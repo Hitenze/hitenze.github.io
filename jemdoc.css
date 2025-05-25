@@ -11,6 +11,11 @@ body {
 	font-family: Georgia, serif;
 	padding-bottom: 8px;
 	margin: 0;
+	/* 禁用安卓Chrome的字体自动调整功能 */
+	-webkit-text-size-adjust: 100%;
+	-moz-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+	text-size-adjust: 100%;
 }
 
 #layout-menu {
@@ -151,6 +156,9 @@ p {
 	margin-bottom: 0.8em;
 	padding: 0;
 	line-height: 1.3;
+	/* 防止安卓Chrome自动调整段落字体大小 */
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
 }
 
 pre {
@@ -214,6 +222,9 @@ li ul, li ol {
 ol {
 	list-style-position: outside;
 	list-style-type: decimal;
+	/* 确保列表项字体大小一致 */
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
 }
 
 li p, dd p {
@@ -369,4 +380,95 @@ img {
 table.imgtable, table.imgtable td {
 	border: none;
 	text-align: left;
+}
+
+/* 移动设备响应式样式 - 只在小屏幕设备上生效，不影响PC端布局 */
+@media screen and (max-width: 768px) {
+   /* 将表格布局改为块级布局 */
+   table#tlayout {
+      display: block;
+      width: 100%;
+   }
+   
+   table#tlayout tr {
+      display: block;
+      width: 100%;
+   }
+   
+   table#tlayout td {
+      display: block;
+      width: 100%;
+   }
+   
+   /* 调整侧边菜单 */
+   #layout-menu {
+      display: block;
+      width: 100%;
+      margin-bottom: 1em;
+      padding: 0.5em;
+      white-space: normal;
+      box-sizing: border-box;
+   }
+   
+   /* 调整主内容区域 */
+   #layout-content {
+      display: block;
+      width: 100%;
+      min-width: auto;
+      padding: 0.5em;
+      margin: 0;
+      box-sizing: border-box;
+   }
+   
+   /* 调整菜单项为水平排列 */
+   .menu-item {
+      display: inline-block;
+      margin-right: 1em;
+      margin-bottom: 0.5em;
+   }
+   
+   /* 调整publication列表的flex布局 */
+   div[style*="display: flex"] {
+      flex-direction: column !important;
+   }
+   
+   /* 调整PDF链接位置 */
+   div[style*="width: 40px"] {
+      width: auto !important;
+      margin-left: 0 !important;
+      text-align: left !important;
+      margin-top: 0.5em;
+   }
+   
+   /* 确保内容不会超出屏幕 */
+   body {
+      overflow-x: hidden;
+   }
+}
+
+/* 针对更小屏幕的额外优化 */
+@media screen and (max-width: 480px) {
+   body {
+      font-size: 14px;
+   }
+   
+   h1 {
+      font-size: 140%;
+   }
+   
+   h2 {
+      font-size: 115%;
+   }
+   
+   #layout-menu {
+      padding: 0.3em;
+   }
+   
+   #layout-content {
+      padding: 0.3em;
+   }
+   
+   .menu-item {
+      margin-right: 0.5em;
+   }
 }
