@@ -362,17 +362,31 @@
 /* =============== Dark Mode Support =============== */
 @media (prefers-color-scheme: dark) {
   :root {
+    --primary-color: #e0e0e0;
+    --secondary-color: #c0c0c0;
+    --accent-color: #66b3ff;
+    
     --text-primary: #e0e0e0;
     --text-secondary: #b0b0b0;
+    --text-light: #999999;
+    
     --bg-primary: #1a1a1a;
     --bg-white: #2a2a2a;
     --bg-light: #333333;
+    
     --border-color: #444444;
+    --shadow-sm: 0 2px 5px rgba(0,0,0,0.3);
+    --shadow-md: 0 5px 15px rgba(0,0,0,0.4);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.5);
   }
   
   body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
+  }
+  
+  header {
+    background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
   }
   
   .section {
