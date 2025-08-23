@@ -125,8 +125,7 @@
     text-align: center;
   }
   
-  /* Special case for single buttons like Repository Link */
-  .publication-links a:only-child,
+  /* Special case for Repository Link in dissertation section */
   .publication-dissertation .publication-links a {
     width: auto;
     flex: 0 0 auto;
