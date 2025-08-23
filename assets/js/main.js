@@ -140,6 +140,10 @@ function initScrollToTop() {
         transition: all 0.3s ease;
         z-index: 999;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
     `;
     
     document.body.appendChild(scrollBtn);
