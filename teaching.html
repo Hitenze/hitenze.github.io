@@ -21,7 +21,7 @@
             background: var(--bg-light);
             padding: 1.5rem;
             border-radius: 8px;
-            border-left: 4px solid var(--warning-color);
+            border-left: 4px solid var(--accent-color);
             margin-bottom: 1rem;
             transition: var(--transition);
         }
@@ -92,8 +92,16 @@
         }
         
         .advisor-card {
-            background: #e8f5e9;
+            background: var(--bg-light);
+            border-left-color: var(--accent-color);
+        }
+        
+        .instructor-card {
             border-left-color: var(--success-color);
+        }
+        
+        .instructor-card .course-code {
+            background: var(--success-color);
         }
         
         .advisor-info {
@@ -188,7 +196,7 @@
                     <li><a href="teaching.html" class="active">Teaching</a></li>
                     <li><a href="outreach.html">Outreach</a></li>
                     <li><a href="https://github.com/hitenze" target="_blank">GitHub</a></li>
-                    <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank">Scholar</a></li>
+                    <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank">Google Scholar</a></li>
                 </ul>
             </nav>
         </div>
@@ -220,7 +228,7 @@
                 <div class="teaching-section">
                     <h2>Instructor</h2>
                     
-                    <div class="course-card current-course">
+                    <div class="course-card instructor-card current-course">
                         <span class="current-badge">Current</span>
                         <div class="course-header">
                             <div class="course-info">
@@ -233,7 +241,7 @@
                         </div>
                     </div>
                     
-                    <div class="course-card">
+                    <div class="course-card instructor-card">
                         <div class="course-header">
                             <div class="course-info">
                                 <div>
@@ -250,7 +258,7 @@
                         </div>
                     </div>
                     
-                    <div class="course-card">
+                    <div class="course-card instructor-card">
                         <div class="course-header">
                             <div class="course-info">
                                 <div>
@@ -267,7 +275,7 @@
                         </div>
                     </div>
                     
-                    <div class="course-card">
+                    <div class="course-card instructor-card">
                         <div class="course-header">
                             <div class="course-info">
                                 <div>
@@ -284,7 +292,7 @@
                         </div>
                     </div>
                     
-                    <div class="course-card">
+                    <div class="course-card instructor-card">
                         <div class="course-header">
                             <div class="course-info">
                                 <div>

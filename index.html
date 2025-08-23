@@ -15,6 +15,41 @@
     <link rel="stylesheet" href="assets/css/responsive.css">
     <link rel="stylesheet" href="assets/css/navigation-patch.css">
     
+    <!-- Additional styles for homepage news -->
+    <style>
+        .news-list-home {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .news-list-home li {
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: baseline;
+        }
+        
+        .news-date-home {
+            display: inline-block;
+            font-weight: 600;
+            color: var(--accent-color);
+            min-width: 90px;
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .news-list-home li {
+                display: block;
+            }
+            
+            .news-date-home {
+                display: block;
+                margin-bottom: 0.25rem;
+            }
+        }
+    </style>
+    
     <!-- MathJax -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML" async></script>
     <script type="text/x-mathjax-config">
@@ -37,7 +72,7 @@
                     <li><a href="teaching.html">Teaching</a></li>
                     <li><a href="outreach.html">Outreach</a></li>
                     <li><a href="https://github.com/hitenze" target="_blank">GitHub</a></li>
-                    <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank">Scholar</a></li>
+                    <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank">Google Scholar</a></li>
                 </ul>
             </nav>
         </div>
@@ -86,13 +121,13 @@
                 </ul>
                 
                 <h2>Recent News</h2>
-                <ul>
-                    <li>[May-2025] New preprint: <a href="https://arxiv.org/abs/2505.00281" target="_blank">"Mixed Precision Orthogonalization-Free Projection Methods for Eigenvalue and Singular Value Problems"</a></li>
-                    <li>[Apr-2025] New preprint: <a href="https://arxiv.org/abs/2504.00480v1" target="_blank">"Preconditioned Additive Gaussian Processes with Fourier Acceleration"</a></li>
-                    <li>[Mar-2025] We are organizing the Atlanta Mathematics of Data Science Bootcamp. <a href="assets/images/Atlanta Mathematics of Data Science Bootcamp.png" target="_blank">[Flyer]</a></li>
-                    <li>[Mar-2025] New preprint: <a href="https://arxiv.org/abs/2503.02259" target="_blank">"HiGP: A High-Performance Python Package for Gaussian Process"</a></li>
-                    <li>[Feb-2025] We are organizing a minisymposium, "Uncertainty Quantification for Machine Learning," at SIAM SEAS25</li>
-                    <li>[Feb-2025] Paper accepted by International Journal of High Performance Computing Applications: <a href="https://doi.org/10.1177/10943420251319334" target="_blank">"A Two-level GPU-Accelerated Incomplete LU Preconditioner for General Sparse Linear Systems"</a></li>
+                <ul class="news-list-home">
+                    <li><span class="news-date-home">[May-2025]</span> New preprint: <a href="https://arxiv.org/abs/2505.00281" target="_blank">"Mixed Precision Orthogonalization-Free Projection Methods for Eigenvalue and Singular Value Problems"</a></li>
+                    <li><span class="news-date-home">[Apr-2025]</span> New preprint: <a href="https://arxiv.org/abs/2504.00480v1" target="_blank">"Preconditioned Additive Gaussian Processes with Fourier Acceleration"</a></li>
+                    <li><span class="news-date-home">[Mar-2025]</span> We are organizing the Atlanta Mathematics of Data Science Bootcamp. <a href="assets/images/Atlanta Mathematics of Data Science Bootcamp.png" target="_blank">[Flyer]</a></li>
+                    <li><span class="news-date-home">[Mar-2025]</span> New preprint: <a href="https://arxiv.org/abs/2503.02259" target="_blank">"HiGP: A High-Performance Python Package for Gaussian Process"</a></li>
+                    <li><span class="news-date-home">[Feb-2025]</span> We are organizing a minisymposium, "Uncertainty Quantification for Machine Learning," at SIAM SEAS25</li>
+                    <li><span class="news-date-home">[Feb-2025]</span> Paper accepted by International Journal of High Performance Computing Applications: <a href="https://doi.org/10.1177/10943420251319334" target="_blank">"A Two-level GPU-Accelerated Incomplete LU Preconditioner for General Sparse Linear Systems"</a></li>
                 </ul>
                 <p style="text-align: right; margin-top: 0.5rem;"><a href="news.html" style="font-size: 0.95rem;">View All News →</a></p>
             </section>

@@ -11,6 +11,21 @@
     <link rel="stylesheet" href="assets/css/responsive.css">
     <link rel="stylesheet" href="assets/css/navigation-patch.css">
     
+    <!-- Additional styles for publications page -->
+    <style>
+        .publication-journal {
+            border-left-color: var(--accent-color);
+        }
+        
+        .publication-preprint {
+            border-left-color: var(--success-color);
+        }
+        
+        .publication-dissertation {
+            border-left-color: var(--info-color);
+        }
+    </style>
+    
     <!-- MathJax -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML" async></script>
     <script type="text/x-mathjax-config">
@@ -33,7 +48,7 @@
                     <li><a href="teaching.html">Teaching</a></li>
                     <li><a href="outreach.html">Outreach</a></li>
                     <li><a href="https://github.com/hitenze" target="_blank">GitHub</a></li>
-                    <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank">Scholar</a></li>
+                    <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank">Google Scholar</a></li>
                 </ul>
             </nav>
         </div>
@@ -48,7 +63,7 @@
                 <!-- Journal Publications -->
                 <h2>Journal Publications</h2>
                 
-                <div class="publication">
+                <div class="publication publication-journal">
                     <div class="publication-title">
                         A Two-level GPU-Accelerated Incomplete LU Preconditioner for General Sparse Linear Systems
                     </div>
@@ -65,7 +80,7 @@
                     </div>
                 </div>
                 
-                <div class="publication">
+                <div class="publication publication-journal">
                     <div class="publication-title">
                         Anderson Acceleration with Truncated Gram-Schmidt
                     </div>
@@ -82,7 +97,7 @@
                     </div>
                 </div>
                 
-                <div class="publication">
+                <div class="publication publication-journal">
                     <div class="publication-title">
                         An Adaptive Factorized Nyström Preconditioner for Regularized Kernel Matrices
                     </div>
@@ -99,7 +114,7 @@
                     </div>
                 </div>
                 
-                <div class="publication">
+                <div class="publication publication-journal">
                     <div class="publication-title">
                         A Parallel Algorithm for Computing Partial Spectral Factorizations of Matrix Pencils via Chebyshev Approximation
                     </div>
@@ -116,7 +131,7 @@
                     </div>
                 </div>
                 
-                <div class="publication">
+                <div class="publication publication-journal">
                     <div class="publication-title">
                         parGeMSLR: A Parallel Multilevel Schur Complement Low-Rank Preconditioning and Solution Package for General Sparse Matrices
                     </div>
@@ -133,7 +148,7 @@
                     </div>
                 </div>
                 
-                <div class="publication">
+                <div class="publication publication-journal">
                     <div class="publication-title">
                         Superconvergence of Some Linear and Quadratic Functionals for Higher-Order Finite Elements
                     </div>
@@ -150,8 +165,8 @@
 
                 <!-- Preprints -->
                 <h2>Preprints</h2>
-                
-                <div class="publication">
+
+                <div class="publication publication-preprint">
                     <div class="publication-title">
                         Mixed Precision Orthogonalization-Free Projection Methods for Eigenvalue and Singular Value Problems
                     </div>
@@ -168,7 +183,7 @@
                     </div>
                 </div>
                 
-                <div class="publication">
+                <div class="publication publication-preprint">
                     <div class="publication-title">
                         Preconditioned Additive Gaussian Processes with Fourier Acceleration
                     </div>
@@ -185,7 +200,7 @@
                     </div>
                 </div>
                 
-                <div class="publication">
+                <div class="publication publication-preprint">
                     <div class="publication-title">
                         HiGP: A High-Performance Python Package for Gaussian Process
                     </div>
@@ -202,7 +217,7 @@
                     </div>
                 </div>
                 
-                <div class="publication">
+                <div class="publication publication-preprint">
                     <div class="publication-title">
                         Multiscale Neural Networks for Approximating Green's Functions
                     </div>
@@ -222,7 +237,7 @@
                 <!-- PhD Dissertation -->
                 <h2>PhD Dissertation</h2>
                 
-                <div class="publication">
+                <div class="publication publication-dissertation">
                     <div class="publication-title">
                         Parallel Schur Complement Algorithms for the Solution of Sparse Linear Systems and Eigenvalue Problems
                     </div>
