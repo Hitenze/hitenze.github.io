@@ -1,0 +1,14 @@
+/* TEAM */
+    Author: Tianshi Xu
+    Contact: tianshi ( d o t ) xu ( a t ) emory ( d o t ) edu
+    Location: Atlanta, Georgia, USA
+
+/* SITE */
+    Language: English
+    Standards: HTML5, CSS3
+    Components: MathJax
+    Tools: Claude Code (AI-assisted development)
+    
+/* SPECIAL THANKS */
+    Claude Code by Anthropic for development assistance
+    GitHub Pages for hosting

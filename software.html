@@ -1,145 +1,272 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta name="generator" content="jemdoc, see http://jemdoc.jaboc.net/" />
-  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="jemdoc.css" type="text/css" />
-  <title>Tianshi Xu's Homepage - Software</title>
-  <!-- MathJax -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML" async></script>
-  <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-      	  TeX: { equationNumbers: { autoNumber: "AMS" } }
-      });
-    </script>
-  <!-- End MathJax -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Software - Tianshi Xu. Open-source software packages for numerical linear algebra and high-performance computing.">
+    <title>Software - Tianshi Xu</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="assets/css/navigation-patch.css">
+    
+    <!-- Additional styles for software page -->
+    <style>
+        .software-card {
+            background: var(--bg-light);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+        
+        .software-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .software-header {
+            display: grid;
+            grid-template-columns: 1fr 250px;
+            gap: 2rem;
+            padding: 2rem;
+            align-items: center;
+        }
+        
+        .software-image {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .software-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .software-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin: 1rem 0;
+        }
+        
+        .software-links {
+            margin-top: 1rem;
+        }
+        
+        .software-tag {
+            display: inline-block;
+            background: var(--accent-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .contributor-badge {
+            display: inline-block;
+            background: var(--success-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        
+        .collaborator-badge {
+            background: var(--info-color);
+        }
+        
+        @media (max-width: 768px) {
+            .software-header {
+                grid-template-columns: 1fr;
+            }
+            
+            .software-image {
+                max-width: 300px;
+                margin: 0 auto;
+            }
+        }
+    </style>
 </head>
-
 <body>
-  <table summary="Table for page layout." id="tlayout">
-    <tr valign="top">
-      <td id="layout-menu">
-        <div class="menu-category">Home</div>
-        <div class="menu-item">
-          <a href="index.html">Biography</a>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">Tianshi Xu</a>
+                <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="publications.html">Publications</a></li>
+                    <li><a href="software.html" class="active">Software</a></li>
+                    <li><a href="teaching.html">Teaching</a></li>
+                    <li><a href="outreach.html">Outreach</a></li>
+                    <li><a href="https://github.com/hitenze" target="_blank">GitHub</a></li>
+                    <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank">Scholar</a></li>
+                </ul>
+            </nav>
         </div>
-        <div class="menu-category">Research</div>
-        <div class="menu-item">
-          <a href="publications.html">Publications</a>
-        </div>
-        <div class="menu-item"><a href="software.html" class="current">Software</a></div>
-        <div class="menu-category">Teaching</div>
-        <div class="menu-item"><a href="teaching.html">Teaching</a></div>
-        <div class="menu-item"><a href="outreach.html">Outreach</a></div>
-        <div class="menu-category">News</div>
-        <div class="menu-item"><a href="news.html">News</a></div>
-        <div class="menu-category">Links</div>
-        <div class="menu-item">
-          <a href="https://github.com/hitenze" target="blank">Github</a>
-        </div>
-        <div class="menu-item"><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="blank">Google Scholar</a></div>
-      </td>
-      <td id="layout-content">
-        <div id="toptitle">
-          <h1>Software</h1>
-          <div id="subtitle"></div>
-        </div>
-        <h2>Main Contributor</h2>
-        <p>
-        <table class="imgtable">
-          <tr>
-            <td align="left">
-              <p style="margin-bottom: 0px;">
-                1. <a href="https://github.com/Hitenze/pargemslr" target="&ldquo;blank&rdquo;">ParGeMSLR: Parallel
-                  Generalized
-                  Multilevel Low-rank
-                  Preconditioner</a>
-              </p>
-              <p style="margin-left: 15px;margin-top: 0px;">
-                ParGeMSLR (Parallel Generalized Multilevel Schur Low-Rank) is a
-                MPI-based C++ library. This is a distributed-memory Multilevel
-                Low-Rank Preconditioning and Solution package for the solution
-                of large and sparse (non)symmetric linear systems of equations.
-                The Parallel GeMSLR preconditioner is purely algebraic.
-              </p>
-            </td>
-            <td>
-              <img src="./figs/pargemslr.png" alt="" width="200px" height="150px" />&nbsp;
-            </td>
-          </tr>
-        </table>
-        </p>
-        <p>
-        <table class="imgtable">
-          <tr>
-            <td align="left">
-              <p style="margin-bottom: 0px;">
-                2. <a href="https://github.com/hitenze/Schurcheb" target="&ldquo;blank&rdquo;">SchurCheb: Schur
-                  Complement
-                  Chebyshev Eigenvalue Solver for
-                  Small Eigenvalues</a>
-              </p>
-              <p style="margin-left: 15px;margin-top: 0px;">
-                SchurCheb is a MPI-based C++ research code for computing partial
-                spectral factorizations of matrix pencils via Chebyshev
-                approximation. This is a distributed-memory package for
-                computing all the eigenvalues (and corresponding eigenvectors)
-                of a large, sparse, real symmetric positive definite matrix
-                pencil that lie within a target interval. The algorithm is
-                purely algebraic.
-              </p>
-            </td>
-            <td>
-              <img src="./figs/schurcheb.png" alt="" width="200px" height="150px" />&nbsp;
-            </td>
-          </tr>
-        </table>
-        </p>
-        <h2>Collaborator</h2>
-        <p>
-        <table class="imgtable">
-          <tr>
-            <td align="left">
-              <p style="margin-bottom: 0px;">
-                1. <a href="https://github.com/hypre-space/hypre" target="&ldquo;blank&rdquo;">HYPRE: High Performance
-                  Preconditioners</a>
-              </p>
-              <p style="margin-left: 15px;margin-top: 0px;">
-                HYPRE is a library of high performance preconditioners and
-                solvers featuring multigrid methods for the solution of large,
-                sparse linear systems of equations on massively parallel
-                computers. The figure on the right is from the <a href="https://github.com/hypre-space/hypre"
-                  target="&ldquo;blank&rdquo;">HYPRE's GitHub page</a>.
-              </p>
-            </td>
-            <td>
-              <img src="./figs/hypre.png" alt="" width="200px" height="100px" />&nbsp;
-            </td>
-          </tr>
-        </table>
-        </p>
-        <p>
-        <table class="imgtable">
-          <tr>
-            <td align="left">
-              <p style="margin-bottom: 0px;">
-                2. <a href="https://github.com/huanghua1994/HiGP" target="&ldquo;blank&rdquo;">HiGP: High-Performance Package for Large-Scale Gaussian Process</a>
-              </p>
-              <p style="margin-left: 15px;margin-top: 0px;">
-                Gaussian processes (GPs) are a set of flexible, non-parametric Bayesian methods for modeling complex data. HiGP is a high-performance Python package for GP regression (GPR) and GP classification (GPC).</a>
-              </p>
-            </td>
-            <td>
-              <img src="./figs/higp.png" alt="" width="200px" height="200px" />&nbsp;
-            </td>
-          </tr>
-        </table>
-        </p>
-      </td>
-    </tr>
-  </table>
-</body>
+    </header>
 
+    <!-- Main Content -->
+    <main class="page-content">
+        <div class="container">
+            <section class="section">
+                <h1>Software</h1>
+                
+                <!-- Main Contributor Section -->
+                <h2>Select Packages</h2>
+                
+                <div class="software-card">
+                    <div class="software-header">
+                        <div>
+                            <span class="contributor-badge">Main Developer</span>
+                            <h3 class="software-title">
+                                ParGeMSLR: Parallel Generalized Multilevel Low-rank Preconditioner
+                            </h3>
+                            <p class="software-description">
+                                ParGeMSLR (Parallel Generalized Multilevel Schur Low-Rank) is a MPI-based C++ library. 
+                                This is a distributed-memory Multilevel Low-Rank Preconditioning and Solution package 
+                                for the solution of large and sparse (non)symmetric linear systems of equations. 
+                                The Parallel GeMSLR preconditioner is purely algebraic.
+                            </p>
+                            <div>
+                                <span class="software-tag">C++</span>
+                                <span class="software-tag">MPI</span>
+                                <span class="software-tag">CUDA</span>
+                            </div>
+                            <div class="software-links">
+                                <a href="https://github.com/Hitenze/pargemslr" target="_blank" class="btn btn-primary">
+                                    View on GitHub
+                                </a>
+                                <a href="https://doi.org/10.1016/j.parco.2022.102956" target="_blank" class="btn btn-secondary">
+                                    Related Paper
+                                </a>
+                            </div>
+                        </div>
+                        <img src="assets/images/pargemslr.png" alt="ParGeMSLR" class="software-image">
+                    </div>
+                </div>
+                
+                <div class="software-card">
+                    <div class="software-header">
+                        <div>
+                            <span class="contributor-badge">Main Developer</span>
+                            <h3 class="software-title">
+                                SchurCheb: Schur Complement Chebyshev Eigenvalue Solver
+                            </h3>
+                            <p class="software-description">
+                                SchurCheb is a MPI-based C++ research code for computing partial spectral factorizations 
+                                of matrix pencils via Chebyshev approximation. This is a distributed-memory package for 
+                                computing all the eigenvalues (and corresponding eigenvectors) of a large, sparse, real 
+                                symmetric positive definite matrix pencil that lie within a target interval. 
+                                The algorithm is purely algebraic.
+                            </p>
+                            <div>
+                                <span class="software-tag">C++</span>
+                                <span class="software-tag">MPI</span>
+                                <span class="software-tag">CUDA</span>
+                            </div>
+                            <div class="software-links">
+                                <a href="https://github.com/hitenze/Schurcheb" target="_blank" class="btn btn-primary">
+                                    View on GitHub
+                                </a>
+                                <a href="https://doi.org/10.1137/22M1501155" target="_blank" class="btn btn-secondary">
+                                    Related Paper
+                                </a>
+                            </div>
+                        </div>
+                        <img src="assets/images/schurcheb.png" alt="SchurCheb" class="software-image">
+                    </div>
+                </div>
+                
+                <div class="software-card">
+                    <div class="software-header">
+                        <div>
+                            <span class="contributor-badge collaborator-badge">Collaborator</span>
+                            <h3 class="software-title">
+                                HYPRE: High Performance Preconditioners
+                            </h3>
+                            <p class="software-description">
+                                HYPRE is a library of high performance preconditioners and solvers featuring 
+                                multigrid methods for the solution of large, sparse linear systems of equations 
+                                on massively parallel computers. I contribute to the development of GPU-accelerated 
+                                incomplete LU preconditioners.
+                            </p>
+                            <div>
+                                <span class="software-tag">C</span>
+                                <span class="software-tag">MPI</span>
+                                <span class="software-tag">CUDA</span>
+                            </div>
+                            <div class="software-links">
+                                <a href="https://github.com/hypre-space/hypre" target="_blank" class="btn btn-primary">
+                                    View on GitHub
+                                </a>
+                                <a href="https://computing.llnl.gov/projects/hypre-scalable-linear-solvers-multigrid-methods" target="_blank" class="btn btn-secondary">
+                                    Project Page
+                                </a>
+                            </div>
+                        </div>
+                        <img src="assets/images/hypre.png" alt="HYPRE" class="software-image">
+                    </div>
+                </div>
+                
+                <div class="software-card">
+                    <div class="software-header">
+                        <div>
+                            <span class="contributor-badge collaborator-badge">Collaborator</span>
+                            <h3 class="software-title">
+                                HiGP: High-Performance Package for Large-Scale Gaussian Process
+                            </h3>
+                            <p class="software-description">
+                                Gaussian processes (GPs) are a set of flexible, non-parametric Bayesian methods 
+                                for modeling complex data. HiGP is a high-performance Python package for GP 
+                                regression (GPR) and GP classification (GPC), designed to handle large-scale 
+                                datasets efficiently.
+                            </p>
+                            <div>
+                                <span class="software-tag">C++</span>
+                                <span class="software-tag">Python</span>
+                            </div>
+                            <div class="software-links">
+                                <a href="https://github.com/huanghua1994/HiGP" target="_blank" class="btn btn-primary">
+                                    View on GitHub
+                                </a>
+                                <a href="https://arxiv.org/abs/2503.02259" target="_blank" class="btn btn-secondary">
+                                    Related Paper
+                                </a>
+                            </div>
+                        </div>
+                        <img src="assets/images/higp.png" alt="HiGP" class="software-image">
+                    </div>
+                </div>
+                
+                <!-- Additional Software -->
+                <h2>Other Contributions</h2>
+                <p>View more of my software projects and contributions on my <a href="https://github.com/hitenze" target="_blank">GitHub profile</a>.</p>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p style="font-size: 0.85rem; color: #999;">© 2025 Tianshi Xu</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="assets/js/main.js"></script>
+</body>
 </html>

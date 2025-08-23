@@ -1,0 +1,403 @@
+/* ========================================
+   Responsive Styles - Mobile First Approach
+   ======================================== */
+
+/* =============== Tablet (768px - 1024px) =============== */
+@media (max-width: 1024px) {
+  .container {
+    max-width: 95%;
+  }
+  
+  .grid-4 {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+/* =============== Mobile Large (481px - 768px) =============== */
+@media (max-width: 768px) {
+  /* Typography */
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.6rem;
+  }
+  
+  h3 {
+    font-size: 1.3rem;
+  }
+  
+  /* Navigation */
+  .mobile-menu-toggle {
+    display: block;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  .logo {
+    margin-right: 0;  /* Reset margin on mobile */
+  }
+  
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: var(--header-height);
+    left: 0;
+    width: 100%;
+    background: var(--secondary-color);
+    flex-direction: column;
+    padding: 1rem 0;
+    gap: 0;
+    box-shadow: var(--shadow-md);
+    margin-left: 0;  /* Reset margin on mobile */
+  }
+  
+  .nav-links.active {
+    display: flex;
+  }
+  
+  .nav-links li {
+    width: 100%;
+  }
+  
+  .nav-links a {
+    display: block;
+    padding: 0.75rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .nav-links a::after {
+    display: none;
+  }
+  
+  /* Profile Section */
+  .profile-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 2rem;
+  }
+  
+  .profile-image {
+    margin: 0 auto;
+  }
+  
+  /* Sections */
+  .section {
+    padding: 2rem 1.5rem;
+    border-radius: 8px;
+  }
+  
+  /* Grid Layouts */
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Buttons */
+  .btn {
+    width: 100%;
+    text-align: center;
+    margin-right: 0;
+  }
+  
+  .btn + .btn {
+    margin-top: 0.5rem;
+  }
+  
+  /* Publications */
+  .publication-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .publication-links a {
+    display: inline-block;
+    margin-right: 0;
+  }
+}
+
+/* =============== Mobile Small (320px - 480px) =============== */
+@media (max-width: 480px) {
+  /* Base */
+  body {
+    font-size: 15px;
+  }
+  
+  /* Container */
+  .container {
+    padding: 0 15px;
+  }
+  
+  /* Typography */
+  h1 {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  h2 {
+    font-size: 1.4rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  h3 {
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  /* Header */
+  header {
+    height: 60px;
+  }
+  
+  .logo {
+    font-size: 1.2rem;
+  }
+  
+  /* Profile */
+  .profile-image {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .profile-info h1 {
+    font-size: 2rem;
+  }
+  
+  .profile-info .title {
+    font-size: 1.1rem;
+  }
+  
+  .profile-info .affiliation {
+    font-size: 1rem;
+  }
+  
+  /* Sections */
+  .section {
+    padding: 1.5rem 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .page-content {
+    padding: 2rem 0;
+  }
+  
+  /* Cards */
+  .card {
+    padding: 1.5rem 1rem;
+  }
+  
+  /* News */
+  .news-date {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Tables */
+  table {
+    font-size: 0.9rem;
+  }
+  
+  /* Overflow handling */
+  .publication-title,
+  .publication-authors,
+  .publication-venue,
+  .news-content {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  /* Contact info */
+  .contact-info {
+    word-break: break-all;
+  }
+}
+
+/* =============== Very Small Devices (< 320px) =============== */
+@media (max-width: 320px) {
+  .container {
+    padding: 0 10px;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  h2 {
+    font-size: 1.25rem;
+  }
+  
+  .section {
+    padding: 1rem 0.75rem;
+  }
+  
+  .profile-image {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+/* =============== Large Screens (> 1200px) =============== */
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1200px;
+  }
+  
+  .grid-5 {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* =============== Touch Device Optimizations =============== */
+@media (hover: none) and (pointer: coarse) {
+  /* Increase touch target sizes */
+  a, button {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  /* Disable hover effects on touch devices */
+  .card:hover,
+  .publication:hover {
+    transform: none;
+  }
+  
+  /* Improve tap highlighting */
+  a, button {
+    -webkit-tap-highlight-color: rgba(52, 152, 219, 0.2);
+  }
+}
+
+/* =============== Landscape Orientation =============== */
+@media (max-width: 768px) and (orientation: landscape) {
+  header {
+    height: 50px;
+  }
+  
+  .nav-links {
+    top: 50px;
+  }
+  
+  .section {
+    padding: 1.5rem;
+  }
+  
+  .page-content {
+    padding: 1.5rem 0;
+  }
+}
+
+/* =============== High DPI Displays =============== */
+@media (-webkit-min-device-pixel-ratio: 2),
+       (min-resolution: 192dpi) {
+  /* Use higher resolution images if available */
+  .profile-image,
+  .gallery-image {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* =============== Print Optimization =============== */
+@media print {
+  /* Hide non-essential elements */
+  .mobile-menu-toggle,
+  .btn,
+  header,
+  footer,
+  .nav-links {
+    display: none !important;
+  }
+  
+  /* Optimize for printing */
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #000;
+    background: #fff;
+  }
+  
+  .section {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+    margin-bottom: 1cm;
+  }
+  
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+  
+  a {
+    color: #000;
+    text-decoration: underline;
+  }
+  
+  /* Show URLs for links */
+  a[href^="http"]:after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+}
+
+/* =============== Reduced Motion =============== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* =============== Dark Mode Support =============== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --bg-primary: #1a1a1a;
+    --bg-white: #2a2a2a;
+    --bg-light: #333333;
+    --border-color: #444444;
+  }
+  
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+  }
+  
+  .section {
+    background: var(--bg-white);
+  }
+  
+  .card,
+  .publication,
+  .news-section {
+    background: var(--bg-light);
+  }
+}
+
+/* =============== iPhone Notch Support =============== */
+@supports (padding: env(safe-area-inset-top)) {
+  header {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .nav-links {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .container {
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
+  }
+}

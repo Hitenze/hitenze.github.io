@@ -1,1 +1,29 @@
+# macOS
 .DS_Store
+Thumbs.db
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.cursor/
+.cursorignore
+
+# AI Assistant files
+.claude/
+CLAUDE.md
+GEMINI.md
+.ai/
+*.ai.md
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+.cache/
+
+# Old site backup
+newsite/
+figs/

@@ -1,0 +1,53 @@
+/* Navigation Layout Optimization Patch */
+
+/* Desktop Navigation Spacing */
+@media (min-width: 769px) {
+  nav {
+    gap: 4rem !important;  /* Increase gap between logo and nav items */
+  }
+  
+  .logo {
+    flex-shrink: 0;  /* Prevent logo from shrinking */
+    white-space: nowrap;  /* Prevent text wrapping */
+  }
+  
+  .nav-links {
+    justify-content: flex-end;  /* Align links to the right */
+  }
+  
+  /* Add visual separator between logo and navigation */
+  .logo::after {
+    content: '';
+    position: absolute;
+    right: -2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 30px;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    display: none;  /* Optional: enable if you want a visual divider */
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  nav {
+    gap: 2rem !important;
+  }
+  
+  .logo {
+    font-size: 1.3rem;
+  }
+  
+  .nav-links {
+    gap: 1.5rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1200px) {
+  nav {
+    gap: 5rem !important;  /* Even more space on large screens */
+  }
+}

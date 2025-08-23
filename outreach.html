@@ -1,105 +1,197 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-   <meta name="generator" content="jemdoc, see http://jemdoc.jaboc.net/" />
-   <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="jemdoc.css" type="text/css" />
-   <title>Tianshi Xu's Homepage - Outreach Activities
-   </title>
-   <!-- MathJax -->
-   <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async>
-   </script>
-   <script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-      TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
-</script>
-   <!-- End MathJax -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Outreach - Tianshi Xu. Community engagement and STEM education initiatives.">
+    <title>Outreach - Tianshi Xu</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="assets/css/navigation-patch.css">
+    
+    <!-- Additional styles for outreach page -->
+    <style>
+        .outreach-item {
+            background: var(--bg-light);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            border-left: 4px solid var(--warning-color);
+            transition: var(--transition);
+        }
+        
+        .outreach-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .outreach-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        .outreach-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+        
+        .role-badge {
+            display: inline-block;
+            background: var(--warning-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+        
+        .year-badge {
+            display: inline-block;
+            background: var(--info-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+        
+        .outreach-image-container {
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        .outreach-image {
+            max-width: 100%;
+            max-height: 350px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+        
+        .outreach-image:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .image-caption {
+            margin-top: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .outreach-links {
+            margin-top: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .outreach-image {
+                max-width: 100%;
+            }
+        }
+    </style>
 </head>
-
 <body>
-   <table summary="Table for page layout." id="tlayout">
-      <tr valign="top">
-         <td id="layout-menu">
-            <div class="menu-category">Home</div>
-            <div class="menu-item">
-               <a href="index.html">Biography</a>
-            </div>
-            <div class="menu-category">Research</div>
-            <div class="menu-item">
-               <a href="publications.html">Publications</a>
-            </div>
-            <div class="menu-item"><a href="software.html">Software</a></div>
-            <div class="menu-category">Teaching</div>
-            <div class="menu-item"><a href="teaching.html">Teaching</a></div>
-            <div class="menu-item"><a href="outreach.html" class="current">Outreach</a></div>
-            <div class="menu-category">News</div>
-            <div class="menu-item"><a href="news.html">News</a></div>
-            <div class="menu-category">Links</div>
-            <div class="menu-item"><a href="https://github.com/hitenze" target="blank">Github</a></div>
-            <div class="menu-item"><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="blank">Google Scholar</a></div>
-         </td>
-         <td id="layout-content">
-            <div id="toptitle">
-               <h1>Outreach Activities
-               </h1>
-               <div id="subtitle">
-               </div>
-            </div>
-            <h3>Atlanta Mathematics of Data Science Bootcamp</h3>
-            <ul>
-               <li>
-                  <div style="display: flex;">
-                    <div style="flex-grow: 1;"> 
-                      <p>
-                        Co-organizer of the Atlanta Mathematics of Data Science Bootcamp (2025).
-                      </p>
-                    </div>
-                    <div style="width: 40px; margin-left: 2px; text-align: right;">
-                      <a href="./figs/Atlanta Mathematics of Data Science Bootcamp.png" target="_blank">[flyer]</a><br />
-                    </div>
-                  </div>
-               </li>
-            </ul>
-            <div style="text-align: center; margin: 0 auto;">
-               <img src="./figs/bootcamp.jpg" alt="Atlanta Science Festival" width="400px" height="300px" style="display: block; margin: 0 auto;" />
-               <p style="max-width: 500px; margin: 10px auto;">
-                  Atlanta Mathematics of Data Science Bootcamp (2025)
-               </p>
-            </div>
-            <h3>Atlanta Science Festival</h3>
-            <ul>
-               <li>
-                  <p>
-                     Exhibitor at the Atlanta Science Festival (2025). We set up a booth to show the importance of math in science and engineering.
-                  </p>
-               </li>
-            </ul>
-            <div style="text-align: center; margin: 0 auto;">
-               <img src="./figs/ASF25.jpg" alt="Atlanta Science Festival" width="400px" height="600px" style="display: block; margin: 0 auto;" />
-               <p style="max-width: 500px; margin: 10px auto;">
-                  Atlanta Science Festival (2025)
-               </p>
-            </div>
-            <h3>Mary Lin Elementary School STEAM Day</h3>
-            <ul>
-               <li>
-                  <p>
-                     Exhibitor at the Mary Lin Elementary School's STEAM Day (2023, 2024). We set up booths to show the importance of math in science and engineering.
-                  </p>
-               </li>
-            </ul>
-            <div style="text-align: center; margin: 0 auto;">
-               <img src="./figs/MLSN.jpg" alt="Mary Lin Elementary School STEAM Day (2024)" width="400px" height="600px" style="display: block; margin: 0 auto;" />
-               <p style="max-width: 500px; margin: 10px auto;">
-                  Mary Lin Elementary School STEAM Day (2024, kids identifying details blurred for privacy)
-               </p>
-            </div>
-         </td>
-      </tr>
-   </table>
-</body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">Tianshi Xu</a>
+                <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="publications.html">Publications</a></li>
+                    <li><a href="software.html">Software</a></li>
+                    <li><a href="teaching.html">Teaching</a></li>
+                    <li><a href="outreach.html" class="active">Outreach</a></li>
+                    <li><a href="https://github.com/hitenze" target="_blank">GitHub</a></li>
+                    <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank">Scholar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-</html> 
+    <!-- Main Content -->
+    <main class="page-content">
+        <div class="container">
+            <section class="section">
+                <h1>Outreach Activities</h1>
+                
+                <!-- Atlanta Mathematics of Data Science Bootcamp -->
+                <div class="outreach-item">
+                    <div>
+                        <span class="role-badge">Co-Organizer</span>
+                        <span class="year-badge">2025</span>
+                    </div>
+                    <div class="outreach-title">Atlanta Mathematics of Data Science Bootcamp</div>
+                    <p class="outreach-description">
+                        Co-organizer of the Atlanta Mathematics of Data Science Bootcamp (2025).
+                    </p>
+                    <div class="outreach-image-container">
+                        <img src="assets/images/bootcamp.jpg" alt="Atlanta Mathematics of Data Science Bootcamp" class="outreach-image">
+                        <p class="image-caption">Atlanta Mathematics of Data Science Bootcamp (2025)</p>
+                    </div>
+                    <div class="outreach-links">
+                        <a href="assets/images/Atlanta Mathematics of Data Science Bootcamp.png" target="_blank" class="btn btn-sm btn-primary">
+                            View Event Flyer
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Atlanta Science Festival -->
+                <div class="outreach-item">
+                    <div>
+                        <span class="role-badge">Exhibitor</span>
+                        <span class="year-badge">2025</span>
+                    </div>
+                    <div class="outreach-title">Atlanta Science Festival</div>
+                    <p class="outreach-description">
+                        Exhibitor at the Atlanta Science Festival (2025). We set up a booth to show the importance of math in science and engineering.
+                    </p>
+                    <div class="outreach-image-container">
+                        <img src="assets/images/ASF25.jpg" alt="Atlanta Science Festival 2025" class="outreach-image">
+                        <p class="image-caption">Atlanta Science Festival (2025)</p>
+                    </div>
+                </div>
+                
+                <!-- Mary Lin Elementary School STEAM Day -->
+                <div class="outreach-item">
+                    <div>
+                        <span class="role-badge">Exhibitor</span>
+                        <span class="year-badge">2023</span>
+                        <span class="year-badge">2024</span>
+                    </div>
+                    <div class="outreach-title">Mary Lin Elementary School STEAM Day</div>
+                    <p class="outreach-description">
+                        Exhibitor at the Mary Lin Elementary School's STEAM Day (2023, 2024). We set up booths to show the importance of math in science and engineering.
+                    </p>
+                    <div class="outreach-image-container">
+                        <img src="assets/images/MLSN.jpg" alt="Mary Lin Elementary School STEAM Day" class="outreach-image">
+                        <p class="image-caption">Mary Lin Elementary School STEAM Day (2024, kids identifying details blurred for privacy)</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p style="font-size: 0.85rem; color: #999;">© 2025 Tianshi Xu</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
