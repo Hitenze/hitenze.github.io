@@ -106,16 +106,31 @@
     margin-top: 0.5rem;
   }
   
-  /* Publications */
+  /* Publications - Keep buttons horizontal on mobile */
   .publication-links {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 0.5rem;
+    align-items: baseline;
   }
   
   .publication-links a {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     margin-right: 0;
+    width: 65px;
+    flex: 0 0 65px;
+    text-align: center;
+  }
+  
+  /* Special case for single buttons like Repository Link */
+  .publication-links a:only-child,
+  .publication-dissertation .publication-links a {
+    width: auto;
+    flex: 0 0 auto;
+    min-width: 120px;
   }
 }
 
