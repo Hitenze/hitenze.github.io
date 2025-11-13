@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Encode/Decode - Online Toolbox</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            display: inline-block;
+            color: #5a6c7d;
+            text-decoration: none;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            border: 1px solid #e8eaed;
+            font-weight: 500;
+        }
+
+        .back-btn:hover {
+            background: #f8f9fa;
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        header {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 30px 40px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: #7f8c8d;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #e8eaed;
+            margin-bottom: 20px;
+        }
+
+        .dual-pane {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .pane {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pane label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .char-count {
+            font-size: 0.85rem;
+            color: #95a5a6;
+            font-weight: 400;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 16px;
+            font-size: 0.95rem;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.3s ease;
+            line-height: 1.6;
+        }
+
+        textarea:focus {
+            border-color: #3498db;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+            color: #5a6c7d;
+            border: 1px solid #dce1e5;
+        }
+
+        .btn:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #5a6c7d;
+            border: 1px solid #dce1e5;
+        }
+
+        .btn-secondary:hover {
+            background: #dce1e5;
+            border-color: #cbd3d9;
+            color: #5a6c7d;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #5a6c7d;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .radio-label input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .url-params {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e8eaed;
+            display: none;
+        }
+
+        .url-params.show {
+            display: block;
+        }
+
+        .url-params h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .param-item {
+            padding: 8px 12px;
+            background: white;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 0.85rem;
+        }
+
+        .param-key {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .param-value {
+            color: #27ae60;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            color: #95a5a6;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dual-pane {
+                grid-template-columns: 1fr;
+            }
+
+            textarea {
+                min-height: 200px;
+            }
+
+            header {
+                padding: 25px 30px;
+            }
+
+            .tool-card {
+                padding: 20px;
+            }
+
+            .button-row {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                padding: 20px;
+            }
+
+            header h1 {
+                font-size: 1.6rem;
+            }
+
+            .tool-card {
+                padding: 15px;
+            }
+
+            textarea {
+                font-size: 0.9rem;
+            }
+
+            .radio-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← Back to Tools</a>
+
+        <header>
+            <h1>URL Encode / Decode</h1>
+            <p>Encode/decode full URLs or URL components</p>
+        </header>
+
+        <div class="tool-card">
+            <div class="dual-pane">
+                <div class="pane">
+                    <label for="originalInput">
+                        <span>Original Text</span>
+                        <span class="char-count" id="originalCount">0 chars</span>
+                    </label>
+                    <textarea
+                        id="originalInput"
+                        placeholder="Enter original text here..."
+                    ></textarea>
+                </div>
+
+                <div class="pane">
+                    <label for="encodedInput">
+                        <span>Encoded Text</span>
+                        <span class="char-count" id="encodedCount">0 chars</span>
+                    </label>
+                    <textarea
+                        id="encodedInput"
+                        placeholder="Enter encoded text here..."
+                    ></textarea>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="radio-group">
+                    <span style="font-weight: 600; color: #2c3e50;">Encoding:</span>
+                    <label class="radio-label">
+                        <input type="radio" name="encodeType" value="component" checked>
+                        URL component
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="encodeType" value="full">
+                        Full URL
+                    </label>
+                </div>
+
+                <div class="button-row">
+                    <button class="btn btn-primary" onclick="encodeURL()">Encode →</button>
+                    <button class="btn btn-primary" onclick="decodeURL()">← Decode</button>
+                    <button class="btn btn-secondary" onclick="parseURLParams()">Parse URL params</button>
+                    <button class="btn btn-success" onclick="copyOriginal()">Copy original</button>
+                    <button class="btn btn-success" onclick="copyEncoded()">Copy encoded</button>
+                </div>
+
+                <div class="message" id="message"></div>
+            </div>
+
+            <div class="url-params" id="urlParams">
+                <h4>Parsed URL Parameters</h4>
+                <div id="paramsContent"></div>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <h3 style="margin-bottom: 15px; color: #2c3e50;">How to use</h3>
+            <ul style="color: #5a6c7d; line-height: 1.8; padding-left: 20px;">
+                <li><strong>URL component:</strong> Encode query params and path segments (encodes / ? & = etc.)</li>
+                <li><strong>Full URL:</strong> Encode the whole URL but preserve URL structure characters</li>
+                <li><strong>Parse URL params:</strong> Extract query parameters from a URL</li>
+                <li>Supports non-ASCII and special characters</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>Note: All operations run locally in your browser. Nothing is uploaded.</p>
+        </footer>
+    </div>
+
+    <script>
+        const originalInput = document.getElementById('originalInput');
+        const encodedInput = document.getElementById('encodedInput');
+        const originalCount = document.getElementById('originalCount');
+        const encodedCount = document.getElementById('encodedCount');
+        const message = document.getElementById('message');
+        const urlParams = document.getElementById('urlParams');
+        const paramsContent = document.getElementById('paramsContent');
+
+        // Update counters
+        function updateOriginalCount() {
+            originalCount.textContent = `${originalInput.value.length} chars`;
+        }
+
+        function updateEncodedCount() {
+            encodedCount.textContent = `${encodedInput.value.length} chars`;
+        }
+
+        originalInput.addEventListener('input', updateOriginalCount);
+        encodedInput.addEventListener('input', updateEncodedCount);
+
+        // Show message
+        function showMessage(msg, type = 'info') {
+            message.textContent = msg;
+            message.className = `message ${type}`;
+
+            setTimeout(() => {
+                message.className = 'message';
+            }, 3000);
+        }
+
+        // Encode URL
+        function encodeURL() {
+            const text = originalInput.value;
+            if (!text) {
+                showMessage('Please enter text to encode', 'error');
+                return;
+            }
+
+            try {
+                const type = document.querySelector('input[name="encodeType"]:checked').value;
+                let encoded;
+
+                if (type === 'component') {
+                    encoded = encodeURIComponent(text);
+                } else {
+                    encoded = encodeURI(text);
+                }
+
+                encodedInput.value = encoded;
+                updateEncodedCount();
+                showMessage('Encoded', 'success');
+            } catch (e) {
+                showMessage(`Encode failed: ${e.message}`, 'error');
+            }
+        }
+
+        // Decode URL
+        function decodeURL() {
+            const text = encodedInput.value;
+            if (!text) {
+                showMessage('Please enter text to decode', 'error');
+                return;
+            }
+
+            try {
+                // Try decodeURIComponent first; fallback to decodeURI
+                let decoded;
+                try {
+                    decoded = decodeURIComponent(text);
+                } catch (e) {
+                    decoded = decodeURI(text);
+                }
+
+                originalInput.value = decoded;
+                updateOriginalCount();
+                showMessage('Decoded', 'success');
+            } catch (e) {
+                showMessage(`Decode failed: ${e.message}`, 'error');
+            }
+        }
+
+        // Parse URL params
+        function parseURLParams() {
+            const text = originalInput.value || encodedInput.value;
+            if (!text) {
+                showMessage('Please enter a URL', 'error');
+                return;
+            }
+
+            try {
+                let url = text;
+
+                // If not a full URL, try parsing from the query string
+                if (!url.includes('://')) {
+                    const queryStart = url.indexOf('?');
+                    if (queryStart !== -1) {
+                        url = 'http://example.com' + url.substring(queryStart);
+                    } else {
+                        showMessage('No URL parameters found', 'error');
+                        return;
+                    }
+                }
+
+                const urlObj = new URL(url);
+                const params = urlObj.searchParams;
+
+                if (params.toString() === '') {
+                    showMessage('No parameters in URL', 'info');
+                    urlParams.classList.remove('show');
+                    return;
+                }
+
+                let html = '';
+                for (const [key, value] of params) {
+                    html += `
+                        <div class="param-item">
+                            <span class="param-key">${escapeHtml(key)}</span> = <span class="param-value">${escapeHtml(value)}</span>
+                        </div>
+                    `;
+                }
+
+                paramsContent.innerHTML = html;
+                urlParams.classList.add('show');
+                showMessage('Parsed', 'success');
+            } catch (e) {
+                showMessage(`Parse failed: ${e.message}`, 'error');
+                urlParams.classList.remove('show');
+            }
+        }
+
+        // HTML escape helper
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Copy original
+        async function copyOriginal() {
+            const text = originalInput.value;
+            if (!text) {
+                showMessage('Nothing to copy', 'error');
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(text);
+                showMessage('Copied', 'success');
+            } catch (err) {
+                originalInput.select();
+                document.execCommand('copy');
+                showMessage('Copied', 'success');
+            }
+        }
+
+        // Copy encoded
+        async function copyEncoded() {
+            const text = encodedInput.value;
+            if (!text) {
+                showMessage('Nothing to copy', 'error');
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(text);
+                showMessage('Copied', 'success');
+            } catch (err) {
+                encodedInput.select();
+                document.execCommand('copy');
+                showMessage('Copied', 'success');
+            }
+        }
+
+        // Initialize counters
+        updateOriginalCount();
+        updateEncodedCount();
+    </script>
+</body>
+</html>

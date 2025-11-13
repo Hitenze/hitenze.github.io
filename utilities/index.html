@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Toolbox</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+        }
+
+        .back-btn {
+            display: inline-block;
+            color: #5a6c7d;
+            text-decoration: none;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            border: 1px solid #e8eaed;
+            font-weight: 500;
+        }
+        .back-btn:hover {
+            background: #f8f9fa;
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 20px 0;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #e8eaed;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            border-color: #3498db;
+        }
+
+        .tool-card h2 {
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .tool-card p {
+            color: #7f8c8d;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .tool-card.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        footer {
+            text-align: center;
+            color: #95a5a6;
+            margin-top: 60px;
+            padding: 20px;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 30px;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+
+            header p {
+                font-size: 1rem;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .tool-card {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                margin-bottom: 30px;
+                padding: 25px 20px;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-btn">← Back to Home</a>
+        <header>
+            <h1>Online Toolbox</h1>
+            <p>A collection of practical web utilities - Co-designed by Claude Code. Use at your own risk.</p>
+        </header>
+
+        <div class="tools-grid">
+
+            <a href="photo-mosaic.html" class="tool-card">
+                <h2>Photo Mosaic</h2>
+                <p>Blur selected areas of an image to protect privacy</p>
+            </a>
+
+            <a href="text-format.html" class="tool-card">
+                <h2>Text Formatter</h2>
+                <p>Clean whitespace, line breaks, and adjust casing</p>
+            </a>
+            
+            <a href="url-to-qr.html" class="tool-card">
+                <h2>URL to QR</h2>
+                <p>Convert URLs to scannable QR codes</p>
+            </a>
+
+            <a href="exam-timer.html" class="tool-card">
+                <h2>Exam Timer</h2>
+                <p>Large-screen timer for exams or talks</p>
+            </a>
+
+            <a href="json-format.html" class="tool-card">
+                <h2>JSON Formatter</h2>
+                <p>Validate, pretty-print, and minify JSON</p>
+            </a>
+
+            <a href="base64.html" class="tool-card">
+                <h2>Base64 Encoder/Decoder</h2>
+                <p>Convert text and files to/from Base64</p>
+            </a>
+
+            <a href="timestamp.html" class="tool-card">
+                <h2>Timestamp Converter</h2>
+                <p>Convert between Unix timestamp and datetime</p>
+            </a>
+
+            <a href="url-encode.html" class="tool-card">
+                <h2>URL Encode/Decode</h2>
+                <p>Encode/decode full URLs or URL components</p>
+            </a>
+
+            <a href="password-generator.html" class="tool-card">
+                <h2>Password Generator</h2>
+                <p>Create secure, random passwords</p>
+            </a>
+
+            <div class="tool-card disabled">
+                <h2>More Tools</h2>
+                <p>Coming soon...</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Online Toolbox</p>
+        </footer>
+    </div>
+</body>
+</html>

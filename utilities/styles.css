@@ -1,0 +1,116 @@
+:root {
+  --myblue: #66c4ff;
+  --myblue-hover: #41b6ff;
+  --myred: #ef4d3b;
+  --myred-hover: #d43f31;
+  --myyellow: #f4cd71;
+  --myyellow-hover: #e0b953;
+  --mypurple: #af58ba;
+  --mygreen: #9ae085;
+  --mygreen-hover: #78ce59;
+  --mygray: #dcdcdc;
+}
+
+/* Buttons */
+.btn-primary {
+  background: var(--myblue) !important;
+  border-color: var(--myblue) !important;
+  color: #fff !important;
+}
+.btn-primary:hover {
+  background: var(--myblue-hover) !important;
+}
+
+.btn-success {
+  background: var(--mygreen) !important;
+  border-color: var(--mygreen) !important;
+  color: #000 !important;
+}
+.btn-success:hover {
+  background: var(--mygreen-hover) !important;
+}
+
+.btn-pause { /* used by exam timer */
+  background: var(--myyellow) !important;
+  border-color: var(--myyellow) !important;
+  color: #000 !important;
+}
+.btn-pause:hover { background: var(--myyellow-hover) !important; }
+
+.btn-reset { /* destructive action */
+  background: var(--myred) !important;
+  border-color: var(--myred) !important;
+  color: #fff !important;
+}
+.btn-reset:hover { background: var(--myred-hover) !important; }
+
+/* Exam timer specific buttons */
+.btn-start {
+  background: var(--mygreen) !important;
+  border-color: var(--mygreen) !important;
+  color: #000 !important;
+}
+.btn-start:hover { background: var(--mygreen-hover) !important; }
+
+.btn-fullscreen {
+  background: var(--myblue) !important;
+  border-color: var(--myblue) !important;
+  color: #fff !important;
+}
+.btn-fullscreen:hover { background: var(--myblue-hover) !important; }
+
+.btn-secondary {
+  background: #fff !important;
+  color: #333 !important;
+  border: 1px solid var(--mygray) !important;
+}
+.btn-secondary:hover {
+  background: var(--mygray) !important;
+}
+
+/* Links, cards */
+.tool-card:hover { border-color: var(--myblue) !important; }
+.back-btn:hover { border-color: var(--myblue) !important; color: var(--myblue) !important; }
+
+/* Inputs */
+input:focus, textarea:focus, select:focus {
+  border-color: var(--myblue) !important;
+}
+
+/* Range slider thumbs */
+input[type="range"]::-webkit-slider-thumb {
+  background: var(--myblue) !important;
+}
+input[type="range"]::-moz-range-thumb {
+  background: var(--myblue) !important;
+}
+
+/* Upload areas */
+.upload-area:hover,
+.upload-area.dragover {
+  border-color: var(--myblue) !important;
+}
+
+/* Exam timer state backgrounds */
+.display-area.warning { background: var(--myyellow) !important; }
+.display-area.warning .timer-display,
+.display-area.warning .custom-text { color: var(--myblue) !important; text-shadow: none !important; }
+.display-area.danger { background: var(--myred) !important; }
+.display-area.danger .timer-display,
+.display-area.danger .custom-text { color: var(--mygray) !important; text-shadow: none !important; }
+
+/* Password strength colors */
+.strength-weak { background: var(--myred) !important; }
+.strength-fair { background: var(--myyellow) !important; }
+.strength-good { background: var(--myblue) !important; }
+.strength-strong { background: var(--mygreen) !important; }
+
+/* Password generator buttons */
+.copy-btn { background: var(--myblue) !important; }
+.copy-btn:hover { background: var(--myblue-hover) !important; }
+.mini-copy-btn { background: var(--myblue) !important; }
+.mini-copy-btn:hover { background: var(--myblue-hover) !important; }
+
+/* Exam timer text colors and alignment (avoid pure black/white) */
+.display-area .timer-display { color: var(--myblue) !important; }
+.display-area .custom-text { color: var(--mygray) !important; text-align: left !important; }

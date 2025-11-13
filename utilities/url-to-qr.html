@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL to QR - Online Toolbox</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            display: inline-block;
+            color: #5a6c7d;
+            text-decoration: none;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            border: 1px solid #e8eaed;
+            font-weight: 500;
+        }
+
+        .back-btn:hover {
+            background: #f8f9fa;
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        header {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 30px 40px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: #7f8c8d;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #e8eaed;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .url-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+        }
+
+        .protocol-select {
+            flex: 0 0 auto;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+            outline: none;
+        }
+
+        .protocol-select:focus {
+            border-color: #3498db;
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: border-color 0.3s ease;
+            outline: none;
+        }
+
+        .url-input:focus {
+            border-color: #3498db;
+        }
+
+        .url-input::placeholder {
+            color: #999;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-primary:active {
+            background: #2573a7;
+        }
+
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #5a6c7d;
+            border: 1px solid #dce1e5;
+        }
+
+        .btn-secondary:hover {
+            background: #dce1e5;
+            border-color: #cbd3d9;
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary:disabled:hover {
+            background: #ecf0f1;
+            border-color: #dce1e5;
+        }
+
+        .qr-result {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #qrcode {
+            margin: 20px auto;
+            display: inline-block;
+        }
+
+        #qrcode canvas,
+        #qrcode img {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .placeholder {
+            color: #95a5a6;
+            font-size: 1rem;
+        }
+
+        .url-display {
+            margin-top: 15px;
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            word-break: break-all;
+            color: #5a6c7d;
+            font-size: 0.9rem;
+            max-width: 100%;
+            border: 1px solid #e8eaed;
+        }
+
+        footer {
+            text-align: center;
+            color: #95a5a6;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .tool-card {
+                padding: 25px;
+            }
+
+            .url-input-wrapper {
+                flex-direction: column;
+            }
+
+            .protocol-select {
+                width: 100%;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .tool-card {
+                padding: 20px;
+            }
+
+            .qr-result {
+                padding: 20px;
+                min-height: 250px;
+            }
+
+            #qrcode canvas,
+            #qrcode img {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← Back to Tools</a>
+
+        <header>
+            <h1>URL to QR</h1>
+            <p>Turn any URL into a scannable QR code</p>
+        </header>
+
+        <div class="tool-card">
+            <div class="input-group">
+                <label for="url">Enter URL</label>
+                <div class="url-input-wrapper">
+                    <select id="protocol" class="protocol-select">
+                        <option value="https://">https://</option>
+                        <option value="http://">http://</option>
+                    </select>
+                    <input
+                        type="text"
+                        id="url"
+                        class="url-input"
+                        placeholder="e.g., www.example.com or example.com"
+                        autocomplete="off"
+                    >
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="generateQR()">Generate QR</button>
+                <button class="btn btn-secondary" id="downloadBtn" onclick="downloadQR()" disabled>Download QR</button>
+            </div>
+
+            <div class="qr-result">
+                <div id="placeholder" class="placeholder">
+                    <div>Enter a URL and click Generate</div>
+                </div>
+                <div id="qrcode"></div>
+                <div id="urlDisplay" class="url-display" style="display: none;"></div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Tip: Scan the generated QR code with your phone</p>
+        </footer>
+    </div>
+
+    <!-- QRCode.js library (vendored locally) -->
+    <script src="vendor/qrcode.min.js"></script>
+
+    <script>
+        let qrcodeInstance = null;
+
+        // Normalize input URL with selected protocol
+        function processURL(url, protocol) {
+            // Remove any existing protocol
+            url = url.trim();
+            url = url.replace(/^(https?:\/\/)/i, '');
+
+            // Add selected protocol
+            return protocol + url;
+        }
+
+        // Generate QR code
+        function generateQR() {
+            const urlInput = document.getElementById('url');
+            const protocol = document.getElementById('protocol').value;
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                alert('Please enter a URL');
+                return;
+            }
+
+            // Normalize URL with selected protocol
+            const fullURL = processURL(url, protocol);
+
+            // Clear previous QR
+            const qrcodeDiv = document.getElementById('qrcode');
+            qrcodeDiv.innerHTML = '';
+
+            // Hide placeholder
+            document.getElementById('placeholder').style.display = 'none';
+
+            // Show URL below QR
+            const urlDisplay = document.getElementById('urlDisplay');
+            urlDisplay.textContent = fullURL;
+            urlDisplay.style.display = 'block';
+
+            try {
+                // Create QR code
+                qrcodeInstance = new QRCode(qrcodeDiv, {
+                    text: fullURL,
+                    width: 256,
+                    height: 256,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+                // Enable download button
+                document.getElementById('downloadBtn').disabled = false;
+            } catch (error) {
+                alert('Failed to generate QR. Please check the URL.');
+                console.error(error);
+            }
+        }
+
+        // Download QR code
+        function downloadQR() {
+            const qrcodeDiv = document.getElementById('qrcode');
+            const canvas = qrcodeDiv.querySelector('canvas');
+            const img = qrcodeDiv.querySelector('img');
+
+            if (canvas) {
+                // If canvas, save directly
+                const url = canvas.toDataURL('image/png');
+                downloadImage(url, 'qrcode.png');
+            } else if (img) {
+                // If img, draw onto a temp canvas then save
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = img.width;
+                tempCanvas.height = img.height;
+                const ctx = tempCanvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                const url = tempCanvas.toDataURL('image/png');
+                downloadImage(url, 'qrcode.png');
+            } else {
+                alert('Please generate a QR code first');
+            }
+        }
+
+        // Download data URL as file
+        function downloadImage(dataURL, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = dataURL;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Allow Enter key to generate QR
+        document.getElementById('url').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateQR();
+            }
+        });
+
+        // Auto-select protocol when typing a URL with http/https
+        document.getElementById('url').addEventListener('input', function(e) {
+            const value = e.target.value.trim();
+            const protocolSelect = document.getElementById('protocol');
+
+            if (value.startsWith('https://')) {
+                protocolSelect.value = 'https://';
+                e.target.value = value.replace(/^https:\/\//i, '');
+            } else if (value.startsWith('http://')) {
+                protocolSelect.value = 'http://';
+                e.target.value = value.replace(/^http:\/\//i, '');
+            }
+        });
+    </script>
+</body>
+</html>

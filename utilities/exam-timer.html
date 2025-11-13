@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Timer - Online Toolbox</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        body.fullscreen-mode {
+            padding: 0;
+            background: #1a1a1a;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            display: inline-block;
+            color: #5a6c7d;
+            text-decoration: none;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            border: 1px solid #e8eaed;
+            font-weight: 500;
+        }
+
+        .back-btn:hover {
+            background: #f8f9fa;
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        body.fullscreen-mode .back-btn {
+            display: none;
+        }
+
+        header {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 30px 40px;
+            margin-bottom: 30px;
+        }
+
+        body.fullscreen-mode header {
+            display: none;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: #7f8c8d;
+        }
+
+        .display-area {
+            background: #111827;
+            border-radius: 12px;
+            padding: 60px 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.fullscreen-mode .display-area {
+            border-radius: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        .display-area.warning {
+            background: #92400e;
+            animation: pulse 1s infinite;
+        }
+
+        .display-area.danger {
+            background: #7f1d1d;
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .timer-display {
+            font-size: 120px;
+            font-weight: 700;
+            color: white;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            line-height: 1.2;
+        }
+
+        .custom-text {
+            font-size: 36px;
+            color: white;
+            font-weight: 500;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            word-wrap: break-word;
+            white-space: pre-line;
+            max-width: 90%;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .control-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #e8eaed;
+        }
+
+        body.fullscreen-mode .control-panel {
+            display: none;
+        }
+
+        .control-section {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .control-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .control-section h3 {
+            font-size: 1rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .mode-switch {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #5a6c7d;
+            transition: all 0.2s ease;
+        }
+
+        .mode-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .mode-btn:hover:not(.active) {
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        .time-inputs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .time-input-group {
+            text-align: center;
+        }
+
+        .time-input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .time-input-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1.5rem;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            outline: none;
+        }
+
+        .time-input-group input:focus {
+            border-color: #3498db;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            resize: vertical;
+            min-height: 80px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        textarea:focus {
+            border-color: #3498db;
+        }
+
+        .slider-group {
+            margin-top: 15px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #5a6c7d;
+            font-size: 0.9rem;
+        }
+
+        .slider-value {
+            font-weight: 600;
+            color: #3498db;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            border: none;
+        }
+
+        .control-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-start {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-start:hover {
+            background: #229954;
+        }
+
+        .btn-pause {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-pause:hover {
+            background: #e67e22;
+        }
+
+        .btn-reset {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #c0392b;
+        }
+
+        .btn-fullscreen {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-fullscreen:hover {
+            background: #2980b9;
+        }
+
+        .quick-presets {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .preset-btn {
+            padding: 10px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #5a6c7d;
+            transition: all 0.2s ease;
+        }
+
+        .preset-btn:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        footer {
+            text-align: center;
+            color: #95a5a6;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+
+        body.fullscreen-mode footer {
+            display: none;
+        }
+
+        .exit-fullscreen {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.5);
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+
+        body.fullscreen-mode .exit-fullscreen {
+            display: block;
+        }
+
+        .exit-fullscreen:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.8);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .timer-display {
+                font-size: 80px;
+            }
+
+            .custom-text {
+                font-size: 32px;
+            }
+
+            .time-inputs {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-presets {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .control-panel {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .timer-display {
+                font-size: 60px;
+            }
+
+            .custom-text {
+                font-size: 24px;
+            }
+
+            .display-area {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← Back to Tools</a>
+
+        <header>
+            <h1>Exam Timer</h1>
+            <p>A large-screen timer for exams and talks</p>
+        </header>
+
+        <div class="display-area" id="displayArea">
+            <div class="timer-display" id="timerDisplay">00:00:00</div>
+            <div class="custom-text" id="customTextDisplay">Exam Instructions:
+• Sit with at least one empty seat between students.
+• Only one person may use the restroom at a time. Leave your phone on the front table when you go.
+• Do not remove or detach any pages from the exam.
+• Stop writing immediately when time is called.</div>
+        </div>
+
+        <button class="exit-fullscreen" onclick="exitFullscreen()">Exit Fullscreen (ESC)</button>
+
+        <div class="control-panel">
+            <div class="control-section">
+                <h3>Mode</h3>
+                <div class="mode-switch">
+                    <button class="mode-btn" id="countupBtn" onclick="setMode('countup')">Count Up</button>
+                    <button class="mode-btn active" id="countdownBtn" onclick="setMode('countdown')">Count Down</button>
+                </div>
+            </div>
+
+            <div class="control-section" id="timeSettingSection">
+                <h3>Set Time</h3>
+                <div class="time-inputs">
+                    <div class="time-input-group">
+                        <label>Hours</label>
+                        <input type="number" id="hoursInput" min="0" max="23" value="1">
+                    </div>
+                    <div class="time-input-group">
+                        <label>Minutes</label>
+                        <input type="number" id="minutesInput" min="0" max="59" value="30">
+                    </div>
+                    <div class="time-input-group">
+                        <label>Seconds</label>
+                        <input type="number" id="secondsInput" min="0" max="59" value="0">
+                    </div>
+                </div>
+                <div class="quick-presets">
+                    <button class="preset-btn" onclick="setPreset(0, 5, 0)">5 min</button>
+                    <button class="preset-btn" onclick="setPreset(0, 15, 0)">15 min</button>
+                    <button class="preset-btn" onclick="setPreset(0, 30, 0)">30 min</button>
+                    <button class="preset-btn" onclick="setPreset(1, 0, 0)">1 hour</button>
+                    <button class="preset-btn" onclick="setPreset(1, 30, 0)">1.5 hours</button>
+                    <button class="preset-btn" onclick="setPreset(2, 0, 0)">2 hours</button>
+                    <button class="preset-btn" onclick="setPreset(2, 30, 0)">2.5 hours</button>
+                    <button class="preset-btn" onclick="setPreset(3, 0, 0)">3 hours</button>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>Notes</h3>
+                <textarea id="customTextInput" placeholder="Enter text to display, e.g., exam instructions, room policy, etc.">Exam Instructions:
+• Sit with at least one empty seat between students.
+• Only one person may use the restroom at a time. Leave your phone on the front table when you go.
+• Do not remove or detach any pages from the exam.
+• Stop writing immediately when time is called.</textarea>
+            </div>
+
+            <div class="control-section">
+                <h3>Font Size</h3>
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span>Time font</span>
+                        <span class="slider-value" id="timerFontValue">120px</span>
+                    </div>
+                    <input type="range" id="timerFontSlider" min="60" max="200" value="120" oninput="updateTimerFont()">
+                </div>
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span>Notes font</span>
+                        <span class="slider-value" id="textFontValue">36px</span>
+                    </div>
+                    <input type="range" id="textFontSlider" min="24" max="80" value="36" oninput="updateTextFont()">
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>Controls</h3>
+                <div class="control-buttons">
+                    <button class="btn btn-start" onclick="startTimer()">Start</button>
+                    <button class="btn btn-pause" onclick="pauseTimer()">Pause</button>
+                    <button class="btn btn-reset" onclick="resetTimer()">Reset</button>
+                    <button class="btn btn-fullscreen" onclick="enterFullscreen()">Fullscreen (F11)</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Tip: Press ESC to exit fullscreen</p>
+        </footer>
+    </div>
+
+    <script>
+        let mode = 'countdown';
+        let isRunning = false;
+        let timerInterval = null;
+        let totalSeconds = 0;
+        let remainingSeconds = 0;
+
+        const timerDisplay = document.getElementById('timerDisplay');
+        const customTextDisplay = document.getElementById('customTextDisplay');
+        const customTextInput = document.getElementById('customTextInput');
+        const defaultNotes = `Exam Instructions:\n• Sit with at least one empty seat between students.\n• Only one person may use the restroom at a time. Leave your phone on the front table when you go.\n• Do not remove or detach any pages from the exam.\n• Stop writing immediately when time is called.`;
+        const displayArea = document.getElementById('displayArea');
+        const hoursInput = document.getElementById('hoursInput');
+        const minutesInput = document.getElementById('minutesInput');
+        const secondsInput = document.getElementById('secondsInput');
+
+        // Set mode
+        function setMode(newMode) {
+            mode = newMode;
+            document.getElementById('countupBtn').classList.toggle('active', mode === 'countup');
+            document.getElementById('countdownBtn').classList.toggle('active', mode === 'countdown');
+            document.getElementById('timeSettingSection').style.display =
+                mode === 'countdown' ? 'block' : 'none';
+            resetTimer();
+        }
+
+        // Preset time
+        function setPreset(hours, minutes, seconds) {
+            hoursInput.value = hours;
+            minutesInput.value = minutes;
+            secondsInput.value = seconds;
+            resetTimer();
+        }
+
+        // Format time for display
+        function formatTime(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        // Update display
+        function updateDisplay() {
+            const displaySeconds = mode === 'countdown' ? remainingSeconds : totalSeconds;
+            timerDisplay.textContent = formatTime(displaySeconds);
+
+            if (mode === 'countdown') {
+                const percentage = totalSeconds > 0 ? (remainingSeconds / totalSeconds) * 100 : 0;
+
+                displayArea.classList.remove('warning', 'danger');
+                if (percentage <= 10 && percentage > 0) {
+                    displayArea.classList.add('danger');
+                } else if (percentage <= 20 && percentage > 10) {
+                    displayArea.classList.add('warning');
+                }
+
+                if (remainingSeconds === 0) {
+                    pauseTimer();
+                    playAlarm();
+                }
+            }
+        }
+
+        // Start
+        function startTimer() {
+            if (isRunning) return;
+
+            if (mode === 'countdown' && totalSeconds === 0) {
+                const hours = parseInt(hoursInput.value) || 0;
+                const minutes = parseInt(minutesInput.value) || 0;
+                const seconds = parseInt(secondsInput.value) || 0;
+                totalSeconds = hours * 3600 + minutes * 60 + seconds;
+                remainingSeconds = totalSeconds;
+            }
+
+            if (mode === 'countdown' && remainingSeconds === 0) {
+                return;
+            }
+
+            isRunning = true;
+            timerInterval = setInterval(() => {
+                if (mode === 'countdown') {
+                    remainingSeconds--;
+                    if (remainingSeconds < 0) {
+                        remainingSeconds = 0;
+                    }
+                } else {
+                    totalSeconds++;
+                }
+                updateDisplay();
+            }, 1000);
+        }
+
+        // Pause
+        function pauseTimer() {
+            isRunning = false;
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        // Reset
+        function resetTimer() {
+            pauseTimer();
+
+            if (mode === 'countdown') {
+                const hours = parseInt(hoursInput.value) || 0;
+                const minutes = parseInt(minutesInput.value) || 0;
+                const seconds = parseInt(secondsInput.value) || 0;
+                totalSeconds = hours * 3600 + minutes * 60 + seconds;
+                remainingSeconds = totalSeconds;
+            } else {
+                totalSeconds = 0;
+            }
+
+            displayArea.classList.remove('warning', 'danger');
+            updateDisplay();
+        }
+
+        // Beep alarm
+        function playAlarm() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 1);
+        }
+
+        // Update notes text
+        customTextInput.addEventListener('input', function() {
+            customTextDisplay.textContent = this.value || defaultNotes;
+        });
+
+        // Update font sizes
+        function updateTimerFont() {
+            const size = document.getElementById('timerFontSlider').value;
+            document.getElementById('timerFontValue').textContent = size + 'px';
+            timerDisplay.style.fontSize = size + 'px';
+        }
+
+        function updateTextFont() {
+            const size = document.getElementById('textFontSlider').value;
+            document.getElementById('textFontValue').textContent = size + 'px';
+            customTextDisplay.style.fontSize = size + 'px';
+        }
+
+        // Fullscreen controls
+        function enterFullscreen() {
+            document.body.classList.add('fullscreen-mode');
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            }
+        }
+
+        function exitFullscreen() {
+            document.body.classList.remove('fullscreen-mode');
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+
+        // Listen fullscreen changes
+        document.addEventListener('fullscreenchange', function() {
+            if (!document.fullscreenElement) {
+                document.body.classList.remove('fullscreen-mode');
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                exitFullscreen();
+            } else if (e.key === 'F11') {
+                e.preventDefault();
+                if (document.body.classList.contains('fullscreen-mode')) {
+                    exitFullscreen();
+                } else {
+                    enterFullscreen();
+                }
+            } else if (e.key === ' ' && document.body.classList.contains('fullscreen-mode')) {
+                e.preventDefault();
+                if (isRunning) {
+                    pauseTimer();
+                } else {
+                    startTimer();
+                }
+            }
+        });
+
+        // Initialize default notes
+        customTextInput.value = defaultNotes;
+        customTextDisplay.textContent = defaultNotes;
+        // Init
+        resetTimer();
+    </script>
+</body>
+</html>

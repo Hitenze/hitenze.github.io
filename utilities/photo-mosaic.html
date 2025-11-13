@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Mosaic - Online Toolbox</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        header p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #3498db;
+            text-decoration: none;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 30px;
+        }
+
+        .upload-area {
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 25px;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: #3498db;
+            background: #f0f8ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #3498db;
+            background: #e3f2fd;
+        }
+
+        .upload-area input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            margin-bottom: 15px;
+            color: #a0aec0;
+        }
+
+        .upload-icon svg {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .upload-text {
+            color: #4a5568;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-group label {
+            font-size: 0.9rem;
+            color: #4a5568;
+            white-space: nowrap;
+        }
+
+        .slider {
+            width: 150px;
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            background: #e2e8f0;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            border: none;
+        }
+
+        .slider-value {
+            min-width: 30px;
+            text-align: center;
+            font-weight: 500;
+            color: #3498db;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #2980b9;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #7f8c8d;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #229954;
+        }
+
+        .canvas-container {
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .canvas-wrapper {
+            text-align: center;
+            display: none;
+        }
+
+        .canvas-wrapper.active {
+            display: block;
+        }
+
+        #canvas {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            cursor: crosshair;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #856404;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .instructions.active {
+            display: block;
+        }
+
+        .instructions strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin: 5px 0;
+        }
+
+        footer {
+            text-align: center;
+            color: #95a5a6;
+            margin-top: 40px;
+            padding: 20px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .control-group {
+                justify-content: space-between;
+            }
+
+            .slider {
+                flex: 1;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-link">← Back to Tools</a>
+            <h1>Photo Mosaic</h1>
+            <p>Upload an image and blur selected areas to protect privacy</p>
+        </header>
+
+        <div class="main-content">
+            <div class="upload-area" id="uploadArea">
+                <input type="file" id="fileInput" accept="image/*">
+                <div class="upload-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                </div>
+                <div class="upload-text">Click or drag an image here</div>
+                <div class="upload-hint">Supports JPG, PNG, GIF. Recommended ≤ 5000×5000 px</div>
+            </div>
+
+            <div class="instructions" id="instructions">
+                <strong>How to use:</strong>
+                <ul>
+                    <li>Select a mode: Mosaic or Draw Box.</li>
+                    <li>Drag on the image to select an area; release to apply.</li>
+                    <li>In Mosaic mode, use the slider to adjust block size.</li>
+                    <li>In Draw Box mode, choose a color or click Pick to sample a color.</li>
+                    <li>Click "Undo" to revert the last change.</li>
+                </ul>
+            </div>
+
+            <div class="controls" id="controls" style="display: none;">
+                <div class="control-group">
+                    <label for="modeSelect">Mode:</label>
+                    <select id="modeSelect" style="height: 32px; padding: 4px 8px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                        <option value="mosaic" selected>Mosaic</option>
+                        <option value="draw">Draw Box</option>
+                    </select>
+                </div>
+                <div class="control-group" id="mosaicControls">
+                    <label for="mosaicSize">Block size:</label>
+                    <input type="range" id="mosaicSize" class="slider" min="5" max="50" value="15">
+                    <span class="slider-value" id="sizeValue">15</span>
+                </div>
+                <div class="control-group" id="previewGroup">
+                    <label>Preview:</label>
+                    <canvas id="previewCanvas" width="100" height="100" style="border: 1px solid #e2e8f0; border-radius: 4px;"></canvas>
+                </div>
+                <div class="control-group" id="drawControls" style="display: none;">
+                    <label for="fillColor">Fill color:</label>
+                    <input type="color" id="fillColor" value="#66c4ff" style="width: 40px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0;">
+                    <button class="btn btn-secondary" id="pickColorBtn" title="Pick color from screen or image">Pick color</button>
+                </div>
+                <button class="btn btn-secondary" id="undoBtn" disabled>Undo</button>
+                <button class="btn btn-primary" id="clearBtn">Clear & choose another</button>
+                <button class="btn btn-success" id="downloadBtn">Download Image</button>
+            </div>
+
+            <div class="canvas-wrapper" id="canvasWrapper">
+                <canvas id="canvas"></canvas>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Online Toolbox | All processing happens locally in your browser</p>
+        </footer>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const canvasWrapper = document.getElementById('canvasWrapper');
+        const controls = document.getElementById('controls');
+        const instructions = document.getElementById('instructions');
+        const mosaicSizeSlider = document.getElementById('mosaicSize');
+        const sizeValue = document.getElementById('sizeValue');
+        const undoBtn = document.getElementById('undoBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const previewCtx = previewCanvas.getContext('2d');
+        const modeSelect = document.getElementById('modeSelect');
+        const mosaicControls = document.getElementById('mosaicControls');
+        const previewGroup = document.getElementById('previewGroup');
+        const drawControls = document.getElementById('drawControls');
+        const fillColorInput = document.getElementById('fillColor');
+        const pickColorBtn = document.getElementById('pickColorBtn');
+
+        let currentImage = null;
+        let isDrawing = false;
+        let startX = 0;
+        let startY = 0;
+        let historyImageData = null;
+        let animationFrameId = null;
+        const MAX_DIMENSION = 5000;
+        let currentMode = 'mosaic';
+        let pickingColorUsingCanvas = false;
+
+        // Update preview canvas with mosaic example
+        function updatePreview() {
+            const mosaicSize = parseInt(mosaicSizeSlider.value);
+
+            // Create gradient test pattern
+            previewCtx.clearRect(0, 0, 100, 100);
+
+            // Paint gradient background
+            for (let y = 0; y < 100; y++) {
+                for (let x = 0; x < 100; x++) {
+                    const r = Math.floor((x / 100) * 255);
+                    const g = Math.floor((y / 100) * 255);
+                    const b = 150;
+                    previewCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+                    previewCtx.fillRect(x, y, 1, 1);
+                }
+            }
+
+            // Apply mosaic to preview
+            const imageData = previewCtx.getImageData(0, 0, 100, 100);
+            const pixels = imageData.data;
+
+            for (let y = 0; y < 100; y += mosaicSize) {
+                for (let x = 0; x < 100; x += mosaicSize) {
+                    const avgColor = getAverageColor(pixels, x, y, mosaicSize, 100, 100);
+                    fillBlock(imageData, x, y, mosaicSize, 100, 100, avgColor);
+                }
+            }
+
+            previewCtx.putImageData(imageData, 0, 0);
+        }
+
+        mosaicSizeSlider.addEventListener('input', (e) => {
+            sizeValue.textContent = e.target.value;
+            updatePreview();
+        });
+
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', handleFileSelect);
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please choose an image file');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    if (img.width > MAX_DIMENSION || img.height > MAX_DIMENSION) {
+                        if (!confirm(`Large image size (${img.width}×${img.height}) may impact performance. Continue?`)) {
+                            return;
+                        }
+                    }
+                    currentImage = img;
+                    initCanvas(img);
+                    showCanvas();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function initCanvas(img) {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+
+            historyImageData = null;
+            undoBtn.disabled = true;
+        }
+
+        function showCanvas() {
+            uploadArea.style.display = 'none';
+            canvasWrapper.classList.add('active');
+            controls.style.display = 'flex';
+            instructions.classList.add('active');
+            updatePreview();
+            updateModeUI();
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            // Fallback color pick via canvas click
+            if (pickingColorUsingCanvas) {
+                const { x, y } = getCanvasCoords(e);
+                const rgba = ctx.getImageData(Math.floor(x), Math.floor(y), 1, 1).data;
+                const hex = rgbToHex(rgba[0], rgba[1], rgba[2]);
+                fillColorInput.value = hex;
+                pickingColorUsingCanvas = false;
+                canvas.style.cursor = 'crosshair';
+                return;
+            }
+
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+
+            startX = (e.clientX - rect.left) * scaleX;
+            startY = (e.clientY - rect.top) * scaleY;
+            isDrawing = true;
+
+            saveHistory();
+        });
+
+        // Mouse move during selection
+        function handleMouseMove(e) {
+            if (!isDrawing) return;
+
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+
+            animationFrameId = requestAnimationFrame(() => {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+
+                // Clamp within canvas bounds
+                const currentX = Math.max(0, Math.min((e.clientX - rect.left) * scaleX, canvas.width));
+                const currentY = Math.max(0, Math.min((e.clientY - rect.top) * scaleY, canvas.height));
+
+                // Restore saved state
+                if (historyImageData) {
+                    ctx.putImageData(historyImageData, 0, 0);
+                } else {
+                    ctx.drawImage(currentImage, 0, 0);
+                }
+
+                if (currentMode === 'draw') {
+                    drawFillOverlay(startX, startY, currentX, currentY, fillColorInput.value, 0.3);
+                }
+                const selColor = currentMode === 'draw' ? fillColorInput.value : '#66c4ff';
+                drawSelectionRect(startX, startY, currentX, currentY, selColor);
+            });
+        }
+
+        canvas.addEventListener('mousemove', handleMouseMove);
+
+        // Track mousemove on document to allow dragging outside canvas
+        document.addEventListener('mousemove', (e) => {
+            if (isDrawing) {
+                handleMouseMove(e);
+            }
+        });
+
+        // Mouse up: apply effect
+        function handleMouseUp(e) {
+            if (!isDrawing) return;
+
+            // Cancel pending frame to avoid overdraw
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+
+            const endX = Math.max(0, Math.min((e.clientX - rect.left) * scaleX, canvas.width));
+            const endY = Math.max(0, Math.min((e.clientY - rect.top) * scaleY, canvas.height));
+
+            isDrawing = false;
+
+            // Clear selection: restore saved state
+            if (historyImageData) {
+                ctx.putImageData(historyImageData, 0, 0);
+            } else {
+                ctx.drawImage(currentImage, 0, 0);
+            }
+
+            // Apply effect by mode
+            let changed = false;
+            if (currentMode === 'mosaic') {
+                changed = applyMosaic(startX, startY, endX, endY);
+            } else {
+                changed = applySolidFill(startX, startY, endX, endY, fillColorInput.value);
+            }
+            if (changed) undoBtn.disabled = false;
+        }
+
+        canvas.addEventListener('mouseup', handleMouseUp);
+
+        // Also listen on document for mouseup when released outside
+        document.addEventListener('mouseup', (e) => {
+            if (isDrawing) {
+                handleMouseUp(e);
+            }
+        });
+
+        // On mouse leave: keep selection active; mouseup handled on document
+        canvas.addEventListener('mouseleave', (e) => {
+            if (isDrawing) {
+                // Keep showing selection; document mouseup will finish
+            }
+        });
+
+        function drawSelectionRect(x1, y1, x2, y2, strokeColor = '#66c4ff') {
+            const left = Math.min(x1, x2);
+            const top = Math.min(y1, y2);
+            const width = Math.abs(x2 - x1);
+            const height = Math.abs(y2 - y1);
+
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.strokeRect(left, top, width, height);
+            ctx.setLineDash([]);
+        }
+
+        function drawFillOverlay(x1, y1, x2, y2, color, alpha = 0.3) {
+            const left = Math.min(x1, x2);
+            const top = Math.min(y1, y2);
+            const width = Math.abs(x2 - x1);
+            const height = Math.abs(y2 - y1);
+            if (width < 1 || height < 1) return;
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = color;
+            ctx.fillRect(left, top, width, height);
+            ctx.restore();
+        }
+
+        function saveHistory() {
+            historyImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        }
+
+        function applyMosaic(x1, y1, x2, y2) {
+            const rawLeft = Math.min(x1, x2);
+            const rawTop = Math.min(y1, y2);
+            const rawRight = Math.max(x1, x2);
+            const rawBottom = Math.max(y1, y2);
+
+            // Align to pixel grid
+            const left = Math.floor(rawLeft);
+            const top = Math.floor(rawTop);
+            const right = Math.ceil(rawRight);
+            const bottom = Math.ceil(rawBottom);
+            const width = Math.max(0, right - left);
+            const height = Math.max(0, bottom - top);
+
+            if (width < 5 || height < 5) {
+                return false;
+            }
+
+            const mosaicSize = parseInt(mosaicSizeSlider.value);
+            const imageData = ctx.getImageData(left, top, width, height);
+            const pixels = imageData.data;
+
+            for (let y = 0; y < height; y += mosaicSize) {
+                for (let x = 0; x < width; x += mosaicSize) {
+                    const avgColor = getAverageColor(pixels, x, y, mosaicSize, width, height);
+                    fillBlock(imageData, x, y, mosaicSize, width, height, avgColor);
+                }
+            }
+
+            ctx.putImageData(imageData, left, top);
+            return true;
+        }
+
+        function applySolidFill(x1, y1, x2, y2, color) {
+            const left = Math.min(x1, x2);
+            const top = Math.min(y1, y2);
+            const width = Math.abs(x2 - x1);
+            const height = Math.abs(y2 - y1);
+
+            if (width < 5 || height < 5) {
+                return false;
+            }
+            const l = Math.floor(left);
+            const t = Math.floor(top);
+            const r = Math.ceil(left + width);
+            const b = Math.ceil(top + height);
+            ctx.fillStyle = color;
+            ctx.fillRect(l, t, r - l, b - t);
+            return true;
+        }
+
+        function getCanvasCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+            return { x, y };
+        }
+
+        function componentToHex(c) {
+            const hex = c.toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+        }
+        function rgbToHex(r, g, b) {
+            return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b);
+        }
+
+        function getAverageColor(pixels, blockX, blockY, blockSize, imageWidth, imageHeight) {
+            let r = 0, g = 0, b = 0, count = 0;
+
+            const maxX = Math.min(blockX + blockSize, imageWidth);
+            const maxY = Math.min(blockY + blockSize, imageHeight);
+
+            for (let y = blockY; y < maxY; y++) {
+                for (let x = blockX; x < maxX; x++) {
+                    const index = (y * imageWidth + x) * 4;
+                    r += pixels[index];
+                    g += pixels[index + 1];
+                    b += pixels[index + 2];
+                    count++;
+                }
+            }
+
+            return {
+                r: Math.round(r / count),
+                g: Math.round(g / count),
+                b: Math.round(b / count)
+            };
+        }
+
+        function fillBlock(imageData, blockX, blockY, blockSize, imageWidth, imageHeight, color) {
+            const maxX = Math.min(blockX + blockSize, imageWidth);
+            const maxY = Math.min(blockY + blockSize, imageHeight);
+
+            for (let y = blockY; y < maxY; y++) {
+                for (let x = blockX; x < maxX; x++) {
+                    const index = (y * imageWidth + x) * 4;
+                    imageData.data[index] = color.r;
+                    imageData.data[index + 1] = color.g;
+                    imageData.data[index + 2] = color.b;
+                }
+            }
+        }
+
+        undoBtn.addEventListener('click', () => {
+            if (!historyImageData) return;
+
+            ctx.putImageData(historyImageData, 0, 0);
+            historyImageData = null;
+            undoBtn.disabled = true;
+        });
+
+        clearBtn.addEventListener('click', () => {
+            if (confirm('Clear the current image and choose another?')) {
+                resetAll();
+            }
+        });
+
+        function resetAll() {
+            currentImage = null;
+            historyImageData = null;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvasWrapper.classList.remove('active');
+            controls.style.display = 'none';
+            instructions.classList.remove('active');
+            uploadArea.style.display = 'block';
+            fileInput.value = '';
+            undoBtn.disabled = true;
+        }
+
+        downloadBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'mosaic-photo-' + Date.now() + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+
+        // Mode switching UI
+        function updateModeUI() {
+            currentMode = modeSelect.value;
+            const isMosaic = currentMode === 'mosaic';
+            mosaicControls.style.display = isMosaic ? 'flex' : 'none';
+            previewGroup.style.display = isMosaic ? 'flex' : 'none';
+            drawControls.style.display = isMosaic ? 'none' : 'flex';
+        }
+        modeSelect.addEventListener('change', updateModeUI);
+
+        // Color pick button
+        pickColorBtn.addEventListener('click', async () => {
+            if (window.EyeDropper) {
+                try {
+                    const ed = new EyeDropper();
+                    const result = await ed.open();
+                    fillColorInput.value = result.sRGBHex;
+                } catch (err) {
+                    // user canceled; ignore
+                }
+            } else {
+                pickingColorUsingCanvas = true;
+                canvas.style.cursor = 'cell';
+                alert('Click on the image to sample a color.');
+            }
+        });
+    </script>
+</body>
+</html>
