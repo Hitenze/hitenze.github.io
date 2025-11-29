@@ -874,9 +874,10 @@ footer a {
   }
 }
 
-/* Dark mode support */
+/* =============== Dark Mode Support =============== */
+/* System preference: dark mode as default when no user preference */
 @media (prefers-color-scheme: dark) {
-  :root {
+  html:not(.light-mode):not(.dark-mode) {
     --primary-color: #ecf0f1;
     --secondary-color: #bdc3c7;
     --accent-color: #3498db;
@@ -889,46 +890,159 @@ footer a {
     --border-color: #4a4a4a;
   }
 
-  .research-hierarchy {
+  html:not(.light-mode):not(.dark-mode) .research-hierarchy {
     background: var(--bg-white);
   }
 
-  .research-layer {
+  html:not(.light-mode):not(.dark-mode) .research-layer {
     background: var(--bg-light);
     border-color: var(--border-color);
   }
 
-  .research-layer.core-layer.highlighted {
-    background: linear-gradient(135deg, rgba(52, 152, 219, 0.25) 0%, rgba(52, 152, 219, 0.15) 100%);
+  html:not(.light-mode):not(.dark-mode) .research-layer.core-layer.highlighted {
     background: linear-gradient(135deg, color-mix(in srgb, var(--core-color) 25%, transparent) 0%, color-mix(in srgb, var(--core-color) 15%, transparent) 100%);
     border-color: var(--core-color);
     box-shadow: 0 0 30px color-mix(in srgb, var(--core-color) 50%, transparent);
   }
 
-  .research-layer.core-layer.highlighted::before {
+  html:not(.light-mode):not(.dark-mode) .research-layer.core-layer.highlighted::before {
     background: linear-gradient(45deg, var(--core-color), color-mix(in srgb, var(--core-color) 80%, black));
     opacity: 0.4;
   }
 
-  .core-layer .layer-title {
+  html:not(.light-mode):not(.dark-mode) .core-layer .layer-title {
     color: var(--core-color);
     border-bottom-color: var(--core-color);
   }
 
-  .research-item.core {
+  html:not(.light-mode):not(.dark-mode) .research-item.core {
     border-left-color: var(--core-color);
   }
 
-  .research-item.core:hover {
+  html:not(.light-mode):not(.dark-mode) .research-item.core:hover {
     background: color-mix(in srgb, var(--core-color) 20%, transparent);
   }
 
-  .research-item {
+  html:not(.light-mode):not(.dark-mode) .research-item {
     background: var(--bg-white);
   }
 
-  .arrow-svg {
+  html:not(.light-mode):not(.dark-mode) .arrow-svg {
     color: var(--core-color);
+  }
+}
+
+/* Manual dark mode override */
+.dark-mode {
+  --primary-color: #ecf0f1;
+  --secondary-color: #bdc3c7;
+  --accent-color: #3498db;
+  --text-primary: #ecf0f1;
+  --text-secondary: #bdc3c7;
+  --text-light: #95a5a6;
+  --bg-primary: #1a1a1a;
+  --bg-white: #2c2c2c;
+  --bg-light: #383838;
+  --border-color: #4a4a4a;
+}
+
+.dark-mode .research-hierarchy {
+  background: var(--bg-white);
+}
+
+.dark-mode .research-layer {
+  background: var(--bg-light);
+  border-color: var(--border-color);
+}
+
+.dark-mode .research-layer.core-layer.highlighted {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--core-color) 25%, transparent) 0%, color-mix(in srgb, var(--core-color) 15%, transparent) 100%);
+  border-color: var(--core-color);
+  box-shadow: 0 0 30px color-mix(in srgb, var(--core-color) 50%, transparent);
+}
+
+.dark-mode .research-layer.core-layer.highlighted::before {
+  background: linear-gradient(45deg, var(--core-color), color-mix(in srgb, var(--core-color) 80%, black));
+  opacity: 0.4;
+}
+
+.dark-mode .core-layer .layer-title {
+  color: var(--core-color);
+  border-bottom-color: var(--core-color);
+}
+
+.dark-mode .research-item.core {
+  border-left-color: var(--core-color);
+}
+
+.dark-mode .research-item.core:hover {
+  background: color-mix(in srgb, var(--core-color) 20%, transparent);
+}
+
+.dark-mode .research-item {
+  background: var(--bg-white);
+}
+
+.dark-mode .arrow-svg {
+  color: var(--core-color);
+}
+
+/* =============== Dark Mode Toggle Button =============== */
+.theme-toggle {
+  background: none;
+  border: none;
+  color: var(--text-white);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-left: 1rem;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+.theme-toggle:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Hide the inactive icon */
+.theme-toggle .icon-sun,
+.theme-toggle .icon-moon {
+  display: none;
+}
+
+/* Light mode: show moon (click to go dark) */
+.light-mode .theme-toggle .icon-moon,
+html:not(.light-mode):not(.dark-mode) .theme-toggle .icon-moon {
+  display: inline;
+}
+
+/* Dark mode: show sun (click to go light) */
+.dark-mode .theme-toggle .icon-sun {
+  display: inline;
+}
+.dark-mode .theme-toggle .icon-moon {
+  display: none;
+}
+
+/* System preference: dark - show sun */
+@media (prefers-color-scheme: dark) {
+  html:not(.light-mode):not(.dark-mode) .theme-toggle .icon-sun {
+    display: inline;
+  }
+  html:not(.light-mode):not(.dark-mode) .theme-toggle .icon-moon {
+    display: none;
   }
 }
 

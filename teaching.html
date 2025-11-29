@@ -159,46 +159,90 @@
             }
         }
         
+        /* Dark mode - class-based */
+        .dark-mode .course-card {
+            background: #2a2a2a;
+        }
+
+        .dark-mode .advisor-card {
+            background: #2a2a2a;
+            border-left-color: #66b3ff;
+        }
+
+        .dark-mode .advisor-card .course-code,
+        .dark-mode .advisor-code {
+            background: #1976d2;
+        }
+
+        .dark-mode .instructor-card {
+            border-left-color: #4caf50;
+        }
+
+        .dark-mode .instructor-card .course-code {
+            background: #4caf50;
+        }
+
+        .dark-mode .course-code {
+            background: #f57c00;
+        }
+
+        .dark-mode .ta-card {
+            border-left-color: #9b59b6;
+        }
+
+        .dark-mode .ta-card .course-code {
+            background: #7b1fa2;
+        }
+
+        .dark-mode .syllabus-link {
+            background: #1976d2;
+        }
+
+        .dark-mode .syllabus-link:hover {
+            background: #1565c0;
+        }
+
+        /* System preference fallback */
         @media (prefers-color-scheme: dark) {
-            .course-card {
+            html:not(.light-mode):not(.dark-mode) .course-card {
                 background: #2a2a2a;
             }
-            
-            .advisor-card {
+
+            html:not(.light-mode):not(.dark-mode) .advisor-card {
                 background: #2a2a2a;
                 border-left-color: #66b3ff;
             }
-            
-            .advisor-card .course-code,
-            .advisor-code {
+
+            html:not(.light-mode):not(.dark-mode) .advisor-card .course-code,
+            html:not(.light-mode):not(.dark-mode) .advisor-code {
                 background: #1976d2;
             }
-            
-            .instructor-card {
+
+            html:not(.light-mode):not(.dark-mode) .instructor-card {
                 border-left-color: #4caf50;
             }
-            
-            .instructor-card .course-code {
+
+            html:not(.light-mode):not(.dark-mode) .instructor-card .course-code {
                 background: #4caf50;
             }
-            
-            .course-code {
+
+            html:not(.light-mode):not(.dark-mode) .course-code {
                 background: #f57c00;
             }
-            
-            .ta-card {
+
+            html:not(.light-mode):not(.dark-mode) .ta-card {
                 border-left-color: #9b59b6;
             }
-            
-            .ta-card .course-code {
+
+            html:not(.light-mode):not(.dark-mode) .ta-card .course-code {
                 background: #7b1fa2;
             }
-            
-            .syllabus-link {
+
+            html:not(.light-mode):not(.dark-mode) .syllabus-link {
                 background: #1976d2;
             }
-            
-            .syllabus-link:hover {
+
+            html:not(.light-mode):not(.dark-mode) .syllabus-link:hover {
                 background: #1565c0;
             }
         }
@@ -253,7 +297,7 @@
                         <div class="course-header">
                             <div class="course-info">
                                 <div>
-                                    <span class="course-code advisor-code">Honor Thesis Advisor</span>
+                                    <span class="course-code advisor-code">Honors Thesis</span>
                                     <span class="course-title">Wenxuan Cai</span>
                                 </div>
                                 <div class="advisor-info">
