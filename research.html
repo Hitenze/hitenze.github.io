@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta name="description" content="Research - Tianshi Xu. Data-driven solvers, stochastic optimization, and high-performance computing.">
+   <title>Research - Tianshi Xu</title>
+   
+   <!-- CSS -->
+   <link rel="stylesheet" href="assets/css/main.css">
+   <link rel="stylesheet" href="assets/css/responsive.css">
+   <link rel="stylesheet" href="assets/css/navigation-patch.css">
+   
+   <!-- Additional styles for research page -->
+   <style>
+      /* Overview Section */
+      .research-overview {
+         background: var(--bg-light);
+         padding: 2rem;
+         border-radius: 10px;
+         margin-bottom: 2rem;
+         border-left: 4px solid var(--accent-color);
+      }
+      
+      .research-overview p {
+         font-size: 1.1rem;
+         line-height: 1.8;
+         color: var(--text-primary);
+         margin: 0;
+      }
+      
+      /* Research Direction Cards */
+      .research-card {
+         background: var(--bg-light);
+         padding: 1.75rem;
+         margin: 1.5rem 0;
+         border-radius: 10px;
+         border-left: 4px solid var(--success-color);
+         transition: var(--transition);
+         box-shadow: var(--shadow-sm);
+         display: grid;
+         grid-template-columns: 1fr 200px;
+         grid-template-rows: auto auto auto auto;
+         column-gap: 1.5rem;
+         align-items: start;
+      }
+      
+      .research-card:nth-child(2) {
+         border-left-color: var(--info-color);
+      }
+      
+      .research-card:nth-child(3) {
+         border-left-color: var(--warning-color);
+      }
+      
+      .research-card:hover {
+         transform: translateX(5px);
+         box-shadow: var(--shadow-md);
+      }
+      
+      .research-card-title {
+         font-weight: 600;
+         color: var(--primary-color);
+         margin-bottom: 0.75rem;
+         font-size: 1.25rem;
+         grid-column: 1;
+         grid-row: 1;
+      }
+      
+      .research-card-description {
+         color: var(--text-secondary);
+         line-height: 1.7;
+         margin-bottom: 1rem;
+         grid-column: 1;
+         grid-row: 2;
+      }
+      
+      .research-card-links {
+         margin-top: 1rem;
+         grid-column: 1;
+         grid-row: 4;
+      }
+      
+      .research-card-links .btn-sm {
+         margin-right: 0.5rem;
+         margin-bottom: 0.5rem;
+      }
+      
+      .tag-container {
+         margin-top: 1rem;
+         grid-column: 1;
+         grid-row: 3;
+      }
+      
+      .research-tag {
+         display: inline-block;
+         background: rgba(52, 152, 219, 0.15);
+         color: var(--accent-color);
+         padding: 0.25rem 0.6rem;
+         border-radius: 4px;
+         font-size: 0.85rem;
+         margin-right: 0.4rem;
+         margin-bottom: 0.4rem;
+      }
+      
+      .research-card-image {
+         grid-column: 2;
+         grid-row: 1 / span 4;
+         align-self: center;
+         width: 100%;
+         height: auto;
+         border-radius: 6px;
+         object-fit: contain;
+         background: white;
+         padding: 0.5rem;
+      }
+      
+      @media (max-width: 900px) {
+         .research-card {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto;
+         }
+         
+         .research-card-title { grid-column: 1; grid-row: 1; }
+         .research-card-description { grid-column: 1; grid-row: 2; }
+         .tag-container { grid-column: 1; grid-row: 3; }
+         .research-card-image {
+            grid-column: 1;
+            grid-row: 4;
+            max-width: 280px;
+            margin: 1rem 0;
+         }
+         .research-card-links { grid-column: 1; grid-row: 5; }
+      }
+      
+      @media (max-width: 768px) {
+         .research-overview {
+            padding: 1.5rem;
+         }
+         
+         .research-overview p {
+            font-size: 1rem;
+         }
+      }
+   </style>
+</head>
+<body>
+   <!-- Header -->
+   <header>
+      <div class="container">
+         <nav>
+            <a href="index.html" class="logo">Tianshi Xu</a>
+            <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+            <ul class="nav-links">
+               <li><a href="index.html">Home</a></li>
+               <li><a href="research.html" class="active">Research</a></li>
+               <li><a href="publications.html">Publications</a></li>
+               <li><a href="software.html">Software</a></li>
+               <li><a href="teaching.html">Teaching</a></li>
+               <li><a href="outreach.html">Outreach</a></li>
+               <li><a href="https://github.com/hitenze" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+               <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank" rel="noopener noreferrer">Google Scholar</a></li>
+               <li><a href="utilities/index.html">Web Tools</a></li>
+            </ul>
+         </nav>
+      </div>
+   </header>
+
+   <!-- Main Content -->
+   <main class="page-content">
+      <div class="container">
+         <section class="section">
+            <h1>Research</h1>
+            
+            <!-- Overview Section -->
+            <h2>Overview</h2>
+            <div class="research-overview">
+               <p>
+                  My research bridges computational mathematics, machine learning, and scientific computing to develop 
+                  data-driven numerical algorithms that overcome the limitations of traditional methods. By embedding 
+                  learning mechanisms within classical numerical frameworks, these algorithms adapt automatically 
+                  to problem structure, scale, and uncertainty, achieving stable and scalable performance on large, 
+                  heterogeneous, and ill-conditioned systems in physics, engineering, and data science.
+               </p>
+               <div class="tag-container">
+                  <span class="research-tag">Stochastic Optimization</span>
+                  <span class="research-tag">Scientific Machine Learning</span>
+                  <span class="research-tag">Numerical Linear Algebra</span>
+                  <span class="research-tag">High-Performance Computing</span>
+               </div>
+            </div>
+            
+            <!-- Research Directions -->
+            <h2 style="margin-top: 2.5rem;">Research Directions</h2>
+            
+            <div class="research-card">
+               <h3 class="research-card-title">Stochastic Optimization</h3>
+               <p class="research-card-description">
+                  I develop scalable stochastic estimators and iterative methods for large-scale optimization and inference, 
+                  focusing on bias-controlled, low-variance approximations to linear solves, traces, and log-determinants 
+                  that remain stable even on ill-conditioned systems.
+               </p>
+               <div class="tag-container">
+                  <span class="research-tag">Stochastic Iterative Methods</span>
+                  <span class="research-tag">Preconditioned SGD</span>
+                  <span class="research-tag">Gaussian Processes</span>
+               </div>
+               <img src="assets/images/research1.png" alt="Stochastic Optimization" class="research-card-image">
+               <div class="research-card-links">
+                  <a href="publications.html?filter=stochastic" class="btn btn-sm btn-primary">Related Publications</a>
+               </div>
+            </div>
+            
+            <div class="research-card">
+               <h3 class="research-card-title">Data-Driven Hybrid Solvers</h3>
+               <p class="research-card-description">
+                  I develop data-driven hybrid solvers that combine PDE structure with learning-based components 
+                  to handle regimes where classical multigrid, ILU, and sparse approximate inverses break down. 
+                  These physics-constrained learned solvers retain the stability and interpretability of 
+                  numerical methods while adapting to global coupling, anisotropy, and multiscale heterogeneity in realistic models.
+               </p>
+               <div class="tag-container">
+                  <span class="research-tag">PDE Solvers</span>
+                  <span class="research-tag">Operator Learning</span>
+                  <span class="research-tag">Green's Functions</span>
+               </div>
+               <img src="assets/images/research2.png" alt="Data-Driven Hybrid Solvers" class="research-card-image">
+               <div class="research-card-links">
+                  <a href="publications.html?filter=datadriven" class="btn btn-sm btn-primary">Related Publications</a>
+               </div>
+            </div>
+            
+            <div class="research-card">
+               <h3 class="research-card-title">High-Performance Numerical Algorithms</h3>
+               <p class="research-card-description">
+                  On the high-performance side, I design preconditioners and eigensolvers for large sparse problems on 
+                  distributed-memory and GPU-accelerated systems. These methods preserve the stability of classical 
+                  solvers while exposing multilevel parallelism, yielding robust, predictable performance for 
+                  large-scale PDE and simulation workloads.
+               </p>
+               <div class="tag-container">
+                  <span class="research-tag">Distributed-Memory Systems</span>
+                  <span class="research-tag">GPU Acceleration</span>
+                  <span class="research-tag">Mixed-Precision</span>
+               </div>
+               <img src="assets/images/research3.png" alt="High-Performance Numerical Algorithms" class="research-card-image">
+               <div class="research-card-links">
+                  <a href="publications.html?filter=hpc" class="btn btn-sm btn-primary">Related Publications</a>
+               </div>
+            </div>
+            
+         </section>
+      </div>
+   </main>
+
+   <!-- Footer -->
+   <footer>
+      <div class="container">
+         <p style="font-size: 0.85rem; color: #999;">© 2025 Tianshi Xu</p>
+      </div>
+   </footer>
+
+   <!-- JavaScript -->
+   <script src="assets/js/main.js"></script>
+
+   <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "320dd9f7e97f40d7891583c792e22503"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
+
