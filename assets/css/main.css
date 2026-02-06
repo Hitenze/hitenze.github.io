@@ -115,6 +115,7 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--bg-primary);
 }
 
 body {
@@ -123,6 +124,7 @@ body {
   line-height: 1.75;
   color: var(--text-primary);
   background-color: var(--bg-primary);
+  min-height: 100vh;
   background-image:
     radial-gradient(circle at 15% 10%, rgba(52, 152, 219, 0.1), transparent 35%),
     radial-gradient(circle at 85% 0%, rgba(44, 62, 80, 0.12), transparent 40%),
@@ -1195,7 +1197,7 @@ footer a {
   font-size: 1.25rem;
   cursor: pointer;
   padding: 0.5rem;
-  margin-left: 1rem;
+  margin-left: 0;
   border-radius: 50%;
   width: 40px;
   height: 40px;
