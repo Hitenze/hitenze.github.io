@@ -9,6 +9,25 @@
     <link rel="author" type="text/plain" href="humans.txt">
     
     <title>Tianshi Xu - Postdoctoral Fellow at Emory University</title>
+
+    <!-- Theme boot (avoid flash on navigation) -->
+    <script>
+      (function() {
+        try {
+          var theme = localStorage.getItem('theme');
+          if (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            theme = 'dark-mode';
+          }
+          if (theme) document.documentElement.classList.add(theme);
+        } catch (e) {}
+      })();
+    </script>
+    <style>
+      html { background: #f6f7fb; }
+      body { background: #f6f7fb; }
+      html.dark-mode,
+      html.dark-mode body { background: #1a1a1a; }
+    </style>
     
     <!-- CSS -->
     <link rel="stylesheet" href="assets/css/main.css">
