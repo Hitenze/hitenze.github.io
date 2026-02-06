@@ -14,15 +14,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // =============== Dark Mode Toggle ===============
 function initDarkMode() {
-    // Create toggle button and add to nav
+    // Create toggle button and add to nav tools if available
     const nav = document.querySelector('nav');
     if (!nav) return;
+    const navTools = nav.querySelector('.nav-tools');
 
     const toggleBtn = document.createElement('button');
     toggleBtn.className = 'theme-toggle';
     toggleBtn.setAttribute('aria-label', 'Toggle dark mode');
     toggleBtn.innerHTML = '<span class="icon-sun">☀️</span><span class="icon-moon">🌙</span>';
-    nav.appendChild(toggleBtn);
+    (navTools || nav).appendChild(toggleBtn);
 
     // Get saved preference or use system preference
     const savedTheme = localStorage.getItem('theme');
@@ -79,16 +80,16 @@ function updateToggleAriaLabel(btn, isDark) {
 // =============== Mobile Menu ===============
 function initMobileMenu() {
     const toggle = document.querySelector('.mobile-menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
+    const navGroups = document.querySelector('.nav-groups');
     
-    if (toggle && navLinks) {
+    if (toggle && navGroups) {
         // Toggle menu on button click
         toggle.addEventListener('click', function(e) {
             e.stopPropagation();
-            navLinks.classList.toggle('active');
+            navGroups.classList.toggle('active');
             
             // Update aria-expanded attribute for accessibility
-            const isExpanded = navLinks.classList.contains('active');
+            const isExpanded = navGroups.classList.contains('active');
             toggle.setAttribute('aria-expanded', isExpanded);
             
             // Change toggle icon
@@ -97,18 +98,18 @@ function initMobileMenu() {
         
         // Close menu when clicking outside
         document.addEventListener('click', function(e) {
-            if (!navLinks.contains(e.target) && !toggle.contains(e.target)) {
-                navLinks.classList.remove('active');
+            if (!navGroups.contains(e.target) && !toggle.contains(e.target)) {
+                navGroups.classList.remove('active');
                 toggle.setAttribute('aria-expanded', 'false');
                 toggle.innerHTML = '☰';
             }
         });
         
         // Close menu when clicking on a link
-        const links = navLinks.querySelectorAll('a');
+        const links = navGroups.querySelectorAll('a');
         links.forEach(link => {
             link.addEventListener('click', function() {
-                navLinks.classList.remove('active');
+                navGroups.classList.remove('active');
                 toggle.setAttribute('aria-expanded', 'false');
                 toggle.innerHTML = '☰';
             });
@@ -119,8 +120,8 @@ function initMobileMenu() {
         window.addEventListener('resize', function() {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(function() {
-                if (window.innerWidth > 768) {
-                    navLinks.classList.remove('active');
+                if (window.innerWidth > 1099) {
+                    navGroups.classList.remove('active');
                     toggle.setAttribute('aria-expanded', 'false');
                     toggle.innerHTML = '☰';
                 }
@@ -145,9 +146,10 @@ function initSmoothScroll() {
             if (target) {
                 e.preventDefault();
                 
-                // Calculate offset for sticky header
-                const headerHeight = document.querySelector('header').offsetHeight;
-                const targetPosition = target.offsetTop - headerHeight - 20;
+                // Calculate offset for top header only (sidebar uses no vertical offset)
+                const header = document.querySelector('header');
+                const headerOffset = window.innerWidth >= 1100 ? 0 : (header ? header.offsetHeight : 0);
+                const targetPosition = target.offsetTop - headerOffset - 20;
                 
                 window.scrollTo({
                     top: targetPosition,
