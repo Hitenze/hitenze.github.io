@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Professional Service - Tianshi Xu. Peer-review and professional academic service.">
+    <title>Professional Service - Tianshi Xu</title>
+
+    <!-- Theme boot (avoid flash on navigation) -->
+    <script>
+      (function() {
+        try {
+          var theme = localStorage.getItem('theme');
+          if (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            theme = 'dark-mode';
+          }
+          if (theme) document.documentElement.classList.add(theme);
+        } catch (e) {}
+      })();
+    </script>
+    <style>
+      html { background: #f6f7fb; }
+      body { background: #f6f7fb; }
+      html.dark-mode,
+      html.dark-mode body { background: #1a1a1a; }
+    </style>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="assets/css/navigation-patch.css">
+
+    <style>
+        .service-block {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .service-block h2 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        .reviewer-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .reviewer-list li {
+            padding: 0.45rem 0;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .reviewer-list li:last-child {
+            border-bottom: none;
+        }
+
+        .service-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .service-list li {
+            padding: 0.45rem 0;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .service-list li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">Tianshi Xu</a>
+                <div class="nav-groups">
+                    <ul class="nav-links nav-primary nav-home">
+                        <li><a href="index.html">Home</a></li>
+                    </ul>
+                    <div class="nav-group">
+                        <div class="nav-links-label">Research</div>
+                        <ul class="nav-links nav-sub">
+                            <li><a href="research.html">Overview</a></li>
+                            <li><a href="publications.html">Publications</a></li>
+                            <li><a href="software.html">Software</a></li>
+                            <li><a href="presentations.html">Presentations</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-group">
+                        <div class="nav-links-label">Teaching</div>
+                        <ul class="nav-links nav-sub">
+                            <li><a href="teaching.html">Courses</a></li>
+                            <li><a href="mentoring.html">Mentoring</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-group">
+                        <div class="nav-links-label">Service</div>
+                        <ul class="nav-links nav-sub">
+                            <li><a href="service.html">Professional Service</a></li>
+                            <li><a href="outreach.html">Outreach</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-group">
+                        <div class="nav-links-label">Links</div>
+                        <ul class="nav-links nav-secondary">
+                            <li><a href="https://github.com/hitenze" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                            <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank" rel="noopener noreferrer">Google Scholar</a></li>
+                            <li><a href="https://www.math.emory.edu/site/codes/" target="_blank" rel="noopener noreferrer">Emory CODES group</a></li>
+                            <li><a href="https://www.math.emory.edu/~yxi26/ACM26/index.html" target="_blank" rel="noopener noreferrer">ACM26</a></li>
+                            <li><a href="utilities/index.html">Web Tools</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="nav-tools">
+                    <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="page-content">
+        <div class="container">
+            <section class="section">
+                <h1>Professional Service</h1>
+
+                <div class="service-block">
+                    <h2>Reviewer</h2>
+                    <ul class="reviewer-list">
+                        <li>SIAM Journal on Scientific Computing</li>
+                        <li>Numerical Linear Algebra with Applications</li>
+                        <li>IEEE Transactions on Parallel and Distributed Systems</li>
+                        <li>ACM Transactions on Architecture and Code Optimization</li>
+                        <li>IEEE Transactions on Cloud Computing</li>
+                        <li>Cluster Computing</li>
+                        <li>The Journal of Supercomputing</li>
+                    </ul>
+                </div>
+
+                <div class="service-block">
+                    <h2>Conference and Minisymposium Organization</h2>
+                    <ul class="service-list">
+                        <li>"Uncertainty Quantification for Machine Learning" at the SIAM Southeastern Atlantic Section Conference, Mar 21-23, 2025.</li>
+                        <li>"Preconditioning for Kernel Matrices" at the SIAM Conference on Mathematics of Data Science, Oct 21-25, 2024.</li>
+                        <li>"Preconditioning Method for Gaussian Process" at the International Conference on Preconditioning Techniques for Scientific and Industrial Applications, Jun 10-12, 2024.</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p style="font-size: 0.85rem; color: #999;">© 2026 Tianshi Xu</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="assets/js/main.js"></script>
+
+    <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "320dd9f7e97f40d7891583c792e22503"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

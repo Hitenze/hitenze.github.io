@@ -3,7 +3,7 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta name="description" content="Research - Tianshi Xu. Data-driven solvers, stochastic optimization, and high-performance computing.">
+   <meta name="description" content="Research - Tianshi Xu. Structure-aware models, geometry-aware optimization, and hardware-efficient scientific computing.">
    <title>Research - Tianshi Xu</title>
 
    <!-- Theme boot (avoid flash on navigation) -->
@@ -170,22 +170,43 @@
          <nav>
             <a href="index.html" class="logo">Tianshi Xu</a>
             <div class="nav-groups">
-               <ul class="nav-links nav-primary">
-                  <li><a href="index.html">Home</a></li>
-                  <li><a href="research.html" class="active">Research</a></li>
-                  <li><a href="publications.html">Publications</a></li>
-                  <li><a href="software.html">Software</a></li>
-                  <li><a href="teaching.html">Teaching</a></li>
-                  <li><a href="outreach.html">Outreach</a></li>
-               </ul>
-               <div class="nav-links-label">Links</div>
-               <ul class="nav-links nav-secondary">
-                  <li><a href="https://github.com/hitenze" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-                  <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank" rel="noopener noreferrer">Google Scholar</a></li>
-                  <li><a href="https://www.math.emory.edu/site/codes/" target="_blank" rel="noopener noreferrer">Emory CODES group</a></li>
-                  <li><a href="utilities/index.html">Web Tools</a></li>
-               </ul>
-            </div>
+                    <ul class="nav-links nav-primary nav-home">
+                        <li><a href="index.html">Home</a></li>
+                    </ul>
+                    <div class="nav-group">
+                        <div class="nav-links-label">Research</div>
+                        <ul class="nav-links nav-sub">
+                            <li><a href="research.html">Overview</a></li>
+                            <li><a href="publications.html">Publications</a></li>
+                            <li><a href="software.html">Software</a></li>
+                            <li><a href="presentations.html">Presentations</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-group">
+                        <div class="nav-links-label">Teaching</div>
+                        <ul class="nav-links nav-sub">
+                            <li><a href="teaching.html">Courses</a></li>
+                            <li><a href="mentoring.html">Mentoring</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-group">
+                        <div class="nav-links-label">Service</div>
+                        <ul class="nav-links nav-sub">
+                            <li><a href="service.html">Professional Service</a></li>
+                            <li><a href="outreach.html">Outreach</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-group">
+                        <div class="nav-links-label">Links</div>
+                        <ul class="nav-links nav-secondary">
+                            <li><a href="https://github.com/hitenze" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                            <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank" rel="noopener noreferrer">Google Scholar</a></li>
+                            <li><a href="https://www.math.emory.edu/site/codes/" target="_blank" rel="noopener noreferrer">Emory CODES group</a></li>
+                            <li><a href="https://www.math.emory.edu/~yxi26/ACM26/index.html" target="_blank" rel="noopener noreferrer">ACM26</a></li>
+                            <li><a href="utilities/index.html">Web Tools</a></li>
+                        </ul>
+                    </div>
+                </div>
             <div class="nav-tools">
                <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
             </div>
@@ -203,15 +224,11 @@
             <h2>Overview</h2>
             <div class="research-overview">
                <p>
-                  My research bridges computational mathematics, machine learning, and scientific computing to develop 
-                  data-driven numerical algorithms that overcome the limitations of traditional methods. By embedding 
-                  learning mechanisms within classical numerical frameworks, these algorithms adapt automatically 
-                  to problem structure, scale, and uncertainty, achieving stable and scalable performance on large, 
-                  heterogeneous, and ill-conditioned systems in physics, engineering, and data science.
+                  My research bridges computational mathematics, machine learning, and scientific computing to advance learning-augmented scientific discovery. Rather than treating learning as a black-box surrogate, I embed it directly within numerical algorithms to accelerate and stabilize many-solve workflows. Achieving accuracy, convergence, and scalability requires end-to-end co-design, integrating structure-aware models, geometry-aware optimization, and hardware-efficient computation into unified solvers.
                </p>
                <div class="tag-container">
-                  <span class="research-tag">Stochastic Optimization</span>
                   <span class="research-tag">Scientific Machine Learning</span>
+                  <span class="research-tag">Algorithm Co-design</span>
                   <span class="research-tag">Numerical Linear Algebra</span>
                   <span class="research-tag">High-Performance Computing</span>
                </div>
@@ -221,58 +238,50 @@
             <h2 style="margin-top: 2.5rem;">Research Directions</h2>
             
             <div class="research-card">
-               <h3 class="research-card-title">Stochastic Optimization</h3>
+               <h3 class="research-card-title">Models: Structure-Aware Representations</h3>
                <p class="research-card-description">
-                  I develop scalable stochastic estimators and iterative methods for large-scale optimization and inference, 
-                  focusing on bias-controlled, low-variance approximations to linear solves, traces, and log-determinants 
-                  that remain stable even on ill-conditioned systems.
+                  From a numerical perspective, representation power alone is insufficient; models must define an approximation space compatible with underlying physical operators. I design physics- and structure-aware architectures such as multiscale networks for Green's functions and line-graph models that explicitly capture locality and sparsity, ensuring parameter efficiency and reliable generalization across varying regimes.
                </p>
                <div class="tag-container">
-                  <span class="research-tag">Stochastic Iterative Methods</span>
-                  <span class="research-tag">Preconditioned SGD</span>
-                  <span class="research-tag">Gaussian Processes</span>
-               </div>
-               <img src="assets/images/research1.png" alt="Stochastic Optimization" class="research-card-image">
-               <div class="research-card-links">
-                  <a href="publications.html?filter=stochastic" class="btn btn-sm btn-primary">Related Publications</a>
-               </div>
-            </div>
-            
-            <div class="research-card">
-               <h3 class="research-card-title">Data-Driven Hybrid Solvers</h3>
-               <p class="research-card-description">
-                  I develop data-driven hybrid solvers that combine PDE structure with learning-based components 
-                  to handle regimes where classical multigrid, ILU, and sparse approximate inverses break down. 
-                  These physics-constrained learned solvers retain the stability and interpretability of 
-                  numerical methods while adapting to global coupling, anisotropy, and multiscale heterogeneity in realistic models.
-               </p>
-               <div class="tag-container">
-                  <span class="research-tag">PDE Solvers</span>
                   <span class="research-tag">Operator Learning</span>
+                  <span class="research-tag">Structure-Aware Models</span>
                   <span class="research-tag">Green's Functions</span>
                </div>
-               <img src="assets/images/research2.png" alt="Data-Driven Hybrid Solvers" class="research-card-image">
+               <img src="assets/images/research2.png" alt="Models and Representations" class="research-card-image">
                <div class="research-card-links">
-                  <a href="publications.html?filter=datadriven" class="btn btn-sm btn-primary">Related Publications</a>
+                  <a href="publications.html?filter=models" class="btn btn-sm btn-primary">Related Publications</a>
                </div>
             </div>
             
             <div class="research-card">
-               <h3 class="research-card-title">High-Performance Numerical Algorithms</h3>
+               <h3 class="research-card-title">Optimization: Geometry-Aware Convergence</h3>
                <p class="research-card-description">
-                  On the high-performance side, I design preconditioners and eigensolvers for large sparse problems on 
-                  distributed-memory and GPU-accelerated systems. These methods preserve the stability of classical 
-                  solvers while exposing multilevel parallelism, yielding robust, predictable performance for 
-                  large-scale PDE and simulation workloads.
+                  Embedding learning inside numerical solvers introduces large-scale, ill-conditioned optimization challenges, often under severe stochastic noise. I develop geometry-aware optimization methods, including preconditioned stochastic gradient descent and adapted Anderson acceleration. These techniques reshape the optimization landscape, enabling stable, fast convergence and significant variance reduction for complex scientific machine learning tasks.
                </p>
                <div class="tag-container">
-                  <span class="research-tag">Distributed-Memory Systems</span>
+                  <span class="research-tag">Preconditioned SGD</span>
+                  <span class="research-tag">Anderson Acceleration</span>
+                  <span class="research-tag">Variance Reduction</span>
+               </div>
+               <img src="assets/images/research1.png" alt="Optimization Methods" class="research-card-image">
+               <div class="research-card-links">
+                  <a href="publications.html?filter=optimization" class="btn btn-sm btn-primary">Related Publications</a>
+               </div>
+            </div>
+            
+            <div class="research-card">
+               <h3 class="research-card-title">Computation: Hardware-Efficient Scalability</h3>
+               <p class="research-card-description">
+                  For mathematically accurate and convergent methods to be practically viable, they must map efficiently to modern hardware. I treat computational efficiency as a core algorithm design constraint. Through domain decomposition, memory-aware kernels, and mixed-precision linear algebra, I ensure these end-to-end solvers scale seamlessly on GPU-accelerated and distributed-memory systems.
+               </p>
+               <div class="tag-container">
                   <span class="research-tag">GPU Acceleration</span>
+                  <span class="research-tag">Distributed Systems</span>
                   <span class="research-tag">Mixed-Precision</span>
                </div>
-               <img src="assets/images/research3.png" alt="High-Performance Numerical Algorithms" class="research-card-image">
+               <img src="assets/images/research3.png" alt="Computational Scalability" class="research-card-image">
                <div class="research-card-links">
-                  <a href="publications.html?filter=hpc" class="btn btn-sm btn-primary">Related Publications</a>
+                  <a href="publications.html?filter=computation" class="btn btn-sm btn-primary">Related Publications</a>
                </div>
             </div>
             

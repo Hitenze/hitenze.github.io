@@ -66,6 +66,22 @@
     display: flex;
   }
 
+  .nav-home {
+    padding-bottom: 0.25rem;
+  }
+
+  .nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    width: 100%;
+  }
+
+  .nav-group + .nav-group {
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding-top: 0.6rem;
+  }
+
   .nav-links {
     flex-direction: column;
     align-items: stretch;
@@ -92,16 +108,16 @@
   }
 
   .nav-links-label {
-    margin-top: 0.25rem;
+    margin-top: 0;
     text-align: left;
-    padding-left: 0.4rem;
+    padding-left: 0.2rem;
     letter-spacing: 0.2em;
     color: rgba(255, 255, 255, 0.7);
   }
 
   .nav-secondary {
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-    padding-top: 0.5rem;
+    border-top: none;
+    padding-top: 0;
   }
 
   .nav-secondary a {

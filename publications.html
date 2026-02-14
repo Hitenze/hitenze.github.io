@@ -158,21 +158,42 @@
             <nav>
                 <a href="index.html" class="logo">Tianshi Xu</a>
                 <div class="nav-groups">
-                    <ul class="nav-links nav-primary">
+                    <ul class="nav-links nav-primary nav-home">
                         <li><a href="index.html">Home</a></li>
-                        <li><a href="research.html">Research</a></li>
-                        <li><a href="publications.html" class="active">Publications</a></li>
-                        <li><a href="software.html">Software</a></li>
-                        <li><a href="teaching.html">Teaching</a></li>
-                        <li><a href="outreach.html">Outreach</a></li>
                     </ul>
-                    <div class="nav-links-label">Links</div>
-                    <ul class="nav-links nav-secondary">
-                        <li><a href="https://github.com/hitenze" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-                        <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank" rel="noopener noreferrer">Google Scholar</a></li>
-                        <li><a href="https://www.math.emory.edu/site/codes/" target="_blank" rel="noopener noreferrer">Emory CODES group</a></li>
-                        <li><a href="utilities/index.html">Web Tools</a></li>
-                    </ul>
+                    <div class="nav-group">
+                        <div class="nav-links-label">Research</div>
+                        <ul class="nav-links nav-sub">
+                            <li><a href="research.html">Overview</a></li>
+                            <li><a href="publications.html">Publications</a></li>
+                            <li><a href="software.html">Software</a></li>
+                            <li><a href="presentations.html">Presentations</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-group">
+                        <div class="nav-links-label">Teaching</div>
+                        <ul class="nav-links nav-sub">
+                            <li><a href="teaching.html">Courses</a></li>
+                            <li><a href="mentoring.html">Mentoring</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-group">
+                        <div class="nav-links-label">Service</div>
+                        <ul class="nav-links nav-sub">
+                            <li><a href="service.html">Professional Service</a></li>
+                            <li><a href="outreach.html">Outreach</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-group">
+                        <div class="nav-links-label">Links</div>
+                        <ul class="nav-links nav-secondary">
+                            <li><a href="https://github.com/hitenze" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                            <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank" rel="noopener noreferrer">Google Scholar</a></li>
+                            <li><a href="https://www.math.emory.edu/site/codes/" target="_blank" rel="noopener noreferrer">Emory CODES group</a></li>
+                            <li><a href="https://www.math.emory.edu/~yxi26/ACM26/index.html" target="_blank" rel="noopener noreferrer">ACM26</a></li>
+                            <li><a href="utilities/index.html">Web Tools</a></li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="nav-tools">
                     <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
@@ -192,16 +213,16 @@
                     <span class="filter-label">Filter by Research Direction:</span>
                     <div class="filter-buttons">
                         <button class="filter-btn active" data-filter="all">All</button>
-                        <button class="filter-btn" data-filter="stochastic">Stochastic Optimization</button>
-                        <button class="filter-btn" data-filter="datadriven">Data-Driven Hybrid Solvers</button>
-                        <button class="filter-btn" data-filter="hpc">HPC & Numerical Algorithms</button>
+                        <button class="filter-btn" data-filter="models">Models</button>
+                        <button class="filter-btn" data-filter="optimization">Optimization</button>
+                        <button class="filter-btn" data-filter="computation">Computation</button>
                     </div>
                 </div>
                 
                 <!-- Submitted -->
                 <h2 data-section="preprints">Submitted</h2>
 
-                <div class="publication publication-preprint" data-category="stochastic">
+                <div class="publication publication-preprint" data-category="optimization">
                     <div class="publication-title">
                         Designing Preconditioners for SGD: Local Conditioning, Noise Floors, and Basin Stability
                     </div>
@@ -217,7 +238,7 @@
                     </div>
                 </div>
 
-                <div class="publication publication-preprint" data-category="stochastic">
+                <div class="publication publication-preprint" data-category="optimization">
                     <div class="publication-title">
                         Preconditioned Truncated Single-Sample Estimators for Scalable Stochastic Optimization
                     </div>
@@ -233,7 +254,7 @@
                     </div>
                 </div>
 
-                <div class="publication publication-preprint" data-category="datadriven hpc">
+                <div class="publication publication-preprint" data-category="models computation">
                     <div class="publication-title">
                         Neural Approximate Inverse Preconditioners
                     </div>
@@ -249,7 +270,7 @@
                     </div>
                 </div>
                 
-                <div class="publication publication-preprint" data-category="stochastic hpc">
+                <div class="publication publication-preprint" data-category="optimization computation">
                     <div class="publication-title">
                         Preconditioned Additive Gaussian Processes with Fourier Acceleration
                     </div>
@@ -269,7 +290,7 @@
                 <!-- Published -->
                 <h2 data-section="published">Published</h2>
 
-                <div class="publication publication-journal" data-category="hpc">
+                <div class="publication publication-journal" data-category="computation">
                     <div class="publication-title">
                         Mixed Precision Orthogonalization-Free Projection Methods for Eigenvalue and Singular Value Problems
                     </div>
@@ -286,7 +307,7 @@
                     </div>
                 </div>
                 
-                <div class="publication publication-journal" data-category="stochastic hpc">
+                <div class="publication publication-journal" data-category="optimization computation">
                     <div class="publication-title">
                         HiGP: A High-Performance Python Package for Gaussian Processes
                     </div>
@@ -303,7 +324,7 @@
                     </div>
                 </div>
 
-                <div class="publication publication-journal" data-category="datadriven">
+                <div class="publication publication-journal" data-category="models">
                     <div class="publication-title">
                         Multiscale Neural Networks for Approximating Green's Functions
                     </div>
@@ -320,7 +341,7 @@
                     </div>
                 </div>
                 
-                <div class="publication publication-journal" data-category="hpc">
+                <div class="publication publication-journal" data-category="computation">
                     <div class="publication-title">
                         A Two-level GPU-Accelerated Incomplete LU Preconditioner for General Sparse Linear Systems
                     </div>
@@ -337,7 +358,7 @@
                     </div>
                 </div>
                 
-                <div class="publication publication-journal" data-category="stochastic">
+                <div class="publication publication-journal" data-category="optimization">
                     <div class="publication-title">
                         Anderson Acceleration with Truncated Gram-Schmidt
                     </div>
@@ -354,7 +375,7 @@
                     </div>
                 </div>
                 
-                <div class="publication publication-journal" data-category="stochastic hpc">
+                <div class="publication publication-journal" data-category="optimization computation">
                     <div class="publication-title">
                         An Adaptive Factorized Nyström Preconditioner for Regularized Kernel Matrices
                     </div>
@@ -371,7 +392,7 @@
                     </div>
                 </div>
                 
-                <div class="publication publication-journal" data-category="hpc">
+                <div class="publication publication-journal" data-category="computation">
                     <div class="publication-title">
                         A Parallel Algorithm for Computing Partial Spectral Factorizations of Matrix Pencils via Chebyshev Approximation
                     </div>
@@ -388,7 +409,7 @@
                     </div>
                 </div>
                 
-                <div class="publication publication-journal" data-category="hpc">
+                <div class="publication publication-journal" data-category="computation">
                     <div class="publication-title">
                         parGeMSLR: A Parallel Multilevel Schur Complement Low-Rank Preconditioning and Solution Package for General Sparse Matrices
                     </div>
@@ -423,7 +444,7 @@
                 <!-- PhD Dissertation -->
                 <h2 data-section="dissertation">PhD Dissertation</h2>
                 
-                <div class="publication publication-dissertation" data-category="hpc">
+                <div class="publication publication-dissertation" data-category="computation">
                     <div class="publication-title">
                         Parallel Schur Complement Algorithms for the Solution of Sparse Linear Systems and Eigenvalue Problems
                     </div>
@@ -459,12 +480,13 @@
         const filterBtns = document.querySelectorAll('.filter-btn');
         const publications = document.querySelectorAll('.publication');
         const sections = document.querySelectorAll('h2[data-section]');
+        const validFilters = new Set(Array.from(filterBtns).map(btn => btn.dataset.filter));
         
         // Check URL for filter parameter
         const urlParams = new URLSearchParams(window.location.search);
         const filterParam = urlParams.get('filter');
         
-        if (filterParam) {
+        if (filterParam && validFilters.has(filterParam)) {
             // Show filter container if URL has filter param
             filterContainer.classList.add('active');
             applyFilter(filterParam);
@@ -519,7 +541,6 @@
                 
                 // Hide empty sections
                 sections.forEach(sec => {
-                    const sectionName = sec.dataset.section;
                     let nextEl = sec.nextElementSibling;
                     let hasVisible = false;
                     

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Presentations and Workshops - Tianshi Xu. Talks and posters at conferences, seminars, and workshops.">
+    <title>Presentations and Workshops - Tianshi Xu</title>
+
+    <!-- Theme boot (avoid flash on navigation) -->
+    <script>
+      (function() {
+        try {
+          var theme = localStorage.getItem('theme');
+          if (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            theme = 'dark-mode';
+          }
+          if (theme) document.documentElement.classList.add(theme);
+        } catch (e) {}
+      })();
+    </script>
+    <style>
+      html { background: #f6f7fb; }
+      body { background: #f6f7fb; }
+      html.dark-mode,
+      html.dark-mode body { background: #1a1a1a; }
+    </style>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="assets/css/navigation-patch.css">
+
+    <style>
+        .presentation-section {
+            margin-top: 2rem;
+        }
+
+        .presentation-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .presentation-item {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 0.85rem;
+            line-height: 1.65;
+        }
+
+        .presentation-item.poster {
+            border-left-color: var(--info-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">Tianshi Xu</a>
+                <div class="nav-groups">
+                    <ul class="nav-links nav-primary nav-home">
+                        <li><a href="index.html">Home</a></li>
+                    </ul>
+                    <div class="nav-group">
+                        <div class="nav-links-label">Research</div>
+                        <ul class="nav-links nav-sub">
+                            <li><a href="research.html">Overview</a></li>
+                            <li><a href="publications.html">Publications</a></li>
+                            <li><a href="software.html">Software</a></li>
+                            <li><a href="presentations.html">Presentations</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-group">
+                        <div class="nav-links-label">Teaching</div>
+                        <ul class="nav-links nav-sub">
+                            <li><a href="teaching.html">Courses</a></li>
+                            <li><a href="mentoring.html">Mentoring</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-group">
+                        <div class="nav-links-label">Service</div>
+                        <ul class="nav-links nav-sub">
+                            <li><a href="service.html">Professional Service</a></li>
+                            <li><a href="outreach.html">Outreach</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-group">
+                        <div class="nav-links-label">Links</div>
+                        <ul class="nav-links nav-secondary">
+                            <li><a href="https://github.com/hitenze" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                            <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank" rel="noopener noreferrer">Google Scholar</a></li>
+                            <li><a href="https://www.math.emory.edu/site/codes/" target="_blank" rel="noopener noreferrer">Emory CODES group</a></li>
+                            <li><a href="https://www.math.emory.edu/~yxi26/ACM26/index.html" target="_blank" rel="noopener noreferrer">ACM26</a></li>
+                            <li><a href="utilities/index.html">Web Tools</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="nav-tools">
+                    <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="page-content">
+        <div class="container">
+            <section class="section">
+                <h1>Presentations and Workshops</h1>
+
+                <div class="presentation-section">
+                    <h2>Presentations</h2>
+                    <ul class="presentation-list">
+                        <li class="presentation-item">"Data-Driven Numerical Algorithms: Integrating Stochasticity and Learning into Scalable Scientific Computing" at Georgia Tech Applied and Computational Math Seminar, Nov 10, 2025.</li>
+                        <li class="presentation-item">"Bias-Reduced Preconditioned Gaussian Processes" at the Penn State University Department of Mathematics Computational and Applied Mathematics Colloquium, Apr 21, 2025.</li>
+                        <li class="presentation-item">"HiGP: Data-Driven Hierarchical Matrix-Based Gaussian Process" at the SIAM Southeastern Atlantic Section Conference, Mar 21-23, 2025.</li>
+                        <li class="presentation-item">"Multiscale Neural Networks for Approximating Green's Functions" at the Emory Computational and Data Enabled Science Seminar, Dec 5, 2024.</li>
+                        <li class="presentation-item">"Efficient Preconditioned Unbiased Estimators in Gaussian Processes" at the SIAM Conference on Mathematics of Data Science, Oct 21-25, 2024.</li>
+                        <li class="presentation-item">"Efficient Preconditioned Unbiased Estimators in Gaussian Processes" at the International Conference on Preconditioning Techniques for Scientific and Industrial Applications, Jun 10-12, 2024.</li>
+                        <li class="presentation-item">"HPyTorch: Data-driven Hierarchical Matrix-based Gaussian Process" at the Fast Direct Solver Conference, Nov 4-5, 2023.</li>
+                        <li class="presentation-item">"GeMSLR: A Multilevel Low-Rank Preconditioning and Solution Package" at the SIAM Conference on Applied Linear Algebra (Virtual), May 17-21, 2021.</li>
+                        <li class="presentation-item">"GeMSLR: A Multilevel Low-Rank Preconditioning and Solution Package" at the International Conference on Preconditioning Techniques for Scientific and Industrial Applications, Jul 1-3, 2019.</li>
+                        <li class="presentation-item">"Correction of High Order of Time Accuracy for Modified Method of Characteristics" at the 10th International Conference on Computational Physics, Jan 16-20, 2017.</li>
+                    </ul>
+                </div>
+
+                <div class="presentation-section">
+                    <h2>Posters</h2>
+                    <ul class="presentation-list">
+                        <li class="presentation-item poster">"Multiscale Neural Networks for Approximating Green's Functions" at the SIAM Conference on Computational Science and Engineering, Mar 3-7, 2025.</li>
+                        <li class="presentation-item poster">"GeMSLR: A Multilevel Low-Rank Preconditioning and Solution Package" at the SIAM Conference on Parallel Processing for Scientific Computing, Feb 12-15, 2020.</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p style="font-size: 0.85rem; color: #999;">© 2026 Tianshi Xu</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="assets/js/main.js"></script>
+
+    <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "320dd9f7e97f40d7891583c792e22503"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
