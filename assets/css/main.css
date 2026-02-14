@@ -375,6 +375,7 @@ nav {
     height: 100vh;
     border-right: 1px solid rgba(255, 255, 255, 0.12);
     border-bottom: none;
+    overflow: hidden;
   }
 
   header .container {
@@ -389,6 +390,7 @@ nav {
     align-items: flex-start;
     gap: 1.5rem;
     height: 100%;
+    min-height: 0;
   }
 
   .logo {
@@ -399,6 +401,12 @@ nav {
     align-items: stretch;
     width: 100%;
     gap: 0.8rem;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 0.2rem;
   }
 
   .nav-group {
@@ -407,9 +415,12 @@ nav {
   }
 
   .nav-tools {
-    margin-top: auto;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
     width: 100%;
     justify-content: flex-start;
+    flex-shrink: 0;
   }
 
   .nav-links {
