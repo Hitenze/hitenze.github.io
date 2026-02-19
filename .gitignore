@@ -15,6 +15,8 @@ Thumbs.db
 .claude/
 CLAUDE.md
 GEMINI.md
+AGENTS.md
+agent.md
 .ai/
 *.ai.md
 

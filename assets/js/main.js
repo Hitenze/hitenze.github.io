@@ -6,6 +6,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     initDarkMode();
     initMobileMenu();
+    initSidebarNavScroll();
     initSmoothScroll();
     initActiveNavigation();
     initScrollToTop();
@@ -128,6 +129,60 @@ function initMobileMenu() {
             }, 250);
         });
     }
+}
+
+// =============== Sidebar Navigation Scroll UX ===============
+function initSidebarNavScroll() {
+    const navGroups = document.querySelector('.nav-groups');
+    if (!navGroups) return;
+
+    const updateScrollState = function() {
+        const isDesktop = window.innerWidth >= 1100;
+        const hasOverflow = navGroups.scrollHeight > navGroups.clientHeight + 2;
+        const atEnd = navGroups.scrollTop + navGroups.clientHeight >= navGroups.scrollHeight - 2;
+
+        navGroups.classList.toggle('is-scrollable', isDesktop && hasOverflow);
+        navGroups.classList.toggle('is-scroll-end', !hasOverflow || atEnd);
+
+        if (isDesktop && hasOverflow) {
+            navGroups.setAttribute('tabindex', '0');
+            navGroups.setAttribute('aria-label', 'Sidebar navigation. Scroll to reveal more links.');
+        } else {
+            navGroups.removeAttribute('tabindex');
+            navGroups.removeAttribute('aria-label');
+        }
+    };
+
+    navGroups.addEventListener('scroll', updateScrollState, { passive: true });
+    window.addEventListener('resize', function() {
+        window.requestAnimationFrame(updateScrollState);
+    });
+    window.addEventListener('load', updateScrollState);
+
+    if (window.ResizeObserver) {
+        const observer = new ResizeObserver(updateScrollState);
+        observer.observe(navGroups);
+    }
+
+    navGroups.addEventListener('keydown', function(e) {
+        if (!navGroups.classList.contains('is-scrollable')) return;
+
+        let delta = 0;
+        if (e.key === 'ArrowDown') delta = 64;
+        if (e.key === 'ArrowUp') delta = -64;
+        if (e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) delta = navGroups.clientHeight * 0.75;
+        if (e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) delta = -navGroups.clientHeight * 0.75;
+        if (e.key === 'Home') delta = -navGroups.scrollHeight;
+        if (e.key === 'End') delta = navGroups.scrollHeight;
+
+        if (delta !== 0) {
+            e.preventDefault();
+            navGroups.scrollBy({ top: delta, behavior: 'smooth' });
+        }
+    });
+
+    window.requestAnimationFrame(updateScrollState);
+    window.setTimeout(updateScrollState, 180);
 }
 
 // =============== Smooth Scroll ===============
