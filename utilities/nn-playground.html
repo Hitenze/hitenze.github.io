@@ -304,9 +304,9 @@ body {
   }
 
   #network-svg-container {
-    flex: 0 0 clamp(280px, 46vh, 360px);
-    height: clamp(280px, 46vh, 360px);
-    min-height: 280px;
+    flex: 0 0 auto;
+    height: auto;
+    min-height: 0;
   }
 
   #right-panel {
@@ -358,9 +358,9 @@ body {
   }
 
   #network-svg-container {
-    flex-basis: clamp(240px, 42vh, 300px);
-    height: clamp(240px, 42vh, 300px);
-    min-height: 240px;
+    flex-basis: auto;
+    height: auto;
+    min-height: 0;
   }
 
   .btn-round {
@@ -1379,12 +1379,39 @@ function updateEpochDisplay() {
 // ============================================================
 const RECT_SIZE = 34;
 const NODE_GAP = 10;
+const STACKED_TOP_PADDING = 44;
+const STACKED_BOTTOM_PADDING = 64;
+const STACKED_MOBILE_MIN_HEIGHT = 220;
+const STACKED_TABLET_MIN_HEIGHT = 250;
+
+function getNetworkSvgHeight(layers, containerHeight) {
+  const stackedLayout = window.matchMedia('(max-width: 1180px)').matches;
+  const maxNodes = Math.max(...layers);
+  const nodeStackHeight = maxNodes * RECT_SIZE + (maxNodes - 1) * NODE_GAP;
+  const contentHeight = STACKED_TOP_PADDING + nodeStackHeight + STACKED_BOTTOM_PADDING;
+
+  if (stackedLayout) {
+    const mobileMinHeight = window.matchMedia('(max-width: 560px)').matches ? STACKED_MOBILE_MIN_HEIGHT : STACKED_TABLET_MIN_HEIGHT;
+    return Math.max(mobileMinHeight, contentHeight);
+  }
+
+  return Math.max(containerHeight || 320, contentHeight);
+}
 
 function drawNetworkSVG() {
   const svgEl = document.getElementById('network-svg');
   const container = document.getElementById('network-svg-container');
   const svgWidth = container.clientWidth || 400;
-  const svgHeight = container.clientHeight || 300;
+
+  const featureLabels = getFeatureLabels();
+  const layers = [featureLabels.length, ...state.hiddenLayers, 1];
+  const svgHeight = getNetworkSvgHeight(layers, container.clientHeight);
+
+  if (window.matchMedia('(max-width: 1180px)').matches) {
+    container.style.height = `${svgHeight}px`;
+  } else {
+    container.style.height = '';
+  }
 
   // Clear
   d3.select(svgEl).selectAll('*').remove();
@@ -1394,9 +1421,8 @@ function drawNetworkSVG() {
 
   if (!network) return;
 
-  const featureLabels = getFeatureLabels();
-  const layers = [featureLabels.length, ...state.hiddenLayers, 1];
   const numLayers = layers.length;
+  const stackedLayout = window.matchMedia('(max-width: 1180px)').matches;
 
   // Layer positions
   const layerSpacing = svgWidth / (numLayers + 1);
@@ -1407,7 +1433,7 @@ function drawNetworkSVG() {
   for (let l = 0; l < numLayers; l++) {
     const n = layers[l];
     const totalH = n * RECT_SIZE + (n - 1) * NODE_GAP;
-    const startY = (svgHeight - totalH) / 2;
+    const startY = stackedLayout ? STACKED_TOP_PADDING : (svgHeight - totalH) / 2;
     const positions = [];
     for (let i = 0; i < n; i++) {
       positions.push({
