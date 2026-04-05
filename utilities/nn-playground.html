@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neural Network Playground — 1D Regression</title>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+<style>
+/* ============ RESET & BASE ============ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+  background: #f7f7f7;
+  color: #333;
+  font-size: 13px;
+  overflow: hidden;
+  height: 100vh;
+}
+/* ============ HEADER ============ */
+#header {
+  background: #1a3a4a;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 48px;
+  gap: 16px;
+}
+#header h1 { font-size: 18px; font-weight: 600; letter-spacing: 1px; }
+#header .epoch-label { font-size: 14px; color: #acd; margin-left: auto; }
+#header .epoch-label span { color: #e74c3c; font-weight: 700; font-size: 16px; }
+
+/* ============ CONTROL BAR ============ */
+#control-bar {
+  background: #e8e8e8;
+  border-bottom: 1px solid #ccc;
+  padding: 4px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.ctrl-group { display: flex; align-items: center; gap: 4px; }
+.ctrl-group label { font-size: 11px; color: #666; white-space: nowrap; }
+.ctrl-group select {
+  font-size: 12px; padding: 3px 6px; border: 1px solid #bbb; border-radius: 3px;
+  background: #fff; cursor: pointer;
+}
+.btn-round {
+  width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  transition: background 0.15s;
+}
+.btn-play { background: #e74c3c; color: #fff; }
+.btn-play:hover { background: #c0392b; }
+.btn-play.playing { background: #0877bd; }
+.btn-step { background: #ddd; color: #333; }
+.btn-step:hover { background: #ccc; }
+.btn-reset { background: #ddd; color: #c33; }
+.btn-reset:hover { background: #ccc; }
+
+/* ============ PRESET BAR ============ */
+#preset-bar {
+  background: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+  padding: 4px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+#preset-bar .preset-label { font-size: 12px; color: #666; font-weight: 600; }
+.btn-preset {
+  font-size: 11px; padding: 4px 10px; border: 1px solid #bbb; border-radius: 14px;
+  background: #fff; cursor: pointer; transition: all 0.15s; color: #444;
+}
+.btn-preset:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+.btn-preset.active { background: #0877bd; color: #fff; border-color: #0877bd; }
+
+/* ============ MAIN LAYOUT ============ */
+#main {
+  display: flex;
+  height: calc(100vh - 48px - 45px - 35px);
+  min-height: 480px;
+  overflow: hidden;
+}
+
+/* ============ LEFT SIDEBAR ============ */
+#sidebar {
+  width: 155px;
+  min-width: 155px;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  padding: 12px;
+  overflow-y: auto;
+}
+#sidebar h3 { font-size: 12px; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.sidebar-section { margin-bottom: 14px; }
+.sidebar-section label { font-size: 11px; color: #555; display: block; margin-bottom: 3px; }
+.sidebar-section select, .sidebar-section input[type="range"] { width: 100%; }
+.sidebar-section .range-val { font-size: 11px; color: #888; float: right; }
+.dataset-btn {
+  display: block; width: 100%; padding: 6px 8px; margin-bottom: 4px;
+  border: 2px solid #ddd; border-radius: 4px; background: #fafafa;
+  cursor: pointer; font-size: 12px; text-align: left; transition: all 0.15s;
+}
+.dataset-btn:hover { border-color: #0877bd; }
+.dataset-btn.active { border-color: #0877bd; background: #e8f4fc; font-weight: 600; }
+
+/* ============ FEATURES COLUMN ============ */
+#features-col {
+  width: 85px;
+  min-width: 85px;
+  background: #fafafa;
+  border-right: 1px solid #ddd;
+  padding: 12px 8px;
+}
+#features-col h3 { font-size: 12px; color: #888; margin-bottom: 10px; text-align: center; }
+.feature-item {
+  display: flex; align-items: center; gap: 4px; margin-bottom: 8px;
+  font-size: 12px;
+}
+.feature-item input[type="checkbox"] { cursor: pointer; }
+.feature-item label { cursor: pointer; }
+
+/* ============ NETWORK VIZ ============ */
+#network-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+  border-right: 1px solid #ddd;
+}
+#network-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px;
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+}
+#network-top label { font-size: 13px; color: #555; font-weight: 600; }
+.btn-sm {
+  width: 24px; height: 24px; border-radius: 4px; border: 1px solid #bbb;
+  background: #fff; cursor: pointer; font-size: 14px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-sm:hover { background: #eee; }
+#network-svg-container {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+#network-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ============ RIGHT PANEL ============ */
+#right-panel {
+  width: 320px;
+  min-width: 320px;
+  background: #fff;
+  padding: 8px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.panel-title {
+  font-size: 11px;
+  color: #888;
+  font-weight: 600;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.plot-container {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.plot-container canvas {
+  display: block;
+  width: 100%;
+}
+.loss-info {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  padding: 4px 0;
+  flex-wrap: wrap;
+}
+.loss-item { display: flex; align-items: center; gap: 4px; }
+.loss-dot { width: 8px; height: 8px; border-radius: 50%; }
+.loss-value { font-weight: 700; font-family: "Courier New", monospace; font-size: 13px; }
+.gap-indicator {
+  padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;
+}
+.gap-green { background: #d4edda; color: #155724; }
+.gap-yellow { background: #fff3cd; color: #856404; }
+.gap-red { background: #f8d7da; color: #721c24; }
+
+.checkbox-row { display: flex; gap: 12px; font-size: 11px; align-items: center; padding: 2px 0; }
+.checkbox-row label { cursor: pointer; display: flex; align-items: center; gap: 3px; }
+
+@media (max-width: 1180px) {
+  body {
+    height: auto;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  #header {
+    height: auto;
+    min-height: 48px;
+    padding: 10px 16px;
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  #header .epoch-label {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  #control-bar,
+  #preset-bar {
+    padding: 10px 12px;
+  }
+
+  #control-bar {
+    align-items: flex-start;
+  }
+
+  .ctrl-group {
+    flex: 1 1 140px;
+    min-width: 140px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ctrl-group select {
+    width: 100%;
+    min-height: 40px;
+  }
+
+  .btn-round {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 auto;
+  }
+
+  #main {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    flex-direction: column;
+  }
+
+  #sidebar,
+  #features-col,
+  #network-area,
+  #right-panel {
+    width: 100%;
+    min-width: 0;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  #sidebar {
+    padding: 14px 16px;
+  }
+
+  #features-col {
+    padding: 14px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    align-items: flex-start;
+  }
+
+  #features-col h3 {
+    width: 100%;
+    margin-bottom: 0;
+    text-align: left;
+  }
+
+  .feature-item {
+    width: calc(50% - 8px);
+    min-width: 140px;
+    margin-bottom: 0;
+  }
+
+  #network-area {
+    min-height: 420px;
+  }
+
+  #network-svg-container {
+    min-height: 260px;
+  }
+
+  #right-panel {
+    padding: 12px 16px 24px;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 720px) {
+  #header h1 {
+    font-size: 16px;
+  }
+
+  #header .epoch-label {
+    font-size: 13px;
+  }
+
+  .ctrl-group {
+    flex-basis: calc(50% - 10px);
+    min-width: calc(50% - 10px);
+  }
+
+  .feature-item {
+    width: 100%;
+    min-width: 0;
+  }
+
+  #network-top {
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 560px) {
+  .ctrl-group {
+    flex-basis: 100%;
+    min-width: 100%;
+  }
+
+  #sidebar,
+  #features-col,
+  #right-panel {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  #network-area {
+    min-height: 360px;
+  }
+
+  #network-svg-container {
+    min-height: 220px;
+  }
+
+  .btn-round {
+    width: 44px;
+    height: 44px;
+  }
+
+  .btn-preset {
+    min-height: 36px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <h1 data-i18n="title">Neural Network Playground</h1>
+  <div style="font-size:12px; color:#8ab; margin-left:8px;" data-i18n="subtitle">1D Regression</div>
+  <button id="btn-lang" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:#fff; border-radius:4px; padding:2px 8px; cursor:pointer; font-size:12px; margin-left:8px;">中</button>
+  <div class="epoch-label"><span data-i18n="epoch">Epoch</span>: <span id="epoch-display">0</span></div>
+</div>
+
+<!-- CONTROL BAR -->
+<div id="control-bar">
+  <button class="btn-round btn-play" id="btn-play" title="播放/暂停">▶</button>
+  <button class="btn-round btn-step" id="btn-step" title="单步">⏭</button>
+  <button class="btn-round btn-reset" id="btn-reset" title="重置">↺</button>
+  <div class="ctrl-group">
+    <label data-i18n="lr">学习率</label>
+    <select id="sel-lr">
+      <option value="0.0005">0.0005</option>
+      <option value="0.001">0.001</option>
+      <option value="0.003">0.003</option>
+      <option value="0.01">0.01</option>
+      <option value="0.03" selected>0.03</option>
+      <option value="0.1">0.1</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <label data-i18n="activation">激活函数</label>
+    <select id="sel-activation">
+      <option value="relu">ReLU</option>
+      <option value="tanh" selected>Tanh</option>
+      <option value="sigmoid">Sigmoid</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <label data-i18n="reg">正则化</label>
+    <select id="sel-reg">
+      <option value="none" selected data-i18n="none">无</option>
+      <option value="l1">L1</option>
+      <option value="l2">L2</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <label data-i18n="regRate">正则化率</label>
+    <select id="sel-reg-rate">
+      <option value="0" selected>0</option>
+      <option value="0.0003">0.0003</option>
+      <option value="0.001">0.001</option>
+      <option value="0.003">0.003</option>
+      <option value="0.01">0.01</option>
+      <option value="0.03">0.03</option>
+      <option value="0.1">0.1</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <label data-i18n="optimizer">优化器</label>
+    <select id="sel-optimizer">
+      <option value="sgd">SGD</option>
+      <option value="adam" selected>Adam</option>
+      <option value="adamw">AdamW</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <label data-i18n="dropout">Dropout率</label>
+    <select id="sel-dropout">
+      <option value="0" selected>0</option>
+      <option value="0.1">0.1</option>
+      <option value="0.2">0.2</option>
+      <option value="0.3">0.3</option>
+      <option value="0.5">0.5</option>
+    </select>
+  </div>
+</div>
+
+<!-- PRESET BAR -->
+<div id="preset-bar">
+  <span class="preset-label" data-i18n="presetLabel">快速演示：</span>
+  <button class="btn-preset" data-preset="overfit" data-i18n="overfit">过拟合</button>
+  <button class="btn-preset" data-preset="l2" data-i18n="l2reg">L2正则化</button>
+  <button class="btn-preset" data-preset="l1" data-i18n="l1reg">L1正则化</button>
+  <button class="btn-preset" data-preset="dropout" data-i18n="dropoutPreset">Dropout</button>
+  <button class="btn-preset" data-preset="good" data-i18n="goodGen">良好泛化</button>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div id="main">
+  <!-- LEFT SIDEBAR -->
+  <div id="sidebar">
+    <h3 data-i18n="dataset">数据集</h3>
+    <div class="sidebar-section">
+      <button class="dataset-btn active" data-fn="sin" data-i18n="sinFn">正弦 sin(πx)</button>
+      <button class="dataset-btn" data-fn="poly" data-i18n="polyFn">多项式 0.5x³-x</button>
+      <button class="dataset-btn" data-fn="step" data-i18n="stepFn">阶梯</button>
+      <button class="dataset-btn" data-fn="composite" data-i18n="compositeFn">复合</button>
+    </div>
+    <div class="sidebar-section">
+      <label><span data-i18n="noise">噪声</span> <span class="range-val" id="noise-val">15</span></label>
+      <input type="range" id="slider-noise" min="0" max="50" value="15">
+    </div>
+    <div class="sidebar-section">
+      <label><span data-i18n="trainRatio">训练比例</span> <span class="range-val" id="ratio-val">60%</span></label>
+      <input type="range" id="slider-ratio" min="20" max="80" value="60">
+    </div>
+    <div class="sidebar-section">
+      <label><span data-i18n="numPoints">数据点数</span> <span class="range-val" id="npoints-val">40</span></label>
+      <input type="range" id="slider-npoints" min="20" max="200" value="40" step="5">
+    </div>
+  </div>
+
+  <!-- FEATURES COLUMN -->
+  <div id="features-col">
+    <h3 data-i18n="features">特征</h3>
+    <div class="feature-item">
+      <input type="checkbox" id="feat-x" checked disabled>
+      <label for="feat-x">x</label>
+    </div>
+    <div class="feature-item">
+      <input type="checkbox" id="feat-x2">
+      <label for="feat-x2">x²</label>
+    </div>
+    <div class="feature-item">
+      <input type="checkbox" id="feat-x3">
+      <label for="feat-x3">x³</label>
+    </div>
+    <div class="feature-item">
+      <input type="checkbox" id="feat-sinx">
+      <label for="feat-sinx">sin(x)</label>
+    </div>
+  </div>
+
+  <!-- NETWORK VISUALIZATION -->
+  <div id="network-area">
+    <div id="network-top">
+      <label data-i18n="hiddenLayers">隐藏层</label>
+      <button class="btn-sm" id="btn-layer-minus">−</button>
+      <span id="layer-count">2</span>
+      <button class="btn-sm" id="btn-layer-plus">+</button>
+    </div>
+    <div id="network-svg-container">
+      <svg id="network-svg"></svg>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div id="right-panel">
+    <div class="panel-title" data-i18n="funcFit">函数拟合</div>
+    <div class="plot-container">
+      <canvas id="canvas-main" width="600" height="400"></canvas>
+    </div>
+    <div class="checkbox-row">
+      <label><input type="checkbox" id="chk-test" checked> <span data-i18n="showTest">显示测试数据</span></label>
+      <label><input type="checkbox" id="chk-truth" checked> <span data-i18n="showTruth">显示真实函数</span></label>
+    </div>
+    <div class="loss-info">
+      <div class="loss-item"><div class="loss-dot" style="background:#0877bd"></div><span data-i18n="trainLoss">训练损失</span>: <span class="loss-value" id="train-loss-val">—</span></div>
+      <div class="loss-item"><div class="loss-dot" style="background:#e74c3c"></div><span data-i18n="testLoss">测试损失</span>: <span class="loss-value" id="test-loss-val">—</span></div>
+      <div class="loss-item"><span data-i18n="genGap">泛化间隙</span>: <span class="gap-indicator gap-green" id="gap-val">—</span></div>
+    </div>
+
+    <div class="panel-title" data-i18n="lossCurve">损失曲线</div>
+    <div class="plot-container">
+      <canvas id="canvas-loss" width="600" height="240"></canvas>
+    </div>
+
+    <div class="panel-title" data-i18n="paramDist">参数分布</div>
+    <div class="plot-container">
+      <canvas id="canvas-params" width="600" height="240"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// NEURAL NETWORK PLAYGROUND - 1D REGRESSION
+// ============================================================
+
+// ---- I18N ----
+let lang = 'en';
+
+const I18N = {
+  zh: {
+    title: '神经网络游乐场',
+    subtitle: '1D 回归',
+    epoch: '轮次',
+    lr: '学习率',
+    activation: '激活函数',
+    reg: '正则化',
+    regRate: '正则化率',
+    optimizer: '优化器',
+    dropout: 'Dropout率',
+    none: '无',
+    presetLabel: '快速演示：',
+    overfit: '过拟合',
+    l2reg: 'L2正则化',
+    l1reg: 'L1正则化',
+    dropoutPreset: 'Dropout',
+    goodGen: '良好泛化',
+    dataset: '数据集',
+    sinFn: '正弦 sin(πx)',
+    polyFn: '多项式 0.5x³-x',
+    stepFn: '阶梯',
+    compositeFn: '复合',
+    features: '特征',
+    noise: '噪声',
+    trainRatio: '训练比例',
+    numPoints: '数据点数',
+    hiddenLayers: '隐藏层',
+    input: '输入',
+    output: '输出',
+    hiddenN: '隐藏层',
+    nNeurons: '{n} 个神经元',
+    funcFit: '函数拟合',
+    showTest: '显示测试数据',
+    showTruth: '显示真实函数',
+    trainLoss: '训练损失',
+    testLoss: '测试损失',
+    genGap: '泛化间隙',
+    lossCurve: '损失曲线',
+    paramDist: '参数分布',
+    train: '训练',
+    test: '测试',
+    play: '播放',
+    pause: '暂停',
+    step: '单步',
+    reset: '重置',
+    pos: '正',
+    neg: '负',
+    weightDesc: '权重 (降序排列)',
+  },
+  en: {
+    title: 'Neural Network Playground',
+    subtitle: '1D Regression',
+    epoch: 'Epoch',
+    lr: 'Learning Rate',
+    activation: 'Activation',
+    reg: 'Regularization',
+    regRate: 'Reg. Rate',
+    optimizer: 'Optimizer',
+    dropout: 'Dropout',
+    none: 'None',
+    presetLabel: 'Presets:',
+    overfit: 'Overfit',
+    l2reg: 'L2 Reg.',
+    l1reg: 'L1 Reg.',
+    dropoutPreset: 'Dropout',
+    goodGen: 'Good Gen.',
+    dataset: 'Dataset',
+    sinFn: 'Sine sin(πx)',
+    polyFn: 'Poly 0.5x³-x',
+    stepFn: 'Step',
+    compositeFn: 'Composite',
+    features: 'Features',
+    noise: 'Noise',
+    trainRatio: 'Train Ratio',
+    numPoints: 'Data Points',
+    hiddenLayers: 'Hidden Layers',
+    input: 'Input',
+    output: 'Output',
+    hiddenN: 'Hidden',
+    nNeurons: '{n} neurons',
+    funcFit: 'Function Fit',
+    showTest: 'Show Test Data',
+    showTruth: 'Show Ground Truth',
+    trainLoss: 'Train Loss',
+    testLoss: 'Test Loss',
+    genGap: 'Gen. Gap',
+    lossCurve: 'Loss Curve',
+    paramDist: 'Parameter Distribution',
+    train: 'Train',
+    test: 'Test',
+    play: 'Play',
+    pause: 'Pause',
+    step: 'Step',
+    reset: 'Reset',
+    pos: 'Pos',
+    neg: 'Neg',
+    weightDesc: 'Weights (desc.)',
+  }
+};
+
+function t(key) { return I18N[lang][key] || key; }
+
+function updateLanguageButton() {
+  document.getElementById('btn-lang').textContent = lang === 'en' ? '中' : 'EN';
+}
+
+function applyI18N(redraw = true) {
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  updateLanguageButton();
+  // Update document title
+  document.title = t('title') + ' — 1D';
+
+  // Update all data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+
+  // Update the "无/None" option inside the select (it has data-i18n too)
+  const noneOpt = document.querySelector('#sel-reg option[data-i18n="none"]');
+  if (noneOpt) noneOpt.textContent = t('none');
+
+  if (!redraw) return;
+
+  // Redraw SVG and charts with new language
+  drawNetworkSVG();
+  drawLossCurve();
+  drawParamsChart();
+  drawMainPlot();
+}
+
+// ---- GLOBALS ----
+let rng = new Math.seedrandom('nn-playground-42');
+let state = {
+  playing: false,
+  epoch: 0,
+  dataset: 'sin',
+  noise: 15,
+  trainRatio: 60,
+  numPoints: 40,
+  features: { x: true, x2: false, x3: false, sinx: false },
+  hiddenLayers: [4, 4],
+  lr: 0.03,
+  activation: 'tanh',
+  reg: 'none',
+  regRate: 0,
+  optimizer: 'adam',
+  dropout: 0,
+  showTest: true,
+  showTruth: true,
+};
+
+let trainData = [], testData = [];
+let network = null;
+let lossHistory = { train: [], test: [] };
+let animFrameId = null;
+
+// ---- TARGET FUNCTIONS ----
+const targetFunctions = {
+  sin: x => Math.sin(Math.PI * x),
+  poly: x => 0.5 * x * x * x - x,
+  step: x => Math.sign(x) * 0.5 + 0.3 * x,
+  composite: x => Math.sin(2 * Math.PI * x) * Math.exp(-0.5 * x * x),
+};
+const xRange = [-2, 2];
+
+// ---- GAUSSIAN RANDOM ----
+function gaussianRandom() {
+  let u = 0, v = 0;
+  while (u === 0) u = rng();
+  while (v === 0) v = rng();
+  return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+}
+
+// ---- DATA GENERATION ----
+function generateData() {
+  rng = new Math.seedrandom('nn-playground-42');
+  const fn = targetFunctions[state.dataset];
+  const n = state.numPoints;
+  const noiseScale = state.noise / 100;
+  const allData = [];
+  for (let i = 0; i < n; i++) {
+    const x = xRange[0] + (xRange[1] - xRange[0]) * rng();
+    const y = fn(x) + gaussianRandom() * noiseScale;
+    allData.push({ x, y });
+  }
+  // Shuffle
+  for (let i = allData.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [allData[i], allData[j]] = [allData[j], allData[i]];
+  }
+  const splitIdx = Math.floor(n * state.trainRatio / 100);
+  trainData = allData.slice(0, splitIdx);
+  testData = allData.slice(splitIdx);
+}
+
+// ---- FEATURE EXTRACTION ----
+function getFeatures(x) {
+  const feats = [x];
+  if (state.features.x2) feats.push(x * x);
+  if (state.features.x3) feats.push(x * x * x);
+  if (state.features.sinx) feats.push(Math.sin(x));
+  return feats;
+}
+
+function getFeatureLabels() {
+  const labels = ['x'];
+  if (state.features.x2) labels.push('x²');
+  if (state.features.x3) labels.push('x³');
+  if (state.features.sinx) labels.push('sin(x)');
+  return labels;
+}
+
+function numFeatures() { return getFeatures(0).length; }
+
+// ---- ACTIVATION FUNCTIONS ----
+const activations = {
+  relu: { fn: x => Math.max(0, x), dfn: x => x > 0 ? 1 : 0 },
+  tanh: { fn: x => Math.tanh(x), dfn: x => 1 - Math.tanh(x) ** 2 },
+  sigmoid: { fn: x => 1 / (1 + Math.exp(-x)), dfn: x => { const s = 1 / (1 + Math.exp(-x)); return s * (1 - s); } },
+};
+
+// ---- NETWORK CLASS ----
+class NeuralNetwork {
+  constructor(layerSizes) {
+    // layerSizes: [inputDim, h1, h2, ..., 1]
+    this.layerSizes = layerSizes;
+    this.weights = [];
+    this.biases = [];
+    this.numLayers = layerSizes.length - 1;
+    // Xavier initialization
+    for (let l = 0; l < this.numLayers; l++) {
+      const fanIn = layerSizes[l];
+      const fanOut = layerSizes[l + 1];
+      const std = Math.sqrt(2.0 / (fanIn + fanOut));
+      const w = [];
+      for (let i = 0; i < fanOut; i++) {
+        const row = [];
+        for (let j = 0; j < fanIn; j++) {
+          row.push(gaussianRandom() * std);
+        }
+        w.push(row);
+      }
+      this.weights.push(w);
+      const b = new Array(fanOut).fill(0);
+      this.biases.push(b);
+    }
+    // Adam state
+    this.mW = this.weights.map(w => w.map(row => row.map(() => 0)));
+    this.vW = this.weights.map(w => w.map(row => row.map(() => 0)));
+    this.mB = this.biases.map(b => b.map(() => 0));
+    this.vB = this.biases.map(b => b.map(() => 0));
+    this.adamT = 0;
+  }
+
+  forward(input, training = false) {
+    const act = activations[state.activation];
+    let a = input.slice();
+    const preActivations = [a.slice()];
+    const postActivations = [a.slice()];
+    const dropoutMasks = [];
+
+    for (let l = 0; l < this.numLayers; l++) {
+      const w = this.weights[l];
+      const b = this.biases[l];
+      const newA = [];
+      for (let i = 0; i < w.length; i++) {
+        let sum = b[i];
+        for (let j = 0; j < a.length; j++) {
+          sum += w[i][j] * a[j];
+        }
+        newA.push(sum);
+      }
+      preActivations.push(newA.slice());
+
+      // Apply activation (not on last layer)
+      if (l < this.numLayers - 1) {
+        for (let i = 0; i < newA.length; i++) {
+          newA[i] = act.fn(newA[i]);
+        }
+        // Dropout
+        if (training && state.dropout > 0 && l < this.numLayers - 1) {
+          const mask = newA.map(() => rng() > state.dropout ? 1 : 0);
+          const scale = 1 / (1 - state.dropout);
+          for (let i = 0; i < newA.length; i++) {
+            newA[i] *= mask[i] * scale;
+          }
+          dropoutMasks.push(mask);
+        } else {
+          dropoutMasks.push(null);
+        }
+      } else {
+        dropoutMasks.push(null);
+      }
+      postActivations.push(newA.slice());
+      a = newA;
+    }
+    return { output: a[0], preActivations, postActivations, dropoutMasks };
+  }
+
+  predict(input) {
+    return this.forward(input, false).output;
+  }
+
+  train(dataPoints) {
+    const lr = state.lr;
+    const act = activations[state.activation];
+    const batchSize = dataPoints.length;
+    if (batchSize === 0) return 0;
+
+    // Accumulate gradients
+    const gradW = this.weights.map(w => w.map(row => row.map(() => 0)));
+    const gradB = this.biases.map(b => b.map(() => 0));
+    let totalLoss = 0;
+
+    for (const dp of dataPoints) {
+      const input = getFeatures(dp.x);
+      const { output, preActivations, postActivations, dropoutMasks } = this.forward(input, true);
+      const target = dp.y;
+      const error = output - target;
+      totalLoss += error * error;
+
+      // Backprop
+      let deltas = [error]; // dL/dz for output layer
+
+      for (let l = this.numLayers - 1; l >= 0; l--) {
+        const prevAct = postActivations[l]; // activations of previous layer
+        // Accumulate gradients
+        for (let i = 0; i < deltas.length; i++) {
+          gradB[l][i] += deltas[i];
+          for (let j = 0; j < prevAct.length; j++) {
+            gradW[l][i][j] += deltas[i] * prevAct[j];
+          }
+        }
+
+        if (l > 0) {
+          // Compute deltas for previous layer
+          const newDeltas = new Array(this.layerSizes[l]).fill(0);
+          for (let j = 0; j < this.layerSizes[l]; j++) {
+            let sum = 0;
+            for (let i = 0; i < deltas.length; i++) {
+              sum += deltas[i] * this.weights[l][i][j];
+            }
+            // Activation derivative
+            const pre = preActivations[l][j];
+            newDeltas[j] = sum * act.dfn(pre);
+            // Dropout mask
+            if (dropoutMasks[l - 1] && dropoutMasks[l - 1][j] === 0) {
+              newDeltas[j] = 0;
+            } else if (dropoutMasks[l - 1] && state.dropout > 0) {
+              newDeltas[j] *= 1 / (1 - state.dropout);
+            }
+          }
+          deltas = newDeltas;
+        }
+      }
+    }
+
+    // Average gradients
+    for (let l = 0; l < this.numLayers; l++) {
+      for (let i = 0; i < gradW[l].length; i++) {
+        gradB[l][i] /= batchSize;
+        for (let j = 0; j < gradW[l][i].length; j++) {
+          gradW[l][i][j] /= batchSize;
+        }
+      }
+    }
+
+    const optType = state.optimizer;
+    const useL1Penalty = state.reg === 'l1' && state.regRate > 0;
+    const useL2Penalty = state.reg === 'l2' && state.regRate > 0 && optType !== 'adamw';
+    const useWeightDecay = state.reg === 'l2' && state.regRate > 0 && optType === 'adamw';
+
+    // Add regularization gradients
+    if (useL1Penalty) {
+      for (let l = 0; l < this.numLayers; l++) {
+        for (let i = 0; i < this.weights[l].length; i++) {
+          for (let j = 0; j < this.weights[l][i].length; j++) {
+            gradW[l][i][j] += state.regRate * Math.sign(this.weights[l][i][j]);
+          }
+        }
+      }
+    } else if (useL2Penalty) {
+      for (let l = 0; l < this.numLayers; l++) {
+        for (let i = 0; i < this.weights[l].length; i++) {
+          for (let j = 0; j < this.weights[l][i].length; j++) {
+            gradW[l][i][j] += 2 * state.regRate * this.weights[l][i][j];
+          }
+        }
+      }
+    }
+
+    // Apply optimizer
+    this.adamT++;
+
+    for (let l = 0; l < this.numLayers; l++) {
+      for (let i = 0; i < this.weights[l].length; i++) {
+        for (let j = 0; j < this.weights[l][i].length; j++) {
+          const g = gradW[l][i][j];
+          if (optType === 'sgd') {
+            this.weights[l][i][j] -= lr * g;
+          } else if (optType === 'adam' || optType === 'adamw') {
+            const beta1 = 0.9, beta2 = 0.999, eps = 1e-8;
+            this.mW[l][i][j] = beta1 * this.mW[l][i][j] + (1 - beta1) * g;
+            this.vW[l][i][j] = beta2 * this.vW[l][i][j] + (1 - beta2) * g * g;
+            const mHat = this.mW[l][i][j] / (1 - Math.pow(beta1, this.adamT));
+            const vHat = this.vW[l][i][j] / (1 - Math.pow(beta2, this.adamT));
+            this.weights[l][i][j] -= lr * mHat / (Math.sqrt(vHat) + eps);
+            // AdamW uses the L2 regularization rate as decoupled weight decay.
+            if (useWeightDecay) {
+              this.weights[l][i][j] -= lr * state.regRate * this.weights[l][i][j];
+            }
+          }
+        }
+        // Bias update
+        const gb = gradB[l][i];
+        if (optType === 'sgd') {
+          this.biases[l][i] -= lr * gb;
+        } else if (optType === 'adam' || optType === 'adamw') {
+          const beta1 = 0.9, beta2 = 0.999, eps = 1e-8;
+          this.mB[l][i] = beta1 * this.mB[l][i] + (1 - beta1) * gb;
+          this.vB[l][i] = beta2 * this.vB[l][i] + (1 - beta2) * gb * gb;
+          const mHat = this.mB[l][i] / (1 - Math.pow(beta1, this.adamT));
+          const vHat = this.vB[l][i] / (1 - Math.pow(beta2, this.adamT));
+          this.biases[l][i] -= lr * mHat / (Math.sqrt(vHat) + eps);
+        }
+      }
+    }
+
+    return totalLoss / batchSize;
+  }
+
+  computeLoss(dataPoints) {
+    if (dataPoints.length === 0) return 0;
+    let totalLoss = 0;
+    for (const dp of dataPoints) {
+      const input = getFeatures(dp.x);
+      const pred = this.predict(input);
+      totalLoss += (pred - dp.y) ** 2;
+    }
+    return totalLoss / dataPoints.length;
+  }
+
+  getAllWeights() {
+    const all = [];
+    for (let l = 0; l < this.numLayers; l++) {
+      for (const row of this.weights[l]) {
+        for (const w of row) all.push(w);
+      }
+    }
+    return all;
+  }
+}
+
+// ---- INITIALIZE NETWORK ----
+function initNetwork() {
+  const nIn = numFeatures();
+  const sizes = [nIn, ...state.hiddenLayers, 1];
+  // Use a separate rng for init
+  rng = new Math.seedrandom('nn-init-42');
+  network = new NeuralNetwork(sizes);
+  state.epoch = 0;
+  lossHistory = { train: [], test: [] };
+  updateEpochDisplay();
+}
+
+// ---- TRAINING STEP ----
+function trainStep() {
+  if (!network) return;
+  const loss = network.train(trainData);
+  state.epoch++;
+  if (state.epoch % 1 === 0) {
+    const trainLoss = network.computeLoss(trainData);
+    const testLoss = network.computeLoss(testData);
+    lossHistory.train.push(trainLoss);
+    lossHistory.test.push(testLoss);
+  }
+}
+
+// ---- COMPUTE LOSSES ----
+function getCurrentLosses() {
+  if (!network) return { train: 0, test: 0 };
+  return {
+    train: network.computeLoss(trainData),
+    test: network.computeLoss(testData),
+  };
+}
+
+// ============================================================
+// VISUALIZATION
+// ============================================================
+
+// ---- MAIN PLOT ----
+function drawMainPlot() {
+  const canvas = document.getElementById('canvas-main');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const margin = { top: 15, right: 15, bottom: 30, left: 45 };
+  const pw = W - margin.left - margin.right;
+  const ph = H - margin.top - margin.bottom;
+
+  // Compute y range
+  const allYs = [...trainData.map(d => d.y), ...testData.map(d => d.y)];
+  // Also sample the true function
+  const fn = targetFunctions[state.dataset];
+  for (let i = 0; i <= 100; i++) {
+    const x = xRange[0] + (xRange[1] - xRange[0]) * i / 100;
+    allYs.push(fn(x));
+  }
+  // Also sample predictions
+  if (network) {
+    for (let i = 0; i <= 100; i++) {
+      const x = xRange[0] + (xRange[1] - xRange[0]) * i / 100;
+      allYs.push(network.predict(getFeatures(x)));
+    }
+  }
+  let yMin = Math.min(...allYs) - 0.1;
+  let yMax = Math.max(...allYs) + 0.1;
+  // Clamp to reasonable range
+  yMin = Math.max(yMin, -5);
+  yMax = Math.min(yMax, 5);
+  if (yMax - yMin < 0.5) { yMin -= 0.25; yMax += 0.25; }
+
+  const xToPixel = x => margin.left + (x - xRange[0]) / (xRange[1] - xRange[0]) * pw;
+  const yToPixel = y => margin.top + (1 - (y - yMin) / (yMax - yMin)) * ph;
+
+  // Grid
+  ctx.strokeStyle = '#eee';
+  ctx.lineWidth = 1;
+  // Y grid
+  const yStep = niceStep(yMin, yMax, 6);
+  for (let y = Math.ceil(yMin / yStep) * yStep; y <= yMax; y += yStep) {
+    const py = yToPixel(y);
+    ctx.beginPath(); ctx.moveTo(margin.left, py); ctx.lineTo(W - margin.right, py); ctx.stroke();
+  }
+  // X grid
+  const xStep = niceStep(xRange[0], xRange[1], 6);
+  for (let x = Math.ceil(xRange[0] / xStep) * xStep; x <= xRange[1]; x += xStep) {
+    const px = xToPixel(x);
+    ctx.beginPath(); ctx.moveTo(px, margin.top); ctx.lineTo(px, H - margin.bottom); ctx.stroke();
+  }
+
+  // Axes
+  ctx.strokeStyle = '#999';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(margin.left, margin.top);
+  ctx.lineTo(margin.left, H - margin.bottom);
+  ctx.lineTo(W - margin.right, H - margin.bottom);
+  ctx.stroke();
+
+  // Axis labels
+  ctx.fillStyle = '#888';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'center';
+  for (let x = Math.ceil(xRange[0] / xStep) * xStep; x <= xRange[1]; x += xStep) {
+    ctx.fillText(x.toFixed(1), xToPixel(x), H - margin.bottom + 14);
+  }
+  ctx.textAlign = 'right';
+  for (let y = Math.ceil(yMin / yStep) * yStep; y <= yMax; y += yStep) {
+    ctx.fillText(y.toFixed(1), margin.left - 5, yToPixel(y) + 3);
+  }
+
+  // True function (gray dashed)
+  if (state.showTruth) {
+    ctx.strokeStyle = '#999';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    for (let i = 0; i <= 200; i++) {
+      const x = xRange[0] + (xRange[1] - xRange[0]) * i / 200;
+      const y = fn(x);
+      const px = xToPixel(x), py = yToPixel(y);
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Network prediction (black solid)
+  if (network) {
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let i = 0; i <= 200; i++) {
+      const x = xRange[0] + (xRange[1] - xRange[0]) * i / 200;
+      const pred = network.predict(getFeatures(x));
+      const px = xToPixel(x), py = yToPixel(pred);
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+  }
+
+  // Test data (red)
+  if (state.showTest) {
+    ctx.fillStyle = '#e74c3c';
+    for (const dp of testData) {
+      const px = xToPixel(dp.x), py = yToPixel(dp.y);
+      ctx.beginPath(); ctx.arc(px, py, 3.5, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  // Train data (blue)
+  ctx.fillStyle = '#0877bd';
+  for (const dp of trainData) {
+    const px = xToPixel(dp.x), py = yToPixel(dp.y);
+    ctx.beginPath(); ctx.arc(px, py, 4.5, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // Legend
+  ctx.font = '11px sans-serif';
+  const legendX = margin.left + 8, legendY = margin.top + 10;
+  ctx.fillStyle = '#0877bd';
+  ctx.beginPath(); ctx.arc(legendX, legendY, 4, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#333';
+  ctx.textAlign = 'left';
+  ctx.fillText(t('train'), legendX + 8, legendY + 3);
+
+  if (state.showTest) {
+    ctx.fillStyle = '#e74c3c';
+    ctx.beginPath(); ctx.arc(legendX + 50, legendY, 3.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#333';
+    ctx.fillText(t('test'), legendX + 58, legendY + 3);
+  }
+}
+
+function niceStep(min, max, maxTicks) {
+  const range = max - min;
+  const rough = range / maxTicks;
+  const pow = Math.pow(10, Math.floor(Math.log10(rough)));
+  const frac = rough / pow;
+  let nice;
+  if (frac <= 1.5) nice = 1;
+  else if (frac <= 3) nice = 2;
+  else if (frac <= 7) nice = 5;
+  else nice = 10;
+  return nice * pow;
+}
+
+// ---- LOSS CURVE ----
+function drawLossCurve() {
+  const canvas = document.getElementById('canvas-loss');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const margin = { top: 10, right: 15, bottom: 25, left: 50 };
+  const pw = W - margin.left - margin.right;
+  const ph = H - margin.top - margin.bottom;
+
+  const trainArr = lossHistory.train;
+  const testArr = lossHistory.test;
+  if (trainArr.length < 2) return;
+
+  const maxEpoch = trainArr.length;
+  const allVals = [...trainArr, ...testArr].filter(v => isFinite(v));
+  if (allVals.length === 0) return;
+  let maxLoss = Math.max(...allVals);
+  maxLoss = Math.min(maxLoss, 5); // Clamp
+  if (maxLoss < 0.01) maxLoss = 0.01;
+
+  const xToP = i => margin.left + (i / (maxEpoch - 1)) * pw;
+  const yToP = v => margin.top + (1 - Math.min(v, maxLoss) / maxLoss) * ph;
+
+  // Gap shading
+  ctx.fillStyle = 'rgba(245,147,34,0.1)';
+  ctx.beginPath();
+  for (let i = 0; i < maxEpoch; i++) {
+    const tst = testArr[i] || 0;
+    const trn = trainArr[i] || 0;
+    if (tst > trn) {
+      ctx.lineTo(xToP(i), yToP(tst));
+    } else {
+      ctx.lineTo(xToP(i), yToP(trn));
+    }
+  }
+  for (let i = maxEpoch - 1; i >= 0; i--) {
+    const tst = testArr[i] || 0;
+    const trn = trainArr[i] || 0;
+    if (tst > trn) {
+      ctx.lineTo(xToP(i), yToP(trn));
+    } else {
+      ctx.lineTo(xToP(i), yToP(tst));
+    }
+  }
+  ctx.closePath();
+  ctx.fill();
+
+  // Axes
+  ctx.strokeStyle = '#ccc';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(margin.left, margin.top);
+  ctx.lineTo(margin.left, H - margin.bottom);
+  ctx.lineTo(W - margin.right, H - margin.bottom);
+  ctx.stroke();
+
+  // Tick labels
+  ctx.fillStyle = '#888';
+  ctx.font = '9px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('0', margin.left, H - margin.bottom + 12);
+  ctx.fillText(maxEpoch.toString(), W - margin.right, H - margin.bottom + 12);
+  ctx.textAlign = 'right';
+  ctx.fillText('0', margin.left - 4, H - margin.bottom + 3);
+  ctx.fillText(maxLoss.toFixed(2), margin.left - 4, margin.top + 8);
+  ctx.textAlign = 'center';
+  ctx.fillText(t('epoch'), margin.left + pw / 2, H - margin.bottom + 18);
+
+  // Train loss line
+  ctx.strokeStyle = '#0877bd';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (let i = 0; i < maxEpoch; i++) {
+    const px = xToP(i), py = yToP(trainArr[i]);
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+
+  // Test loss line
+  ctx.strokeStyle = '#e74c3c';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (let i = 0; i < maxEpoch; i++) {
+    const px = xToP(i), py = yToP(testArr[i]);
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+
+  // Legend
+  ctx.font = '10px sans-serif';
+  const lx = margin.left + 10;
+  ctx.strokeStyle = '#0877bd'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(lx, margin.top + 6); ctx.lineTo(lx + 15, margin.top + 6); ctx.stroke();
+  ctx.fillStyle = '#333'; ctx.textAlign = 'left';
+  ctx.fillText(t('train'), lx + 18, margin.top + 10);
+
+  ctx.strokeStyle = '#e74c3c'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(lx + 50, margin.top + 6); ctx.lineTo(lx + 65, margin.top + 6); ctx.stroke();
+  ctx.fillStyle = '#333';
+  ctx.fillText(t('test'), lx + 68, margin.top + 10);
+}
+
+// ---- PARAMETER MAGNITUDE CHART ----
+function drawParamsChart() {
+  const canvas = document.getElementById('canvas-params');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  if (!network) return;
+  const allW = network.getAllWeights();
+  if (allW.length === 0) return;
+
+  // Sort by absolute value descending
+  const sorted = allW.map((w, i) => ({ w, abs: Math.abs(w) }));
+  sorted.sort((a, b) => b.abs - a.abs);
+
+  const margin = { top: 10, right: 15, bottom: 20, left: 45 };
+  const pw = W - margin.left - margin.right;
+  const ph = H - margin.top - margin.bottom;
+
+  const maxAbs = Math.max(sorted[0].abs, 0.1);
+  const barW = Math.max(1, pw / sorted.length);
+
+  for (let i = 0; i < sorted.length; i++) {
+    const { w, abs } = sorted[i];
+    const barH = (abs / maxAbs) * ph;
+    const x = margin.left + i * barW;
+    const y = margin.top + ph - barH;
+    ctx.fillStyle = w >= 0 ? '#0877bd' : '#e74c3c';
+    ctx.fillRect(x, y, Math.max(barW - 0.5, 1), barH);
+  }
+
+  // Axes
+  ctx.strokeStyle = '#ccc';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(margin.left, margin.top);
+  ctx.lineTo(margin.left, H - margin.bottom);
+  ctx.lineTo(W - margin.right, H - margin.bottom);
+  ctx.stroke();
+
+  ctx.fillStyle = '#888';
+  ctx.font = '9px sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText(maxAbs.toFixed(2), margin.left - 4, margin.top + 8);
+  ctx.fillText('0', margin.left - 4, H - margin.bottom + 3);
+  ctx.textAlign = 'center';
+  ctx.fillText('|' + t('weightDesc') + '|', margin.left + pw / 2, H - margin.bottom + 14);
+
+  // Legend
+  const lx = W - margin.right - 100;
+  ctx.fillStyle = '#0877bd';
+  ctx.fillRect(lx, margin.top + 2, 10, 8);
+  ctx.fillStyle = '#333'; ctx.textAlign = 'left'; ctx.font = '9px sans-serif';
+  ctx.fillText(t('pos'), lx + 13, margin.top + 9);
+  ctx.fillStyle = '#e74c3c';
+  ctx.fillRect(lx + 30, margin.top + 2, 10, 8);
+  ctx.fillStyle = '#333';
+  ctx.fillText(t('neg'), lx + 43, margin.top + 9);
+}
+
+// ---- LOSS INFO ----
+function updateLossInfo() {
+  const losses = getCurrentLosses();
+  document.getElementById('train-loss-val').textContent = losses.train.toFixed(4);
+  document.getElementById('test-loss-val').textContent = losses.test.toFixed(4);
+
+  const gap = Math.abs(losses.test - losses.train);
+  const gapEl = document.getElementById('gap-val');
+  gapEl.textContent = gap.toFixed(4);
+  gapEl.className = 'gap-indicator ' + (gap < 0.05 ? 'gap-green' : gap < 0.25 ? 'gap-yellow' : 'gap-red');
+}
+
+function updateEpochDisplay() {
+  document.getElementById('epoch-display').textContent = state.epoch;
+}
+
+// ============================================================
+// NETWORK SVG VISUALIZATION
+// ============================================================
+const RECT_SIZE = 34;
+const NODE_GAP = 10;
+
+function drawNetworkSVG() {
+  const svgEl = document.getElementById('network-svg');
+  const container = document.getElementById('network-svg-container');
+  const svgWidth = container.clientWidth || 400;
+  const svgHeight = container.clientHeight || 300;
+
+  // Clear
+  d3.select(svgEl).selectAll('*').remove();
+  const svg = d3.select(svgEl)
+    .attr('width', svgWidth)
+    .attr('height', svgHeight);
+
+  if (!network) return;
+
+  const featureLabels = getFeatureLabels();
+  const layers = [featureLabels.length, ...state.hiddenLayers, 1];
+  const numLayers = layers.length;
+
+  // Layer positions
+  const layerSpacing = svgWidth / (numLayers + 1);
+  const layerX = layers.map((_, i) => layerSpacing * (i + 0.5));
+
+  // Compute node positions
+  const nodePositions = []; // [layer][neuron] = {x, y}
+  for (let l = 0; l < numLayers; l++) {
+    const n = layers[l];
+    const totalH = n * RECT_SIZE + (n - 1) * NODE_GAP;
+    const startY = (svgHeight - totalH) / 2;
+    const positions = [];
+    for (let i = 0; i < n; i++) {
+      positions.push({
+        x: layerX[l],
+        y: startY + i * (RECT_SIZE + NODE_GAP) + RECT_SIZE / 2
+      });
+    }
+    nodePositions.push(positions);
+  }
+
+  // Draw connections
+  for (let l = 1; l < numLayers; l++) {
+    const wLayer = network.weights[l - 1]; // wLayer[to][from]
+    for (let to = 0; to < layers[l]; to++) {
+      for (let from = 0; from < layers[l - 1]; from++) {
+        const w = wLayer[to][from];
+        const absW = Math.abs(w);
+        const thickness = Math.min(Math.max(absW * 2, 0.5), 5);
+        let color;
+        if (absW < 0.05) color = '#ccc';
+        else if (w > 0) color = '#0877bd';
+        else color = '#e74c3c';
+
+        svg.append('line')
+          .attr('x1', nodePositions[l - 1][from].x + RECT_SIZE / 2)
+          .attr('y1', nodePositions[l - 1][from].y)
+          .attr('x2', nodePositions[l][to].x - RECT_SIZE / 2)
+          .attr('y2', nodePositions[l][to].y)
+          .attr('stroke', color)
+          .attr('stroke-width', thickness)
+          .attr('opacity', 0.6);
+      }
+    }
+  }
+
+  // Draw nodes
+  for (let l = 0; l < numLayers; l++) {
+    for (let i = 0; i < layers[l]; i++) {
+      const pos = nodePositions[l][i];
+      const g = svg.append('g')
+        .attr('transform', `translate(${pos.x - RECT_SIZE / 2}, ${pos.y - RECT_SIZE / 2})`);
+
+      // Node background
+      let fillColor = '#f0f0f0';
+      if (l === 0) {
+        fillColor = '#e3f2fd';
+      } else if (l === numLayers - 1) {
+        fillColor = '#fde8e8';
+      } else {
+        // Color based on average activation
+        fillColor = '#f5f5f5';
+      }
+
+      g.append('rect')
+        .attr('width', RECT_SIZE)
+        .attr('height', RECT_SIZE)
+        .attr('rx', 4)
+        .attr('ry', 4)
+        .attr('fill', fillColor)
+        .attr('stroke', '#aaa')
+        .attr('stroke-width', 1);
+
+      // Label inside node
+      let label = '';
+      if (l === 0) {
+        label = featureLabels[i];
+      } else if (l === numLayers - 1) {
+        label = 'y';
+      }
+
+      if (label) {
+        g.append('text')
+          .attr('x', RECT_SIZE / 2)
+          .attr('y', RECT_SIZE / 2 + 4)
+          .attr('text-anchor', 'middle')
+          .attr('font-size', '11px')
+          .attr('fill', '#555')
+          .text(label);
+      }
+
+      // Draw mini f(x) curve inside hidden nodes
+      if (l > 0 && l < numLayers - 1 && network) {
+        const pad = 3;
+        const pw = RECT_SIZE - pad * 2;
+        const ph = RECT_SIZE - pad * 2;
+        const nSamples = 16;
+        // Sample the neuron's output across input range
+        const vals = [];
+        for (let s = 0; s < nSamples; s++) {
+          const xVal = xRange[0] + (xRange[1] - xRange[0]) * s / (nSamples - 1);
+          const input = getFeatures(xVal);
+          const { postActivations } = network.forward(input, false);
+          vals.push(postActivations[l][i]);
+        }
+        // Compute y-range for scaling
+        let vMin = Math.min(...vals), vMax = Math.max(...vals);
+        if (Math.abs(vMax - vMin) < 1e-6) { vMin -= 0.5; vMax += 0.5; }
+        // Build SVG path
+        let pathD = '';
+        for (let s = 0; s < nSamples; s++) {
+          const px = pad + (s / (nSamples - 1)) * pw;
+          const py = pad + (1 - (vals[s] - vMin) / (vMax - vMin)) * ph;
+          pathD += (s === 0 ? 'M' : 'L') + px.toFixed(1) + ',' + py.toFixed(1);
+        }
+        // Zero line if range crosses zero
+        if (vMin < 0 && vMax > 0) {
+          const zeroY = pad + (1 - (0 - vMin) / (vMax - vMin)) * ph;
+          g.append('line')
+            .attr('x1', pad).attr('x2', pad + pw)
+            .attr('y1', zeroY).attr('y2', zeroY)
+            .attr('stroke', '#ccc').attr('stroke-width', 0.5);
+        }
+        g.append('path')
+          .attr('d', pathD)
+          .attr('fill', 'none')
+          .attr('stroke', '#0877bd')
+          .attr('stroke-width', 1.5)
+          .attr('stroke-linecap', 'round');
+      }
+    }
+  }
+
+  // Layer labels
+  // Input
+  svg.append('text')
+    .attr('x', layerX[0])
+    .attr('y', 18)
+    .attr('text-anchor', 'middle')
+    .attr('font-size', '11px')
+    .attr('fill', '#888')
+    .text(t('input'));
+
+  // Hidden layers
+  for (let l = 1; l < numLayers - 1; l++) {
+    svg.append('text')
+      .attr('x', layerX[l])
+      .attr('y', 18)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '11px')
+      .attr('fill', '#888')
+      .text(t('hiddenN') + l);
+
+    // Neuron count label + buttons below the last node
+    const lastNodeY = nodePositions[l][nodePositions[l].length - 1].y + RECT_SIZE / 2 + 10;
+    const btnW = 18, btnH = 16, btnGap = 4;
+    const totalCtrlW = btnW + btnGap + btnW; // minus + gap + plus
+
+    // Neuron count label (centered)
+    svg.append('text')
+      .attr('x', layerX[l])
+      .attr('y', lastNodeY + 11)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '10px')
+      .attr('fill', '#888')
+      .text(t('nNeurons').replace('{n}', state.hiddenLayers[l - 1]));
+
+    // Minus button (left side, below the label)
+    const btnRowY = lastNodeY + 18;
+    const minusG = svg.append('g')
+      .attr('class', 'neuron-btn')
+      .attr('transform', `translate(${layerX[l] - totalCtrlW / 2}, ${btnRowY})`)
+      .style('cursor', 'pointer')
+      .on('click', () => changeNeurons(l - 1, -1));
+    minusG.append('rect').attr('width', btnW).attr('height', btnH).attr('rx', 3).attr('fill', '#e8e8e8').attr('stroke', '#bbb');
+    minusG.append('text').attr('x', btnW / 2).attr('y', btnH - 3).attr('text-anchor', 'middle').attr('font-size', '13px').attr('fill', '#666').text('−');
+
+    // Plus button (right side, next to minus)
+    const plusG = svg.append('g')
+      .attr('class', 'neuron-btn')
+      .attr('transform', `translate(${layerX[l] - totalCtrlW / 2 + btnW + btnGap}, ${btnRowY})`)
+      .style('cursor', 'pointer')
+      .on('click', () => changeNeurons(l - 1, 1));
+    plusG.append('rect').attr('width', btnW).attr('height', btnH).attr('rx', 3).attr('fill', '#e8e8e8').attr('stroke', '#bbb');
+    plusG.append('text').attr('x', btnW / 2).attr('y', btnH - 3).attr('text-anchor', 'middle').attr('font-size', '13px').attr('fill', '#666').text('+');
+  }
+
+  // Output
+  svg.append('text')
+    .attr('x', layerX[numLayers - 1])
+    .attr('y', 18)
+    .attr('text-anchor', 'middle')
+    .attr('font-size', '11px')
+    .attr('fill', '#888')
+    .text(t('output'));
+}
+
+function changeNeurons(layerIdx, delta) {
+  const newVal = state.hiddenLayers[layerIdx] + delta;
+  if (newVal < 1 || newVal > 8) return;
+  state.hiddenLayers[layerIdx] = newVal;
+  resetAll();
+}
+
+// ============================================================
+// CONTROLS
+// ============================================================
+
+function resetAll() {
+  state.playing = false;
+  document.getElementById('btn-play').textContent = '▶';
+  document.getElementById('btn-play').classList.remove('playing');
+  if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
+  generateData();
+  initNetwork();
+  updateAllVisuals();
+}
+
+function updateAllVisuals() {
+  drawMainPlot();
+  drawLossCurve();
+  drawParamsChart();
+  updateLossInfo();
+  updateEpochDisplay();
+  drawNetworkSVG();
+}
+
+function syncStateFromUI() {
+  state.lr = parseFloat(document.getElementById('sel-lr').value);
+  state.activation = document.getElementById('sel-activation').value;
+  state.reg = document.getElementById('sel-reg').value;
+  state.regRate = parseFloat(document.getElementById('sel-reg-rate').value);
+  state.optimizer = document.getElementById('sel-optimizer').value;
+  state.dropout = parseFloat(document.getElementById('sel-dropout').value);
+  state.noise = parseInt(document.getElementById('slider-noise').value);
+  state.trainRatio = parseInt(document.getElementById('slider-ratio').value);
+  state.numPoints = parseInt(document.getElementById('slider-npoints').value);
+  state.features.x2 = document.getElementById('feat-x2').checked;
+  state.features.x3 = document.getElementById('feat-x3').checked;
+  state.features.sinx = document.getElementById('feat-sinx').checked;
+  state.showTest = document.getElementById('chk-test').checked;
+  state.showTruth = document.getElementById('chk-truth').checked;
+}
+
+function setUIFromState() {
+  document.getElementById('sel-lr').value = state.lr;
+  document.getElementById('sel-activation').value = state.activation;
+  document.getElementById('sel-reg').value = state.reg;
+  document.getElementById('sel-reg-rate').value = state.regRate;
+  document.getElementById('sel-optimizer').value = state.optimizer;
+  document.getElementById('sel-dropout').value = state.dropout;
+  document.getElementById('slider-noise').value = state.noise;
+  document.getElementById('slider-ratio').value = state.trainRatio;
+  document.getElementById('slider-npoints').value = state.numPoints;
+  document.getElementById('noise-val').textContent = state.noise;
+  document.getElementById('ratio-val').textContent = state.trainRatio + '%';
+  document.getElementById('npoints-val').textContent = state.numPoints;
+  document.getElementById('feat-x2').checked = state.features.x2;
+  document.getElementById('feat-x3').checked = state.features.x3;
+  document.getElementById('feat-sinx').checked = state.features.sinx;
+  document.getElementById('chk-test').checked = state.showTest;
+  document.getElementById('chk-truth').checked = state.showTruth;
+  document.getElementById('layer-count').textContent = state.hiddenLayers.length;
+
+  // Dataset buttons
+  document.querySelectorAll('.dataset-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.fn === state.dataset);
+  });
+}
+
+// ---- ANIMATION LOOP ----
+function animationLoop() {
+  if (!state.playing) return;
+  const stepsPerFrame = 30;
+  for (let i = 0; i < stepsPerFrame; i++) {
+    trainStep();
+  }
+  drawMainPlot();
+  drawLossCurve();
+  updateLossInfo();
+  updateEpochDisplay();
+  if (state.epoch % 60 === 0) {
+    drawParamsChart();
+    drawNetworkSVG();
+  }
+  animFrameId = requestAnimationFrame(animationLoop);
+}
+
+function togglePlay() {
+  state.playing = !state.playing;
+  const btn = document.getElementById('btn-play');
+  if (state.playing) {
+    btn.textContent = '⏸';
+    btn.classList.add('playing');
+    animFrameId = requestAnimationFrame(animationLoop);
+  } else {
+    btn.textContent = '▶';
+    btn.classList.remove('playing');
+    if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
+  }
+}
+
+function stepOnce() {
+  for (let i = 0; i < 30; i++) trainStep();
+  updateAllVisuals();
+}
+
+// ---- EVENT LISTENERS ----
+document.getElementById('btn-play').addEventListener('click', togglePlay);
+document.getElementById('btn-step').addEventListener('click', stepOnce);
+document.getElementById('btn-reset').addEventListener('click', resetAll);
+
+// Language toggle
+document.getElementById('btn-lang').addEventListener('click', () => {
+  lang = lang === 'zh' ? 'en' : 'zh';
+  applyI18N();
+});
+
+// Layer +/-
+document.getElementById('btn-layer-plus').addEventListener('click', () => {
+  if (state.hiddenLayers.length < 4) {
+    state.hiddenLayers.push(4);
+    document.getElementById('layer-count').textContent = state.hiddenLayers.length;
+    resetAll();
+  }
+});
+document.getElementById('btn-layer-minus').addEventListener('click', () => {
+  if (state.hiddenLayers.length > 1) {
+    state.hiddenLayers.pop();
+    document.getElementById('layer-count').textContent = state.hiddenLayers.length;
+    resetAll();
+  }
+});
+
+// Sliders
+document.getElementById('slider-noise').addEventListener('input', e => {
+  document.getElementById('noise-val').textContent = e.target.value;
+});
+document.getElementById('slider-ratio').addEventListener('input', e => {
+  document.getElementById('ratio-val').textContent = e.target.value + '%';
+});
+document.getElementById('slider-npoints').addEventListener('input', e => {
+  document.getElementById('npoints-val').textContent = e.target.value;
+});
+// Slider changes trigger reset
+['slider-noise', 'slider-ratio', 'slider-npoints'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    syncStateFromUI();
+    resetAll();
+  });
+});
+
+// Feature checkboxes
+['feat-x2', 'feat-x3', 'feat-sinx'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    syncStateFromUI();
+    resetAll();
+  });
+});
+
+// Dropdowns that don't need reset (affect training only)
+['sel-lr', 'sel-activation', 'sel-reg', 'sel-reg-rate', 'sel-optimizer', 'sel-dropout'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    syncStateFromUI();
+  });
+});
+
+// Activation change needs network reset
+document.getElementById('sel-activation').addEventListener('change', () => {
+  syncStateFromUI();
+  resetAll();
+});
+
+// Display toggles
+['chk-test', 'chk-truth'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    syncStateFromUI();
+    drawMainPlot();
+  });
+});
+
+// Dataset buttons
+document.querySelectorAll('.dataset-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    state.dataset = btn.dataset.fn;
+    document.querySelectorAll('.dataset-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    resetAll();
+  });
+});
+
+// ---- PRESETS ----
+const presets = {
+  overfit: {
+    dataset: 'sin', noise: 30, numPoints: 25, trainRatio: 40,
+    hiddenLayers: [8, 8], lr: 0.0005, activation: 'tanh', reg: 'none', regRate: 0,
+    optimizer: 'adam', dropout: 0,
+    features: { x: true, x2: false, x3: false, sinx: false }
+  },
+  l2: {
+    dataset: 'sin', noise: 30, numPoints: 25, trainRatio: 40,
+    hiddenLayers: [8, 8], lr: 0.0005, activation: 'tanh', reg: 'l2', regRate: 0.001,
+    optimizer: 'adam', dropout: 0,
+    features: { x: true, x2: false, x3: false, sinx: false }
+  },
+  l1: {
+    dataset: 'sin', noise: 30, numPoints: 25, trainRatio: 40,
+    hiddenLayers: [8, 8], lr: 0.0005, activation: 'tanh', reg: 'l1', regRate: 0.0003,
+    optimizer: 'adam', dropout: 0,
+    features: { x: true, x2: false, x3: false, sinx: false }
+  },
+  dropout: {
+    dataset: 'sin', noise: 30, numPoints: 25, trainRatio: 40,
+    hiddenLayers: [8, 8], lr: 0.0005, activation: 'tanh', reg: 'none', regRate: 0,
+    optimizer: 'adam', dropout: 0.1,
+    features: { x: true, x2: false, x3: false, sinx: false }
+  },
+  good: {
+    dataset: 'sin', noise: 10, numPoints: 60, trainRatio: 60,
+    hiddenLayers: [4, 4], lr: 0.0005, activation: 'tanh', reg: 'l2', regRate: 0.001,
+    optimizer: 'adam', dropout: 0,
+    features: { x: true, x2: false, x3: false, sinx: false }
+  },
+};
+
+document.querySelectorAll('.btn-preset').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const preset = presets[btn.dataset.preset];
+    if (!preset) return;
+    // Highlight active
+    document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    Object.assign(state, JSON.parse(JSON.stringify(preset)));
+    setUIFromState();
+    resetAll();
+    // Auto-play
+    if (!state.playing) togglePlay();
+  });
+});
+
+// ---- WINDOW RESIZE ----
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    drawNetworkSVG();
+  }, 200);
+});
+
+// ---- INIT ----
+applyI18N(false);
+syncStateFromUI();
+generateData();
+initNetwork();
+updateAllVisuals();
+</script></body>
+</html>

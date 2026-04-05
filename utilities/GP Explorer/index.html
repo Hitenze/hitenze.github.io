@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GP · MCMC · HMC 交互式探索</title>
+  <!-- Fonts -->
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <link rel="stylesheet" href="./base.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <!-- Skip link -->
+  <a href="#main" class="sr-only" style="position:absolute;top:0;left:0;z-index:999;background:var(--color-primary);color:#fff;padding:8px 16px;" data-i18n="skip-link">跳转到内容</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo" aria-label="GP Explorer">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+          <path d="M6 20 Q11 8, 16 16 Q21 24, 26 12" stroke="var(--color-accent)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <circle cx="11" cy="14" r="2" fill="var(--color-accent)" opacity="0.6"/>
+          <circle cx="16" cy="16" r="2" fill="var(--color-accent)"/>
+          <circle cx="21" cy="18" r="2" fill="var(--color-accent)" opacity="0.6"/>
+        </svg>
+        <span class="logo-text">GP Explorer</span>
+      </div>
+      <div class="header-actions">
+        <button class="lang-toggle" id="lang-toggle" aria-label="Switch language">
+          <span class="lang-label" id="lang-label">中</span>
+        </button>
+        <button data-theme-toggle aria-label="切换深色/浅色模式">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-inner">
+        <p class="hero-eyebrow" data-i18n="hero-eyebrow">交互式教学</p>
+        <h1 data-i18n="hero-title" data-i18n-html="true">理解 Gaussian Process<br>从先验到后验</h1>
+        <p class="hero-sub" data-i18n="hero-sub">从高斯过程的核心直觉出发，逐步理解 MCMC 如何采样后验分布，以及 HMC 如何利用物理动力学加速探索。每一步都有可视化演示。</p>
+      </div>
+    </section>
+
+    <!-- Tabs -->
+    <section class="tabs-section">
+      <div class="tabs-container">
+        <nav class="tab-nav" role="tablist" aria-label="主题选择">
+          <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-gp" id="tab-gp" data-tab="gp">
+            <span class="tab-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20 Q8 4, 12 12 Q16 20, 21 6"/></svg>
+            </span>
+            <span data-i18n="tab-gp">高斯过程 (GP)</span>
+          </button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-mcmc" id="tab-mcmc" data-tab="mcmc">
+            <span class="tab-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="18" r="2"/><circle cx="12" cy="8" r="2"/><circle cx="18" cy="14" r="2"/><path d="M6 18 L12 8 L18 14" stroke-dasharray="3 3"/></svg>
+            </span>
+            GP + MCMC
+          </button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-hmc" id="tab-hmc" data-tab="hmc">
+            <span class="tab-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 4 C16 8, 16 16, 12 20" stroke-dasharray="2 2"/><path d="M8 6 L16 18" stroke-width="2.5" stroke="var(--color-accent)"/></svg>
+            </span>
+            GP + HMC
+          </button>
+        </nav>
+
+        <!-- GP Panel -->
+        <div class="tab-panel active" role="tabpanel" id="panel-gp" aria-labelledby="tab-gp">
+          <div class="panel-grid">
+            <div class="panel-text">
+              <h2 data-i18n="gp-title">什么是高斯过程？</h2>
+              <p data-i18n="gp-intro" data-i18n-html="true">高斯过程是函数空间上的概率分布。给定任意有限个输入点 \(x_1, \ldots, x_n\)，对应的函数值 \(f(x_1), \ldots, f(x_n)\) 服从一个多元正态分布：</p>
+              <div class="math-block">
+                $$f(\mathbf{x}) \sim \mathcal{GP}\big(m(\mathbf{x}),\, k(\mathbf{x}, \mathbf{x}')\big)$$
+              </div>
+              <p data-i18n="gp-kernel-explain" data-i18n-html="true">其中 \(m(\mathbf{x})\) 为均值函数，\(k(\mathbf{x}, \mathbf{x}')\) 为核函数（协方差函数）。核函数编码了我们对函数平滑性、周期性等先验信念。</p>
+
+              <h3 data-i18n="gp-kernel-family">核函数家族</h3>
+              <div class="kernel-cards">
+                <div class="kernel-card" data-kernel="rbf">
+                  <h4>RBF (SE)</h4>
+                  <p class="kernel-formula">$$k(x,x') = \sigma^2 \exp\!\Big(-\frac{(x-x')^2}{2\ell^2}\Big)$$</p>
+                  <p class="kernel-desc" data-i18n="kernel-rbf-desc">无限可微，产生极其平滑的函数样本</p>
+                </div>
+                <div class="kernel-card" data-kernel="matern">
+                  <h4>Matérn 3/2</h4>
+                  <p class="kernel-formula">$$k(x,x') = \sigma^2\Big(1+\frac{\sqrt{3}|x-x'|}{\ell}\Big)\exp\!\Big(-\frac{\sqrt{3}|x-x'|}{\ell}\Big)$$</p>
+                  <p class="kernel-desc" data-i18n="kernel-matern-desc">一阶可微，更适合金融数据等不要求无限光滑的场景</p>
+                </div>
+                <div class="kernel-card" data-kernel="periodic">
+                  <h4>Periodic</h4>
+                  <p class="kernel-formula">$$k(x,x') = \sigma^2 \exp\!\Big(-\frac{2\sin^2(\pi|x-x'|/p)}{\ell^2}\Big)$$</p>
+                  <p class="kernel-desc" data-i18n="kernel-periodic-desc">捕捉周期性结构，可在本页手动调节周期 \(p\)</p>
+                </div>
+              </div>
+
+              <h3 data-i18n="gp-prior-to-posterior">先验到后验</h3>
+              <p data-i18n="gp-posterior-intro" data-i18n-html="true">观察到数据 \(\mathcal{D} = \{(\mathbf{X}, \mathbf{y})\}\) 后，GP 后验预测为：</p>
+              <div class="math-block">
+                $$\mu_* = \mathbf{K}_{*f} [\mathbf{K}_{ff} + \sigma_n^2 \mathbf{I}]^{-1} \mathbf{y}$$
+              </div>
+              <div class="math-block">
+                $$\Sigma_* = \mathbf{K}_{**} - \mathbf{K}_{*f} [\mathbf{K}_{ff} + \sigma_n^2 \mathbf{I}]^{-1} \mathbf{K}_{f*}$$
+              </div>
+              <p data-i18n="gp-posterior-explain">这个更新过程就是贝叶斯推断的精髓：先验 + 数据 → 后验。右侧的可视化展示了 GP 先验样本和加入观测点后的后验更新。</p>
+
+              <div class="callout">
+                <strong data-i18n="gp-callout-title">计算瓶颈</strong><span data-i18n="gp-callout-body" data-i18n-html="true">：矩阵求逆 \([\mathbf{K}_{ff} + \sigma_n^2 \mathbf{I}]^{-1}\) 的复杂度为 \(\mathcal{O}(n^3)\)，这是 GP 面对大数据集时的核心挑战。</span>
+              </div>
+            </div>
+            <div class="panel-viz">
+              <div class="viz-controls">
+                <label><span data-i18n="ctrl-kernel">核函数</span>:
+                  <select id="kernel-select">
+                    <option value="rbf" selected>RBF (SE)</option>
+                    <option value="matern">Matérn 3/2</option>
+                    <option value="periodic">Periodic</option>
+                  </select>
+                </label>
+                <label><span data-i18n="ctrl-lengthscale">长度尺度</span> ℓ:
+                  <input type="range" id="lengthscale" min="0.1" max="3" step="0.1" value="1">
+                  <span id="ls-val">1.0</span>
+                </label>
+                <label id="period-control" hidden><span data-i18n="ctrl-period">周期</span> p:
+                  <input type="range" id="period" min="0.5" max="4" step="0.1" value="2">
+                  <span id="period-val">2.0</span>
+                </label>
+                <button class="btn-sample" id="btn-gp-sample" data-i18n="btn-resample">重新采样</button>
+                <button class="btn-sample btn-secondary" id="btn-gp-toggle" data-i18n="btn-show-posterior">显示后验</button>
+                <button class="btn-sample btn-danger" id="btn-gp-clear" data-i18n="btn-clear-obs">清除观测点</button>
+              </div>
+              <canvas id="gp-canvas" width="600" height="400"></canvas>
+              <p class="viz-caption" data-i18n="gp-viz-caption">点击画布添加观测点，切换「显示后验」查看 GP 如何更新预测</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- MCMC Panel -->
+        <div class="tab-panel" role="tabpanel" id="panel-mcmc" aria-labelledby="tab-mcmc" hidden>
+          <div class="panel-grid">
+            <div class="panel-text">
+              <h2 data-i18n="mcmc-title">MCMC：从后验分布中采样</h2>
+              <p data-i18n="mcmc-intro" data-i18n-html="true">当 GP 的超参数后验无法解析求解时，我们先做正参数变换，令 \(z=(\log \ell, \log \sigma_f)\)，再在 \(z\)-空间上使用 MCMC 采样；这等价于在原始正参数上使用对数正态先验。</p>
+
+              <h3 data-i18n="mcmc-mh-title">Metropolis-Hastings 算法</h3>
+              <div class="algo-steps">
+                <div class="algo-step">
+                  <span class="step-num">1</span>
+                  <div>
+                    <strong data-i18n="mcmc-step1-title">提议</strong><span data-i18n="mcmc-step1-body" data-i18n-html="true">：从当前状态 \(z_t\)，按提议分布 \(q(z' | z_t)\) 生成候选 \(z'\)</span>
+                  </div>
+                </div>
+                <div class="algo-step">
+                  <span class="step-num">2</span>
+                  <div>
+                    <strong data-i18n="mcmc-step2-title">计算接受率</strong><span data-i18n="mcmc-step2-body">：</span>
+                    <div class="math-block">$$\alpha = \min\!\Bigg(1,\; \frac{p(z'|\mathcal{D})\, q(z_t|z')}{p(z_t|\mathcal{D})\, q(z'|z_t)}\Bigg)$$</div>
+                  </div>
+                </div>
+                <div class="algo-step">
+                  <span class="step-num">3</span>
+                  <div>
+                    <strong data-i18n="mcmc-step3-title">接受/拒绝</strong><span data-i18n="mcmc-step3-body" data-i18n-html="true">：以概率 \(\alpha\) 接受 \(z'\)，否则保持 \(z_t\)</span>
+                  </div>
+                </div>
+              </div>
+
+              <h3 data-i18n="mcmc-curse-title">关键问题：随机游走的诅咒</h3>
+              <p data-i18n="mcmc-curse-intro" data-i18n-html="true">标准 MCMC（Random Walk MH）在高维空间中效率极低。步长必须与 \(d^{-1/2}\) 成比例缩小以维持合理的接受率（最优约 23.4%），导致：</p>
+              <ul class="styled-list">
+                <li data-i18n="mcmc-curse-li1" data-i18n-html="true">混合时间随维度 \(d\) 以 \(\mathcal{O}(d^2)\) 增长</li>
+                <li data-i18n="mcmc-curse-li2">链在目标分布的局部区域「随机游走」，难以快速遍历整个分布</li>
+                <li data-i18n="mcmc-curse-li3">自相关性高，有效样本量（ESS）低</li>
+              </ul>
+
+              <h3 data-i18n="mcmc-diag-title">收敛诊断</h3>
+              <div class="metric-row">
+                <div class="metric">
+                  <span class="metric-label">\(\hat{R}\) (Gelman-Rubin)</span>
+                  <span class="metric-value">&lt; 1.01</span>
+                  <span class="metric-desc" data-i18n="mcmc-metric-rhat">多链收敛指标</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">ESS</span>
+                  <span class="metric-value" data-i18n="mcmc-metric-ess-val">&gt; 100/链</span>
+                  <span class="metric-desc" data-i18n="mcmc-metric-ess">有效样本量</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label" data-i18n="mcmc-metric-accept-label">接受率</span>
+                  <span class="metric-value">~23.4%</span>
+                  <span class="metric-desc" data-i18n="mcmc-metric-accept">MH 最优接受率</span>
+                </div>
+              </div>
+
+              <div class="callout">
+                <strong data-i18n="mcmc-callout-title">为什么需要 HMC？</strong><span data-i18n="mcmc-callout-body" data-i18n-html="true"> 在 GP 超参数推断中，参数空间通常是数十到数百维。MCMC 的 \(\mathcal{O}(d^2)\) 混合时间使其效率极低——这正是 HMC 要解决的问题。</span>
+              </div>
+            </div>
+            <div class="panel-viz">
+              <div class="viz-controls">
+                <label><span data-i18n="ctrl-step-size">步长</span> σ:
+                  <input type="range" id="mcmc-sigma" min="0.05" max="1.5" step="0.05" value="0.3">
+                  <span id="mcmc-sigma-val">0.30</span>
+                </label>
+                <label><span data-i18n="ctrl-num-samples">采样数</span>:
+                  <input type="range" id="mcmc-steps" min="50" max="500" step="50" value="200">
+                  <span id="mcmc-steps-val">200</span>
+                </label>
+                <button class="btn-sample" id="btn-mcmc-run" data-i18n="btn-run-mcmc">运行 MCMC</button>
+              </div>
+              <p class="viz-label" data-i18n="viz-label-hyperparam">超参数空间 (ℓ, σ<sub>f</sub>)</p>
+              <canvas id="mcmc-canvas" width="600" height="300"></canvas>
+              <div class="viz-stats" id="mcmc-stats"></div>
+              <p class="viz-note" id="mcmc-impl-note">实现说明：采样在 z = (log ℓ, log σ_f) 空间进行，并以原始 (ℓ, σ_f) 坐标显示轨迹。</p>
+              <p class="viz-label" data-i18n="viz-label-gp-live">当前超参数对应的 GP 后验</p>
+              <canvas id="mcmc-gp-canvas" width="600" height="250"></canvas>
+              <p class="viz-caption" data-i18n="mcmc-viz-caption">在 GP 超参数后验上运行 MH 采样——实际采样在 \(z=(\log \ell, \log \sigma_f)\) 空间完成，上图仅把样本映射回 \((\ell, \sigma_f)\) 坐标显示</p>
+              <div class="callout callout-warn" id="mcmc-no-data" data-i18n="mcmc-no-data" style="margin-top:var(--space-3)">请先在「高斯过程」Tab 中点击画布添加至少 2 个观测点，然后回到此页运行采样。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HMC Panel -->
+        <div class="tab-panel" role="tabpanel" id="panel-hmc" aria-labelledby="tab-hmc" hidden>
+          <div class="panel-grid">
+            <div class="panel-text">
+              <h2 data-i18n="hmc-title">HMC：物理直觉驱动的高效采样</h2>
+              <p data-i18n="hmc-intro">Hamiltonian Monte Carlo (HMC) 借用经典力学的哈密顿动力学，把 MCMC 采样变成一个物理系统的模拟。本演示在 \(z=(\log \ell, \log \sigma_f)\) 空间中运行 HMC。核心思想：</p>
+
+              <div class="analogy-box">
+                <div class="analogy-icon">🏒</div>
+                <div>
+                  <strong data-i18n="hmc-analogy-title">冰球类比</strong><span data-i18n="hmc-analogy-body" data-i18n-html="true">：想象在一个地形上滑动冰球——地形的高度对应负对数后验密度 \(-\log p(z|\mathcal{D})\)。冰球的动量帮助它爬坡越谷，高效地探索整个地形。</span>
+                </div>
+              </div>
+
+              <h3 data-i18n="hmc-hamilton-title">哈密顿方程</h3>
+              <p data-i18n="hmc-hamilton-intro" data-i18n-html="true">引入辅助动量变量 \(\mathbf{p}\)，定义哈密顿量：</p>
+              <div class="math-block">
+                $$H(z, \mathbf{p}) = U(z) + K(\mathbf{p}) = -\log p(z|\mathcal{D}) + \frac{1}{2}\mathbf{p}^T \mathbf{M}^{-1} \mathbf{p}$$
+              </div>
+              <p data-i18n="hmc-hamilton-evolve">系统按哈密顿方程演化：</p>
+              <div class="math-block">
+                $$\frac{dz}{dt} = \frac{\partial H}{\partial \mathbf{p}} = \mathbf{M}^{-1}\mathbf{p}, \qquad \frac{d\mathbf{p}}{dt} = -\frac{\partial H}{\partial z} = -\nabla U(z)$$
+              </div>
+
+              <h3 data-i18n="hmc-leapfrog-title">Leapfrog 积分器</h3>
+              <div class="algo-steps">
+                <div class="algo-step">
+                  <span class="step-num">1</span>
+                  <div>
+                    <strong data-i18n="hmc-step1-title">半步动量更新</strong><span data-i18n="hmc-step1-body" data-i18n-html="true">：\(\mathbf{p}_{t+\epsilon/2} = \mathbf{p}_t - \frac{\epsilon}{2}\nabla U(z_t)\)</span>
+                  </div>
+                </div>
+                <div class="algo-step">
+                  <span class="step-num">2</span>
+                  <div>
+                    <strong data-i18n="hmc-step2-title">全步位置更新</strong><span data-i18n="hmc-step2-body" data-i18n-html="true">：\(z_{t+\epsilon} = z_t + \epsilon\, \mathbf{M}^{-1}\mathbf{p}_{t+\epsilon/2}\)</span>
+                  </div>
+                </div>
+                <div class="algo-step">
+                  <span class="step-num">3</span>
+                  <div>
+                    <strong data-i18n="hmc-step3-title">半步动量更新</strong><span data-i18n="hmc-step3-body" data-i18n-html="true">：\(\mathbf{p}_{t+\epsilon} = \mathbf{p}_{t+\epsilon/2} - \frac{\epsilon}{2}\nabla U(z_{t+\epsilon})\)</span>
+                  </div>
+                </div>
+              </div>
+              <p data-i18n="hmc-leapfrog-explain" data-i18n-html="true">重复 \(L\) 步后，用 Metropolis 准则接受/拒绝。Leapfrog 的辛性质（symplectic property）保证了哈密顿量近似守恒，使接受率极高。</p>
+
+              <h3 data-i18n="hmc-compare-title">HMC vs MCMC 核心对比</h3>
+              <div class="comparison-table-wrapper">
+              <table class="comparison-table">
+                <thead>
+                  <tr><th></th><th>Random Walk MH</th><th>HMC</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td data-i18n="hmc-row-proposal">提议机制</td><td data-i18n="hmc-row-proposal-mh">随机扰动（各向同性）</td><td data-i18n="hmc-row-proposal-hmc">沿梯度的确定性轨迹</td></tr>
+                  <tr><td data-i18n="hmc-row-mixing">混合速度</td><td>\(\mathcal{O}(d^2)\)</td><td>\(\mathcal{O}(d^{5/4})\)</td></tr>
+                  <tr><td data-i18n="hmc-row-accept">最优接受率</td><td>~23.4%</td><td>~65%</td></tr>
+                  <tr><td data-i18n="hmc-row-gradient">梯度需求</td><td data-i18n="hmc-row-gradient-mh">不需要</td><td data-i18n="hmc-row-gradient-hmc" data-i18n-html="true">需要 \(\nabla \log p(z)\)</td></tr>
+                  <tr><td data-i18n="hmc-row-highdim">高维表现</td><td data-i18n="hmc-row-highdim-mh">灾难性退化</td><td data-i18n="hmc-row-highdim-hmc">扩展性良好</td></tr>
+                </tbody>
+              </table>
+              </div>
+
+              <h3 data-i18n="hmc-nuts-title">NUTS：自适应 HMC</h3>
+              <p data-i18n="hmc-nuts-body" data-i18n-html="true">No-U-Turn Sampler (NUTS) 自动调节轨迹长度 \(L\)，通过检测 U-turn 条件 \(\mathbf{p} \cdot (z - z_0) &lt; 0\) 避免不必要的计算。Stan、PyMC、NumPyro 均默认使用 NUTS。</p>
+
+              <div class="callout callout-success">
+                <strong data-i18n="hmc-callout-title">GP + HMC 的完美组合</strong><span data-i18n="hmc-callout-body" data-i18n-html="true">：在 GP 超参数推断中，边际似然对核超参数的导数可解析计算。本演示直接用解析梯度来更新 \(z=(\log \ell, \log \sigma_f)\) 的 HMC 轨迹；若当前核为 periodic，则 \(p\) 固定为当前设置值。</span>
+              </div>
+            </div>
+            <div class="panel-viz">
+              <div class="viz-controls">
+                <label><span data-i18n="ctrl-step-size">步长</span> ε:
+                  <input type="range" id="hmc-eps" min="0.01" max="0.3" step="0.01" value="0.08">
+                  <span id="hmc-eps-val">0.08</span>
+                </label>
+                <label>Leapfrog <span data-i18n="ctrl-leapfrog-steps">步数</span> L:
+                  <input type="range" id="hmc-L" min="5" max="50" step="5" value="20">
+                  <span id="hmc-L-val">20</span>
+                </label>
+                <button class="btn-sample" id="btn-hmc-run" data-i18n="btn-run-hmc">运行 HMC</button>
+                <button class="btn-sample btn-secondary" id="btn-compare" data-i18n="btn-compare-mcmc">对比 MCMC</button>
+              </div>
+              <p class="viz-label" data-i18n="viz-label-hyperparam">超参数空间 (ℓ, σ<sub>f</sub>)</p>
+              <canvas id="hmc-canvas" width="600" height="300"></canvas>
+              <div class="viz-stats" id="hmc-stats"></div>
+              <p class="viz-note" id="hmc-impl-note">实现说明：采样在 z = (log ℓ, log σ_f) 空间进行，并以原始 (ℓ, σ_f) 坐标显示轨迹。</p>
+              <p class="viz-label" data-i18n="viz-label-gp-live">当前超参数对应的 GP 后验</p>
+              <canvas id="hmc-gp-canvas" width="600" height="250"></canvas>
+              <p class="viz-caption" data-i18n="hmc-viz-caption">对比 HMC（蓝色）与 MH（红色）在 GP 超参数后验上的采样效率，下图实时显示 GP 预测</p>
+              <div class="callout callout-warn" id="hmc-no-data" data-i18n="hmc-no-data" style="margin-top:var(--space-3)">请先在「高斯过程」Tab 中点击画布添加至少 2 个观测点，然后回到此页运行采样。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Summary -->
+    <section class="summary-section">
+      <div class="summary-inner">
+        <h2 data-i18n="summary-title">三者关系</h2>
+        <div class="flow-diagram">
+          <div class="flow-node flow-gp">
+            <div class="flow-label">GP</div>
+            <div class="flow-desc" data-i18n="flow-gp-desc">函数空间上的非参数贝叶斯模型</div>
+          </div>
+          <div class="flow-arrow" data-i18n="flow-arrow1">需要超参数推断 →</div>
+          <div class="flow-node flow-mcmc">
+            <div class="flow-label">MCMC</div>
+            <div class="flow-desc" data-i18n="flow-mcmc-desc">从后验分布中采样的通用框架</div>
+          </div>
+          <div class="flow-arrow" data-i18n="flow-arrow2">梯度加速 →</div>
+          <div class="flow-node flow-hmc">
+            <div class="flow-label">HMC</div>
+            <div class="flow-desc" data-i18n="flow-hmc-desc">利用哈密顿动力学的高效 MCMC</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p data-i18n="footer">交互式学习 · GP Explorer</p>
+  </footer>
+
+  <script src="./app.js"></script>
+<script data-pplx-inline-edit>
+(function(){
+  if(window===window.top)return;
+  function inlineAll(orig,clone){
+    if(orig.nodeType!==1)return;
+    try{
+      var cs=getComputedStyle(orig);
+      var t='';
+      for(var i=0;i<cs.length;i++){t+=cs[i]+':'+cs.getPropertyValue(cs[i])+';';}
+      clone.style.cssText=t;
+    }catch(e){}
+    var oc=orig.children,cc=clone.children;
+    for(var j=0;j<oc.length&&j<cc.length;j++){inlineAll(oc[j],cc[j]);}
+  }
+  function stripExternal(clone){
+    var imgs=clone.querySelectorAll('img');
+    for(var i=0;i<imgs.length;i++){
+      var s=imgs[i].getAttribute('src');
+      if(s&&!s.startsWith('data:'))imgs[i].removeAttribute('src');
+    }
+    var all=clone.querySelectorAll('*');
+    for(var i=0;i<all.length;i++){
+      var st=all[i].style.cssText;
+      if(st&&st.indexOf('url(')>=0){
+        all[i].style.cssText=st.replace(/url\(["']?(?!data:)[^)"']*["']?\)/gi,'none');
+      }
+    }
+  }
+  window.addEventListener('message',function(e){
+    if(!e.data||e.data.type!=='INLINE_EDIT_CAPTURE_REQUEST')return;
+    var scrollX=window.scrollX||window.pageXOffset||0;
+    var scrollY=window.scrollY||window.pageYOffset||0;
+    var w=window.innerWidth,h=window.innerHeight;
+    try{
+      var clone=document.documentElement.cloneNode(true);
+      var rm=clone.querySelectorAll('script,link[rel="stylesheet"],style');
+      for(var i=0;i<rm.length;i++){rm[i].remove();}
+      inlineAll(document.documentElement,clone);
+      stripExternal(clone);
+      var html=new XMLSerializer().serializeToString(clone);
+      var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'">'
+        +'<foreignObject width="100%" height="100%">'
+        +'<div xmlns="http://www.w3.org/1999/xhtml" style="width:'+w+'px;height:'+h+'px;overflow:hidden">'
+        +'<div style="transform:translate(-'+scrollX+'px,-'+scrollY+'px);transform-origin:top left">'
+        +html+'</div></div></foreignObject></svg>';
+      var svgUrl='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+      var img=new Image();
+      img.onload=function(){
+        var c=document.createElement('canvas');c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0);
+        window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:c.toDataURL('image/png'),scrollX:scrollX,scrollY:scrollY},'*');
+      };
+      img.onerror=function(){
+        window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:null,scrollX:scrollX,scrollY:scrollY},'*');
+      };
+      img.src=svgUrl;
+    }catch(err){
+      window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:null,scrollX:scrollX,scrollY:scrollY},'*');
+    }
+  });
+})();
+</script></body>
+</html>
