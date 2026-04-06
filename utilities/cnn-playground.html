@@ -1,0 +1,2107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CNN Playground</title>
+<style>
+/* ============ RESET & BASE ============ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+  background: #f7f7f7;
+  color: #333;
+  font-size: 13px;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ============ HEADER ============ */
+#header {
+  background: #1a3a4a;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 48px;
+  gap: 16px;
+  flex-shrink: 0;
+}
+#header h1 { font-size: 18px; font-weight: 600; letter-spacing: 1px; }
+#header .subtitle { font-size: 12px; color: #8ab; margin-left: 4px; }
+#header .epoch-label { font-size: 14px; color: #acd; margin-left: auto; }
+#header .epoch-label span.val { color: #e74c3c; font-weight: 700; font-size: 16px; }
+
+/* ============ CONTROL BAR ============ */
+#control-bar {
+  background: #e8e8e8;
+  border-bottom: 1px solid #ccc;
+  padding: 4px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.ctrl-group { display: flex; align-items: center; gap: 4px; }
+.ctrl-group label { font-size: 11px; color: #666; white-space: nowrap; }
+.ctrl-group select {
+  font-size: 12px; padding: 3px 6px; border: 1px solid #bbb; border-radius: 3px;
+  background: #fff; cursor: pointer;
+}
+.btn-round {
+  width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  transition: background 0.15s;
+}
+.btn-play { background: #e74c3c; color: #fff; }
+.btn-play:hover { background: #c0392b; }
+.btn-play.playing { background: #0877bd; }
+.btn-step { background: #ddd; color: #333; }
+.btn-step:hover { background: #ccc; }
+.btn-reset { background: #ddd; color: #c33; }
+.btn-reset:hover { background: #ccc; }
+
+/* ============ PRESET BAR ============ */
+#preset-bar {
+  background: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+  padding: 4px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+#preset-bar .preset-label { font-size: 12px; color: #666; font-weight: 600; }
+.btn-preset {
+  font-size: 11px; padding: 4px 10px; border: 1px solid #bbb; border-radius: 14px;
+  background: #fff; cursor: pointer; transition: all 0.15s; color: #444;
+}
+.btn-preset:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+.btn-preset.active { background: #0877bd; color: #fff; border-color: #0877bd; }
+
+/* ============ MAIN LAYOUT ============ */
+#main {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+}
+
+/* ============ LEFT SIDEBAR ============ */
+#sidebar {
+  width: 160px;
+  min-width: 160px;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  padding: 12px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+#sidebar h3 {
+  font-size: 11px; color: #888; margin-bottom: 8px;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.sidebar-section { margin-bottom: 14px; }
+.sidebar-section label { font-size: 11px; color: #555; display: block; margin-bottom: 3px; }
+.spin-row { display: flex; align-items: center; gap: 4px; }
+.spin-val {
+  width: 32px; text-align: center; font-size: 13px; font-weight: 700;
+  color: #0877bd;
+}
+.btn-spin {
+  width: 22px; height: 22px; border-radius: 4px; border: 1px solid #bbb;
+  background: #f5f5f5; cursor: pointer; font-size: 14px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.1s;
+}
+.btn-spin:hover { background: #e0e0e0; }
+.btn-spin:disabled { opacity: 0.35; cursor: default; }
+.radio-group { display: flex; gap: 6px; flex-wrap: wrap; }
+.radio-group label {
+  display: flex; align-items: center; gap: 3px; cursor: pointer;
+  padding: 3px 7px; border: 1px solid #bbb; border-radius: 10px;
+  font-size: 11px; transition: all 0.1s; color: #444;
+}
+.radio-group label.checked { background: #0877bd; color: #fff; border-color: #0877bd; }
+.radio-group input { display: none; }
+
+/* ============ CENTER AREA ============ */
+#center-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  min-width: 0;
+}
+
+/* ============ ARCH VIZ ============ */
+#arch-area {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  padding: 8px;
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+}
+#arch-canvas-wrap {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+#arch-canvas { display: block; }
+
+/* ============ FORWARD PASS AREA ============ */
+#fwd-area {
+  padding: 8px 16px;
+  background: #fff;
+  border-top: 2px solid #e0e0e0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  min-height: 0;
+  flex-shrink: 0;
+  max-height: 260px;
+}
+.fwd-title {
+  font-size: 11px; color: #888; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+}
+#fwd-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-bottom: 4px;
+}
+.fwd-block {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 2px 0;
+}
+.fwd-block-title {
+  font-size: 11px; color: #666; text-align: right; font-weight: 500;
+  width: 76px; flex-shrink: 0;
+}
+.fwd-maps { display: flex; gap: 3px; flex-wrap: wrap; max-width: 400px; }
+.fwd-arrow {
+  font-size: 14px; color: #bbb; flex-shrink: 0;
+  padding-left: 82px; /* align under maps area, offset for label width */
+  line-height: 1;
+}
+.digit-thumb {
+  cursor: pointer; border: 2px solid #ddd; border-radius: 3px;
+  transition: border-color 0.15s;
+}
+.digit-thumb.selected,
+.digit-thumb.selected-thumb {
+  border-color: #0877bd;
+  box-shadow: 0 0 0 1px rgba(8, 119, 189, 0.18);
+}
+.digit-thumb:hover { border-color: #0877bd; }
+
+/* ============ DIGIT SAMPLES ROW ============ */
+#digit-row {
+  display: flex; gap: 6px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 8px;
+}
+#samples-grid {
+  display: flex; flex-direction: column; gap: 3px;
+}
+.sample-row {
+  display: flex; align-items: center; gap: 3px;
+}
+.sample-row-label {
+  font-size: 11px; color: #555; font-weight: 700;
+  width: 16px; text-align: right; flex-shrink: 0;
+}
+#digit-row .digit-group { display: flex; gap: 2px; align-items: center; }
+#digit-row .dg-label { font-size: 10px; color: #888; margin-right: 2px; }
+
+/* ============ DRAW CANVAS ============ */
+#draw-section {
+  display: flex; flex-direction: column; align-items: center; flex-shrink: 0;
+}
+#draw-canvas {
+  cursor: crosshair;
+  border: 1px solid #999;
+  border-radius: 3px;
+  image-rendering: pixelated;
+}
+#btn-clear {
+  margin-top: 4px; font-size: 10px; padding: 2px 8px;
+  border: 1px solid #bbb; border-radius: 3px;
+  background: #f5f5f5; cursor: pointer;
+}
+#btn-clear:hover { background: #eee; }
+
+/* ============ RIGHT PANEL ============ */
+#right-panel {
+  width: 280px;
+  min-width: 280px;
+  background: #fff;
+  padding: 8px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.panel-title {
+  font-size: 11px; color: #888; font-weight: 600; margin-bottom: 2px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.plot-container {
+  background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden;
+}
+.plot-container canvas { display: block; width: 100%; }
+.loss-info {
+  display: flex; gap: 10px; font-size: 12px; padding: 4px 0; flex-wrap: wrap;
+}
+.loss-item { display: flex; align-items: center; gap: 4px; }
+.loss-dot { width: 8px; height: 8px; border-radius: 50%; }
+.loss-value { font-weight: 700; font-family: "Courier New", monospace; font-size: 12px; }
+.gap-indicator {
+  padding: 2px 7px; border-radius: 10px; font-size: 11px; font-weight: 600;
+}
+.gap-green { background: #d4edda; color: #155724; }
+.gap-yellow { background: #fff3cd; color: #856404; }
+.gap-red { background: #f8d7da; color: #721c24; }
+
+.acc-row {
+  display: flex; gap: 10px; align-items: center; font-size: 12px;
+}
+.acc-bar-wrap {
+  flex: 1; height: 12px; background: #f0f0f0; border-radius: 6px; overflow: hidden;
+}
+.acc-bar {
+  height: 100%; border-radius: 6px; transition: width 0.3s;
+}
+.acc-label { font-size: 11px; color: #666; width: 60px; }
+.acc-val { font-weight: 700; font-family: monospace; width: 36px; }
+
+/* ============ LANG BTN ============ */
+#btn-lang {
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; border-radius: 4px; padding: 2px 8px; cursor: pointer;
+  font-size: 12px; margin-left: 6px;
+}
+#btn-lang:hover { background: rgba(255,255,255,0.25); }
+
+/* ============ PROB CHART ============ */
+.prob-row {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 3px;
+}
+.prob-label { font-size: 11px; width: 14px; font-weight: 700; color: #555; }
+.prob-bar-wrap { flex:1; height: 14px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
+.prob-bar { height: 100%; border-radius: 3px; transition: width 0.15s; }
+.prob-val { font-size: 11px; font-family: monospace; width: 40px; text-align: right; color: #555; }
+
+.pred-result {
+  text-align: center; font-size: 18px; font-weight: 700; color: #0877bd;
+  padding: 4px 0;
+}
+
+/* outer page layout */
+html, body { height: 100%; }
+body { display: flex; flex-direction: column; }
+#page-content { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+#main { flex: 1; min-height: 520px; overflow: hidden; }
+
+@media (max-width: 1180px) {
+  body {
+    min-height: auto;
+  }
+
+  #header {
+    height: auto;
+    min-height: 48px;
+    padding: 10px 16px;
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  #header .epoch-label {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  #control-bar,
+  #preset-bar {
+    padding: 10px 12px;
+  }
+
+  #control-bar {
+    align-items: flex-start;
+  }
+
+  .ctrl-group {
+    flex: 1 1 150px;
+    min-width: 150px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ctrl-group select {
+    width: 100%;
+    min-height: 40px;
+  }
+
+  .btn-round {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 auto;
+  }
+
+  #main {
+    min-height: 0;
+    overflow: visible;
+    flex-direction: column;
+  }
+
+  #sidebar,
+  #center-area,
+  #right-panel {
+    width: 100%;
+    min-width: 0;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  #sidebar {
+    padding: 14px 16px;
+  }
+
+  #arch-area {
+    flex: 0 0 clamp(260px, 42vh, 360px);
+    height: clamp(260px, 42vh, 360px);
+  }
+
+  #fwd-area {
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: visible;
+    padding: 12px 16px 20px;
+  }
+
+  #digit-row {
+    align-items: flex-start;
+  }
+
+  #draw-section {
+    margin-left: 0 !important;
+  }
+
+  #right-panel {
+    padding: 12px 16px 24px;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 720px) {
+  #header h1 {
+    font-size: 16px;
+  }
+
+  .ctrl-group {
+    flex-basis: calc(50% - 10px);
+    min-width: calc(50% - 10px);
+  }
+
+  #digit-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .fwd-block {
+    min-width: max-content;
+  }
+}
+
+@media (max-width: 560px) {
+  .ctrl-group {
+    flex-basis: 100%;
+    min-width: 100%;
+  }
+
+  #sidebar,
+  #fwd-area,
+  #right-panel {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  #arch-area {
+    flex-basis: clamp(220px, 38vh, 280px);
+    height: clamp(220px, 38vh, 280px);
+  }
+
+  .btn-round {
+    width: 44px;
+    height: 44px;
+  }
+
+  .btn-preset {
+    min-height: 36px;
+  }
+}
+</style>
+</head>
+<body>
+<div id="page-content">
+
+<!-- HEADER -->
+<div id="header">
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-label="CNN Logo">
+    <rect x="1" y="4" width="8" height="20" rx="2" fill="#0877bd" opacity="0.85"/>
+    <rect x="11" y="7" width="6" height="14" rx="2" fill="#0877bd" opacity="0.6"/>
+    <rect x="19" y="10" width="8" height="8" rx="2" fill="#e74c3c" opacity="0.85"/>
+    <line x1="9" y1="14" x2="11" y2="14" stroke="white" stroke-width="1.5" opacity="0.6"/>
+    <line x1="17" y1="14" x2="19" y2="14" stroke="white" stroke-width="1.5" opacity="0.6"/>
+  </svg>
+  <h1 data-i18n="title">CNN Playground</h1>
+  <div class="subtitle" data-i18n="subtitle">Digit Classification 0-1-2</div>
+  <button id="btn-lang">中</button>
+  <div class="epoch-label"><span data-i18n="epoch">Epoch</span>: <span class="val" id="epoch-display">0</span></div>
+</div>
+
+<!-- CONTROL BAR -->
+<div id="control-bar">
+  <button class="btn-round btn-play" id="btn-play" title="Play/Pause">▶</button>
+  <button class="btn-round btn-step" id="btn-step" title="Step">⏭</button>
+  <button class="btn-round btn-reset" id="btn-reset" title="Reset">↺</button>
+  <div class="ctrl-group">
+      <label data-i18n="lr">Learning Rate</label>
+    <select id="sel-lr">
+      <option value="0.01">0.01</option>
+      <option value="0.005" selected>0.005</option>
+      <option value="0.001">0.001</option>
+      <option value="0.0005">0.0005</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+      <label data-i18n="optimizer">Optimizer</label>
+    <select id="sel-optimizer">
+      <option value="sgd">SGD</option>
+      <option value="adam" selected>Adam</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <label data-i18n="dropout">Dropout</label>
+    <select id="sel-dropout">
+      <option value="0" selected>0</option>
+      <option value="0.1">0.1</option>
+      <option value="0.2">0.2</option>
+      <option value="0.3">0.3</option>
+      <option value="0.5">0.5</option>
+    </select>
+  </div>
+</div>
+
+<!-- PRESET BAR -->
+<div id="preset-bar">
+  <span class="preset-label" data-i18n="presetLabel">Presets:</span>
+  <button class="btn-preset active" data-preset="simple" data-i18n="presetSimple">Simple</button>
+  <button class="btn-preset" data-preset="two" data-i18n="presetTwo">Two Layer</button>
+  <button class="btn-preset" data-preset="big" data-i18n="presetBig">High Capacity</button>
+  <button class="btn-preset" data-preset="residual" data-i18n="presetResidual">Residual</button>
+  <button class="btn-preset" data-preset="dropout" data-i18n="presetDropout">Dropout</button>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div id="main">
+  <!-- LEFT SIDEBAR -->
+  <div id="sidebar">
+    <h3 data-i18n="architecture">Architecture</h3>
+
+    <div class="sidebar-section">
+      <label data-i18n="convLayers">Conv Layers</label>
+      <div class="radio-group" id="rg-layers">
+        <label class="checked" data-val="1"><input type="radio" name="layers" value="1"> 1</label>
+        <label data-val="2"><input type="radio" name="layers" value="2"> 2</label>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <label data-i18n="conv1filters">Conv1 Filters</label>
+      <div class="spin-row">
+        <button class="btn-spin" id="btn-c1-minus">−</button>
+        <div class="spin-val" id="c1-val">4</div>
+        <button class="btn-spin" id="btn-c1-plus">+</button>
+      </div>
+    </div>
+
+    <div class="sidebar-section" id="conv2-section" style="opacity:0.35;pointer-events:none;">
+      <label data-i18n="conv2filters">Conv2 Filters</label>
+      <div class="spin-row">
+        <button class="btn-spin" id="btn-c2-minus">−</button>
+        <div class="spin-val" id="c2-val">4</div>
+        <button class="btn-spin" id="btn-c2-plus">+</button>
+      </div>
+    </div>
+
+    <div class="sidebar-section" id="residual-section">
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+        <input type="checkbox" id="chk-residual" style="cursor:pointer;">
+        <span data-i18n="residual">Residual</span>
+      </label>
+      <div id="residual-note" style="font-size:10px;color:#aaa;margin-top:2px;" data-i18n="residualNote">(needs 2 layers, same channels)</div>
+    </div>
+  </div>
+
+  <!-- CENTER AREA: arch viz + forward pass -->
+  <div id="center-area">
+    <!-- Architecture Diagram -->
+    <div id="arch-area">
+      <div id="arch-canvas-wrap">
+        <canvas id="arch-canvas"></canvas>
+      </div>
+    </div>
+
+    <!-- Forward Pass Visualization -->
+    <div id="fwd-area">
+      <div class="fwd-title" data-i18n="forwardPass">Forward Pass Visualization</div>
+
+      <!-- Digit selector row -->
+      <div id="digit-row">
+        <div>
+          <div style="font-size:11px;color:#666;font-weight:600;margin-bottom:4px;" data-i18n="testSamples">Test Samples:</div>
+          <div id="samples-grid"></div>
+        </div>
+
+        <!-- Draw canvas -->
+        <div id="draw-section" style="margin-left:8px;">
+          <span style="font-size:10px;color:#888;display:block;margin-bottom:2px;" data-i18n="drawDigit">Draw</span>
+          <canvas id="draw-canvas" width="96" height="96" style="width:80px;height:80px;"></canvas>
+          <button id="btn-clear" data-i18n="clear">Clear</button>
+        </div>
+      </div>
+
+      <!-- Feature map pipeline -->
+      <div id="fwd-scroll">
+        <!-- filled by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div id="right-panel">
+    <div class="panel-title" data-i18n="lossCurve">Loss Curve</div>
+    <div class="plot-container">
+      <canvas id="canvas-loss" width="520" height="200"></canvas>
+    </div>
+    <div class="loss-info">
+      <div class="loss-item">
+        <div class="loss-dot" style="background:#0877bd"></div>
+        <span data-i18n="trainLoss">Train Loss</span>:
+        <span class="loss-value" id="train-loss-val">—</span>
+      </div>
+      <div class="loss-item">
+        <div class="loss-dot" style="background:#e74c3c"></div>
+        <span data-i18n="testLoss">Test Loss</span>:
+        <span class="loss-value" id="test-loss-val">—</span>
+      </div>
+      <div class="loss-item">
+        <span data-i18n="genGap">Gen. Gap</span>:
+        <span class="gap-indicator gap-green" id="gap-val">—</span>
+      </div>
+    </div>
+
+    <div class="panel-title" data-i18n="accuracy">Accuracy</div>
+    <div class="acc-row">
+      <div class="acc-label" data-i18n="train">Train</div>
+      <div class="acc-bar-wrap"><div class="acc-bar" id="acc-train-bar" style="width:0%;background:#0877bd;"></div></div>
+      <div class="acc-val" id="acc-train-val">—</div>
+    </div>
+    <div class="acc-row" style="margin-top:4px;">
+      <div class="acc-label" data-i18n="test">Test</div>
+      <div class="acc-bar-wrap"><div class="acc-bar" id="acc-test-bar" style="width:0%;background:#e74c3c;"></div></div>
+      <div class="acc-val" id="acc-test-val">—</div>
+    </div>
+
+    <div class="panel-title" data-i18n="prediction">Current Prediction</div>
+    <div id="prob-chart">
+      <div class="prob-row">
+        <div class="prob-label">0</div>
+        <div class="prob-bar-wrap"><div class="prob-bar" id="pb-0" style="width:33%;background:#0877bd;"></div></div>
+        <div class="prob-val" id="pv-0">0.33</div>
+      </div>
+      <div class="prob-row">
+        <div class="prob-label">1</div>
+        <div class="prob-bar-wrap"><div class="prob-bar" id="pb-1" style="width:33%;background:#0877bd;"></div></div>
+        <div class="prob-val" id="pv-1">0.33</div>
+      </div>
+      <div class="prob-row">
+        <div class="prob-label">2</div>
+        <div class="prob-bar-wrap"><div class="prob-bar" id="pb-2" style="width:33%;background:#0877bd;"></div></div>
+        <div class="prob-val" id="pv-2">0.33</div>
+      </div>
+      <div class="pred-result" id="pred-result">?</div>
+    </div>
+  </div>
+</div>
+</div><!-- end page-content -->
+
+<script>
+// ============================================================
+// CNN PLAYGROUND — Digit Classification 0/1/2
+// ============================================================
+
+// ---- I18N ----
+let lang = 'en';
+const I18N = {
+  zh: {
+    title: '卷积神经网络游乐场',
+    subtitle: '数字识别 0-1-2',
+    epoch: '轮次',
+    lr: '学习率',
+    optimizer: '优化器',
+    dropout: 'Dropout',
+    presetLabel: '快速演示：',
+    presetSimple: '简单',
+    presetTwo: '双层',
+    presetBig: '大容量',
+    architecture: '网络结构',
+    convLayers: '卷积层数',
+    conv1filters: 'Conv1 滤波器',
+    conv2filters: 'Conv2 滤波器',
+    forwardPass: '前向传播可视化',
+    selectDigit: '选择数字:',
+    testSamples: '测试集样本:',
+    drawDigit: '手写输入',
+    clear: '清除',
+    lossCurve: '损失曲线',
+    trainLoss: '训练损失',
+    testLoss: '测试损失',
+    genGap: '泛化间隙',
+    accuracy: '准确率',
+    train: '训练集',
+    test: '测试集',
+    prediction: '当前预测',
+    inputImg: '输入图像',
+    conv1Out: 'Conv1特征图',
+    pool1Out: '池化1输出',
+    conv2Out: 'Conv2特征图',
+    pool2Out: '池化2输出',
+    fcOut: 'FC输出',
+    kernels: '卷积核',
+    draw: '手绘',
+    predicted: '预测:',
+    noSel: '(请选择或绘制一个数字)',
+    residual: '残差连接',
+    residualNote: '(需要双层且通道数相同)',
+    presetResidual: '残差',
+    presetDropout: 'Dropout',
+  },
+  en: {
+    title: 'CNN Playground',
+    subtitle: 'Digit Classification 0-1-2',
+    epoch: 'Epoch',
+    lr: 'Learning Rate',
+    optimizer: 'Optimizer',
+    dropout: 'Dropout',
+    presetLabel: 'Presets:',
+    presetSimple: 'Simple',
+    presetTwo: 'Two Layer',
+    presetBig: 'High Capacity',
+    architecture: 'Architecture',
+    convLayers: 'Conv Layers',
+    conv1filters: 'Conv1 Filters',
+    conv2filters: 'Conv2 Filters',
+    forwardPass: 'Forward Pass Visualization',
+    selectDigit: 'Select digit:',
+    testSamples: 'Test Samples:',
+    drawDigit: 'Draw',
+    clear: 'Clear',
+    lossCurve: 'Loss Curve',
+    trainLoss: 'Train Loss',
+    testLoss: 'Test Loss',
+    genGap: 'Gen. Gap',
+    accuracy: 'Accuracy',
+    train: 'Train',
+    test: 'Test',
+    prediction: 'Current Prediction',
+    inputImg: 'Input',
+    conv1Out: 'Conv1 Maps',
+    pool1Out: 'Pool1 Out',
+    conv2Out: 'Conv2 Maps',
+    pool2Out: 'Pool2 Out',
+    fcOut: 'FC Out',
+    kernels: 'Kernels',
+    draw: 'Draw',
+    predicted: 'Pred:',
+    noSel: '(Select or draw a digit)',
+    residual: 'Residual',
+    residualNote: '(needs 2 layers, same channels)',
+    presetResidual: 'Residual',
+    presetDropout: 'Dropout',
+  }
+};
+function t(key) { return I18N[lang][key] || key; }
+function updateLanguageButton() {
+  document.getElementById('btn-lang').textContent = lang === 'en' ? '中' : 'EN';
+}
+function applyI18N() {
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  document.title = t('title');
+  updateLanguageButton();
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (el.tagName === 'OPTION') el.textContent = t(key);
+    else el.textContent = t(key);
+  });
+}
+document.getElementById('btn-lang').addEventListener('click', () => {
+  lang = lang === 'zh' ? 'en' : 'zh';
+  applyI18N();
+  rebuildFwdViz();
+  drawArchDiagram();
+  if (selectedSample) runForwardViz(selectedSample.img, selectedSample.label);
+  else updateProbChart([0.33,0.33,0.34], -1);
+});
+
+// ============================================================
+// DATA GENERATION: 12×12 grayscale digit images
+// ============================================================
+const IMG_SIZE = 12;
+const NUM_CLASSES = 3;
+
+function renderDigit(digit, dx=0, dy=0, noiseLevel=0) {
+  const canvas = document.createElement('canvas');
+  canvas.width = IMG_SIZE; canvas.height = IMG_SIZE;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, IMG_SIZE, IMG_SIZE);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 9px monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(String(digit), IMG_SIZE/2 + dx, IMG_SIZE/2 + dy);
+  const imageData = ctx.getImageData(0, 0, IMG_SIZE, IMG_SIZE);
+  const data = imageData.data;
+  const flat = new Float32Array(IMG_SIZE * IMG_SIZE);
+  for (let i = 0; i < IMG_SIZE * IMG_SIZE; i++) {
+    let v = data[i * 4] / 255.0;
+    if (noiseLevel > 0) v = Math.max(0, Math.min(1, v + (Math.random()-0.5)*noiseLevel));
+    flat[i] = v;
+  }
+  return flat;
+}
+
+function generateDataset() {
+  const samples = [];
+  const offsets = [[0,0],[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1],[2,0],[-2,0],[0,2],[0,-2],[1,2],[-1,2]];
+  for (let cls = 0; cls < 3; cls++) {
+    for (let i = 0; i < offsets.length; i++) {
+      const [dx, dy] = offsets[i];
+      const noise = i < 5 ? 0 : 0.12;
+      samples.push({ img: renderDigit(cls, dx, dy, noise), label: cls });
+    }
+  }
+  // shuffle
+  for (let i = samples.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [samples[i], samples[j]] = [samples[j], samples[i]];
+  }
+  // split 70/30
+  const splitIdx = Math.floor(samples.length * 0.7);
+  const trainData = samples.slice(0, splitIdx);
+  const testData = samples.slice(splitIdx);
+  return { trainData, testData };
+}
+
+let { trainData, testData } = generateDataset();
+
+// Keep reference to a few per class for thumbnails
+const thumbsByClass = [[], [], []];
+for (const s of trainData) {
+  if (thumbsByClass[s.label].length < 3) thumbsByClass[s.label].push(s.img);
+}
+for (let c = 0; c < 3; c++) {
+  while (thumbsByClass[c].length < 3) thumbsByClass[c].push(renderDigit(c));
+}
+
+// ============================================================
+// CNN IMPLEMENTATION FROM SCRATCH
+// ============================================================
+
+// --- Utility ---
+function zeros(...dims) {
+  if (dims.length === 1) return new Float32Array(dims[0]);
+  if (dims.length === 2) {
+    const a = []; for (let i=0;i<dims[0];i++) a.push(new Float32Array(dims[1])); return a;
+  }
+  if (dims.length === 3) {
+    const a = []; for (let i=0;i<dims[0];i++) { const b = []; for(let j=0;j<dims[1];j++) b.push(new Float32Array(dims[2])); a.push(b); } return a;
+  }
+  if (dims.length === 4) {
+    const a = []; for (let i=0;i<dims[0];i++) { const b=[]; for(let j=0;j<dims[1];j++) { const c=[]; for(let k=0;k<dims[2];k++) c.push(new Float32Array(dims[3])); b.push(c); } a.push(b); } return a;
+  }
+}
+
+function heInit(size, fanIn) {
+  const a = new Float32Array(size);
+  const std = Math.sqrt(2.0 / fanIn);
+  for (let i=0;i<size;i++) a[i] = randn() * std;
+  return a;
+}
+function xavierInit(size, fanIn, fanOut) {
+  const a = new Float32Array(size);
+  const std = Math.sqrt(2.0 / (fanIn + fanOut));
+  for (let i=0;i<size;i++) a[i] = randn() * std;
+  return a;
+}
+function randn() {
+  let u=0, v=0;
+  while(u===0) u=Math.random();
+  while(v===0) v=Math.random();
+  return Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*v);
+}
+
+// ---- CNN Model State ----
+let cfg = {
+  numLayers: 1,   // 1 or 2 conv layers (simple preset default)
+  c1Filters: 4,
+  c2Filters: 4,
+  lr: 0.005,
+  optimizer: 'adam',
+  residual: false,
+  dropout: 0,      // dropout rate (0 = off, 0.1, 0.2, 0.3, 0.5)
+};
+
+let model = null; // built fresh on init
+
+function buildModel() {
+  const { numLayers, c1Filters, c2Filters } = cfg;
+  const c1_in = 1, c1_out = c1Filters;
+  // Conv1: [c1_out, c1_in, 3, 3]
+  const c1W = heInit(c1_out * c1_in * 9, c1_in * 9);
+  const c1b = new Float32Array(c1_out);
+
+  let flatSize = 0;
+  let c2W = null, c2b = null;
+  if (numLayers === 1) {
+    // after conv1 (12x12xc1_out) + maxpool -> 6x6xc1_out
+    flatSize = 6 * 6 * c1_out;
+  } else {
+    const c2_in = c1_out, c2_out = c2Filters;
+    c2W = heInit(c2_out * c2_in * 9, c2_in * 9);
+    c2b = new Float32Array(c2_out);
+    // after conv2 + maxpool -> 3x3xc2_out
+    flatSize = 3 * 3 * c2_out;
+  }
+  // Store filter counts in model so forward() uses correct values
+  const c1Filters_ = c1Filters;
+  const c2Filters_ = c2Filters;
+
+  // FC: flatSize -> 3
+  const fcW = xavierInit(flatSize * 3, flatSize, 3);
+  const fcb = new Float32Array(3);
+
+  // Adam moments
+  function mkMom(arr) { return { m: new Float32Array(arr.length), v: new Float32Array(arr.length) }; }
+
+  return {
+    numLayers,
+    c1W, c1b, c2W, c2b, fcW, fcb,
+    flatSize,
+    // Adam state
+    adam: {
+      c1W: mkMom(c1W), c1b: mkMom(c1b),
+      c2W: c2W ? mkMom(c2W) : null,
+      c2b: c2b ? mkMom(c2b) : null,
+      fcW: mkMom(fcW), fcb: mkMom(fcb),
+      t: 0
+    },
+    c1Filters: c1Filters_,
+    c2Filters: c2Filters_
+  };
+}
+
+// Helper: check whether residual is active for Conv2
+function residualActive() {
+  return cfg.residual && cfg.numLayers === 2 && cfg.c1Filters === cfg.c2Filters;
+}
+
+// ---- Forward / Backward ----
+
+// conv2d: input [H,W,C_in], kernel [C_out,C_in,3,3], bias [C_out]
+// pad=1, stride=1 => output [H,W,C_out]
+function conv2d(input, H, W, C_in, kernel, bias, C_out) {
+  const out = new Float32Array(H * W * C_out);
+  for (let co = 0; co < C_out; co++) {
+    for (let oy = 0; oy < H; oy++) {
+      for (let ox = 0; ox < W; ox++) {
+        let sum = bias[co];
+        for (let ci = 0; ci < C_in; ci++) {
+          for (let ky = 0; ky < 3; ky++) {
+            for (let kx = 0; kx < 3; kx++) {
+              const iy = oy + ky - 1;
+              const ix = ox + kx - 1;
+              if (iy < 0 || iy >= H || ix < 0 || ix >= W) continue;
+              const inVal = input[iy * W * C_in + ix * C_in + ci];
+              const wIdx = co * C_in * 9 + ci * 9 + ky * 3 + kx;
+              sum += inVal * kernel[wIdx];
+            }
+          }
+        }
+        out[oy * W * C_out + ox * C_out + co] = sum;
+      }
+    }
+  }
+  return out;
+}
+
+// relu in-place
+function relu(arr) {
+  for (let i=0;i<arr.length;i++) if(arr[i]<0) arr[i]=0;
+  return arr;
+}
+
+// maxpool2x2: input [H,W,C], output [H/2,W/2,C], also returns indices for backprop
+function maxpool2d(input, H, W, C) {
+  const oH = H >> 1, oW = W >> 1;
+  const out = new Float32Array(oH * oW * C);
+  const idx = new Int32Array(oH * oW * C); // index into input
+  for (let c = 0; c < C; c++) {
+    for (let oy = 0; oy < oH; oy++) {
+      for (let ox = 0; ox < oW; ox++) {
+        let mx = -Infinity, mIdx = -1;
+        for (let ky = 0; ky < 2; ky++) {
+          for (let kx = 0; kx < 2; kx++) {
+            const iy = oy*2+ky, ix = ox*2+kx;
+            const inIdx = iy*W*C + ix*C + c;
+            if (input[inIdx] > mx) { mx = input[inIdx]; mIdx = inIdx; }
+          }
+        }
+        const oIdx = oy*oW*C + ox*C + c;
+        out[oIdx] = mx;
+        idx[oIdx] = mIdx;
+      }
+    }
+  }
+  return { out, idx, oH, oW };
+}
+
+// softmax
+function softmax(arr) {
+  const mx = Math.max(...arr);
+  const exp = arr.map(x => Math.exp(x - mx));
+  const sum = exp.reduce((a,b)=>a+b,0);
+  return exp.map(x => x/sum);
+}
+
+// Dropout: zero out elements with probability p, scale survivors by 1/(1-p)
+// Returns the mask used (needed for backprop)
+function applyDropout(arr, p) {
+  if (p <= 0) return { out: arr, mask: null };
+  const mask = new Uint8Array(arr.length);
+  const scale = 1 / (1 - p);
+  const out = new Float32Array(arr.length);
+  for (let i = 0; i < arr.length; i++) {
+    if (Math.random() >= p) { mask[i] = 1; out[i] = arr[i] * scale; }
+  }
+  return { out, mask };
+}
+
+// Forward pass — returns all intermediate activations for visualization
+function forward(imgFlat, m, training) {
+  const H1 = IMG_SIZE, W1 = IMG_SIZE, C1_in = 1;
+  const C1_out = m.c1Filters;
+  const dropRate = training ? cfg.dropout : 0;
+
+  // Conv1
+  const c1_pre = conv2d(imgFlat, H1, W1, C1_in, m.c1W, m.c1b, C1_out);
+  const c1_act = relu(new Float32Array(c1_pre)); // copy then relu
+  // Dropout after Conv1 activation
+  const drop1 = applyDropout(c1_act, dropRate);
+  const c1_dropped = drop1.out;
+  const { out: p1_out, idx: p1_idx, oH: H2, oW: W2 } = maxpool2d(c1_dropped, H1, W1, C1_out);
+
+  let flat, c2_pre=null, c2_act=null, p2_out=null, p2_idx=null, H3=0, W3=0, C2_out=0;
+  let residualUsed = false;
+  let drop2 = { out: null, mask: null };
+  if (m.numLayers === 1) {
+    flat = p1_out;
+  } else {
+    C2_out = m.c2Filters;
+    c2_pre = conv2d(p1_out, H2, W2, C1_out, m.c2W, m.c2b, C2_out);
+    // Residual: add p1_out to c2_pre before ReLU (only when channels match)
+    const useRes = residualActive() && C1_out === C2_out;
+    if (useRes) {
+      residualUsed = true;
+      for (let i = 0; i < c2_pre.length; i++) c2_pre[i] += p1_out[i];
+    }
+    c2_act = relu(new Float32Array(c2_pre));
+    // Dropout after Conv2 activation
+    drop2 = applyDropout(c2_act, dropRate);
+    const c2_dropped = drop2.out;
+    const pool2 = maxpool2d(c2_dropped, H2, W2, C2_out);
+    p2_out = pool2.out; p2_idx = pool2.idx; H3 = pool2.oH; W3 = pool2.oW;
+    flat = p2_out;
+  }
+
+  // FC
+  const fc_out = new Float32Array(3);
+  for (let o = 0; o < 3; o++) {
+    let s = m.fcb[o];
+    for (let i = 0; i < flat.length; i++) s += m.fcW[o * flat.length + i] * flat[i];
+    fc_out[o] = s;
+  }
+  const probs = softmax(Array.from(fc_out));
+
+  return {
+    imgFlat,
+    c1_pre, c1_act, p1_out, p1_idx,
+    c2_pre, c2_act, p2_out, p2_idx,
+    flat, fc_out, probs,
+    H1, W1, C1_in, C1_out,
+    H2, W2, C2_out,
+    H3, W3,
+    residualUsed,
+    drop1Mask: drop1.mask,
+    drop2Mask: drop2.mask
+  };
+}
+
+function crossEntropyLoss(probs, label) {
+  return -Math.log(Math.max(probs[label], 1e-9));
+}
+
+// Backward pass
+function backward(act, label, m) {
+  const grads = {};
+
+  // dL/d(fc_out) = probs - one_hot
+  const dFcOut = new Float32Array(act.probs.map((p,i) => p - (i===label?1:0)));
+
+  // FC gradients
+  const flatLen = act.flat.length;
+  grads.fcW = new Float32Array(3 * flatLen);
+  grads.fcb = new Float32Array(3);
+  const dFlat = new Float32Array(flatLen);
+  for (let o = 0; o < 3; o++) {
+    grads.fcb[o] = dFcOut[o];
+    for (let i = 0; i < flatLen; i++) {
+      grads.fcW[o * flatLen + i] = dFcOut[o] * act.flat[i];
+      dFlat[i] += dFcOut[o] * m.fcW[o * flatLen + i];
+    }
+  }
+
+  const dropScale = cfg.dropout > 0 ? 1 / (1 - cfg.dropout) : 1;
+
+  if (m.numLayers === 1) {
+    // dFlat is gradient at pool1 output
+    // backprop through maxpool1
+    const dp1 = new Float32Array(act.H1 * act.W1 * act.C1_out);
+    for (let i = 0; i < dFlat.length; i++) dp1[act.p1_idx[i]] += dFlat[i];
+
+    // backprop dropout1
+    if (act.drop1Mask) {
+      for (let i = 0; i < dp1.length; i++) dp1[i] = act.drop1Mask[i] ? dp1[i] * dropScale : 0;
+    }
+
+    // backprop relu1
+    for (let i = 0; i < dp1.length; i++) if (act.c1_pre[i] <= 0) dp1[i] = 0;
+
+    // backprop conv1
+    grads.c1W = backpropConv(act.imgFlat, dp1, act.H1, act.W1, act.C1_in, act.C1_out);
+    grads.c1b = new Float32Array(act.C1_out);
+    for (let i = 0; i < dp1.length; i++) {
+      const co = i % act.C1_out;
+      grads.c1b[co] += dp1[i];
+    }
+  } else {
+    // dFlat -> pool2
+    const dp2 = new Float32Array(act.H2 * act.W2 * act.C2_out);
+    for (let i = 0; i < dFlat.length; i++) dp2[act.p2_idx[i]] += dFlat[i];
+
+    // backprop dropout2
+    if (act.drop2Mask) {
+      for (let i = 0; i < dp2.length; i++) dp2[i] = act.drop2Mask[i] ? dp2[i] * dropScale : 0;
+    }
+
+    // relu2: gate gradient by pre-activation
+    for (let i = 0; i < dp2.length; i++) if (act.c2_pre[i] <= 0) dp2[i] = 0;
+
+    // conv2 grads
+    grads.c2W = backpropConv(act.p1_out, dp2, act.H2, act.W2, act.C1_out, act.C2_out);
+    grads.c2b = new Float32Array(act.C2_out);
+    for (let i = 0; i < dp2.length; i++) grads.c2b[i % act.C2_out] += dp2[i];
+
+    // backprop through conv2 to get gradient at pool1 output
+    const dp1FromC2 = backpropConvInput(dp2, m.c2W, act.H2, act.W2, act.C1_out, act.C2_out);
+
+    // Residual: gradient also flows directly from conv2 input (p1_out) via skip connection
+    const dp1AtPool1Out = new Float32Array(dp1FromC2.length);
+    for (let i = 0; i < dp1FromC2.length; i++) {
+      dp1AtPool1Out[i] = dp1FromC2[i] + (act.residualUsed ? dp2[i] : 0);
+    }
+
+    // pool1 backward
+    const dp1 = new Float32Array(act.H1 * act.W1 * act.C1_out);
+    for (let i = 0; i < dp1AtPool1Out.length; i++) dp1[act.p1_idx[i]] += dp1AtPool1Out[i];
+
+    // backprop dropout1
+    if (act.drop1Mask) {
+      for (let i = 0; i < dp1.length; i++) dp1[i] = act.drop1Mask[i] ? dp1[i] * dropScale : 0;
+    }
+
+    // relu1
+    for (let i = 0; i < dp1.length; i++) if (act.c1_pre[i] <= 0) dp1[i] = 0;
+
+    // conv1 grads
+    grads.c1W = backpropConv(act.imgFlat, dp1, act.H1, act.W1, act.C1_in, act.C1_out);
+    grads.c1b = new Float32Array(act.C1_out);
+    for (let i = 0; i < dp1.length; i++) grads.c1b[i % act.C1_out] += dp1[i];
+  }
+
+  return grads;
+}
+
+// Compute dW for conv layer
+function backpropConv(input, dOut, H, W, C_in, C_out) {
+  const dW = new Float32Array(C_out * C_in * 9);
+  for (let co = 0; co < C_out; co++) {
+    for (let oy = 0; oy < H; oy++) {
+      for (let ox = 0; ox < W; ox++) {
+        const d = dOut[oy*W*C_out + ox*C_out + co];
+        if (d === 0) continue;
+        for (let ci = 0; ci < C_in; ci++) {
+          for (let ky = 0; ky < 3; ky++) {
+            for (let kx = 0; kx < 3; kx++) {
+              const iy = oy+ky-1, ix = ox+kx-1;
+              if (iy<0||iy>=H||ix<0||ix>=W) continue;
+              dW[co*C_in*9 + ci*9 + ky*3+kx] += d * input[iy*W*C_in + ix*C_in + ci];
+            }
+          }
+        }
+      }
+    }
+  }
+  return dW;
+}
+
+// Compute d_input for conv layer (for chaining)
+function backpropConvInput(dOut, kernel, H, W, C_in, C_out) {
+  const dIn = new Float32Array(H * W * C_in);
+  for (let co = 0; co < C_out; co++) {
+    for (let oy = 0; oy < H; oy++) {
+      for (let ox = 0; ox < W; ox++) {
+        const d = dOut[oy*W*C_out + ox*C_out + co];
+        if (d === 0) continue;
+        for (let ci = 0; ci < C_in; ci++) {
+          for (let ky = 0; ky < 3; ky++) {
+            for (let kx = 0; kx < 3; kx++) {
+              const iy = oy+ky-1, ix = ox+kx-1;
+              if (iy<0||iy>=H||ix<0||ix>=W) continue;
+              dIn[iy*W*C_in + ix*C_in + ci] += d * kernel[co*C_in*9 + ci*9 + ky*3+kx];
+            }
+          }
+        }
+      }
+    }
+  }
+  return dIn;
+}
+
+// ---- Gradient clipping ----
+function clipGrads(grads, maxNorm) {
+  // Compute global norm
+  let sqSum = 0;
+  for (const k in grads) { if (grads[k]) for (let i=0;i<grads[k].length;i++) sqSum+=grads[k][i]*grads[k][i]; }
+  const norm = Math.sqrt(sqSum);
+  if (norm > maxNorm) {
+    const scale = maxNorm / norm;
+    for (const k in grads) { if (grads[k]) for (let i=0;i<grads[k].length;i++) grads[k][i]*=scale; }
+  }
+  return grads;
+}
+
+// ---- Optimizer update ----
+function updateWeights(m, grads) {
+  const lr = cfg.lr;
+  if (cfg.optimizer === 'sgd') {
+    applyGrad(m.c1W, grads.c1W, lr);
+    applyGrad(m.c1b, grads.c1b, lr);
+    if (m.numLayers === 2) { applyGrad(m.c2W, grads.c2W, lr); applyGrad(m.c2b, grads.c2b, lr); }
+    applyGrad(m.fcW, grads.fcW, lr);
+    applyGrad(m.fcb, grads.fcb, lr);
+  } else {
+    // Adam
+    m.adam.t++;
+    const t = m.adam.t;
+    const b1=0.9, b2=0.999, eps=1e-8;
+    adamStep(m.c1W, grads.c1W, m.adam.c1W, lr, b1, b2, eps, t);
+    adamStep(m.c1b, grads.c1b, m.adam.c1b, lr, b1, b2, eps, t);
+    if (m.numLayers === 2) {
+      adamStep(m.c2W, grads.c2W, m.adam.c2W, lr, b1, b2, eps, t);
+      adamStep(m.c2b, grads.c2b, m.adam.c2b, lr, b1, b2, eps, t);
+    }
+    adamStep(m.fcW, grads.fcW, m.adam.fcW, lr, b1, b2, eps, t);
+    adamStep(m.fcb, grads.fcb, m.adam.fcb, lr, b1, b2, eps, t);
+  }
+}
+function applyGrad(w, dw, lr) { for (let i=0;i<w.length;i++) w[i] -= lr*dw[i]; }
+function adamStep(w, dw, mom, lr, b1, b2, eps, t) {
+  const bc1 = 1 - Math.pow(b1,t), bc2 = 1 - Math.pow(b2,t);
+  for (let i=0;i<w.length;i++) {
+    mom.m[i] = b1*mom.m[i] + (1-b1)*dw[i];
+    mom.v[i] = b2*mom.v[i] + (1-b2)*dw[i]*dw[i];
+    w[i] -= lr * (mom.m[i]/bc1) / (Math.sqrt(mom.v[i]/bc2) + eps);
+  }
+}
+
+// ---- Training Loop ----
+let epoch = 0;
+let isPlaying = false;
+let trainInterval = null;
+const lossHistory = { train: [], test: [] };
+let selectedSample = null; // { img, label } for forward pass viz
+let isDrawing = false;
+
+function trainStep() {
+  if (!model) model = buildModel();
+  // one epoch = all training samples
+  let totalLoss = 0;
+  const order = Array.from({length: trainData.length}, (_,i)=>i);
+  for (let i=order.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [order[i],order[j]]=[order[j],order[i]]; }
+
+  // mini-batch SGD — accumulate gradients
+  const batchSize = Math.min(8, trainData.length);
+  for (let b=0; b<trainData.length; b+=batchSize) {
+    const batchEnd = Math.min(b+batchSize, trainData.length);
+    const batchGrads = null;
+    let accGrads = null;
+    for (let bi=b; bi<batchEnd; bi++) {
+      const s = trainData[order[bi]];
+      const act = forward(s.img, model, true); // training=true for dropout
+      const loss = crossEntropyLoss(act.probs, s.label);
+      totalLoss += loss;
+      const g = backward(act, s.label, model);
+      if (accGrads === null) {
+        accGrads = g;
+      } else {
+        for (const k in g) { if (g[k]) for(let i=0;i<g[k].length;i++) accGrads[k][i]+=g[k][i]; }
+      }
+    }
+    const n = batchEnd - b;
+    for (const k in accGrads) { if (accGrads[k]) for(let i=0;i<accGrads[k].length;i++) accGrads[k][i]/=n; }
+    clipGrads(accGrads, 1.0);
+    updateWeights(model, accGrads);
+  }
+
+  const avgLoss = totalLoss / trainData.length;
+
+  // compute test loss
+  let testLoss = 0;
+  for (const s of testData) {
+    const act = forward(s.img, model);
+    testLoss += crossEntropyLoss(act.probs, s.label);
+  }
+  testLoss /= testData.length;
+
+  epoch++;
+  lossHistory.train.push(avgLoss);
+  lossHistory.test.push(testLoss);
+
+  updateUI(avgLoss, testLoss);
+}
+
+function computeAccuracy(data) {
+  let correct = 0;
+  for (const s of data) {
+    const act = forward(s.img, model);
+    const pred = act.probs.indexOf(Math.max(...act.probs));
+    if (pred === s.label) correct++;
+  }
+  return correct / data.length;
+}
+
+function updateUI(trainLoss, testLoss) {
+  document.getElementById('epoch-display').textContent = epoch;
+  document.getElementById('train-loss-val').textContent = trainLoss.toFixed(4);
+  document.getElementById('test-loss-val').textContent = testLoss.toFixed(4);
+
+  const gap = testLoss - trainLoss;
+  const gapEl = document.getElementById('gap-val');
+  gapEl.textContent = gap.toFixed(4);
+  gapEl.className = 'gap-indicator ' + (gap < 0.05 ? 'gap-green' : gap < 0.2 ? 'gap-yellow' : 'gap-red');
+
+  // Accuracy
+  const trainAcc = computeAccuracy(trainData);
+  const testAcc = computeAccuracy(testData);
+  document.getElementById('acc-train-bar').style.width = (trainAcc*100).toFixed(1)+'%';
+  document.getElementById('acc-test-bar').style.width = (testAcc*100).toFixed(1)+'%';
+  document.getElementById('acc-train-val').textContent = (trainAcc*100).toFixed(0)+'%';
+  document.getElementById('acc-test-val').textContent = (testAcc*100).toFixed(0)+'%';
+
+  drawLossCurve();
+  drawArchDiagram();
+
+  // Update thumb borders (show pass/fail) every 5 epochs
+  if (epoch % 5 === 0) updateThumbBorders();
+
+  // Update forward pass viz if a sample is selected
+  if (selectedSample) runForwardViz(selectedSample.img, selectedSample.label);
+}
+
+function clearTrainingState() {
+  epoch = 0;
+  lossHistory.train = [];
+  lossHistory.test = [];
+  document.getElementById('epoch-display').textContent = '0';
+  document.getElementById('train-loss-val').textContent = '—';
+  document.getElementById('test-loss-val').textContent = '—';
+  document.getElementById('gap-val').textContent = '—';
+  document.getElementById('acc-train-val').textContent = '—';
+  document.getElementById('acc-test-val').textContent = '—';
+  document.getElementById('acc-train-bar').style.width = '0%';
+  document.getElementById('acc-test-bar').style.width = '0%';
+  const lc = document.getElementById('canvas-loss');
+  lc.getContext('2d').clearRect(0, 0, lc.width, lc.height);
+}
+
+function restartCurrentModel() {
+  const shouldResume = isPlaying;
+  pause();
+  clearTrainingState();
+  model = buildModel();
+  updateResidualUI();
+  buildThumbs();
+  rebuildFwdViz();
+  drawArchDiagram();
+  if (selectedSample) runForwardViz(selectedSample.img, selectedSample.label);
+  else updateProbChart([0.33,0.33,0.34], -1);
+  if (shouldResume) play();
+}
+
+// ---- Play/Pause ----
+function play() {
+  if (!model) { model = buildModel(); }
+  isPlaying = true;
+  document.getElementById('btn-play').textContent = '⏸';
+  document.getElementById('btn-play').classList.add('playing');
+  trainInterval = setInterval(() => { trainStep(); }, 30);
+}
+function pause() {
+  isPlaying = false;
+  document.getElementById('btn-play').textContent = '▶';
+  document.getElementById('btn-play').classList.remove('playing');
+  clearInterval(trainInterval);
+}
+function reset(autoPlay=true) {
+  pause();
+  clearTrainingState();
+  let ds = generateDataset();
+  trainData = ds.trainData; testData = ds.testData;
+  model = buildModel();
+  // Select first test sample as default
+  const firstTest = testData.find(s => s.label === 0) || testData[0];
+  selectedSample = firstTest ? { img: firstTest.img, label: firstTest.label } : null;
+  buildThumbs();
+  rebuildFwdViz();
+  drawArchDiagram();
+  if (selectedSample) runForwardViz(selectedSample.img, selectedSample.label);
+  else updateProbChart([0.33,0.33,0.34], -1);
+  if (autoPlay) play();
+}
+
+document.getElementById('btn-play').addEventListener('click', () => { isPlaying ? pause() : play(); });
+document.getElementById('btn-step').addEventListener('click', () => { pause(); if(!model) model=buildModel(); trainStep(); });
+document.getElementById('btn-reset').addEventListener('click', () => reset(false));
+
+document.getElementById('sel-lr').addEventListener('change', e => { cfg.lr = parseFloat(e.target.value); restartCurrentModel(); });
+document.getElementById('sel-optimizer').addEventListener('change', e => { cfg.optimizer = e.target.value; restartCurrentModel(); });
+document.getElementById('sel-dropout').addEventListener('change', e => { cfg.dropout = parseFloat(e.target.value); restartCurrentModel(); });
+
+// ---- Spin buttons ----
+function setupSpin(minusId, plusId, valId, cfgKey, min, max, onChange) {
+  const valEl = document.getElementById(valId);
+  document.getElementById(minusId).addEventListener('click', () => {
+    if (cfg[cfgKey] > min) { cfg[cfgKey]--; valEl.textContent = cfg[cfgKey]; onChange(); }
+  });
+  document.getElementById(plusId).addEventListener('click', () => {
+    if (cfg[cfgKey] < max) { cfg[cfgKey]++; valEl.textContent = cfg[cfgKey]; onChange(); }
+  });
+}
+function onFilterChange() {
+  restartCurrentModel();
+}
+setupSpin('btn-c1-minus','btn-c1-plus','c1-val','c1Filters',2,8, onFilterChange);
+setupSpin('btn-c2-minus','btn-c2-plus','c2-val','c2Filters',2,8, onFilterChange);
+
+// ---- Radio buttons for layer count ----
+document.querySelectorAll('#rg-layers label').forEach(lbl => {
+  lbl.addEventListener('click', () => {
+    document.querySelectorAll('#rg-layers label').forEach(l => l.classList.remove('checked'));
+    lbl.classList.add('checked');
+    cfg.numLayers = parseInt(lbl.getAttribute('data-val'));
+    // gray out conv2 section
+    const c2s = document.getElementById('conv2-section');
+    if (cfg.numLayers === 1) {
+      c2s.style.opacity = '0.35';
+      c2s.style.pointerEvents = 'none';
+    } else {
+      c2s.style.opacity = '1';
+      c2s.style.pointerEvents = '';
+    }
+    restartCurrentModel();
+  });
+});
+
+// ---- Presets ----
+document.querySelectorAll('.btn-preset').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const p = btn.getAttribute('data-preset');
+    if (p === 'simple') {
+      cfg.numLayers=1; cfg.c1Filters=4; cfg.lr=0.005; cfg.optimizer='adam'; cfg.residual=false; cfg.dropout=0;
+      setRadio(1); setSpinVals(4,4); setSel('sel-lr','0.005'); setSel('sel-optimizer','adam'); setResidualCheckbox(false); setSel('sel-dropout','0');
+    } else if (p === 'two') {
+      cfg.numLayers=2; cfg.c1Filters=4; cfg.c2Filters=4; cfg.lr=0.005; cfg.optimizer='adam'; cfg.residual=false; cfg.dropout=0;
+      setRadio(2); setSpinVals(4,4); setSel('sel-lr','0.005'); setSel('sel-optimizer','adam'); setResidualCheckbox(false); setSel('sel-dropout','0');
+    } else if (p === 'big') {
+      cfg.numLayers=2; cfg.c1Filters=8; cfg.c2Filters=8; cfg.lr=0.001; cfg.optimizer='adam'; cfg.residual=false; cfg.dropout=0;
+      setRadio(2); setSpinVals(8,8); setSel('sel-lr','0.001'); setSel('sel-optimizer','adam'); setResidualCheckbox(false); setSel('sel-dropout','0');
+    } else if (p === 'residual') {
+      cfg.numLayers=2; cfg.c1Filters=4; cfg.c2Filters=4; cfg.lr=0.005; cfg.optimizer='adam'; cfg.residual=true; cfg.dropout=0;
+      setRadio(2); setSpinVals(4,4); setSel('sel-lr','0.005'); setSel('sel-optimizer','adam'); setResidualCheckbox(true); setSel('sel-dropout','0');
+    } else if (p === 'dropout') {
+      cfg.numLayers=2; cfg.c1Filters=8; cfg.c2Filters=8; cfg.lr=0.005; cfg.optimizer='adam'; cfg.residual=false; cfg.dropout=0.3;
+      setRadio(2); setSpinVals(8,8); setSel('sel-lr','0.005'); setSel('sel-optimizer','adam'); setResidualCheckbox(false); setSel('sel-dropout','0.3');
+    }
+    reset();
+  });
+});
+function setRadio(n) {
+  document.querySelectorAll('#rg-layers label').forEach(l => {
+    l.classList.toggle('checked', parseInt(l.getAttribute('data-val')) === n);
+  });
+  const c2s = document.getElementById('conv2-section');
+  if (n===1) { c2s.style.opacity='0.35'; c2s.style.pointerEvents='none'; }
+  else { c2s.style.opacity='1'; c2s.style.pointerEvents=''; }
+}
+function setSpinVals(c1,c2) {
+  document.getElementById('c1-val').textContent = c1;
+  document.getElementById('c2-val').textContent = c2;
+}
+function setSel(id, val) { document.getElementById(id).value = val; }
+function setResidualCheckbox(val) {
+  document.getElementById('chk-residual').checked = val;
+  updateResidualUI();
+}
+function updateResidualUI() {
+  const active = residualActive();
+  const noteEl = document.getElementById('residual-note');
+  const chk = document.getElementById('chk-residual');
+  // Gray out note when conditions are met (active) or show it when conditions aren't met
+  if (cfg.residual && !active) {
+    noteEl.style.display = 'block';
+    noteEl.style.color = '#e74c3c';
+  } else if (!cfg.residual) {
+    noteEl.style.display = 'none';
+  } else {
+    // residual is ON and active — show note dimmed
+    noteEl.style.display = 'block';
+    noteEl.style.color = '#aaa';
+  }
+  drawArchDiagram();
+}
+
+// Residual checkbox
+document.getElementById('chk-residual').addEventListener('change', e => {
+  cfg.residual = e.target.checked;
+  restartCurrentModel();
+});
+
+// ============================================================
+// LOSS CURVE
+// ============================================================
+function drawLossCurve() {
+  const canvas = document.getElementById('canvas-loss');
+  const W = canvas.width, H = canvas.height;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+
+  const pad = { l:36, r:12, t:12, b:28 };
+  const iW = W - pad.l - pad.r, iH = H - pad.t - pad.b;
+
+  ctx.fillStyle = '#f9f9f9';
+  ctx.fillRect(pad.l, pad.t, iW, iH);
+
+  const tr = lossHistory.train, te = lossHistory.test;
+  if (tr.length < 2) return;
+
+  const maxL = Math.max(...tr, ...te, 0.1);
+  const minL = 0;
+  const n = tr.length;
+
+  function px(i) { return pad.l + (i / (n-1)) * iW; }
+  function py(v) { return pad.t + iH - ((v - minL) / (maxL - minL)) * iH; }
+
+  // grid
+  ctx.strokeStyle = '#e8e8e8'; ctx.lineWidth = 1;
+  for (let i=0; i<=4; i++) {
+    const y = pad.t + (i/4)*iH;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+iW,y); ctx.stroke();
+    ctx.fillStyle='#aaa'; ctx.font='9px sans-serif'; ctx.textAlign='right';
+    ctx.fillText((maxL*(1-i/4)).toFixed(2), pad.l-3, y+3);
+  }
+  // x axis labels
+  ctx.fillStyle='#aaa'; ctx.font='9px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('0', pad.l, pad.t+iH+12);
+  ctx.fillText(n+'ep', pad.l+iW, pad.t+iH+12);
+
+  // train line
+  ctx.beginPath(); ctx.strokeStyle='#0877bd'; ctx.lineWidth=2;
+  tr.forEach((v,i) => { i===0?ctx.moveTo(px(i),py(v)):ctx.lineTo(px(i),py(v)); });
+  ctx.stroke();
+
+  // test line
+  ctx.beginPath(); ctx.strokeStyle='#e74c3c'; ctx.lineWidth=2; ctx.setLineDash([4,3]);
+  te.forEach((v,i) => { i===0?ctx.moveTo(px(i),py(v)):ctx.lineTo(px(i),py(v)); });
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+// ============================================================
+// ARCHITECTURE DIAGRAM
+// ============================================================
+function drawArchDiagram() {
+  const container = document.getElementById('arch-canvas-wrap');
+  const W = container.clientWidth || 600;
+  const H = container.clientHeight || 200;
+  const canvas = document.getElementById('arch-canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+
+  if (!model) model = buildModel();
+  const m = model;
+
+  const c1f = cfg.c1Filters;
+  const c2f = cfg.c2Filters;
+  const layers = cfg.numLayers;
+
+  // Layout: Input | Conv1(kernels) | Pool1 | [Conv2(kernels)] | [Pool2] | FC | Out
+  const layerDefs = [];
+  layerDefs.push({ type:'input', label:'Input\n12×12', w:50, h:H*0.7 });
+  layerDefs.push({ type:'conv1', label:`Conv1\n${c1f}×3×3`, w:56, h:H*0.75 });
+  layerDefs.push({ type:'pool1', label:'MaxPool\n6×6', w:42, h:H*0.55 });
+  if (layers === 2) {
+    layerDefs.push({ type:'conv2', label:`Conv2\n${c2f}×3×3`, w:52, h:H*0.65 });
+    layerDefs.push({ type:'pool2', label:'MaxPool\n3×3', w:36, h:H*0.42 });
+  }
+  layerDefs.push({ type:'fc', label:`FC\n${m.flatSize}→3`, w:46, h:H*0.38 });
+  layerDefs.push({ type:'out', label:'Output\n3 classes', w:50, h:H*0.32 });
+
+  const gap = 20;
+  const totalW = layerDefs.reduce((s,l)=>s+l.w,0) + gap*(layerDefs.length-1);
+  let startX = (W - totalW) / 2;
+
+  const cX = [], cY = [];
+  layerDefs.forEach((ld, i) => {
+    cX.push(startX + ld.w/2);
+    cY.push(H/2);
+    startX += ld.w + gap;
+  });
+
+  // Draw connections
+  ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1.5;
+  for (let i=0; i<layerDefs.length-1; i++) {
+    const x1 = cX[i] + layerDefs[i].w/2 - 2;
+    const x2 = cX[i+1] - layerDefs[i+1].w/2 + 2;
+    const y = H/2;
+    ctx.beginPath(); ctx.moveTo(x1,y); ctx.lineTo(x2,y); ctx.stroke();
+    // arrow head
+    ctx.beginPath();
+    ctx.moveTo(x2,y); ctx.lineTo(x2-7,y-4); ctx.lineTo(x2-7,y+4); ctx.closePath();
+    ctx.fillStyle='#ccc'; ctx.fill();
+  }
+
+  // Residual skip arc removed — controlled via checkbox only
+
+  // Draw boxes + kernels
+  layerDefs.forEach((ld, i) => {
+    const x = cX[i] - ld.w/2;
+    const y = cY[i] - ld.h/2;
+    const w = ld.w, h = ld.h;
+
+    // Color based on type
+    let boxColor = '#e8f4fc', borderColor = '#0877bd';
+    if (ld.type === 'pool1' || ld.type === 'pool2') { boxColor='#f0f7f0'; borderColor='#2ecc71'; }
+    if (ld.type === 'out') { boxColor='#fef9e7'; borderColor='#f39c12'; }
+    if (ld.type === 'fc') { boxColor='#fdf2f8'; borderColor='#9b59b6'; }
+
+    ctx.fillStyle = boxColor;
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = 1.5;
+    roundRect(ctx, x, y, w, h, 4);
+    ctx.fill(); ctx.stroke();
+
+    // Label
+    ctx.fillStyle = '#444'; ctx.font = 'bold 9px sans-serif'; ctx.textAlign='center';
+    const lines = ld.label.split('\n');
+    lines.forEach((line, li) => {
+      ctx.fillText(line, cX[i], y + 14 + li*11);
+    });
+
+    // Draw kernels for conv layers (vertical layout)
+    if (ld.type === 'conv1' && m.c1W) {
+      drawKernelsInBox(ctx, m.c1W, c1f, 1, cX[i], y+h/2+6, w*0.8, h*0.65);
+    }
+    if (ld.type === 'conv2' && m.c2W) {
+      drawKernelsInBox(ctx, m.c2W, c2f, c1f, cX[i], y+h/2+6, w*0.8, h*0.55);
+    }
+  });
+}
+
+function drawKernelsInBox(ctx, weights, nOut, nIn, cx, topY, boxW, boxH) {
+  const kSize = Math.min(18, Math.floor(boxH / nOut) - 3);
+  const totalH = nOut * (kSize + 2);
+  const sy0 = topY - totalH/2;
+  for (let co = 0; co < nOut; co++) {
+    // sum over input channels
+    const kData = new Float32Array(9);
+    for (let ci = 0; ci < nIn; ci++) {
+      for (let k = 0; k < 9; k++) {
+        kData[k] += weights[co * nIn * 9 + ci * 9 + k] / nIn;
+      }
+    }
+    drawKernelHeatmap(ctx, kData, cx - kSize/2, sy0 + co*(kSize+2), kSize, kSize);
+  }
+}
+
+function drawKernelHeatmap(ctx, data, x, y, w, h) {
+  const mx = Math.max(...data.map(Math.abs), 0.01);
+  for (let ky = 0; ky < 3; ky++) {
+    for (let kx = 0; kx < 3; kx++) {
+      const v = data[ky*3+kx] / mx; // -1 to 1
+      const px = x + kx * (w/3);
+      const py = y + ky * (h/3);
+      ctx.fillStyle = divergingColor(v);
+      ctx.fillRect(Math.floor(px), Math.floor(py), Math.ceil(w/3)+1, Math.ceil(h/3)+1);
+    }
+  }
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r);
+  ctx.closePath();
+}
+
+// Grayscale diverging color for kernels: black(negative) → gray(zero) → white(positive)
+function divergingColor(v) {
+  // v in [-1,1]: -1=black, 0=mid-gray, 1=white
+  v = Math.max(-1, Math.min(1, v));
+  const g = Math.round(128 + 127 * v);
+  return `rgb(${g},${g},${g})`;
+}
+// Blue intensity (for activations ≥0)
+function blueIntensity(v) {
+  // v in [0,1]
+  const t = Math.max(0,Math.min(1,v));
+  const r = Math.round(255*(1-t*0.9));
+  const g = Math.round(255*(1-t*0.7));
+  const b = 255;
+  return `rgb(${r},${g},${b})`;
+}
+
+// ============================================================
+// FORWARD PASS VISUALIZATION (bottom)
+// ============================================================
+function rebuildFwdViz() {
+  const scroll = document.getElementById('fwd-scroll');
+  scroll.innerHTML = '';
+
+  // Determine layout based on current cfg
+  const c1f = cfg.c1Filters;
+  const c2f = cfg.c2Filters;
+  const numLayers = cfg.numLayers;
+  const MAP_SIZE = 36; // display size in px for each feature map cell
+
+  function makeBlock(id, titleKey, numMaps, mapW, mapH) {
+    const block = document.createElement('div');
+    block.className = 'fwd-block';
+    const titleEl = document.createElement('div');
+    titleEl.className = 'fwd-block-title';
+    titleEl.setAttribute('data-i18n', titleKey);
+    titleEl.textContent = t(titleKey);
+    block.appendChild(titleEl);
+    const mapsDiv = document.createElement('div');
+    mapsDiv.className = 'fwd-maps';
+    mapsDiv.id = id;
+    for (let i=0; i<numMaps; i++) {
+      const cv = document.createElement('canvas');
+      cv.width = mapW; cv.height = mapH;
+      cv.style.width = MAP_SIZE+'px'; cv.style.height = (MAP_SIZE*mapH/mapW)+'px';
+      cv.style.imageRendering = 'pixelated';
+      cv.style.border = '1px solid #ddd';
+      cv.style.borderRadius = '2px';
+      cv.setAttribute('data-idx', i);
+      mapsDiv.appendChild(cv);
+    }
+    block.appendChild(mapsDiv);
+    return block;
+  }
+  function makeArrow() {
+    const d = document.createElement('div');
+    d.className = 'fwd-arrow';
+    d.textContent = '↓';
+    return d;
+  }
+
+  // Input image block
+  const inputBlock = document.createElement('div');
+  inputBlock.className = 'fwd-block';
+  const inputTitle = document.createElement('div');
+  inputTitle.className = 'fwd-block-title';
+  inputTitle.setAttribute('data-i18n','inputImg');
+  inputTitle.textContent = t('inputImg');
+  inputBlock.appendChild(inputTitle);
+  const inputCv = document.createElement('canvas');
+  inputCv.id = 'fwd-input-cv';
+  inputCv.width = IMG_SIZE; inputCv.height = IMG_SIZE;
+  inputCv.style.width = '40px'; inputCv.style.height = '40px';
+  inputCv.style.imageRendering = 'pixelated';
+  inputCv.style.border = '2px solid #0877bd'; inputCv.style.borderRadius='3px';
+  inputBlock.appendChild(inputCv);
+  scroll.appendChild(inputBlock);
+
+  scroll.appendChild(makeArrow());
+  scroll.appendChild(makeBlock('fwd-c1','conv1Out', c1f, 12, 12));
+  scroll.appendChild(makeArrow());
+  scroll.appendChild(makeBlock('fwd-p1','pool1Out', c1f, 6, 6));
+
+  if (numLayers === 2) {
+    scroll.appendChild(makeArrow());
+    scroll.appendChild(makeBlock('fwd-c2','conv2Out', c2f, 6, 6));
+    scroll.appendChild(makeArrow());
+    scroll.appendChild(makeBlock('fwd-p2','pool2Out', c2f, 3, 3));
+  }
+
+  scroll.appendChild(makeArrow());
+
+  // Prediction block
+  const predBlock = document.createElement('div');
+  predBlock.className = 'fwd-block';
+  const predTitle = document.createElement('div');
+  predTitle.className = 'fwd-block-title';
+  predTitle.setAttribute('data-i18n','fcOut');
+  predTitle.textContent = t('fcOut');
+  predBlock.appendChild(predTitle);
+  const predInner = document.createElement('div');
+  predInner.style.cssText = 'display:flex;flex-direction:row;align-items:center;gap:10px;';
+  const predBars = document.createElement('div');
+  predBars.id = 'fwd-pred';
+  predBars.style.cssText = 'min-width:120px;';
+  for (let c=0;c<3;c++) {
+    const row = document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:3px;margin-bottom:2px;';
+    const lbl=document.createElement('span'); lbl.textContent=c; lbl.style.cssText='font-size:10px;width:10px;font-weight:700;color:#555;';
+    const bwrap=document.createElement('div'); bwrap.style.cssText='width:70px;height:10px;background:#f0f0f0;border-radius:3px;overflow:hidden;';
+    const bar=document.createElement('div'); bar.id=`fwd-pb-${c}`; bar.style.cssText='height:100%;border-radius:3px;background:#0877bd;width:33%;transition:width 0.15s;';
+    bwrap.appendChild(bar);
+    const val=document.createElement('span'); val.id=`fwd-pv-${c}`; val.style.cssText='font-size:9px;font-family:monospace;width:34px;text-align:right;';val.textContent='0.33';
+    row.appendChild(lbl); row.appendChild(bwrap); row.appendChild(val);
+    predBars.appendChild(row);
+  }
+  const predRes=document.createElement('div'); predRes.id='fwd-pred-res'; predRes.style.cssText='font-size:14px;font-weight:700;color:#0877bd;padding:2px 0;white-space:nowrap;';
+  predRes.textContent='?';
+  predInner.appendChild(predBars);
+  predInner.appendChild(predRes);
+  predBlock.appendChild(predInner);
+  scroll.appendChild(predBlock);
+}
+
+function runForwardViz(imgFlat, label) {
+  if (!model) return;
+  const act = forward(imgFlat, model);
+
+  // Draw input
+  const inputCv = document.getElementById('fwd-input-cv');
+  if (!inputCv) return;
+  drawGrayscaleMap(inputCv, imgFlat, IMG_SIZE, IMG_SIZE, false);
+
+  // Conv1 feature maps
+  const c1f = cfg.c1Filters;
+  const c1div = document.getElementById('fwd-c1');
+  if (c1div) {
+    for (let f=0; f<c1f; f++) {
+      const cv = c1div.children[f];
+      if (!cv) continue;
+      const map = extractChannel(act.c1_act, 12, 12, c1f, f);
+      drawGrayscaleMap(cv, map, 12, 12, true);
+    }
+  }
+
+  // Pool1
+  const p1div = document.getElementById('fwd-p1');
+  if (p1div) {
+    for (let f=0; f<c1f; f++) {
+      const cv = p1div.children[f];
+      if (!cv) continue;
+      const map = extractChannel(act.p1_out, 6, 6, c1f, f);
+      drawGrayscaleMap(cv, map, 6, 6, true);
+    }
+  }
+
+  // Conv2 + Pool2 if present
+  if (cfg.numLayers === 2 && act.c2_act) {
+    const c2f = cfg.c2Filters;
+    const c2div = document.getElementById('fwd-c2');
+    if (c2div) {
+      for (let f=0; f<c2f; f++) {
+        const cv = c2div.children[f];
+        if (!cv) continue;
+        const map = extractChannel(act.c2_act, 6, 6, c2f, f);
+        drawGrayscaleMap(cv, map, 6, 6, true);
+      }
+    }
+    const p2div = document.getElementById('fwd-p2');
+    if (p2div) {
+      for (let f=0; f<c2f; f++) {
+        const cv = p2div.children[f];
+        if (!cv) continue;
+        const map = extractChannel(act.p2_out, 3, 3, c2f, f);
+        drawGrayscaleMap(cv, map, 3, 3, true);
+      }
+    }
+  }
+
+  // Prediction bars in fwd viz
+  const probs = act.probs;
+  for (let c=0;c<3;c++) {
+    const bar = document.getElementById(`fwd-pb-${c}`);
+    const val = document.getElementById(`fwd-pv-${c}`);
+    if (bar) bar.style.width = (probs[c]*100).toFixed(1)+'%';
+    if (val) val.textContent = probs[c].toFixed(2);
+  }
+  const predIdx = probs.indexOf(Math.max(...probs));
+  const predRes = document.getElementById('fwd-pred-res');
+  if (predRes) {
+    predRes.textContent = t('predicted') + ' ' + predIdx;
+    predRes.style.color = predIdx === label ? '#27ae60' : '#e74c3c';
+  }
+
+  // Also update main right-panel prob chart
+  updateProbChart(probs, label);
+}
+
+function extractChannel(flat, H, W, C, channel) {
+  const out = new Float32Array(H * W);
+  for (let i=0; i<H*W; i++) out[i] = flat[i*C + channel];
+  return out;
+}
+
+function drawGrayscaleMap(canvas, data, H, W, useBlue) {
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const id = ctx.createImageData(W, H);
+  const d = id.data;
+  const max = Math.max(...data, 0.001);
+  const min = Math.min(...data);
+  const range = max - min || 1;
+  for (let i=0; i<H*W; i++) {
+    const v = (data[i] - min) / range; // 0..1
+    let r,g,b;
+    if (useBlue) {
+      // blue intensity
+      r = Math.round(255*(1-v*0.9));
+      g = Math.round(255*(1-v*0.7));
+      b = 255;
+    } else {
+      const gv = Math.round(v*255);
+      r=gv; g=gv; b=gv;
+    }
+    d[i*4]=r; d[i*4+1]=g; d[i*4+2]=b; d[i*4+3]=255;
+  }
+  ctx.putImageData(id, 0, 0);
+}
+
+function updateProbChart(probs, label) {
+  for (let c=0; c<3; c++) {
+    document.getElementById(`pb-${c}`).style.width=(probs[c]*100).toFixed(1)+'%';
+    document.getElementById(`pv-${c}`).textContent=probs[c].toFixed(3);
+  }
+  const pred = probs.indexOf(Math.max(...probs));
+  const predEl = document.getElementById('pred-result');
+  if (label >= 0) {
+    predEl.textContent = t('predicted') + ' ' + pred + (pred===label?' ✓':' ✗');
+    predEl.style.color = pred===label ? '#27ae60' : '#e74c3c';
+  } else {
+    predEl.textContent = t('predicted') + ' ' + pred;
+    predEl.style.color = '#0877bd';
+  }
+}
+
+// ============================================================
+// DIGIT THUMBNAILS — show ALL test samples with pass/fail
+// ============================================================
+let thumbCanvases = []; // keep references for updating borders
+function buildThumbs() {
+  const grid = document.getElementById('samples-grid');
+  grid.innerHTML = '';
+  thumbCanvases = [];
+  // Show test data samples in 3 rows, one per class
+  for (let cls = 0; cls < 3; cls++) {
+    const row = document.createElement('div');
+    row.className = 'sample-row';
+
+    const rowLabel = document.createElement('span');
+    rowLabel.className = 'sample-row-label';
+    rowLabel.textContent = cls + ':';
+    row.appendChild(rowLabel);
+
+    const classTestSamples = testData.filter(s => s.label === cls);
+    classTestSamples.forEach((sample) => {
+      const cv = document.createElement('canvas');
+      cv.width = IMG_SIZE; cv.height = IMG_SIZE;
+      cv.style.cssText = 'width:26px;height:26px;image-rendering:pixelated;cursor:pointer;border:2px solid #ccc;border-radius:2px;';
+      cv.className = 'digit-thumb';
+      cv._sampleLabel = cls;
+      cv._sampleImg = sample.img;
+      const ctx = cv.getContext('2d');
+      const id = ctx.createImageData(IMG_SIZE, IMG_SIZE);
+      for (let p = 0; p < IMG_SIZE*IMG_SIZE; p++) {
+        const gv = Math.round(sample.img[p]*255);
+        id.data[p*4]=gv; id.data[p*4+1]=gv; id.data[p*4+2]=gv; id.data[p*4+3]=255;
+      }
+      ctx.putImageData(id,0,0);
+      if (selectedSample && selectedSample.label === cls && selectedSample.img === sample.img) {
+        cv.classList.add('selected-thumb');
+        cv.style.borderColor = '#0877bd';
+      }
+      cv.addEventListener('click', () => {
+        document.querySelectorAll('.digit-thumb').forEach(c => {
+          if (!c.classList.contains('selected-thumb')) {
+            c.style.borderColor = c._borderColor || '#ccc';
+          }
+        });
+        document.querySelectorAll('.digit-thumb').forEach(c => {
+          c.classList.remove('selected-thumb');
+          c.classList.remove('selected');
+        });
+        cv.classList.add('selected-thumb');
+        cv.style.borderColor = '#0877bd';
+        selectedSample = { img: sample.img, label: cls };
+        runForwardViz(sample.img, cls);
+      });
+      row.appendChild(cv);
+      thumbCanvases.push(cv);
+    });
+
+    grid.appendChild(row);
+  }
+}
+
+// Update thumbnail borders based on current model predictions
+function updateThumbBorders() {
+  if (!model) return;
+  thumbCanvases.forEach(cv => {
+    const img = cv._sampleImg;
+    const label = cv._sampleLabel;
+    const result = forward(img, model);
+    const probs = result.probs;
+    const pred = probs.indexOf(Math.max(...probs));
+    const correct = pred === label;
+    cv._borderColor = correct ? '#27ae60' : '#e74c3c';
+    if (!cv.classList.contains('selected-thumb')) {
+      cv.style.borderColor = cv._borderColor;
+    }
+  });
+}
+
+// ============================================================
+// DRAW CANVAS
+// ============================================================
+const drawCanvas = document.getElementById('draw-canvas');
+const drawCtx = drawCanvas.getContext('2d');
+let mouseDown = false;
+
+drawCtx.fillStyle='#000';
+drawCtx.fillRect(0,0,drawCanvas.width,drawCanvas.height);
+
+function getDrawPos(e) {
+  const rect = drawCanvas.getBoundingClientRect();
+  const scaleX = drawCanvas.width / rect.width;
+  const scaleY = drawCanvas.height / rect.height;
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  return {
+    x: (clientX - rect.left) * scaleX,
+    y: (clientY - rect.top) * scaleY
+  };
+}
+
+function drawAt(pos) {
+  drawCtx.fillStyle='#fff';
+  drawCtx.beginPath();
+  drawCtx.arc(pos.x, pos.y, 7, 0, Math.PI*2);
+  drawCtx.fill();
+  inferDrawn();
+}
+
+drawCanvas.addEventListener('mousedown', e => { mouseDown=true; drawAt(getDrawPos(e)); e.preventDefault(); });
+drawCanvas.addEventListener('mousemove', e => { if(mouseDown) { drawAt(getDrawPos(e)); e.preventDefault(); }});
+drawCanvas.addEventListener('mouseup', () => mouseDown=false);
+drawCanvas.addEventListener('mouseleave', () => mouseDown=false);
+drawCanvas.addEventListener('touchstart', e => { mouseDown=true; drawAt(getDrawPos(e)); e.preventDefault(); }, {passive:false});
+drawCanvas.addEventListener('touchmove', e => { if(mouseDown) drawAt(getDrawPos(e)); e.preventDefault(); }, {passive:false});
+drawCanvas.addEventListener('touchend', () => mouseDown=false);
+
+document.getElementById('btn-clear').addEventListener('click', () => {
+  drawCtx.fillStyle='#000';
+  drawCtx.fillRect(0,0,drawCanvas.width,drawCanvas.height);
+  updateProbChart([0.33,0.33,0.34],-1);
+  rebuildFwdViz();
+});
+
+function inferDrawn() {
+  if (!model) return;
+  // Read drawn canvas, scale to 12x12
+  const tmp = document.createElement('canvas');
+  tmp.width = IMG_SIZE; tmp.height = IMG_SIZE;
+  const tmpCtx = tmp.getContext('2d');
+  tmpCtx.drawImage(drawCanvas, 0, 0, IMG_SIZE, IMG_SIZE);
+  const id = tmpCtx.getImageData(0,0,IMG_SIZE,IMG_SIZE);
+  const flat = new Float32Array(IMG_SIZE*IMG_SIZE);
+  for (let i=0;i<IMG_SIZE*IMG_SIZE;i++) flat[i] = id.data[i*4]/255;
+
+  // Deselect thumbnails
+  document.querySelectorAll('.digit-thumb').forEach(c => {
+    c.classList.remove('selected-thumb');
+    c.classList.remove('selected');
+    c.style.borderColor = c._borderColor || '#ccc';
+  });
+  selectedSample = { img: flat, label: -1 };
+  runForwardViz(flat, -1);
+}
+
+// ============================================================
+// RESIZE HANDLER
+// ============================================================
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    drawArchDiagram();
+  }, 100);
+});
+
+// ============================================================
+// INIT
+// ============================================================
+applyI18N();
+// Initialize via reset (builds model, thumbnails, fwd viz, starts training)
+reset(true);
+</script></body>
+</html>
