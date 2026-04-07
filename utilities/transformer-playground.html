@@ -1946,6 +1946,8 @@ function renderLoss() {
 // =====================================================================
 // EMBEDDING PCA RENDERING
 // =====================================================================
+let lastPcaCoords = null;
+
 function pca2d(matrix) {
   // matrix: N × d, returns N × 2 (first 2 principal components)
   const N = matrix.length;
@@ -1957,9 +1959,11 @@ function pca2d(matrix) {
   const centered = matrix.map(row => row.map((v, j) => v - mean[j]));
 
   // Power iteration for top 2 PCs
-  const randUnit = (dim) => {
+  const deterministicUnit = (dim, axis = 0) => {
     const v = new Float64Array(dim);
-    for (let i = 0; i < dim; i++) v[i] = Math.random() - 0.5;
+    for (let i = 0; i < dim; i++) {
+      v[i] = (i === axis % dim) ? 1 : 0.25 / Math.max(dim - 1, 1);
+    }
     const n = Math.sqrt(v.reduce((s, x) => s + x * x, 0));
     return v.map(x => x / n);
   };
@@ -1975,8 +1979,8 @@ function pca2d(matrix) {
     return v.map(x => x / n);
   };
 
-  const powerIter = (data, iters = 30) => {
-    let v = randUnit(d);
+  const powerIter = (data, seedAxis, iters = 30) => {
+    let v = deterministicUnit(d, seedAxis);
     for (let iter = 0; iter < iters; iter++) {
       const scores = project(data, v);
       const Av = matVec(data, scores);
@@ -1985,13 +1989,27 @@ function pca2d(matrix) {
     return v;
   };
 
-  const pc1 = powerIter(centered);
+  const pc1 = powerIter(centered, 0);
   const scores1 = project(centered, pc1);
   const data2 = deflate(centered, pc1, scores1);
-  const pc2 = powerIter(data2);
+  const pc2 = powerIter(data2, 1);
   const scores2 = project(data2, pc2);
 
-  return scores1.map((s1, i) => [s1, scores2[i]]);
+  let coords = scores1.map((s1, i) => [s1, scores2[i]]);
+
+  if (lastPcaCoords && lastPcaCoords.length === coords.length) {
+    const dotX = coords.reduce((s, c, i) => s + c[0] * lastPcaCoords[i][0], 0);
+    const dotY = coords.reduce((s, c, i) => s + c[1] * lastPcaCoords[i][1], 0);
+    if (dotX < 0) {
+      coords = coords.map(([x, y]) => [-x, y]);
+    }
+    if (dotY < 0) {
+      coords = coords.map(([x, y]) => [x, -y]);
+    }
+  }
+
+  lastPcaCoords = coords.map(([x, y]) => [x, y]);
+  return coords;
 }
 
 const CAT_COLORS = {
