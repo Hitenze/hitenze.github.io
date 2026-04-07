@@ -636,8 +636,9 @@ function generateData(type) {
   const normalized = raw.map(v => 2 * (v - mn) / range - 1);
 
   // Build sliding window samples with a clean temporal split:
-  // train windows stay entirely in the train segment, and test windows
-  // use only test-segment context.
+  // train targets stay in the train segment, while test targets stay in
+  // the test segment. Test windows are still allowed to use pre-split
+  // history as input context, which is standard for forecasting.
   const X_train = [], Y_train = [], trainTargetIdx = [];
   const X_test = [], Y_test = [], testTargetIdx = [];
 
@@ -647,10 +648,12 @@ function generateData(type) {
     trainTargetIdx.push(i + W);
   }
 
-  for (let i = splitPoint; i + W < normalized.length; i++) {
+  for (let i = splitPoint - W; i + W < normalized.length; i++) {
+    const targetIdx = i + W;
+    if (targetIdx < splitPoint) continue;
     X_test.push(normalized.slice(i, i + W));
-    Y_test.push(normalized[i + W]);
-    testTargetIdx.push(i + W);
+    Y_test.push(normalized[targetIdx]);
+    testTargetIdx.push(targetIdx);
   }
 
   return {
@@ -1350,23 +1353,37 @@ function drawPredictionPlot() {
   }
   ctx.stroke();
 
-  // Prediction line (red) — offset by window size
+  // Prediction lines (red), drawn separately for train/test to avoid
+  // visually bridging the split with a synthetic straight segment.
   if (LAST_PREDICTIONS && LAST_PREDICTIONS.length > 0) {
     ctx.strokeStyle = '#e74c3c';
     ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    let started = false;
-    for (let i = 0; i < LAST_PREDICTIONS.length; i++) {
-      const seqIdx = targetIdx[i];
-      if (seqIdx >= N) break;
-      const x = xScale(seqIdx), y = yScale(Math.max(-1.5, Math.min(1.5, LAST_PREDICTIONS[i])));
-      if (!started) { ctx.moveTo(x, y); started = true; }
-      else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
+
+    const trainCount = DATA.X_train.length;
+    const drawPredictionSegment = (start, end) => {
+      if (start >= end) return;
+      ctx.beginPath();
+      let started = false;
+      for (let i = start; i < end; i++) {
+        const seqIdx = targetIdx[i];
+        if (seqIdx >= N) break;
+        const clipped = Math.max(-1.5, Math.min(1.5, LAST_PREDICTIONS[i]));
+        const x = xScale(seqIdx);
+        const y = yScale(clipped);
+        if (!started) {
+          ctx.moveTo(x, y);
+          started = true;
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+      ctx.stroke();
+    };
+
+    drawPredictionSegment(0, trainCount);
+    drawPredictionSegment(trainCount, LAST_PREDICTIONS.length);
 
     // MSE computation
-    const trainCount = DATA.X_train.length;
     let trainMSE = 0, testMSE = 0;
     for (let i = 0; i < LAST_PREDICTIONS.length; i++) {
       const diff = (LAST_PREDICTIONS[i] - (i < trainCount ? DATA.Y_train[i] : DATA.Y_test[i - trainCount]));
