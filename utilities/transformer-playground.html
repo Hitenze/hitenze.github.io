@@ -1,0 +1,2221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformer Playground</title>
+<style>
+/* ============ RESET & BASE ============ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+  background: #f7f7f7;
+  color: #333;
+  font-size: 13px;
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============ HEADER ============ */
+#header {
+  background: #1a3a4a;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 48px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+#header-logo {
+  display: flex; align-items: center; gap: 8px;
+}
+#header h1 { font-size: 17px; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap; }
+#header .subtitle { font-size: 11px; color: #8ab; margin-left: 4px; white-space: nowrap; }
+#header .epoch-label { font-size: 13px; color: #acd; margin-left: auto; white-space: nowrap; display: flex; gap: 16px; align-items: center; }
+#header .epoch-label span.val { color: #e74c3c; font-weight: 700; font-size: 15px; }
+#header .epoch-label span.acc-val { color: #4ade80; font-weight: 700; font-size: 15px; }
+
+/* ============ CONTROL BAR ============ */
+#control-bar {
+  background: #e8e8e8;
+  border-bottom: 1px solid #ccc;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.ctrl-group { display: flex; align-items: center; gap: 4px; }
+.ctrl-group label { font-size: 11px; color: #666; white-space: nowrap; }
+.ctrl-group select {
+  font-size: 11px; padding: 3px 5px; border: 1px solid #bbb; border-radius: 3px;
+  background: #fff; cursor: pointer;
+}
+.btn-round {
+  width: 32px; height: 32px; border-radius: 50%; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+  transition: background 0.15s;
+}
+.btn-play { background: #e74c3c; color: #fff; }
+.btn-play:hover { background: #c0392b; }
+.btn-play.playing { background: #0877bd; }
+.btn-step { background: #ddd; color: #333; }
+.btn-step:hover { background: #ccc; }
+.btn-reset { background: #ddd; color: #c33; }
+.btn-reset:hover { background: #ccc; }
+
+/* ============ PRESET BAR ============ */
+#preset-bar {
+  background: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+#preset-bar .preset-label { font-size: 11px; color: #666; font-weight: 600; }
+.btn-preset {
+  font-size: 11px; padding: 3px 10px; border: 1px solid #bbb; border-radius: 12px;
+  background: #fff; cursor: pointer; transition: all 0.15s; color: #444;
+}
+.btn-preset:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+.btn-preset.active { background: #0877bd; color: #fff; border-color: #0877bd; }
+
+/* ============ MAIN LAYOUT ============ */
+#main {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ============ LEFT SIDEBAR ============ */
+#sidebar {
+  width: 150px;
+  min-width: 150px;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  padding: 10px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+#sidebar h3 {
+  font-size: 10px; color: #888; margin-bottom: 6px;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.sidebar-section { margin-bottom: 12px; }
+.sidebar-section label { font-size: 11px; color: #555; display: block; margin-bottom: 3px; }
+.radio-group { display: flex; gap: 4px; flex-wrap: wrap; }
+.radio-group label {
+  display: flex; align-items: center; gap: 2px; cursor: pointer;
+  padding: 2px 6px; border: 1px solid #bbb; border-radius: 10px;
+  font-size: 11px; transition: all 0.1s; color: #444;
+}
+.radio-group label.checked { background: #0877bd; color: #fff; border-color: #0877bd; }
+.radio-group input { display: none; }
+
+.sidebar-info {
+  background: #f8f8f8; border: 1px solid #eee; border-radius: 4px;
+  padding: 6px; margin-top: 8px; font-size: 10px; color: #666; line-height: 1.5;
+}
+.sidebar-info .info-row { display: flex; justify-content: space-between; }
+.sidebar-info .info-val { font-weight: 700; color: #0877bd; font-family: monospace; }
+
+/* ============ CENTER AREA ============ */
+#center-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fafafa;
+  border-right: 1px solid #ddd;
+  min-width: 0;
+}
+
+/* ============ TEXT GENERATION AREA ============ */
+#gen-area {
+  background: #fff;
+  border-bottom: 2px solid #e0e0e0;
+  padding: 8px 12px;
+  flex-shrink: 0;
+}
+.gen-title {
+  font-size: 10px; color: #888; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+}
+.gen-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+#gen-input {
+  flex: 1; font-size: 12px; padding: 4px 8px;
+  border: 1px solid #bbb; border-radius: 4px; background: #fff;
+  font-family: inherit;
+}
+.btn-gen {
+  font-size: 11px; padding: 4px 12px; border: none; border-radius: 4px;
+  background: #0877bd; color: #fff; cursor: pointer; font-weight: 600;
+  transition: background 0.15s; white-space: nowrap;
+}
+.btn-gen:hover { background: #065f99; }
+.btn-gen:disabled { background: #aaa; cursor: default; }
+
+.example-btns { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
+.btn-example {
+  font-size: 10px; padding: 2px 7px; border: 1px solid #bbb; border-radius: 10px;
+  background: #f5f5f5; cursor: pointer; transition: all 0.1s; color: #555;
+}
+.btn-example:hover { background: #e0e0e0; }
+
+#gen-output {
+  min-height: 26px; padding: 4px 8px; background: #f8f8f8;
+  border: 1px solid #e8e8e8; border-radius: 4px; font-size: 13px;
+  display: flex; gap: 4px; flex-wrap: wrap; align-items: center;
+  margin-bottom: 4px;
+}
+.tok-prompt { color: #0877bd; font-weight: 600; padding: 1px 4px; border-radius: 3px; background: #e8f4fb; }
+.tok-generated { color: #059669; font-weight: 600; padding: 1px 4px; border-radius: 3px; background: #d1fae5; animation: fadeIn 0.3s; }
+.tok-new { animation: popIn 0.4s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { 0% { transform: scale(0.6); opacity: 0; } 70% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+
+/* Top-5 predictions bar */
+#top5-area {
+  display: flex; gap: 6px; align-items: flex-end; height: 42px;
+}
+.top5-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 28px; }
+.top5-bar { width: 22px; background: #0877bd; border-radius: 2px 2px 0 0; transition: height 0.3s; min-height: 2px; }
+.top5-bar.top { background: #e74c3c; }
+.top5-label { font-size: 9px; color: #666; text-align: center; max-width: 30px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.top5-prob { font-size: 8px; color: #888; font-family: monospace; }
+
+/* ============ ATTENTION HEATMAP AREA ============ */
+#heatmap-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 8px 12px;
+  min-height: 0;
+}
+.heatmap-title {
+  font-size: 10px; color: #888; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+  display: flex; align-items: center; gap: 8px;
+}
+.heatmap-tabs {
+  display: flex; gap: 4px; margin-bottom: 6px; flex-wrap: wrap;
+}
+.tab-btn {
+  font-size: 10px; padding: 2px 8px; border: 1px solid #bbb; border-radius: 10px;
+  background: #f5f5f5; cursor: pointer; transition: all 0.1s; color: #555;
+}
+.tab-btn.active { background: #0877bd; color: #fff; border-color: #0877bd; }
+
+#heatmap-scroll {
+  flex: 1; overflow: auto; min-height: 0;
+}
+#heads-grid {
+  display: grid;
+  gap: 10px;
+}
+.head-panel {
+  background: #fff; border: 1px solid #e0e0e0; border-radius: 4px;
+  padding: 6px;
+}
+.head-title { font-size: 10px; color: #888; font-weight: 600; margin-bottom: 4px; text-align: center; }
+.heatmap-canvas-wrap { display: flex; justify-content: center; }
+
+/* ============ RIGHT PANEL ============ */
+#right-panel {
+  width: 260px;
+  min-width: 260px;
+  background: #fff;
+  padding: 8px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.panel-title {
+  font-size: 10px; color: #888; font-weight: 600; margin-bottom: 4px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.plot-container {
+  background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden;
+}
+.plot-container canvas { display: block; }
+.loss-info {
+  display: flex; gap: 8px; font-size: 11px; padding: 3px 0; flex-wrap: wrap;
+}
+.loss-item { display: flex; align-items: center; gap: 4px; }
+.loss-dot { width: 7px; height: 7px; border-radius: 50%; }
+.loss-value { font-weight: 700; font-family: "Courier New", monospace; font-size: 11px; }
+
+.acc-row { display: flex; gap: 6px; align-items: center; font-size: 11px; margin-top: 2px; }
+.acc-bar-wrap { flex: 1; height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden; }
+.acc-bar { height: 100%; border-radius: 5px; transition: width 0.3s; background: #4ade80; }
+.acc-label { font-size: 10px; color: #666; width: 54px; }
+.acc-val-text { font-weight: 700; font-family: monospace; width: 34px; font-size: 10px; }
+
+/* ============ LANG BTN ============ */
+#btn-lang {
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; border-radius: 4px; padding: 2px 8px; cursor: pointer;
+  font-size: 11px; margin-left: 4px;
+}
+#btn-lang:hover { background: rgba(255,255,255,0.25); }
+
+/* ============ SCROLLBAR ============ */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #f0f0f0; }
+::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #aaa; }
+
+/* ============ TRAINING STATUS ============ */
+#training-status {
+  font-size: 10px; color: #888; font-style: italic;
+}
+
+/* ============ COLORBAR LEGEND ============ */
+.colorbar-wrap { display: flex; align-items: center; gap: 4px; font-size: 9px; color: #888; }
+.colorbar { width: 60px; height: 8px; border-radius: 2px; border: 1px solid #ddd;
+  background: linear-gradient(to right, #fff, #0877bd); }
+
+/* ============ EMBEDDING VIZ ============ */
+#embed-canvas { display: block; }
+
+/* Status badge */
+.status-badge {
+  display: inline-block; font-size: 9px; padding: 1px 6px; border-radius: 8px;
+  font-weight: 600; background: #d1fae5; color: #065f30;
+}
+.status-badge.training { background: #fef3c7; color: #78350f; }
+.status-badge.paused { background: #fee2e2; color: #7f1d1d; }
+
+/* ============ LAYER SELECTOR ============ */
+.layer-head-selector {
+  display: flex; gap: 6px; align-items: center; margin-bottom: 4px;
+}
+.layer-head-selector label { font-size: 10px; color: #666; }
+.layer-head-selector select {
+  font-size: 10px; padding: 2px 4px; border: 1px solid #bbb; border-radius: 3px; background: #fff;
+}
+</style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<div id="header">
+  <div id="header-logo">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-label="Transformer logo">
+      <rect x="2" y="2" width="5" height="5" rx="1" fill="#0877bd" opacity="0.9"/>
+      <rect x="11" y="2" width="5" height="5" rx="1" fill="#0877bd" opacity="0.7"/>
+      <rect x="20" y="2" width="5" height="5" rx="1" fill="#0877bd" opacity="0.5"/>
+      <rect x="2" y="11" width="5" height="5" rx="1" fill="#e74c3c" opacity="0.6"/>
+      <rect x="11" y="11" width="5" height="5" rx="1" fill="#e74c3c" opacity="0.9"/>
+      <rect x="20" y="11" width="5" height="5" rx="1" fill="#e74c3c" opacity="0.5"/>
+      <rect x="2" y="20" width="5" height="5" rx="1" fill="#0877bd" opacity="0.3"/>
+      <rect x="11" y="20" width="5" height="5" rx="1" fill="#0877bd" opacity="0.5"/>
+      <rect x="20" y="20" width="5" height="5" rx="1" fill="#0877bd" opacity="0.9"/>
+      <line x1="7" y1="4.5" x2="11" y2="4.5" stroke="#fff" stroke-width="0.8" opacity="0.6"/>
+      <line x1="16" y1="4.5" x2="20" y2="4.5" stroke="#fff" stroke-width="0.8" opacity="0.4"/>
+      <line x1="4.5" y1="7" x2="4.5" y2="11" stroke="#fff" stroke-width="0.8" opacity="0.4"/>
+      <line x1="13.5" y1="7" x2="13.5" y2="11" stroke="#fff" stroke-width="0.8" opacity="0.7"/>
+    </svg>
+    <h1 data-i18n="title">Transformer 游乐场</h1>
+    <span class="subtitle" data-i18n="subtitle">注意力机制 · 语言建模</span>
+  </div>
+  <button id="btn-lang" onclick="toggleLang()">中</button>
+  <div class="epoch-label">
+    <span data-i18n="epoch">轮次</span>: <span id="epoch-val" class="val">0</span>
+  </div>
+</div>
+
+<!-- ========== CONTROL BAR (play/pause/reset + params) ========== -->
+<div id="control-bar">
+  <button id="btn-play" class="btn-round btn-play" title="Play/Pause">▶</button>
+  <button id="btn-step" class="btn-round btn-step" title="Step one epoch">⏭</button>
+  <button id="btn-reset" class="btn-round btn-reset" title="Reset">↺</button>
+  <div class="ctrl-group">
+    <label data-i18n="lr">学习率</label>
+    <select id="sel-lr">
+      <option value="0.001">0.001</option>
+      <option value="0.003">0.003</option>
+      <option value="0.005" selected>0.005</option>
+      <option value="0.01">0.010</option>
+      <option value="0.02">0.020</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <label data-i18n="optimizer">优化器</label>
+    <select id="sel-opt">
+      <option value="adam" selected>Adam</option>
+      <option value="sgd">SGD</option>
+    </select>
+  </div>
+</div>
+
+<!-- ========== PRESET BAR ========== -->
+<div id="preset-bar">
+  <span class="preset-label" data-i18n="presets">预设:</span>
+  <button class="btn-preset active" data-preset="basic" onclick="applyPreset('basic')" data-i18n="preset_basic">基础</button>
+  <button class="btn-preset" data-preset="single" onclick="applyPreset('single')" data-i18n="preset_single">单头</button>
+  <button class="btn-preset" data-preset="deep" onclick="applyPreset('deep')" data-i18n="preset_deep">深层</button>
+  <button class="btn-preset" data-preset="small" onclick="applyPreset('small')" data-i18n="preset_small">小模型</button>
+</div>
+
+<!-- ========== MAIN AREA ========== -->
+<div id="main">
+
+  <!-- ===== LEFT SIDEBAR ===== -->
+  <div id="sidebar">
+    <div class="sidebar-section">
+      <h3 data-i18n="arch">架构</h3>
+      <label data-i18n="layers">层数</label>
+      <div class="radio-group" id="rg-layers">
+        <label class="checked"><input type="radio" name="layers" value="1" onchange="onConfigChange()">1</label>
+        <label><input type="radio" name="layers" value="2" checked onchange="onConfigChange()">2</label>
+        <label><input type="radio" name="layers" value="3" onchange="onConfigChange()">3</label>
+        <label><input type="radio" name="layers" value="4" onchange="onConfigChange()">4</label>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <label data-i18n="heads">注意力头数</label>
+      <div class="radio-group" id="rg-heads">
+        <label><input type="radio" name="heads" value="1" onchange="onConfigChange()">1</label>
+        <label class="checked"><input type="radio" name="heads" value="2" onchange="onConfigChange()">2</label>
+        <label><input type="radio" name="heads" value="4" checked onchange="onConfigChange()">4</label>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <label>d_model</label>
+      <div class="radio-group" id="rg-dmodel">
+        <label><input type="radio" name="dmodel" value="16" onchange="onConfigChange()">16</label>
+        <label class="checked"><input type="radio" name="dmodel" value="32" checked onchange="onConfigChange()">32</label>
+        <label><input type="radio" name="dmodel" value="64" onchange="onConfigChange()">64</label>
+      </div>
+    </div>
+
+    <div class="sidebar-info" id="model-info">
+      <div class="info-row"><span data-i18n="vocab">词汇量</span><span class="info-val" id="info-vocab">—</span></div>
+      <div class="info-row"><span>d_ff</span><span class="info-val" id="info-dff">—</span></div>
+      <div class="info-row"><span data-i18n="params">参数量</span><span class="info-val" id="info-params">—</span></div>
+      <div class="info-row"><span data-i18n="samples">样本数</span><span class="info-val" id="info-samples">—</span></div>
+    </div>
+  </div>
+
+  <!-- ===== CENTER AREA ===== -->
+  <div id="center-area">
+
+    <!-- Text generation area -->
+    <div id="gen-area">
+      <div class="gen-title" data-i18n="gen_title">交互式文本生成</div>
+      <div class="example-btns">
+        <span style="font-size:10px;color:#888;" data-i18n="examples">示例提示:</span>
+        <button class="btn-example" onclick="setPrompt('the cat sat')">the cat sat</button>
+        <button class="btn-example" onclick="setPrompt('a dog sat')">a dog sat</button>
+        <button class="btn-example" onclick="setPrompt('the bird flew')">the bird flew</button>
+        <button class="btn-example" onclick="setPrompt('a fish swam')">a fish swam</button>
+        <button class="btn-example" onclick="setPrompt('the cat chased')">the cat chased</button>
+      </div>
+      <div class="gen-row">
+        <input type="text" id="gen-input" placeholder="Enter a prompt... (e.g. the cat sat)" value="the cat sat">
+        <button class="btn-gen" id="btn-gen" onclick="generateText()" data-i18n="generate">生成</button>
+        <button class="btn-gen" style="background:#888;" onclick="clearGen()" data-i18n="clear">清除</button>
+      </div>
+      <div id="gen-output"></div>
+      <div style="display:flex;gap:12px;align-items:center;margin-top:4px;">
+        <span style="font-size:10px;color:#888;" data-i18n="top5">Top-5 预测:</span>
+        <div id="top5-area"></div>
+      </div>
+    </div>
+
+    <!-- Attention heatmap -->
+    <div id="heatmap-area">
+      <div class="heatmap-title">
+        <span data-i18n="attention_map">自注意力热力图</span>
+        <div class="layer-head-selector">
+          <label data-i18n="layer_sel">层:</label>
+          <select id="sel-layer" onchange="renderHeatmaps()"></select>
+        </div>
+        <div class="colorbar-wrap">
+          <span>0</span>
+          <div class="colorbar"></div>
+          <span>1</span>
+        </div>
+        <span id="training-status"></span>
+      </div>
+      <div id="heatmap-scroll">
+        <div id="heads-grid"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== RIGHT PANEL ===== -->
+  <div id="right-panel">
+
+    <!-- Loss curve -->
+    <div>
+      <div class="panel-title" data-i18n="loss_curve">损失曲线</div>
+      <div class="plot-container">
+        <canvas id="loss-canvas" width="244" height="130"></canvas>
+      </div>
+      <div class="loss-info">
+        <div class="loss-item">
+          <div class="loss-dot" style="background:#e74c3c;"></div>
+          <span data-i18n="loss_label">损失</span>: <span class="loss-value" id="loss-display">—</span>
+        </div>
+      </div>
+      <div class="acc-row">
+        <span class="acc-label" data-i18n="accuracy">准确率</span>
+        <div class="acc-bar-wrap"><div class="acc-bar" id="acc-bar" style="width:0%"></div></div>
+        <span class="acc-val-text" id="acc-display">0%</span>
+      </div>
+    </div>
+
+    <!-- Token Embedding PCA -->
+    <div>
+      <div class="panel-title" data-i18n="embed_viz">词嵌入可视化 (PCA)</div>
+      <div class="plot-container">
+        <canvas id="embed-canvas" width="244" height="200"></canvas>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:3px;font-size:9px;">
+        <div style="display:flex;align-items:center;gap:2px;"><div style="width:7px;height:7px;border-radius:50%;background:#0877bd;"></div><span data-i18n="nouns">名词</span></div>
+        <div style="display:flex;align-items:center;gap:2px;"><div style="width:7px;height:7px;border-radius:50%;background:#e74c3c;"></div><span data-i18n="verbs">动词</span></div>
+        <div style="display:flex;align-items:center;gap:2px;"><div style="width:7px;height:7px;border-radius:50%;background:#16a34a;"></div><span data-i18n="preps">介词</span></div>
+        <div style="display:flex;align-items:center;gap:2px;"><div style="width:7px;height:7px;border-radius:50%;background:#888;"></div><span data-i18n="articles">冠词</span></div>
+      </div>
+    </div>
+
+    <!-- Vocab info -->
+    <div>
+      <div class="panel-title" data-i18n="vocab_panel">词汇表</div>
+      <div id="vocab-display" style="font-size:10px;color:#555;line-height:1.6;"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// =====================================================================
+// INTERNATIONALIZATION
+// =====================================================================
+const I18N = {
+  zh: {
+    title: 'Transformer 游乐场',
+    subtitle: '注意力机制 · 语言建模',
+    lr: '学习率:',
+    optimizer: '优化器:',
+    epoch: '轮次',
+    loss: '损失',
+    acc: '准确率',
+    paused: '已暂停',
+    playing: '训练中',
+    presets: '预设:',
+    preset_basic: '基础 (2层 4头 d=32)',
+    preset_single: '单头 (2层 1头 d=32)',
+    preset_deep: '深层 (4层 4头 d=32)',
+    preset_small: '小模型 (1层 2头 d=16)',
+    arch: '架构',
+    layers: '层数',
+    heads: '注意力头数',
+    vocab: '词汇量',
+    params: '参数量',
+    samples: '样本数',
+    gen_title: '交互式文本生成',
+    examples: '示例提示:',
+    generate: '生成',
+    clear: '清除',
+    top5: 'Top-5 预测:',
+    attention_map: '自注意力热力图',
+    layer_sel: '层:',
+    loss_curve: '损失曲线',
+    loss_label: '损失',
+    accuracy: '准确率',
+    embed_viz: '词嵌入可视化 (PCA)',
+    nouns: '名词',
+    verbs: '动词',
+    preps: '介词',
+    articles: '冠词',
+    vocab_panel: '词汇表',
+    training: '训练中...',
+    head: '头',
+    layer: '层',
+  },
+  en: {
+    title: 'Transformer Playground',
+    subtitle: 'Attention · Language Modeling',
+    lr: 'LR:',
+    optimizer: 'Optimizer:',
+    epoch: 'Epoch',
+    loss: 'Loss',
+    acc: 'Acc',
+    paused: 'Paused',
+    playing: 'Training',
+    presets: 'Presets:',
+    preset_basic: 'Basic (2L 4H d=32)',
+    preset_single: 'Single Head (2L 1H d=32)',
+    preset_deep: 'Deep (4L 4H d=32)',
+    preset_small: 'Small (1L 2H d=16)',
+    arch: 'Architecture',
+    layers: 'Layers',
+    heads: 'Attention Heads',
+    vocab: 'Vocab Size',
+    params: 'Parameters',
+    samples: 'Samples',
+    gen_title: 'Interactive Text Generation',
+    examples: 'Example prompts:',
+    generate: 'Generate',
+    clear: 'Clear',
+    top5: 'Top-5 predictions:',
+    attention_map: 'Self-Attention Heatmap',
+    layer_sel: 'Layer:',
+    loss_curve: 'Loss Curve',
+    loss_label: 'Loss',
+    accuracy: 'Accuracy',
+    embed_viz: 'Token Embedding (PCA)',
+    nouns: 'Nouns',
+    verbs: 'Verbs',
+    preps: 'Preps',
+    articles: 'Articles',
+    vocab_panel: 'Vocabulary',
+    training: 'Training...',
+    head: 'Head',
+    layer: 'Layer',
+  }
+};
+let lang = 'en';
+function applyI18n() {
+  document.getElementById('btn-lang').textContent = lang === 'zh' ? 'EN' : '中';
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (I18N[lang][k]) el.textContent = I18N[lang][k];
+  });
+  // Update status badge
+  updateStatusBadge();
+  renderHeatmaps();
+}
+function toggleLang() {
+  lang = lang === 'zh' ? 'en' : 'zh';
+  applyI18n();
+}
+function t(k) { return I18N[lang][k] || k; }
+
+const DECODE_CONFIG = {
+  temperature: 0.85,
+  topK: 5,
+  repetitionPenalty: 1.18,
+};
+
+function adjustedNextTokenProbs(logits, tokenIds) {
+  const adjusted = Array.from(logits);
+  const padId = V2I['<pad>'];
+  adjusted[padId] = -1e9;
+
+  const counts = new Map();
+  tokenIds.forEach(id => counts.set(id, (counts.get(id) || 0) + 1));
+  counts.forEach((count, id) => {
+    if (id === padId || id === V2I['<eos>']) return;
+    adjusted[id] -= Math.log(DECODE_CONFIG.repetitionPenalty) * count;
+  });
+
+  const scaled = adjusted.map(v => v / DECODE_CONFIG.temperature);
+  const ranked = scaled
+    .map((v, i) => ({ v, i }))
+    .sort((a, b) => b.v - a.v);
+  const keep = new Set(ranked.slice(0, DECODE_CONFIG.topK).map(item => item.i));
+  for (let i = 0; i < scaled.length; i++) {
+    if (!keep.has(i)) scaled[i] = -1e9;
+  }
+  return softmax1d(scaled);
+}
+
+function sampleFromDistribution(probs) {
+  let r = Math.random();
+  for (let i = 0; i < probs.length; i++) {
+    r -= probs[i];
+    if (r <= 0) return i;
+  }
+  return probs.length - 1;
+}
+
+// =====================================================================
+// CORPUS & VOCABULARY
+// =====================================================================
+const CORPUS = [
+  'the cat sat on the mat',
+  'the cat sat on the rug',
+  'the dog sat on the rug',
+  'the dog sat on the mat',
+  'a cat sat on a mat',
+  'a cat sat on a rug',
+  'a dog sat on a rug',
+  'a dog sat on a mat',
+  'the cat is on the mat',
+  'the cat is on the rug',
+  'the dog is on the rug',
+  'the dog is on the mat',
+  'a cat is on a mat',
+  'a cat is on a rug',
+  'a dog is on a rug',
+  'a dog is on a mat',
+  'the bird flew over the house',
+  'the bird flew over the tree',
+  'a bird flew over a house',
+  'a bird flew over a tree',
+  'the fish swam in the pond',
+  'a fish swam in a pond',
+  'the cat chased the dog',
+  'the dog chased the cat',
+  'a cat chased a dog',
+  'a dog chased a cat',
+  'the bird is in the tree',
+  'the bird is in the house',
+  'a bird is in a tree',
+  'a bird is in a house',
+  'the cat chased a bird',
+  'the dog chased a bird',
+  'a cat chased the dog',
+  'a dog chased the cat',
+];
+
+const TRAIN_SEQUENCES = CORPUS.map(sent => [...sent.split(' '), '<eos>']);
+
+// Build vocabulary
+const SPECIAL = ['<pad>', '<eos>'];
+const wordSet = new Set();
+CORPUS.forEach(s => s.split(' ').forEach(w => wordSet.add(w)));
+const VOCAB = [...SPECIAL, ...Array.from(wordSet).sort()];
+const V2I = {};
+VOCAB.forEach((w, i) => V2I[w] = i);
+const VOCAB_SIZE = VOCAB.length;
+
+// Word categories for embedding coloring
+const WORD_CATS = {};
+['cat','dog','bird','fish','mat','rug','house','pond','tree'].forEach(w => WORD_CATS[w] = 'noun');
+['sat','is','flew','swam','chased'].forEach(w => WORD_CATS[w] = 'verb');
+['on','in','over'].forEach(w => WORD_CATS[w] = 'prep');
+['the','a'].forEach(w => WORD_CATS[w] = 'article');
+SPECIAL.forEach(w => WORD_CATS[w] = 'special');
+
+// Total training positions includes predicting <eos> at the end of each sequence.
+const TOTAL_TRAIN_POSITIONS = TRAIN_SEQUENCES.reduce((s, seq) => s + seq.length - 1, 0);
+
+// =====================================================================
+// MATH UTILITIES
+// =====================================================================
+function zeros(r, c) {
+  const a = [];
+  for (let i = 0; i < r; i++) { a.push(new Float64Array(c)); }
+  return a;
+}
+function zeros1d(n) { return new Float64Array(n); }
+function randn(r, c, scale) {
+  const a = [];
+  for (let i = 0; i < r; i++) {
+    const row = new Float64Array(c);
+    for (let j = 0; j < c; j++) {
+      // Box-Muller
+      const u1 = Math.random(), u2 = Math.random();
+      row[j] = Math.sqrt(-2 * Math.log(u1 + 1e-10)) * Math.cos(2 * Math.PI * u2) * scale;
+    }
+    a.push(row);
+  }
+  return a;
+}
+function randn1d(n, scale) {
+  const a = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    const u1 = Math.random(), u2 = Math.random();
+    a[i] = Math.sqrt(-2 * Math.log(u1 + 1e-10)) * Math.cos(2 * Math.PI * u2) * scale;
+  }
+  return a;
+}
+function matMul(A, B, rA, cA, cB) {
+  // A: rA×cA, B: cA×cB → C: rA×cB
+  const C = zeros(rA, cB);
+  for (let i = 0; i < rA; i++)
+    for (let k = 0; k < cA; k++) {
+      const a = A[i][k];
+      if (a === 0) continue;
+      for (let j = 0; j < cB; j++) C[i][j] += a * B[k][j];
+    }
+  return C;
+}
+function matMulT(A, B, rA, cA, rB) {
+  // A: rA×cA, B^T: rB×cA → C: rA×rB  (B is rB×cA, compute A@B^T)
+  const C = zeros(rA, rB);
+  for (let i = 0; i < rA; i++)
+    for (let j = 0; j < rB; j++) {
+      let s = 0;
+      for (let k = 0; k < cA; k++) s += A[i][k] * B[j][k];
+      C[i][j] = s;
+    }
+  return C;
+}
+function matTMul(A, B, cA, rA, cB) {
+  // A^T: cA×rA, B: rA×cB → C: cA×cB  (A is rA×cA)
+  const C = zeros(cA, cB);
+  for (let k = 0; k < rA; k++)
+    for (let i = 0; i < cA; i++) {
+      const a = A[k][i];
+      if (a === 0) continue;
+      for (let j = 0; j < cB; j++) C[i][j] += a * B[k][j];
+    }
+  return C;
+}
+function softmax1d(x) {
+  const m = Math.max(...x);
+  const e = x.map(v => Math.exp(v - m));
+  const s = e.reduce((a, b) => a + b, 0);
+  return e.map(v => v / (s + 1e-10));
+}
+function softmax2d(X, rows, cols) {
+  const out = zeros(rows, cols);
+  for (let i = 0; i < rows; i++) {
+    let m = -Infinity;
+    for (let j = 0; j < cols; j++) if (X[i][j] > m) m = X[i][j];
+    let s = 0;
+    for (let j = 0; j < cols; j++) { out[i][j] = Math.exp(X[i][j] - m); s += out[i][j]; }
+    for (let j = 0; j < cols; j++) out[i][j] /= (s + 1e-10);
+  }
+  return out;
+}
+function addVec(a, b) {
+  const c = new Float64Array(a.length);
+  for (let i = 0; i < a.length; i++) c[i] = a[i] + b[i];
+  return c;
+}
+function copyMat(A) { return A.map(row => new Float64Array(row)); }
+function copyVec(a) { return new Float64Array(a); }
+function clipNorm(grads, maxNorm) {
+  let norm2 = 0;
+  for (const g of grads) {
+    if (!g) continue;
+    if (g instanceof Float64Array) { for (const v of g) norm2 += v * v; }
+    else { for (const row of g) for (const v of row) norm2 += v * v; }
+  }
+  const norm = Math.sqrt(norm2);
+  if (norm > maxNorm) {
+    const scale = maxNorm / (norm + 1e-10);
+    for (const g of grads) {
+      if (!g) continue;
+      if (g instanceof Float64Array) { for (let i = 0; i < g.length; i++) g[i] *= scale; }
+      else { for (const row of g) for (let i = 0; i < row.length; i++) row[i] *= scale; }
+    }
+  }
+}
+
+// =====================================================================
+// ADAM OPTIMIZER STATE
+// =====================================================================
+class AdamState {
+  constructor() { this.m = null; this.v = null; this.t = 0; }
+  initLike(p) {
+    if (p instanceof Float64Array) {
+      this.m = new Float64Array(p.length);
+      this.v = new Float64Array(p.length);
+    } else {
+      this.m = p.map(row => new Float64Array(row.length));
+      this.v = p.map(row => new Float64Array(row.length));
+    }
+  }
+  step(p, g, lr, b1=0.9, b2=0.999, eps=1e-8) {
+    if (!this.m) this.initLike(p);
+    this.t++;
+    const bc1 = 1 - Math.pow(b1, this.t);
+    const bc2 = 1 - Math.pow(b2, this.t);
+    const update = (p, g, m, v) => {
+      m.set(m.map((x, i) => b1 * x + (1 - b1) * g[i]));
+      v.set(v.map((x, i) => b2 * x + (1 - b2) * g[i] * g[i]));
+      for (let i = 0; i < p.length; i++) {
+        const mh = m[i] / bc1, vh = v[i] / bc2;
+        p[i] -= lr * mh / (Math.sqrt(vh) + eps);
+      }
+    };
+    if (p instanceof Float64Array) {
+      update(p, g, this.m, this.v);
+    } else {
+      for (let i = 0; i < p.length; i++) update(p[i], g[i], this.m[i], this.v[i]);
+    }
+  }
+}
+
+// =====================================================================
+// LAYER NORMALIZATION
+// =====================================================================
+function layerNorm(x, gamma, beta, eps=1e-5) {
+  // x: Float64Array of length d
+  const d = x.length;
+  let mean = 0, vari = 0;
+  for (let i = 0; i < d; i++) mean += x[i];
+  mean /= d;
+  for (let i = 0; i < d; i++) vari += (x[i] - mean) ** 2;
+  vari /= d;
+  const std = Math.sqrt(vari + eps);
+  const xhat = new Float64Array(d);
+  for (let i = 0; i < d; i++) xhat[i] = (x[i] - mean) / std;
+  const out = new Float64Array(d);
+  for (let i = 0; i < d; i++) out[i] = gamma[i] * xhat[i] + beta[i];
+  return { out, xhat, mean, std };
+}
+
+function layerNormBackward(dout, xhat, std, gamma, d) {
+  // dout, xhat, gamma: Float64Array(d)
+  const dgamma = new Float64Array(d);
+  const dbeta = new Float64Array(d);
+  const dxhat = new Float64Array(d);
+  for (let i = 0; i < d; i++) {
+    dgamma[i] = dout[i] * xhat[i];
+    dbeta[i] = dout[i];
+    dxhat[i] = dout[i] * gamma[i];
+  }
+  // dx from dxhat
+  let s1 = 0, s2 = 0;
+  for (let i = 0; i < d; i++) { s1 += dxhat[i]; s2 += dxhat[i] * xhat[i]; }
+  const dx = new Float64Array(d);
+  for (let i = 0; i < d; i++) {
+    dx[i] = (dxhat[i] - s1 / d - xhat[i] * s2 / d) / std;
+  }
+  return { dx, dgamma, dbeta };
+}
+
+// =====================================================================
+// TRANSFORMER MODEL
+// =====================================================================
+class TransformerModel {
+  constructor(config) {
+    this.config = config;
+    this.init();
+  }
+
+  init() {
+    const { d_model, n_heads, n_layers, max_seq_len } = this.config;
+    const d_ff = d_model * 2;
+    const d_k = d_model / n_heads;
+    const scale = Math.sqrt(2.0 / d_model); // Xavier
+
+    // Token embeddings
+    this.tok_emb = randn(VOCAB_SIZE, d_model, scale);
+    // Positional embeddings (learnable)
+    this.pos_emb = randn(max_seq_len, d_model, scale * 0.1);
+    // Output projection
+    this.out_W = randn(d_model, VOCAB_SIZE, Math.sqrt(2.0 / (d_model + VOCAB_SIZE)));
+    this.out_b = zeros1d(VOCAB_SIZE);
+
+    // Transformer layers
+    this.layers = [];
+    for (let l = 0; l < n_layers; l++) {
+      this.layers.push({
+        // Multi-head attention weights (concatenated over heads)
+        // W_q, W_k, W_v: d_model × d_model
+        W_q: randn(d_model, d_model, scale),
+        W_k: randn(d_model, d_model, scale),
+        W_v: randn(d_model, d_model, scale),
+        W_o: randn(d_model, d_model, scale),
+        b_q: zeros1d(d_model),
+        b_k: zeros1d(d_model),
+        b_v: zeros1d(d_model),
+        b_o: zeros1d(d_model),
+        // Layer norm 1 (before attn)
+        ln1_gamma: new Float64Array(d_model).fill(1),
+        ln1_beta: zeros1d(d_model),
+        // Feed-forward
+        ff_W1: randn(d_model, d_ff, Math.sqrt(2.0 / d_model)),
+        ff_b1: zeros1d(d_ff),
+        ff_W2: randn(d_ff, d_model, Math.sqrt(2.0 / d_ff)),
+        ff_b2: zeros1d(d_model),
+        // Layer norm 2 (before ff)
+        ln2_gamma: new Float64Array(d_model).fill(1),
+        ln2_beta: zeros1d(d_model),
+      });
+    }
+
+    // Adam states — created lazily
+    this.optStates = null;
+    this.epoch = 0;
+
+    // Stored attention weights for visualization
+    this.lastAttnWeights = null; // [n_layers][n_heads][seq_len][seq_len]
+    this.lastSeqTokens = null;
+  }
+
+  initOptStates() {
+    // We store one AdamState per parameter
+    const { n_layers } = this.config;
+    const states = {
+      tok_emb: new AdamState(),
+      pos_emb: new AdamState(),
+      out_W: new AdamState(),
+      out_b: new AdamState(),
+      layers: []
+    };
+    for (let l = 0; l < n_layers; l++) {
+      states.layers.push({
+        W_q: new AdamState(), W_k: new AdamState(), W_v: new AdamState(), W_o: new AdamState(),
+        b_q: new AdamState(), b_k: new AdamState(), b_v: new AdamState(), b_o: new AdamState(),
+        ln1_gamma: new AdamState(), ln1_beta: new AdamState(),
+        ff_W1: new AdamState(), ff_b1: new AdamState(),
+        ff_W2: new AdamState(), ff_b2: new AdamState(),
+        ln2_gamma: new AdamState(), ln2_beta: new AdamState(),
+      });
+    }
+    this.optStates = states;
+  }
+
+  // Forward pass for a sequence of token indices
+  // Returns { logits: Float64Array(vocab_size), attnWeights: [n_layers][n_heads][][] }
+  forward(tokenIds, storeAttn = true) {
+    const { d_model, n_heads, n_layers } = this.config;
+    const d_ff = d_model * 2;
+    const d_k = d_model / n_heads;
+    const T = tokenIds.length;
+
+    // Build input: token_emb + pos_emb
+    // X: T × d_model
+    let X = [];
+    for (let t = 0; t < T; t++) {
+      const x = new Float64Array(d_model);
+      for (let d = 0; d < d_model; d++) {
+        x[d] = this.tok_emb[tokenIds[t]][d] + this.pos_emb[t][d];
+      }
+      X.push(x);
+    }
+
+    // Store cache for backprop
+    const cache = { X_input: X, layers: [] };
+    const allAttn = [];
+
+    for (let l = 0; l < n_layers; l++) {
+      const layer = this.layers[l];
+      const layerAttn = []; // [n_heads][T][T]
+
+      // --- Pre-LN1 ---
+      const ln1_out = [], ln1_cache = [];
+      for (let t = 0; t < T; t++) {
+        const { out, xhat, mean, std } = layerNorm(X[t], layer.ln1_gamma, layer.ln1_beta);
+        ln1_out.push(out);
+        ln1_cache.push({ xhat, mean, std });
+      }
+
+      // --- Multi-Head Self-Attention ---
+      // Compute Q, K, V: each T × d_model
+      const Q = [], K = [], V = [];
+      for (let t = 0; t < T; t++) {
+        const q = new Float64Array(d_model), k = new Float64Array(d_model), v = new Float64Array(d_model);
+        for (let d = 0; d < d_model; d++) {
+          let sq = layer.b_q[d], sk = layer.b_k[d], sv = layer.b_v[d];
+          for (let i = 0; i < d_model; i++) {
+            sq += ln1_out[t][i] * layer.W_q[i][d];
+            sk += ln1_out[t][i] * layer.W_k[i][d];
+            sv += ln1_out[t][i] * layer.W_v[i][d];
+          }
+          q[d] = sq; k[d] = sk; v[d] = sv;
+        }
+        Q.push(q); K.push(k); V.push(v);
+      }
+
+      // Per-head attention
+      const scale_attn = 1.0 / Math.sqrt(d_k);
+      const attn_out = zeros(T, d_model); // concatenated head outputs
+
+      const headQ = [], headK = [], headV = [], headAttnW = [], headAttnOut = [];
+
+      for (let h = 0; h < n_heads; h++) {
+        const hStart = h * d_k;
+        // Extract head slice
+        const Qh = [], Kh = [], Vh = [];
+        for (let t = 0; t < T; t++) {
+          Qh.push(Q[t].slice(hStart, hStart + d_k));
+          Kh.push(K[t].slice(hStart, hStart + d_k));
+          Vh.push(V[t].slice(hStart, hStart + d_k));
+        }
+
+        // Scores: T×T
+        const scores = zeros(T, T);
+        for (let i = 0; i < T; i++)
+          for (let j = 0; j < T; j++) {
+            let s = 0;
+            for (let d = 0; d < d_k; d++) s += Qh[i][d] * Kh[j][d];
+            scores[i][j] = s * scale_attn;
+          }
+
+        // Causal mask: upper triangle → -Inf
+        for (let i = 0; i < T; i++)
+          for (let j = i + 1; j < T; j++) scores[i][j] = -1e9;
+
+        // Softmax over cols
+        const attnW = softmax2d(scores, T, T);
+
+        // Attention output: T × d_k
+        const headOut = zeros(T, d_k);
+        for (let i = 0; i < T; i++)
+          for (let d = 0; d < d_k; d++) {
+            let s = 0;
+            for (let j = 0; j < T; j++) s += attnW[i][j] * Vh[j][d];
+            headOut[i][d] = s;
+          }
+
+        // Write into attn_out
+        for (let t = 0; t < T; t++)
+          for (let d = 0; d < d_k; d++) attn_out[t][hStart + d] = headOut[t][d];
+
+        layerAttn.push(attnW.map(row => Array.from(row)));
+        headQ.push(Qh); headK.push(Kh); headV.push(Vh);
+        headAttnW.push(attnW);
+        headAttnOut.push(headOut);
+      }
+
+      // --- Output projection: T × d_model ---
+      const attn_proj = [];
+      for (let t = 0; t < T; t++) {
+        const out = new Float64Array(d_model);
+        for (let d = 0; d < d_model; d++) {
+          let s = layer.b_o[d];
+          for (let i = 0; i < d_model; i++) s += attn_out[t][i] * layer.W_o[i][d];
+          out[d] = s;
+        }
+        attn_proj.push(out);
+      }
+
+      // --- Residual 1: X = X + attn_proj ---
+      const X_res1 = [];
+      for (let t = 0; t < T; t++) {
+        const r = new Float64Array(d_model);
+        for (let d = 0; d < d_model; d++) r[d] = X[t][d] + attn_proj[t][d];
+        X_res1.push(r);
+      }
+
+      // --- Pre-LN2 ---
+      const ln2_out = [], ln2_cache = [];
+      for (let t = 0; t < T; t++) {
+        const { out, xhat, mean, std } = layerNorm(X_res1[t], layer.ln2_gamma, layer.ln2_beta);
+        ln2_out.push(out);
+        ln2_cache.push({ xhat, mean, std });
+      }
+
+      // --- Feed-Forward: d_model → d_ff → d_model ---
+      const ff1_out = []; // T × d_ff (pre-relu)
+      const ff1_relu = []; // T × d_ff (post-relu)
+      for (let t = 0; t < T; t++) {
+        const h1 = new Float64Array(d_ff);
+        for (let d = 0; d < d_ff; d++) {
+          let s = layer.ff_b1[d];
+          for (let i = 0; i < d_model; i++) s += ln2_out[t][i] * layer.ff_W1[i][d];
+          h1[d] = s;
+        }
+        ff1_out.push(h1);
+        ff1_relu.push(h1.map(v => Math.max(0, v)));
+      }
+      const ff2_out = [];
+      for (let t = 0; t < T; t++) {
+        const h2 = new Float64Array(d_model);
+        for (let d = 0; d < d_model; d++) {
+          let s = layer.ff_b2[d];
+          for (let i = 0; i < d_ff; i++) s += ff1_relu[t][i] * layer.ff_W2[i][d];
+          h2[d] = s;
+        }
+        ff2_out.push(h2);
+      }
+
+      // --- Residual 2: X = X_res1 + ff2 ---
+      const X_res2 = [];
+      for (let t = 0; t < T; t++) {
+        const r = new Float64Array(d_model);
+        for (let d = 0; d < d_model; d++) r[d] = X_res1[t][d] + ff2_out[t][d];
+        X_res2.push(r);
+      }
+
+      cache.layers.push({
+        X_in: X, ln1_cache, ln1_out,
+        Q, K, V,
+        headQ, headK, headV, headAttnW, headAttnOut,
+        attn_out,
+        attn_proj, X_res1,
+        ln2_cache, ln2_out,
+        ff1_out, ff1_relu, ff2_out, X_res2
+      });
+
+      allAttn.push(layerAttn);
+      X = X_res2;
+    }
+
+    // --- Output layer: ALL positions ---
+    const allLogits = []; // T × VOCAB_SIZE
+    for (let t = 0; t < T; t++) {
+      const logits_t = new Float64Array(VOCAB_SIZE);
+      for (let v = 0; v < VOCAB_SIZE; v++) {
+        let s = this.out_b[v];
+        for (let d = 0; d < d_model; d++) s += X[t][d] * this.out_W[d][v];
+        logits_t[v] = s;
+      }
+      allLogits.push(logits_t);
+    }
+    const logits = allLogits[T - 1]; // Last position for generation
+
+    if (storeAttn) {
+      this.lastAttnWeights = allAttn;
+    }
+
+    return { logits, allLogits, cache, X_final: X };
+  }
+
+  // Cross-entropy loss + backward pass (multi-position)
+  // targetIds: array of target token ids (one per input position, or just one for last)
+  // targetPositions: array of positions to compute loss at
+  backward(logits, targetId, cache, lr, allLogits, targetPositions) {
+    const { d_model, n_heads, n_layers } = this.config;
+    const d_ff = d_model * 2;
+    const d_k = d_model / n_heads;
+    const T = cache.X_input.length;
+    const X_final = cache.layers[n_layers - 1].X_res2;
+
+    // Multi-position loss: compute at all provided positions (or just last)
+    // targetPositions: array of {pos, targetId} OR null (default: last position only)
+    const positions = targetPositions || [{ pos: T - 1, targetId }];
+    let totalLoss = 0;
+    const dout_W = zeros(d_model, VOCAB_SIZE);
+    const dout_b = new Float64Array(VOCAB_SIZE);
+    let dX = [];
+    for (let t = 0; t < T; t++) dX.push(new Float64Array(d_model));
+
+    for (const { pos, targetId: tgt } of positions) {
+      const logits_pos = allLogits ? allLogits[pos] : logits;
+      const probs = softmax1d(Array.from(logits_pos));
+      totalLoss += -Math.log(probs[tgt] + 1e-10);
+
+      const dlogits = new Float64Array(VOCAB_SIZE);
+      for (let v = 0; v < VOCAB_SIZE; v++) dlogits[v] = probs[v] / positions.length;
+      dlogits[tgt] -= 1.0 / positions.length;
+
+      const xt = X_final[pos];
+      for (let v = 0; v < VOCAB_SIZE; v++) {
+        dout_b[v] += dlogits[v];
+        for (let d = 0; d < d_model; d++) {
+          dout_W[d][v] += xt[d] * dlogits[v];
+          dX[pos][d] += this.out_W[d][v] * dlogits[v];
+        }
+      }
+    }
+    const loss = totalLoss / positions.length;
+
+    // Backprop through transformer layers (in reverse)
+    const layerGrads = [];
+    for (let l = n_layers - 1; l >= 0; l--) {
+      const layer = this.layers[l];
+      const lc = cache.layers[l];
+      const g = {};
+
+      // --- Residual 2: dX_res1 += dX, dff2 = dX ---
+      const dX_res1 = dX.map(v => new Float64Array(v));
+      const dff2 = dX.map(v => new Float64Array(v));
+
+      // --- Backprop through FF2: d_ff → d_model ---
+      const dff_W2 = zeros(d_ff, d_model);
+      const dff_b2 = new Float64Array(d_model);
+      const dff1_relu = zeros(T, d_ff);
+      for (let t = 0; t < T; t++) {
+        for (let d = 0; d < d_model; d++) dff_b2[d] += dff2[t][d];
+        for (let i = 0; i < d_ff; i++) {
+          let s = 0;
+          for (let d = 0; d < d_model; d++) {
+            dff_W2[i][d] += lc.ff1_relu[t][i] * dff2[t][d];
+            s += layer.ff_W2[i][d] * dff2[t][d];
+          }
+          dff1_relu[t][i] = s;
+        }
+      }
+
+      // --- ReLU backward ---
+      const dff1 = zeros(T, d_ff);
+      for (let t = 0; t < T; t++)
+        for (let i = 0; i < d_ff; i++)
+          dff1[t][i] = lc.ff1_out[t][i] > 0 ? dff1_relu[t][i] : 0;
+
+      // --- Backprop through FF1: d_model → d_ff ---
+      const dff_W1 = zeros(d_model, d_ff);
+      const dff_b1 = new Float64Array(d_ff);
+      const dln2_out = zeros(T, d_model);
+      for (let t = 0; t < T; t++) {
+        for (let d = 0; d < d_ff; d++) dff_b1[d] += dff1[t][d];
+        for (let i = 0; i < d_model; i++) {
+          let s = 0;
+          for (let d = 0; d < d_ff; d++) {
+            dff_W1[i][d] += lc.ln2_out[t][i] * dff1[t][d];
+            s += layer.ff_W1[i][d] * dff1[t][d];
+          }
+          dln2_out[t][i] = s;
+        }
+      }
+
+      // --- Layer Norm 2 backward ---
+      const dln2_gamma = new Float64Array(d_model);
+      const dln2_beta = new Float64Array(d_model);
+      const dX_res1_ln2 = [];
+      for (let t = 0; t < T; t++) {
+        const { dx, dgamma, dbeta } = layerNormBackward(dln2_out[t], lc.ln2_cache[t].xhat, lc.ln2_cache[t].std, layer.ln2_gamma, d_model);
+        for (let d = 0; d < d_model; d++) { dln2_gamma[d] += dgamma[d]; dln2_beta[d] += dbeta[d]; }
+        dX_res1_ln2.push(dx);
+      }
+      // Add to dX_res1
+      for (let t = 0; t < T; t++) for (let d = 0; d < d_model; d++) dX_res1[t][d] += dX_res1_ln2[t][d];
+
+      // --- Backprop through attention projection ---
+      const dW_o = zeros(d_model, d_model);
+      const db_o = new Float64Array(d_model);
+      const dattn_out = zeros(T, d_model);
+      for (let t = 0; t < T; t++) {
+        for (let d = 0; d < d_model; d++) db_o[d] += dX_res1[t][d];
+        for (let i = 0; i < d_model; i++) {
+          let s = 0;
+          for (let d = 0; d < d_model; d++) {
+            dW_o[i][d] += lc.attn_out[t][i] * dX_res1[t][d];
+            s += layer.W_o[i][d] * dX_res1[t][d];
+          }
+          dattn_out[t][i] = s;
+        }
+      }
+
+      // --- Backprop through each head ---
+      const dQ = zeros(T, d_model);
+      const dK = zeros(T, d_model);
+      const dV = zeros(T, d_model);
+
+      for (let h = 0; h < n_heads; h++) {
+        const hStart = h * d_k;
+        // Extract dattn_out for this head
+        const dheadOut = [];
+        for (let t = 0; t < T; t++) dheadOut.push(dattn_out[t].slice(hStart, hStart + d_k));
+
+        const attnW = lc.headAttnW[h]; // T×T
+        const Vh = lc.headV[h]; // T×d_k
+        const Qh = lc.headQ[h];
+        const Kh = lc.headK[h];
+        const headOut = lc.headAttnOut[h];
+
+        // dV: (T×d_k) ← attnW^T @ dheadOut
+        const dVh = zeros(T, d_k);
+        for (let j = 0; j < T; j++)
+          for (let d = 0; d < d_k; d++) {
+            let s = 0;
+            for (let i = 0; i < T; i++) s += attnW[i][j] * dheadOut[i][d];
+            dVh[j][d] = s;
+          }
+
+        // dattnW = dheadOut @ Vh^T  →  T×T
+        const dattnW = zeros(T, T);
+        for (let i = 0; i < T; i++)
+          for (let j = 0; j < T; j++) {
+            let s = 0;
+            for (let d = 0; d < d_k; d++) s += dheadOut[i][d] * Vh[j][d];
+            dattnW[i][j] = s;
+          }
+
+        // Softmax backward (with causal mask: upper triangle is zeroed)
+        const dscores = zeros(T, T);
+        for (let i = 0; i < T; i++) {
+          // softmax backward: dscores[i] = attnW[i] * (dattnW[i] - sum(attnW[i]*dattnW[i]))
+          let dot = 0;
+          for (let j = 0; j <= i; j++) dot += attnW[i][j] * dattnW[i][j];
+          for (let j = 0; j <= i; j++) {
+            dscores[i][j] = attnW[i][j] * (dattnW[i][j] - dot) * (1.0 / Math.sqrt(d_k));
+          }
+        }
+
+        // dQ: dscores @ K
+        const dQh = zeros(T, d_k);
+        const dKh = zeros(T, d_k);
+        for (let i = 0; i < T; i++)
+          for (let d = 0; d < d_k; d++) {
+            for (let j = 0; j < T; j++) {
+              dQh[i][d] += dscores[i][j] * Kh[j][d];
+              dKh[j][d] += dscores[i][j] * Qh[i][d];
+            }
+          }
+
+        // Write back
+        for (let t = 0; t < T; t++)
+          for (let d = 0; d < d_k; d++) {
+            dQ[t][hStart + d] += dQh[t][d];
+            dK[t][hStart + d] += dKh[t][d];
+            dV[t][hStart + d] += dVh[t][d];
+          }
+      }
+
+      // --- Backprop through Q,K,V projections ---
+      const dW_q = zeros(d_model, d_model);
+      const dW_k = zeros(d_model, d_model);
+      const dW_v = zeros(d_model, d_model);
+      const db_q = new Float64Array(d_model);
+      const db_k = new Float64Array(d_model);
+      const db_v = new Float64Array(d_model);
+      const dln1_out = zeros(T, d_model);
+
+      for (let t = 0; t < T; t++) {
+        for (let d = 0; d < d_model; d++) {
+          db_q[d] += dQ[t][d]; db_k[d] += dK[t][d]; db_v[d] += dV[t][d];
+          for (let i = 0; i < d_model; i++) {
+            dW_q[i][d] += lc.ln1_out[t][i] * dQ[t][d];
+            dW_k[i][d] += lc.ln1_out[t][i] * dK[t][d];
+            dW_v[i][d] += lc.ln1_out[t][i] * dV[t][d];
+          }
+        }
+        // dln1_out[t]
+        for (let i = 0; i < d_model; i++) {
+          let sq = 0, sk = 0, sv = 0;
+          for (let d = 0; d < d_model; d++) {
+            sq += layer.W_q[i][d] * dQ[t][d];
+            sk += layer.W_k[i][d] * dK[t][d];
+            sv += layer.W_v[i][d] * dV[t][d];
+          }
+          dln1_out[t][i] = sq + sk + sv;
+        }
+      }
+
+      // --- Layer Norm 1 backward ---
+      const dln1_gamma = new Float64Array(d_model);
+      const dln1_beta = new Float64Array(d_model);
+      const dX_ln1 = [];
+      for (let t = 0; t < T; t++) {
+        const { dx, dgamma, dbeta } = layerNormBackward(dln1_out[t], lc.ln1_cache[t].xhat, lc.ln1_cache[t].std, layer.ln1_gamma, d_model);
+        for (let d = 0; d < d_model; d++) { dln1_gamma[d] += dgamma[d]; dln1_beta[d] += dbeta[d]; }
+        dX_ln1.push(dx);
+      }
+
+      // --- Residual 1 backward ---
+      // dX_in = dX_res1 + dX_ln1  (residual connection)
+      // The attention branch gradient is in dX_res1 (from residual 2)
+      // plus dX_ln1 from ln1 backward (which goes through attn)
+      const dX_prev = [];
+      for (let t = 0; t < T; t++) {
+        const d = new Float64Array(d_model);
+        for (let i = 0; i < d_model; i++) d[i] = dX_res1[t][i] + dX_ln1[t][i];
+        dX_prev.push(d);
+      }
+
+      // Gradient for X_input to this layer is dX_prev
+      dX = dX_prev;
+
+      layerGrads[l] = {
+        W_q: dW_q, W_k: dW_k, W_v: dW_v, W_o: dW_o,
+        b_q: db_q, b_k: db_k, b_v: db_v, b_o: db_o,
+        ln1_gamma: dln1_gamma, ln1_beta: dln1_beta,
+        ff_W1: dff_W1, ff_b1: dff_b1,
+        ff_W2: dff_W2, ff_b2: dff_b2,
+        ln2_gamma: dln2_gamma, ln2_beta: dln2_beta,
+      };
+    }
+
+    // Gradient through embedding lookup
+    const dtok_emb = zeros(VOCAB_SIZE, d_model);
+    // dpos_emb must be same size as pos_emb (max_seq_len)
+    const dpos_emb = zeros(this.config.max_seq_len, d_model);
+    for (let t = 0; t < T; t++) {
+      const tid = cache.X_input_ids[t];
+      for (let d = 0; d < d_model; d++) {
+        dtok_emb[tid][d] += dX[t][d];
+        dpos_emb[t][d] += dX[t][d];
+      }
+    }
+
+    // --- Clip gradients ---
+    const allGrads = [dout_W, dout_b];
+    for (let i = 0; i < dtok_emb.length; i++) allGrads.push(dtok_emb[i]);
+    for (let i = 0; i < dpos_emb.length; i++) allGrads.push(dpos_emb[i]);
+    for (const lg of layerGrads) {
+      allGrads.push(lg.W_q, lg.W_k, lg.W_v, lg.W_o,
+        lg.b_q, lg.b_k, lg.b_v, lg.b_o,
+        lg.ln1_gamma, lg.ln1_beta,
+        lg.ff_W1, lg.ff_b1, lg.ff_W2, lg.ff_b2,
+        lg.ln2_gamma, lg.ln2_beta);
+    }
+    clipNorm(allGrads, 1.0);
+
+    // --- Parameter update ---
+    if (!this.optStates) this.initOptStates();
+
+    const useSGD = document.getElementById('sel-opt').value === 'sgd';
+
+    const updateParam1D = (p, g, state) => {
+      if (useSGD) { for (let i = 0; i < p.length; i++) p[i] -= lr * g[i]; }
+      else { state.step(p, g, lr); }
+    };
+    const updateParam2D = (p, g, state) => {
+      if (useSGD) { for (let i = 0; i < p.length; i++) for (let j = 0; j < p[i].length; j++) p[i][j] -= lr * g[i][j]; }
+      else { state.step(p, g, lr); }
+    };
+
+    updateParam2D(this.out_W, dout_W, this.optStates.out_W);
+    updateParam1D(this.out_b, dout_b, this.optStates.out_b);
+    updateParam2D(this.tok_emb, dtok_emb, this.optStates.tok_emb);
+    updateParam2D(this.pos_emb, dpos_emb, this.optStates.pos_emb);
+
+
+    for (let l = 0; l < n_layers; l++) {
+      const lg = layerGrads[l];
+      const ls = this.optStates.layers[l];
+      const lp = this.layers[l];
+      updateParam2D(lp.W_q, lg.W_q, ls.W_q);
+      updateParam2D(lp.W_k, lg.W_k, ls.W_k);
+      updateParam2D(lp.W_v, lg.W_v, ls.W_v);
+      updateParam2D(lp.W_o, lg.W_o, ls.W_o);
+      updateParam1D(lp.b_q, lg.b_q, ls.b_q);
+      updateParam1D(lp.b_k, lg.b_k, ls.b_k);
+      updateParam1D(lp.b_v, lg.b_v, ls.b_v);
+      updateParam1D(lp.b_o, lg.b_o, ls.b_o);
+      updateParam1D(lp.ln1_gamma, lg.ln1_gamma, ls.ln1_gamma);
+      updateParam1D(lp.ln1_beta, lg.ln1_beta, ls.ln1_beta);
+      updateParam2D(lp.ff_W1, lg.ff_W1, ls.ff_W1);
+      updateParam1D(lp.ff_b1, lg.ff_b1, ls.ff_b1);
+      updateParam2D(lp.ff_W2, lg.ff_W2, ls.ff_W2);
+      updateParam1D(lp.ff_b2, lg.ff_b2, ls.ff_b2);
+      updateParam1D(lp.ln2_gamma, lg.ln2_gamma, ls.ln2_gamma);
+      updateParam1D(lp.ln2_beta, lg.ln2_beta, ls.ln2_beta);
+    }
+
+    return loss;
+  }
+
+  // Run one full epoch over the training data
+  trainEpoch(lr) {
+    // Train on full sentences (all positions simultaneously)
+    const sentOrder = TRAIN_SEQUENCES.map((_, i) => i);
+    for (let i = sentOrder.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [sentOrder[i], sentOrder[j]] = [sentOrder[j], sentOrder[i]];
+    }
+    for (const si of sentOrder) {
+      const tokens = TRAIN_SEQUENCES[si].map(w => V2I[w]);
+      // Input: all tokens except last. Targets: all tokens except first.
+      const inputIds = tokens.slice(0, -1);
+      if (inputIds.length === 0) continue;
+      const targetIds = tokens.slice(1);
+
+      const { logits, allLogits, cache } = this.forward(inputIds, false);
+      cache.X_input_ids = inputIds;
+
+      // Build target positions
+      const positions = targetIds.map((tgt, i) => ({ pos: i, targetId: tgt }));
+
+      this.backward(logits, targetIds[targetIds.length - 1], cache, lr, allLogits, positions);
+    }
+    this.epoch++;
+    return this.evaluateCorpus();
+  }
+
+  evaluateCorpus() {
+    let totalLoss = 0, correct = 0, count = 0;
+    for (const seq of TRAIN_SEQUENCES) {
+      const tokens = seq.map(w => V2I[w]);
+      const inputIds = tokens.slice(0, -1);
+      if (inputIds.length === 0) continue;
+      const targetIds = tokens.slice(1);
+
+      const { allLogits } = this.forward(inputIds, false);
+      for (let pos = 0; pos < targetIds.length; pos++) {
+        const logits = allLogits[pos];
+        const probs = softmax1d(Array.from(logits));
+        totalLoss += -Math.log(probs[targetIds[pos]] + 1e-10);
+
+        let maxV = -Infinity, maxI = 0;
+        for (let v = 0; v < VOCAB_SIZE; v++) {
+          if (logits[v] > maxV) {
+            maxV = logits[v];
+            maxI = v;
+          }
+        }
+        if (maxI === targetIds[pos]) correct++;
+        count++;
+      }
+    }
+    return {
+      loss: totalLoss / Math.max(count, 1),
+      acc: correct / Math.max(count, 1),
+    };
+  }
+
+  countParams() {
+    const { d_model, n_heads, n_layers } = this.config;
+    const d_ff = d_model * 2;
+    let n = 0;
+    n += VOCAB_SIZE * d_model; // tok_emb
+    n += this.config.max_seq_len * d_model; // pos_emb
+    n += d_model * VOCAB_SIZE + VOCAB_SIZE; // out_W, out_b
+    for (let l = 0; l < n_layers; l++) {
+      n += 4 * (d_model * d_model + d_model); // W_q,k,v,o + b
+      n += 2 * (2 * d_model); // ln1, ln2 gamma+beta
+      n += d_model * d_ff + d_ff; // ff_W1, ff_b1
+      n += d_ff * d_model + d_model; // ff_W2, ff_b2
+    }
+    return n;
+  }
+}
+
+// =====================================================================
+// TRAINING STATE
+// =====================================================================
+let model = null;
+let isPlaying = false;
+let rafId = null;
+let lossHistory = [];
+let accHistory = [];
+
+// Current heatmap display sequence
+let heatmapSeq = null;
+
+function getConfig() {
+  const layers = parseInt(document.querySelector('input[name="layers"]:checked')?.value || 2);
+  const heads = parseInt(document.querySelector('input[name="heads"]:checked')?.value || 4);
+  const d_model = parseInt(document.querySelector('input[name="dmodel"]:checked')?.value || 32);
+  return { d_model, n_heads: heads, n_layers: layers, d_ff: d_model * 2, max_seq_len: 12 };
+}
+
+function getLR() { return parseFloat(document.getElementById('sel-lr').value); }
+
+function resetModel() {
+  const config = getConfig();
+  model = new TransformerModel(config);
+  lossHistory = [];
+  accHistory = [];
+  updateEpochDisplay(0, null, null);
+  updateSidebarInfo();
+  buildLayerSelect();
+  // Set default heatmap sequence
+  heatmapSeq = [V2I['the'], V2I['cat'], V2I['sat']];
+  runForwardForHeatmap();
+  renderHeatmaps();
+  renderLoss();
+  renderEmbedding();
+  renderVocab();
+}
+
+function updateSidebarInfo() {
+  if (!model) return;
+  document.getElementById('info-vocab').textContent = VOCAB_SIZE;
+  document.getElementById('info-dff').textContent = model.config.d_model * 2;
+  document.getElementById('info-params').textContent = formatNum(model.countParams());
+  document.getElementById('info-samples').textContent = TOTAL_TRAIN_POSITIONS;
+}
+function formatNum(n) {
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+  return n;
+}
+
+function buildLayerSelect() {
+  if (!model) return;
+  const sel = document.getElementById('sel-layer');
+  sel.innerHTML = '';
+  for (let l = 0; l < model.config.n_layers; l++) {
+    const opt = document.createElement('option');
+    opt.value = l;
+    opt.textContent = `${t('layer')} ${l + 1}`;
+    sel.appendChild(opt);
+  }
+}
+
+// =====================================================================
+// TRAINING LOOP
+// =====================================================================
+function trainStep() {
+  if (!model || !isPlaying) return;
+  const lr = getLR();
+  const { loss, acc } = model.trainEpoch(lr);
+  lossHistory.push(loss);
+  accHistory.push(acc);
+  updateEpochDisplay(model.epoch, loss, acc);
+  runForwardForHeatmap();
+  renderHeatmaps();
+  renderLoss();
+  if (model.epoch % 5 === 0) renderEmbedding();
+  rafId = requestAnimationFrame(trainStep);
+}
+
+function runForwardForHeatmap() {
+  if (!model || !heatmapSeq || heatmapSeq.length === 0) return;
+  const { logits } = model.forward(heatmapSeq, true);
+  // model.lastAttnWeights is now updated
+}
+
+function updateEpochDisplay(epoch, loss, acc) {
+  document.getElementById('epoch-val').textContent = epoch;
+  const lossEl = document.getElementById('loss-val');
+  const accEl = document.getElementById('acc-val');
+  if (lossEl) lossEl.textContent = loss !== null ? loss.toFixed(3) : '—';
+  if (accEl) accEl.textContent = acc !== null ? (acc * 100).toFixed(1) + '%' : '—';
+  document.getElementById('loss-display').textContent = loss !== null ? loss.toFixed(4) : '—';
+  document.getElementById('acc-display').textContent = acc !== null ? (acc * 100).toFixed(1) + '%' : '—';
+  const pct = acc !== null ? Math.min(100, acc * 100) : 0;
+  document.getElementById('acc-bar').style.width = pct + '%';
+}
+
+function updateStatusBadge() {
+  const badge = document.getElementById('status-badge');
+  if (!badge) return;
+  if (isPlaying) {
+    badge.textContent = t('playing');
+    badge.className = 'status-badge training';
+    badge.setAttribute('data-i18n', 'playing');
+  } else {
+    badge.textContent = t('paused');
+    badge.className = 'status-badge paused';
+    badge.setAttribute('data-i18n', 'paused');
+  }
+}
+
+// =====================================================================
+// CONTROLS
+// =====================================================================
+document.getElementById('btn-play').addEventListener('click', () => {
+  isPlaying = !isPlaying;
+  const btn = document.getElementById('btn-play');
+  if (isPlaying) {
+    btn.textContent = '⏸';
+    btn.classList.add('playing');
+    document.getElementById('training-status').textContent = t('training');
+    trainStep();
+  } else {
+    btn.textContent = '▶';
+    btn.classList.remove('playing');
+    document.getElementById('training-status').textContent = '';
+    if (rafId) cancelAnimationFrame(rafId);
+  }
+  updateStatusBadge();
+});
+
+document.getElementById('btn-step').addEventListener('click', () => {
+  if (!model) return;
+  const wasPlaying = isPlaying;
+  if (isPlaying) {
+    isPlaying = false;
+    if (rafId) cancelAnimationFrame(rafId);
+  }
+  const lr = getLR();
+  const { loss, acc } = model.trainEpoch(lr);
+  lossHistory.push(loss);
+  accHistory.push(acc);
+  updateEpochDisplay(model.epoch, loss, acc);
+  runForwardForHeatmap();
+  renderHeatmaps();
+  renderLoss();
+  renderEmbedding();
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  if (isPlaying) {
+    isPlaying = false;
+    if (rafId) cancelAnimationFrame(rafId);
+    document.getElementById('btn-play').textContent = '▶';
+    document.getElementById('btn-play').classList.remove('playing');
+  }
+  updateStatusBadge();
+  resetModel();
+});
+
+function onConfigChange() {
+  // Sync radio group checked classes
+  document.querySelectorAll('.radio-group').forEach(rg => {
+    rg.querySelectorAll('label').forEach(lbl => {
+      lbl.classList.toggle('checked', lbl.querySelector('input').checked);
+    });
+  });
+  if (isPlaying) {
+    isPlaying = false;
+    if (rafId) cancelAnimationFrame(rafId);
+    document.getElementById('btn-play').textContent = '▶';
+    document.getElementById('btn-play').classList.remove('playing');
+    updateStatusBadge();
+  }
+  resetModel();
+}
+
+function applyPreset(name) {
+  document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-preset="${name}"]`).classList.add('active');
+
+  const presets = {
+    basic: { layers: 2, heads: 4, d: 32 },
+    single: { layers: 2, heads: 1, d: 32 },
+    deep: { layers: 4, heads: 4, d: 32 },
+    small: { layers: 1, heads: 2, d: 16 },
+  };
+  const p = presets[name];
+  // Set radio buttons
+  setRadio('layers', p.layers);
+  setRadio('heads', p.heads);
+  setRadio('dmodel', p.d);
+  onConfigChange();
+}
+
+function setRadio(name, val) {
+  document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+    r.checked = parseInt(r.value) === val;
+  });
+}
+
+// =====================================================================
+// ATTENTION HEATMAP RENDERING
+// =====================================================================
+function attnColor(w) {
+  // 0 → white, 1 → dark blue (#0877bd)
+  const r = Math.round(255 - w * (255 - 8));
+  const g = Math.round(255 - w * (255 - 119));
+  const b = Math.round(255 - w * (255 - 189));
+  return `rgb(${r},${g},${b})`;
+}
+
+function renderHeatmaps() {
+  if (!model || !model.lastAttnWeights) return;
+  const cfg = model.config;
+  const layerIdx = parseInt(document.getElementById('sel-layer').value) || 0;
+  const attnWeights = model.lastAttnWeights[layerIdx]; // [n_heads][seq][seq]
+  const tokens = heatmapSeq || [V2I['the'], V2I['cat']];
+  const T = tokens.length;
+  const tokenLabels = tokens.map(i => VOCAB[i]);
+
+  const grid = document.getElementById('heads-grid');
+  const n = cfg.n_heads;
+
+  // Layout: 1-2 heads: 1 col, 3-4 heads: 2 cols
+  const cols = n <= 2 ? n : 2;
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+  // Clear and rebuild
+  while (grid.children.length > n) grid.removeChild(grid.lastChild);
+  while (grid.children.length < n) {
+    const panel = document.createElement('div');
+    panel.className = 'head-panel';
+    panel.innerHTML = `<div class="head-title"></div><div class="heatmap-canvas-wrap"><canvas></canvas></div>`;
+    grid.appendChild(panel);
+  }
+
+  const CELL = Math.min(32, Math.floor((document.getElementById('heatmap-scroll').clientWidth / cols - 60) / Math.max(T, 2)));
+  const PAD_LEFT = 36, PAD_TOP = 36;
+  const W = PAD_LEFT + T * CELL;
+  const H = PAD_TOP + T * CELL;
+
+  for (let h = 0; h < n; h++) {
+    const panel = grid.children[h];
+    panel.querySelector('.head-title').textContent = `${t('head')} ${h + 1}`;
+    const canvas = panel.querySelector('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+
+    const weights = attnWeights ? attnWeights[h] : null;
+
+    // Draw cells
+    for (let row = 0; row < T; row++) {
+      for (let col = 0; col < T; col++) {
+        const x = PAD_LEFT + col * CELL;
+        const y = PAD_TOP + row * CELL;
+
+        if (col > row) {
+          // Masked (upper triangle)
+          ctx.fillStyle = '#f0f0f0';
+          ctx.fillRect(x, y, CELL, CELL);
+          // Hatch
+          ctx.strokeStyle = '#ddd';
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(x, y); ctx.lineTo(x + CELL, y + CELL);
+          ctx.stroke();
+        } else {
+          const w = weights ? (weights[row][col] || 0) : 0;
+          ctx.fillStyle = attnColor(w);
+          ctx.fillRect(x, y, CELL, CELL);
+          // Cell border
+          ctx.strokeStyle = '#e0e0e0';
+          ctx.lineWidth = 0.5;
+          ctx.strokeRect(x, y, CELL, CELL);
+          // Value text
+          if (CELL >= 20) {
+            ctx.fillStyle = w > 0.5 ? '#fff' : '#333';
+            ctx.font = `${Math.min(9, CELL * 0.28)}px monospace`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(w.toFixed(2), x + CELL / 2, y + CELL / 2);
+          }
+        }
+      }
+    }
+
+    // Column labels (top)
+    ctx.fillStyle = '#555';
+    ctx.font = `bold ${Math.min(10, CELL * 0.35)}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (let col = 0; col < T; col++) {
+      const x = PAD_LEFT + col * CELL + CELL / 2;
+      ctx.fillText(tokenLabels[col], x, PAD_TOP / 2);
+    }
+
+    // Row labels (left)
+    ctx.textAlign = 'right';
+    for (let row = 0; row < T; row++) {
+      const y = PAD_TOP + row * CELL + CELL / 2;
+      ctx.fillText(tokenLabels[row], PAD_LEFT - 4, y);
+    }
+  }
+}
+
+// =====================================================================
+// LOSS CURVE RENDERING
+// =====================================================================
+function renderLoss() {
+  const canvas = document.getElementById('loss-canvas');
+  const W = canvas.width, H = canvas.height;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  const PAD = { l: 28, r: 8, t: 8, b: 20 };
+  const w = W - PAD.l - PAD.r;
+  const h = H - PAD.t - PAD.b;
+
+  // Background
+  ctx.fillStyle = '#fafafa';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid lines
+  ctx.strokeStyle = '#eee';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = PAD.t + h - (h * i / 4);
+    ctx.beginPath(); ctx.moveTo(PAD.l, y); ctx.lineTo(PAD.l + w, y); ctx.stroke();
+  }
+
+  const N = lossHistory.length;
+  if (N === 0) {
+    ctx.fillStyle = '#bbb'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(t('epoch') + ' 0', PAD.l + w / 2, PAD.t + h / 2);
+    return;
+  }
+
+  const maxL = Math.max(...lossHistory, 0.01);
+  const minL = Math.min(...lossHistory);
+
+  // Y axis labels
+  ctx.fillStyle = '#888'; ctx.font = '9px monospace'; ctx.textAlign = 'right';
+  for (let i = 0; i <= 4; i++) {
+    const v = minL + (maxL - minL) * (1 - i / 4);
+    const y = PAD.t + h * i / 4;
+    ctx.fillText(v.toFixed(2), PAD.l - 2, y + 3);
+  }
+
+  // X axis
+  ctx.fillStyle = '#888'; ctx.font = '9px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText(N, PAD.l + w, PAD.t + h + 14);
+  ctx.fillText('0', PAD.l, PAD.t + h + 14);
+
+  // Loss line
+  ctx.strokeStyle = '#e74c3c';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (let i = 0; i < N; i++) {
+    const x = PAD.l + (i / Math.max(N - 1, 1)) * w;
+    const y = PAD.t + h - ((lossHistory[i] - minL) / (maxL - minL + 1e-10)) * h;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Acc line (secondary axis, green)
+  if (accHistory.length > 0) {
+    ctx.strokeStyle = '#4ade80';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 2]);
+    ctx.beginPath();
+    for (let i = 0; i < accHistory.length; i++) {
+      const x = PAD.l + (i / Math.max(accHistory.length - 1, 1)) * w;
+      const y = PAD.t + h - accHistory[i] * h;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+}
+
+// =====================================================================
+// EMBEDDING PCA RENDERING
+// =====================================================================
+function pca2d(matrix) {
+  // matrix: N × d, returns N × 2 (first 2 principal components)
+  const N = matrix.length;
+  const d = matrix[0].length;
+
+  // Center
+  const mean = new Float64Array(d);
+  for (let i = 0; i < N; i++) for (let j = 0; j < d; j++) mean[j] += matrix[i][j] / N;
+  const centered = matrix.map(row => row.map((v, j) => v - mean[j]));
+
+  // Power iteration for top 2 PCs
+  const randUnit = (dim) => {
+    const v = new Float64Array(dim);
+    for (let i = 0; i < dim; i++) v[i] = Math.random() - 0.5;
+    const n = Math.sqrt(v.reduce((s, x) => s + x * x, 0));
+    return v.map(x => x / n);
+  };
+  const project = (data, v) => data.map(row => row.reduce((s, x, i) => s + x * v[i], 0));
+  const deflate = (data, v, scores) => data.map((row, i) => row.map((x, j) => x - scores[i] * v[j]));
+  const matVec = (data, scores) => {
+    const v = new Float64Array(d);
+    for (let i = 0; i < N; i++) for (let j = 0; j < d; j++) v[j] += data[i][j] * scores[i];
+    return v;
+  };
+  const normalize = (v) => {
+    const n = Math.sqrt(v.reduce((s, x) => s + x * x, 0) + 1e-10);
+    return v.map(x => x / n);
+  };
+
+  const powerIter = (data, iters = 30) => {
+    let v = randUnit(d);
+    for (let iter = 0; iter < iters; iter++) {
+      const scores = project(data, v);
+      const Av = matVec(data, scores);
+      v = normalize(Av);
+    }
+    return v;
+  };
+
+  const pc1 = powerIter(centered);
+  const scores1 = project(centered, pc1);
+  const data2 = deflate(centered, pc1, scores1);
+  const pc2 = powerIter(data2);
+  const scores2 = project(data2, pc2);
+
+  return scores1.map((s1, i) => [s1, scores2[i]]);
+}
+
+const CAT_COLORS = {
+  noun: '#0877bd',
+  verb: '#e74c3c',
+  prep: '#16a34a',
+  article: '#888',
+  special: '#ccc',
+};
+
+function renderEmbedding() {
+  if (!model) return;
+  const canvas = document.getElementById('embed-canvas');
+  const W = canvas.width, H = canvas.height;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#fafafa';
+  ctx.fillRect(0, 0, W, H);
+
+  // Get embeddings
+  const embeddings = VOCAB.map((w, i) => Array.from(model.tok_emb[i]));
+  let coords;
+  try {
+    coords = pca2d(embeddings);
+  } catch (e) {
+    return;
+  }
+
+  // Normalize to canvas
+  const xs = coords.map(c => c[0]), ys = coords.map(c => c[1]);
+  const xmin = Math.min(...xs), xmax = Math.max(...xs);
+  const ymin = Math.min(...ys), ymax = Math.max(...ys);
+  const PAD = 20;
+  const xRange = xmax - xmin || 1, yRange = ymax - ymin || 1;
+
+  const toX = v => PAD + ((v - xmin) / xRange) * (W - 2 * PAD);
+  const toY = v => H - PAD - ((v - ymin) / yRange) * (H - 2 * PAD);
+
+  // Draw grid
+  ctx.strokeStyle = '#eee'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2); ctx.stroke();
+
+  // Draw points then labels with collision avoidance
+  const points = [];
+  VOCAB.forEach((word, i) => {
+    if (word === '<pad>') return;
+    const x = toX(coords[i][0]);
+    const y = toY(coords[i][1]);
+    const cat = WORD_CATS[word] || 'special';
+    points.push({ word: word === '<eos>' ? 'eos' : word, x, y, color: CAT_COLORS[cat] });
+  });
+
+  // Draw dots first
+  points.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.stroke();
+  });
+
+  // Draw labels with simple collision avoidance
+  ctx.font = '8px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  const placed = []; // [{x, y, w, h}]
+  points.forEach(p => {
+    const tw = ctx.measureText(p.word).width;
+    let lx = p.x, ly = p.y - 5;
+    // Try offsets to avoid overlap
+    const offsets = [[0,-5],[0,12],[tw/2+4,-5],[-(tw/2+4),-5],[0,-12],[tw/2+4,8],[-(tw/2+4),8]];
+    for (const [dx, dy] of offsets) {
+      const cx = p.x + dx, cy = p.y + dy;
+      const overlap = placed.some(r => Math.abs(cx - r.x) < (tw + r.w)/2 + 2 && Math.abs(cy - r.y) < 8);
+      if (!overlap) { lx = cx; ly = cy; break; }
+    }
+    placed.push({ x: lx, y: ly, w: tw, h: 8 });
+    ctx.fillStyle = '#333';
+    ctx.fillText(p.word, lx, ly);
+  });
+}
+
+// =====================================================================
+// VOCABULARY DISPLAY
+// =====================================================================
+function renderVocab() {
+  const el = document.getElementById('vocab-display');
+  const catOrder = ['article', 'noun', 'verb', 'prep', 'special'];
+  const byCat = {};
+  catOrder.forEach(c => byCat[c] = []);
+  VOCAB.forEach(w => {
+    const c = WORD_CATS[w] || 'special';
+    byCat[c].push(w);
+  });
+  let html = '';
+  catOrder.forEach(cat => {
+    if (!byCat[cat].length) return;
+    const color = CAT_COLORS[cat];
+    html += byCat[cat].map(w =>
+      `<span style="display:inline-block;margin:1px;padding:1px 5px;border-radius:8px;background:${color}22;color:${color};border:1px solid ${color}44;">${w}</span>`
+    ).join('');
+  });
+  el.innerHTML = html;
+}
+
+// =====================================================================
+// TEXT GENERATION
+// =====================================================================
+function setPrompt(text) {
+  document.getElementById('gen-input').value = text;
+}
+
+function clearGen() {
+  document.getElementById('gen-output').innerHTML = '';
+  document.getElementById('top5-area').innerHTML = '';
+}
+
+async function generateText() {
+  if (!model) return;
+  const inputText = document.getElementById('gen-input').value.trim().toLowerCase();
+  if (!inputText) return;
+
+  const words = inputText.split(/\s+/);
+  let tokenIds = words.map(w => V2I[w] !== undefined ? V2I[w] : V2I['<pad>']);
+  if (tokenIds.length === 0) return;
+
+  // Update heatmap sequence
+  heatmapSeq = [...tokenIds];
+
+  // Show prompt tokens
+  const output = document.getElementById('gen-output');
+  output.innerHTML = '';
+  tokenIds.forEach(tid => {
+    const span = document.createElement('span');
+    span.className = 'tok-prompt';
+    span.textContent = VOCAB[tid];
+    output.appendChild(span);
+  });
+
+  // Generate up to 8 more tokens
+  const maxNew = 8;
+  for (let step = 0; step < maxNew; step++) {
+    const seq = tokenIds.slice(-model.config.max_seq_len);
+    const { logits } = model.forward(seq, true);
+
+    const probs = adjustedNextTokenProbs(logits, tokenIds);
+
+    // Show top-5
+    renderTop5(probs);
+
+    // Top-k temperature sampling with a light repetition penalty is more
+    // stable here than pure greedy decoding on a tiny toy corpus.
+    const nextId = sampleFromDistribution(probs);
+
+    // Update heatmap
+    heatmapSeq = seq;
+    renderHeatmaps();
+
+    if (nextId === V2I['<eos>']) break;
+
+    tokenIds.push(nextId);
+    heatmapSeq = tokenIds.slice(-model.config.max_seq_len);
+    model.forward(heatmapSeq, true);
+    const span = document.createElement('span');
+    span.className = 'tok-generated tok-new';
+    span.textContent = VOCAB[nextId];
+    output.appendChild(span);
+    renderHeatmaps();
+
+    await new Promise(r => setTimeout(r, 350));
+    span.classList.remove('tok-new');
+
+    if (tokenIds.length >= model.config.max_seq_len) break;
+  }
+}
+
+function renderTop5(probs) {
+  const indexed = probs.map((p, i) => ({ p, i })).sort((a, b) => b.p - a.p).slice(0, 5);
+  const area = document.getElementById('top5-area');
+  area.innerHTML = '';
+  const maxP = indexed[0].p;
+  indexed.forEach((item, rank) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'top5-bar-wrap';
+    const barH = Math.max(2, Math.round((item.p / (maxP + 1e-10)) * 36));
+    wrap.innerHTML = `
+      <div class="top5-bar ${rank === 0 ? 'top' : ''}" style="height:${barH}px;"></div>
+      <div class="top5-label">${VOCAB[item.i] === '<eos>' ? 'eos' : VOCAB[item.i]}</div>
+      <div class="top5-prob">${(item.p * 100).toFixed(0)}%</div>
+    `;
+    area.appendChild(wrap);
+  });
+}
+
+// =====================================================================
+// INITIALIZATION
+// =====================================================================
+function init() {
+  // Sync radio labels
+  document.querySelectorAll('.radio-group').forEach(rg => {
+    rg.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('change', () => {
+        rg.querySelectorAll('label').forEach(l => l.classList.remove('checked'));
+        inp.parentElement.classList.add('checked');
+      });
+    });
+  });
+
+  // Set default radio checked states visually
+  document.querySelectorAll('.radio-group').forEach(rg => {
+    rg.querySelectorAll('input').forEach(inp => {
+      if (inp.checked) inp.parentElement.classList.add('checked');
+      else inp.parentElement.classList.remove('checked');
+    });
+  });
+
+  resetModel();
+  applyPreset('basic');
+  applyI18n();
+}
+
+window.addEventListener('load', init);
+window.addEventListener('resize', () => {
+  renderHeatmaps();
+});
+</script>
+</body>
+</html>
