@@ -1,0 +1,2039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCN 游乐场</title>
+<style>
+/* ============ RESET & BASE ============ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+  background: #f7f7f7;
+  color: #333;
+  font-size: 13px;
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#page-content { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+/* ============ HEADER ============ */
+#header {
+  background: #1a3a4a;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 48px;
+  gap: 16px;
+  flex-shrink: 0;
+}
+#header h1 { font-size: 18px; font-weight: 600; letter-spacing: 1px; }
+#header .subtitle { font-size: 12px; color: #8ab; margin-left: 4px; }
+#header .epoch-label { font-size: 14px; color: #acd; margin-left: auto; }
+#header .epoch-label span.val { color: #e74c3c; font-weight: 700; font-size: 16px; }
+
+/* ============ CONTROL BAR ============ */
+#control-bar {
+  background: #e8e8e8;
+  border-bottom: 1px solid #ccc;
+  padding: 4px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.ctrl-group { display: flex; align-items: center; gap: 4px; }
+.ctrl-group label { font-size: 11px; color: #666; white-space: nowrap; }
+.ctrl-group select {
+  font-size: 12px; padding: 3px 6px; border: 1px solid #bbb; border-radius: 3px;
+  background: #fff; cursor: pointer;
+}
+.btn-round {
+  width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  transition: background 0.15s;
+}
+.btn-play { background: #e74c3c; color: #fff; }
+.btn-play:hover { background: #c0392b; }
+.btn-play.playing { background: #0877bd; }
+.btn-step { background: #ddd; color: #333; }
+.btn-step:hover { background: #ccc; }
+.btn-reset { background: #ddd; color: #c33; }
+.btn-reset:hover { background: #ccc; }
+
+/* ============ PRESET BAR ============ */
+#preset-bar {
+  background: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+  padding: 4px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+#preset-bar .preset-label { font-size: 12px; color: #666; font-weight: 600; }
+.btn-preset {
+  font-size: 11px; padding: 4px 10px; border: 1px solid #bbb; border-radius: 14px;
+  background: #fff; cursor: pointer; transition: all 0.15s; color: #444;
+}
+.btn-preset:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+.btn-preset.active { background: #0877bd; color: #fff; border-color: #0877bd; }
+
+/* ============ MAIN LAYOUT ============ */
+#main {
+  display: flex;
+  flex: 1;
+  min-height: 520px;
+  overflow: hidden;
+}
+
+/* ============ LEFT SIDEBAR ============ */
+#sidebar {
+  width: 168px;
+  min-width: 168px;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  padding: 12px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+#sidebar h3 {
+  font-size: 11px; color: #888; margin-bottom: 8px;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.sidebar-section { margin-bottom: 14px; }
+.sidebar-section label { font-size: 11px; color: #555; display: block; margin-bottom: 3px; }
+.spin-row { display: flex; align-items: center; gap: 4px; }
+.spin-val {
+  width: 32px; text-align: center; font-size: 13px; font-weight: 700;
+  color: #0877bd;
+}
+.btn-spin {
+  width: 22px; height: 22px; border-radius: 4px; border: 1px solid #bbb;
+  background: #f5f5f5; cursor: pointer; font-size: 14px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.1s;
+}
+.btn-spin:hover { background: #e0e0e0; }
+.btn-spin:disabled { opacity: 0.35; cursor: default; }
+.radio-group { display: flex; gap: 5px; flex-wrap: wrap; }
+.radio-group label {
+  display: flex; align-items: center; gap: 3px; cursor: pointer;
+  padding: 3px 7px; border: 1px solid #bbb; border-radius: 10px;
+  font-size: 11px; transition: all 0.1s; color: #444;
+}
+.radio-group label.checked { background: #0877bd; color: #fff; border-color: #0877bd; }
+.radio-group input { display: none; }
+.full-select {
+  width: 100%; font-size: 12px; padding: 3px 6px;
+  border: 1px solid #bbb; border-radius: 3px; background: #fff;
+}
+.checkbox-row { display: flex; align-items: center; gap: 6px; }
+.checkbox-row input[type=checkbox] { cursor: pointer; }
+.checkbox-row span { font-size: 11px; color: #555; }
+.slider-row { display: flex; align-items: center; gap: 6px; }
+.slider-row input[type=range] { flex: 1; }
+.slider-val { font-size: 11px; font-weight: 700; color: #0877bd; width: 28px; }
+
+/* ============ CENTER AREA ============ */
+#center-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fafafa;
+  border-right: 1px solid #ddd;
+  min-width: 0;
+}
+#graph-title-bar {
+  padding: 5px 12px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  font-size: 11px; color: #888;
+  display: flex; align-items: center; gap: 8px;
+  flex-shrink: 0;
+}
+#graph-title-bar .gtitle { font-weight: 600; color: #555; }
+#graph-canvas-wrap {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+#graph-canvas { display: block; cursor: default; }
+
+/* Node info popup */
+#node-info {
+  position: absolute;
+  bottom: 10px; left: 10px;
+  background: rgba(255,255,255,0.97);
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 11px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: none;
+  min-width: 140px;
+  pointer-events: none;
+}
+#node-info .ni-title { font-weight: 700; color: #333; margin-bottom: 4px; font-size: 12px; }
+#node-info .ni-row { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 2px; }
+#node-info .ni-key { color: #888; }
+#node-info .ni-val { font-weight: 700; color: #0877bd; }
+.class-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 3px; }
+
+/* ============ RIGHT PANEL ============ */
+#right-panel {
+  width: 290px;
+  min-width: 290px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.panel-title {
+  font-size: 11px; color: #888; font-weight: 600; margin-bottom: 4px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.right-top {
+  flex: 1;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+.right-bottom {
+  padding: 8px;
+  flex-shrink: 0;
+}
+.layer-tabs {
+  display: flex; gap: 3px; flex-wrap: wrap; margin-bottom: 6px;
+}
+.layer-tab {
+  font-size: 10px; padding: 2px 7px; border: 1px solid #bbb; border-radius: 10px;
+  background: #f5f5f5; cursor: pointer; color: #555; transition: all 0.1s;
+}
+.layer-tab.active { background: #0877bd; color: #fff; border-color: #0877bd; }
+#pca-canvas-wrap { flex: 1; overflow: hidden; min-height: 0; }
+#pca-canvas { display: block; }
+
+.plot-container {
+  background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden;
+}
+.loss-info {
+  display: flex; gap: 10px; font-size: 12px; padding: 4px 0; flex-wrap: wrap;
+}
+.loss-item { display: flex; align-items: center; gap: 4px; }
+.loss-dot { width: 8px; height: 8px; border-radius: 50%; }
+.loss-value { font-weight: 700; font-family: "Courier New", monospace; font-size: 12px; }
+.acc-row {
+  display: flex; gap: 8px; align-items: center; font-size: 11px; margin-top: 4px;
+}
+.acc-bar-wrap {
+  flex: 1; height: 10px; background: #f0f0f0; border-radius: 6px; overflow: hidden;
+}
+.acc-bar { height: 100%; border-radius: 6px; transition: width 0.3s; }
+.acc-label { font-size: 11px; color: #666; width: 50px; flex-shrink: 0; }
+.acc-val { font-weight: 700; font-family: monospace; width: 34px; flex-shrink: 0; }
+
+/* ============ LANG BTN ============ */
+#btn-lang {
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; border-radius: 4px; padding: 2px 8px; cursor: pointer;
+  font-size: 12px; margin-left: 6px;
+}
+#btn-lang:hover { background: rgba(255,255,255,0.25); }
+
+/* ============ LEGEND ============ */
+#legend {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  padding: 4px 8px;
+  background: #fff; border-top: 1px solid #eee;
+  flex-shrink: 0;
+}
+.leg-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #555; }
+.leg-circle {
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 2px solid #333;
+}
+.leg-circle.train { border: 2px solid #111; }
+.leg-circle.test { border: 1.5px solid #aaa; }
+
+/* Pulse animation for misclassified */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+</style>
+</head>
+<body>
+<div id="page-content">
+
+<!-- HEADER -->
+<div id="header">
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-label="GCN Logo">
+    <!-- Graph nodes -->
+    <circle cx="8" cy="8" r="4" fill="#0877bd" opacity="0.9"/>
+    <circle cx="22" cy="8" r="4" fill="#e74c3c" opacity="0.9"/>
+    <circle cx="8" cy="22" r="4" fill="#27ae60" opacity="0.9"/>
+    <circle cx="20" cy="21" r="3.5" fill="#0877bd" opacity="0.7"/>
+    <circle cx="14" cy="14" r="3" fill="#fff" opacity="0.9"/>
+    <!-- Edges -->
+    <line x1="8" y1="8" x2="22" y2="8" stroke="white" stroke-width="1.2" opacity="0.5"/>
+    <line x1="8" y1="8" x2="8" y2="22" stroke="white" stroke-width="1.2" opacity="0.5"/>
+    <line x1="22" y1="8" x2="20" y2="21" stroke="white" stroke-width="1.2" opacity="0.5"/>
+    <line x1="8" y1="22" x2="20" y2="21" stroke="white" stroke-width="1.2" opacity="0.5"/>
+    <line x1="14" y1="14" x2="8" y2="8" stroke="white" stroke-width="1" opacity="0.4"/>
+    <line x1="14" y1="14" x2="22" y2="8" stroke="white" stroke-width="1" opacity="0.4"/>
+  </svg>
+  <h1 data-i18n="title">GCN 游乐场</h1>
+  <div class="subtitle" data-i18n="subtitle">图卷积网络节点分类</div>
+  <button id="btn-lang">中</button>
+  <div class="epoch-label"><span data-i18n="epoch">轮次</span>: <span class="val" id="epoch-display">0</span></div>
+</div>
+
+<!-- CONTROL BAR -->
+<div id="control-bar">
+  <button class="btn-round btn-play" id="btn-play" title="播放/暂停">▶</button>
+  <button class="btn-round btn-step" id="btn-step" title="单步">⏭</button>
+  <button class="btn-round btn-reset" id="btn-reset" title="重置">↺</button>
+  <div class="ctrl-group">
+    <label data-i18n="lr">学习率</label>
+    <select id="sel-lr">
+      <option value="0.01" selected>0.01</option>
+      <option value="0.005">0.005</option>
+      <option value="0.001">0.001</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <label data-i18n="optimizer">优化器</label>
+    <select id="sel-optimizer">
+      <option value="sgd">SGD</option>
+      <option value="adam" selected>Adam</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <label>Dropout</label>
+    <select id="sel-dropout">
+      <option value="0" selected>0</option>
+      <option value="0.1">0.1</option>
+      <option value="0.2">0.2</option>
+      <option value="0.3">0.3</option>
+      <option value="0.5">0.5</option>
+    </select>
+  </div>
+</div>
+
+<!-- PRESET BAR -->
+<div id="preset-bar">
+  <span class="preset-label" data-i18n="presetLabel">快速演示：</span>
+  <button class="btn-preset active" data-preset="normal" data-i18n="presetNormal">正常</button>
+  <button class="btn-preset" data-preset="oversmooth" data-i18n="presetOversmooth">过平滑</button>
+  <button class="btn-preset" data-preset="residual" data-i18n="presetResidual">残差</button>
+  <button class="btn-preset" data-preset="fewlabels" data-i18n="presetFewLabels">少标注</button>
+  <button class="btn-preset" data-preset="dropout" data-i18n="presetDropout">Dropout</button>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div id="main">
+  <!-- LEFT SIDEBAR -->
+  <div id="sidebar">
+    <h3 data-i18n="graphConfig">图配置</h3>
+
+    <div class="sidebar-section">
+      <label data-i18n="graphLabel">图数据集</label>
+      <select class="full-select" id="sel-graph">
+        <option value="sbm" data-i18n="graphSBM">随机块模型</option>
+        <option value="karate" data-i18n="graphKarate">空手道俱乐部</option>
+        <option value="ring" data-i18n="graphRing">环状团图</option>
+      </select>
+    </div>
+
+    <h3 data-i18n="modelConfig" style="margin-top:10px;">模型结构</h3>
+
+    <div class="sidebar-section">
+      <label data-i18n="gcnLayers">GCN 层数</label>
+      <div class="spin-row">
+        <button class="btn-spin" id="btn-layers-minus">−</button>
+        <div class="spin-val" id="layers-val">2</div>
+        <button class="btn-spin" id="btn-layers-plus">+</button>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <label data-i18n="hiddenDim">隐藏维度</label>
+      <div class="radio-group" id="rg-hidden">
+        <label data-val="8"><input type="radio" name="hidden" value="8"> 8</label>
+        <label class="checked" data-val="16"><input type="radio" name="hidden" value="16" checked> 16</label>
+        <label data-val="32"><input type="radio" name="hidden" value="32"> 32</label>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="checkbox-row">
+        <input type="checkbox" id="cb-residual">
+        <span data-i18n="residual">残差连接</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <label data-i18n="trainRatio">训练比例</label>
+      <div class="slider-row">
+        <input type="range" id="sl-trainratio" min="10" max="70" value="30" step="10">
+        <div class="slider-val" id="trainratio-val">30%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER AREA -->
+  <div id="center-area">
+    <div id="graph-title-bar">
+      <span class="gtitle" data-i18n="graphVizTitle">力导向图</span>
+      <span id="graph-stats" style="margin-left:auto; color:#999;"></span>
+    </div>
+    <div id="graph-canvas-wrap">
+      <canvas id="graph-canvas"></canvas>
+      <div id="node-info">
+        <div class="ni-title" id="ni-title">Node 0</div>
+        <div class="ni-row"><span class="ni-key" data-i18n="niFeatures">特征</span><span class="ni-val" id="ni-feat"></span></div>
+        <div class="ni-row"><span class="ni-key" data-i18n="niTrue">真实标签</span><span class="ni-val" id="ni-true"></span></div>
+        <div class="ni-row"><span class="ni-key" data-i18n="niPred">预测标签</span><span class="ni-val" id="ni-pred"></span></div>
+        <div class="ni-row"><span class="ni-key" data-i18n="niConf">置信度</span><span class="ni-val" id="ni-conf"></span></div>
+        <div class="ni-row"><span class="ni-key" data-i18n="niTrain">训练节点</span><span class="ni-val" id="ni-train"></span></div>
+      </div>
+    </div>
+    <div id="legend">
+      <div class="leg-item">
+        <svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="#0877bd"/></svg>
+        <span data-i18n="class0">类别 0</span>
+      </div>
+      <div class="leg-item">
+        <svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="#e74c3c"/></svg>
+        <span data-i18n="class1">类别 1</span>
+      </div>
+      <div class="leg-item">
+        <svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="#27ae60"/></svg>
+        <span data-i18n="class2">类别 2</span>
+      </div>
+      <div class="leg-item" style="margin-left:8px;">
+        <svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="#aaa" stroke="#111" stroke-width="2"/></svg>
+        <span data-i18n="trainNode">训练节点</span>
+      </div>
+      <div class="leg-item">
+        <svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="#aaa" stroke="#aaa" stroke-width="1.5"/></svg>
+        <span data-i18n="testNode">测试节点</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div id="right-panel">
+    <div class="right-top">
+      <div class="panel-title" data-i18n="embeddingTitle">嵌入 PCA 投影</div>
+      <div class="layer-tabs" id="layer-tabs"></div>
+      <div id="pca-canvas-wrap">
+        <canvas id="pca-canvas"></canvas>
+      </div>
+    </div>
+    <div class="right-bottom">
+      <div class="panel-title" data-i18n="lossTitle">损失 & 准确率</div>
+      <div class="plot-container" style="margin-bottom:6px;">
+        <canvas id="loss-canvas" height="100"></canvas>
+      </div>
+      <div class="loss-info">
+        <div class="loss-item">
+          <div class="loss-dot" style="background:#0877bd;"></div>
+          <span data-i18n="trainLoss">训练损失</span>:
+          <span class="loss-value" id="disp-train-loss">-.---</span>
+        </div>
+        <div class="loss-item">
+          <div class="loss-dot" style="background:#e74c3c;"></div>
+          <span data-i18n="testAcc">测试准确率</span>:
+          <span class="loss-value" id="disp-test-acc">--%</span>
+        </div>
+      </div>
+      <div class="acc-row">
+        <span class="acc-label" data-i18n="trainAccLabel">训练</span>
+        <div class="acc-bar-wrap"><div class="acc-bar" id="bar-train-acc" style="background:#0877bd; width:0%;"></div></div>
+        <span class="acc-val" id="disp-train-acc">--%</span>
+      </div>
+      <div class="acc-row">
+        <span class="acc-label" data-i18n="testAccLabel">测试</span>
+        <div class="acc-bar-wrap"><div class="acc-bar" id="bar-test-acc" style="background:#e74c3c; width:0%;"></div></div>
+        <span class="acc-val" id="disp-test-acc2">--%</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+'use strict';
+
+// ============================================================
+// I18N
+// ============================================================
+const I18N = {
+  zh: {
+    title: 'GCN 游乐场',
+    subtitle: '图卷积网络节点分类',
+    epoch: '轮次',
+    lr: '学习率',
+    optimizer: '优化器',
+    presetLabel: '快速演示：',
+    presetNormal: '正常',
+    presetOversmooth: '过平滑',
+    presetResidual: '残差',
+    presetFewLabels: '少标注',
+    presetDropout: 'Dropout',
+    graphConfig: '图配置',
+    graphLabel: '图数据集',
+    graphSBM: '随机块模型',
+    graphKarate: '空手道俱乐部',
+    graphRing: '环状团图',
+    modelConfig: '模型结构',
+    gcnLayers: 'GCN 层数',
+    hiddenDim: '隐藏维度',
+    residual: '残差连接',
+    trainRatio: '训练比例',
+    graphVizTitle: '力导向图',
+    embeddingTitle: '嵌入 PCA 投影',
+    lossTitle: '损失 & 准确率',
+    trainLoss: '训练损失',
+    testAcc: '测试准确率',
+    trainAccLabel: '训练',
+    testAccLabel: '测试',
+    niFeatures: '特征',
+    niTrue: '真实标签',
+    niPred: '预测标签',
+    niConf: '置信度',
+    niTrain: '训练节点',
+    class0: '类别 0',
+    class1: '类别 1',
+    class2: '类别 2',
+    trainNode: '训练节点',
+    testNode: '测试节点',
+    layerInput: '输入',
+    layerOutput: '输出',
+    layerN: (n) => `层 ${n}`,
+    yes: '是',
+    no: '否',
+  },
+  en: {
+    title: 'GCN Playground',
+    subtitle: 'Node Classification via GCN',
+    epoch: 'Epoch',
+    lr: 'Learn Rate',
+    optimizer: 'Optimizer',
+    presetLabel: 'Presets:',
+    presetNormal: 'Normal',
+    presetOversmooth: 'Over-smooth',
+    presetResidual: 'Residual',
+    presetFewLabels: 'Few Labels',
+    presetDropout: 'Dropout',
+    graphConfig: 'Graph',
+    graphLabel: 'Dataset',
+    graphSBM: 'SBM',
+    graphKarate: 'Karate Club',
+    graphRing: 'Ring of Cliques',
+    modelConfig: 'Model',
+    gcnLayers: 'GCN Layers',
+    hiddenDim: 'Hidden Dim',
+    residual: 'Residual',
+    trainRatio: 'Train Ratio',
+    graphVizTitle: 'Force-Directed Graph',
+    embeddingTitle: 'Embedding PCA',
+    lossTitle: 'Loss & Accuracy',
+    trainLoss: 'Train Loss',
+    testAcc: 'Test Acc',
+    trainAccLabel: 'Train',
+    testAccLabel: 'Test',
+    niFeatures: 'Features',
+    niTrue: 'True Label',
+    niPred: 'Pred Label',
+    niConf: 'Confidence',
+    niTrain: 'Train Node',
+    class0: 'Class 0',
+    class1: 'Class 1',
+    class2: 'Class 2',
+    trainNode: 'Train Node',
+    testNode: 'Test Node',
+    layerInput: 'Input',
+    layerOutput: 'Output',
+    layerN: (n) => `Layer ${n}`,
+    yes: 'Yes',
+    no: 'No',
+  }
+};
+let lang = 'en';
+function t(key, ...args) {
+  const d = I18N[lang];
+  const v = d[key];
+  if (typeof v === 'function') return v(...args);
+  return v !== undefined ? v : key;
+}
+function applyI18n() {
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  document.getElementById('btn-lang').textContent = lang === 'zh' ? 'EN' : '中';
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    el.textContent = t(k);
+  });
+  // Update select options
+  document.querySelectorAll('[data-i18n-opt]').forEach(el => {
+    const k = el.getAttribute('data-i18n-opt');
+    el.textContent = t(k);
+  });
+  updateLayerTabs();
+}
+
+// ============================================================
+// GRAPH DATA GENERATION
+// ============================================================
+function seededRandom(seed) {
+  let s = seed;
+  return function() {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    return (s >>> 0) / 0xffffffff;
+  };
+}
+
+function randn(rng) {
+  // Box-Muller
+  const u = rng(), v = rng();
+  return Math.sqrt(-2 * Math.log(u + 1e-10)) * Math.cos(2 * Math.PI * v);
+}
+
+function generateSBM(trainRatio, seed = 42) {
+  const rng = seededRandom(seed);
+  const N = 24, K = 3, comSize = 8;
+  const pIn = 0.6, pOut = 0.05;
+  // Community centers
+  const centers = [[0.0, 2.0], [-1.73, -1.0], [1.73, -1.0]];
+  const features = new Float32Array(N * 2);
+  const labels = new Int32Array(N);
+  for (let i = 0; i < N; i++) {
+    const c = Math.floor(i / comSize);
+    labels[i] = c;
+    features[i*2]   = centers[c][0] + randn(rng) * 0.6;
+    features[i*2+1] = centers[c][1] + randn(rng) * 0.6;
+  }
+  const edges = [];
+  for (let i = 0; i < N; i++) {
+    for (let j = i+1; j < N; j++) {
+      const ci = Math.floor(i / comSize), cj = Math.floor(j / comSize);
+      const p = (ci === cj) ? pIn : pOut;
+      if (rng() < p) edges.push([i, j]);
+    }
+  }
+  // Ensure connectivity within each community
+  for (let c = 0; c < K; c++) {
+    const base = c * comSize;
+    for (let i = base; i < base + comSize - 1; i++) {
+      const hasEdge = edges.some(e => (e[0]===i && e[1]===i+1) || (e[0]===i+1 && e[1]===i));
+      if (!hasEdge) edges.push([i, i+1]);
+    }
+  }
+  const trainMask = makeTrainMask(labels, trainRatio, rng);
+  return { numNodes: N, numClasses: 3, featDim: 2, features, labels, edges, trainMask, name: 'SBM' };
+}
+
+function generateKarate(trainRatio, seed = 7) {
+  const rng = seededRandom(seed);
+  // Zachary's Karate Club - hardcoded adjacency
+  const edgeList = [
+    [0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,10],[0,11],[0,12],[0,13],[0,17],[0,19],[0,21],[0,31],
+    [1,2],[1,3],[1,7],[1,13],[1,17],[1,19],[1,21],[1,30],
+    [2,3],[2,7],[2,8],[2,9],[2,13],[2,27],[2,28],[2,32],
+    [3,7],[3,12],[3,13],
+    [4,6],[4,10],
+    [5,6],[5,10],[5,16],
+    [6,16],
+    [8,30],[8,32],[8,33],
+    [9,33],
+    [13,33],
+    [14,32],[14,33],
+    [15,32],[15,33],
+    [18,32],[18,33],
+    [19,33],
+    [20,32],[20,33],
+    [22,32],[22,33],
+    [23,25],[23,27],[23,29],[23,32],[23,33],
+    [24,25],[24,27],[24,31],
+    [25,31],
+    [26,29],[26,33],
+    [27,33],
+    [28,31],[28,33],
+    [29,32],[29,33],
+    [30,32],[30,33],
+    [31,32],[31,33],
+    [32,33]
+  ];
+  const N = 34;
+  // Known 2-faction split
+  const faction = [0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1];
+  const features = new Float32Array(N * 2);
+  const labels = new Int32Array(N);
+  for (let i = 0; i < N; i++) {
+    labels[i] = faction[i];
+    features[i*2]   = (faction[i] === 0 ? -1.0 : 1.0) + randn(rng) * 0.5;
+    features[i*2+1] = randn(rng) * 0.5;
+  }
+  const trainMask = makeTrainMask(labels, trainRatio, rng);
+  return { numNodes: N, numClasses: 2, featDim: 2, features, labels, edges: edgeList, trainMask, name: 'Karate' };
+}
+
+function generateRingOfCliques(trainRatio, seed = 13) {
+  const rng = seededRandom(seed);
+  // 3 cliques of 6 nodes each, connected in a ring
+  const N = 18, K = 3, cliqueSize = 6;
+  const features = new Float32Array(N * 2);
+  const labels = new Int32Array(N);
+  const centers = [[0.0, 2.2], [-1.9, -1.1], [1.9, -1.1]];
+  for (let i = 0; i < N; i++) {
+    const c = Math.floor(i / cliqueSize);
+    labels[i] = c;
+    features[i*2]   = centers[c][0] + randn(rng) * 0.4;
+    features[i*2+1] = centers[c][1] + randn(rng) * 0.4;
+  }
+  const edges = [];
+  // Intra-clique edges
+  for (let c = 0; c < K; c++) {
+    const base = c * cliqueSize;
+    for (let i = base; i < base + cliqueSize; i++) {
+      for (let j = i+1; j < base + cliqueSize; j++) {
+        edges.push([i, j]);
+      }
+    }
+  }
+  // Bridge edges: clique0-clique1, clique1-clique2, clique2-clique0
+  edges.push([5, 6]);   // last of clique0, first of clique1
+  edges.push([4, 7]);   // bridge
+  edges.push([11, 12]); // last of clique1, first of clique2
+  edges.push([10, 13]); // bridge
+  edges.push([17, 0]);  // last of clique2, first of clique0
+  edges.push([16, 1]);  // bridge
+  const trainMask = makeTrainMask(labels, trainRatio, rng);
+  return { numNodes: N, numClasses: 3, featDim: 2, features, labels, edges, trainMask, name: 'Ring' };
+}
+
+function makeTrainMask(labels, trainRatio, rng) {
+  const N = labels.length;
+  const mask = new Uint8Array(N);
+  const classBuckets = new Map();
+  for (let i = 0; i < N; i++) {
+    const label = labels[i];
+    if (!classBuckets.has(label)) classBuckets.set(label, []);
+    classBuckets.get(label).push(i);
+  }
+
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+
+  const classIds = Array.from(classBuckets.keys());
+  const nTrain = Math.max(classIds.length, Math.round(N * trainRatio / 100));
+  const remaining = [];
+
+  // Guarantee at least one labeled node per class.
+  classIds.forEach(label => {
+    const bucket = classBuckets.get(label);
+    shuffle(bucket);
+    mask[bucket[0]] = 1;
+    for (let i = 1; i < bucket.length; i++) remaining.push(bucket[i]);
+  });
+
+  shuffle(remaining);
+  const extraNeeded = Math.min(remaining.length, nTrain - classIds.length);
+  for (let i = 0; i < extraNeeded; i++) mask[remaining[i]] = 1;
+  return mask;
+}
+
+// ============================================================
+// ADJACENCY NORMALIZATION
+// ============================================================
+function computeAdjNorm(N, edges) {
+  // Ã = A + I, D̃ = degree(Ã), adjNorm = D̃^{-1/2} Ã D̃^{-1/2}
+  // Returns dense N×N matrix as Float32Array
+  const A = new Float32Array(N * N);
+  // Self-loops
+  for (let i = 0; i < N; i++) A[i*N+i] = 1;
+  // Edges (undirected)
+  for (const [u, v] of edges) {
+    A[u*N+v] = 1;
+    A[v*N+u] = 1;
+  }
+  // Degree
+  const d = new Float32Array(N);
+  for (let i = 0; i < N; i++) {
+    for (let j = 0; j < N; j++) d[i] += A[i*N+j];
+  }
+  // D^{-1/2}
+  const dinv = new Float32Array(N);
+  for (let i = 0; i < N; i++) dinv[i] = d[i] > 0 ? 1.0 / Math.sqrt(d[i]) : 0;
+  // adjNorm[i][j] = dinv[i] * A[i][j] * dinv[j]
+  const adj = new Float32Array(N * N);
+  for (let i = 0; i < N; i++) {
+    for (let j = 0; j < N; j++) {
+      adj[i*N+j] = dinv[i] * A[i*N+j] * dinv[j];
+    }
+  }
+  return adj;
+}
+
+// ============================================================
+// MATRIX MATH UTILITIES
+// ============================================================
+// All matrices stored as Float32Array, row-major
+// matmul(A: [m×k], B: [k×n]) -> [m×n]
+function matmul(A, m, k, B, n) {
+  const C = new Float32Array(m * n);
+  for (let i = 0; i < m; i++) {
+    for (let l = 0; l < k; l++) {
+      const a = A[i*k+l];
+      if (a === 0) continue;
+      for (let j = 0; j < n; j++) {
+        C[i*n+j] += a * B[l*n+j];
+      }
+    }
+  }
+  return C;
+}
+
+function addBias(H, N, dim, b) {
+  // Add bias b[dim] to each row of H[N×dim]
+  const out = H.slice();
+  for (let i = 0; i < N; i++) {
+    for (let j = 0; j < dim; j++) {
+      out[i*dim+j] += b[j];
+    }
+  }
+  return out;
+}
+
+function relu(H) {
+  const out = H.slice();
+  for (let i = 0; i < out.length; i++) out[i] = out[i] > 0 ? out[i] : 0;
+  return out;
+}
+
+function reluGrad(H) {
+  // Returns mask
+  const mask = new Float32Array(H.length);
+  for (let i = 0; i < H.length; i++) mask[i] = H[i] > 0 ? 1 : 0;
+  return mask;
+}
+
+function softmax(logits, N, C) {
+  const out = new Float32Array(N * C);
+  for (let i = 0; i < N; i++) {
+    let maxVal = -Infinity;
+    for (let c = 0; c < C; c++) maxVal = Math.max(maxVal, logits[i*C+c]);
+    let sum = 0;
+    for (let c = 0; c < C; c++) {
+      out[i*C+c] = Math.exp(logits[i*C+c] - maxVal);
+      sum += out[i*C+c];
+    }
+    for (let c = 0; c < C; c++) out[i*C+c] /= sum;
+  }
+  return out;
+}
+
+function transpose(A, m, n) {
+  const B = new Float32Array(n * m);
+  for (let i = 0; i < m; i++) {
+    for (let j = 0; j < n; j++) {
+      B[j*m+i] = A[i*n+j];
+    }
+  }
+  return B;
+}
+
+// Xavier init
+function xavierInit(fanIn, fanOut, rng) {
+  const scale = Math.sqrt(2.0 / (fanIn + fanOut));
+  const W = new Float32Array(fanIn * fanOut);
+  for (let i = 0; i < W.length; i++) W[i] = randn(rng) * scale;
+  return W;
+}
+
+// ============================================================
+// GCN MODEL
+// ============================================================
+class GCN {
+  constructor(featDim, hiddenDim, numClasses, numLayers, useResidual) {
+    this.featDim = featDim;
+    this.hiddenDim = hiddenDim;
+    this.numClasses = numClasses;
+    this.numLayers = numLayers;
+    this.useResidual = useResidual;
+    this.initWeights();
+    this.initAdam();
+  }
+
+  initWeights() {
+    const rng = seededRandom(99);
+    this.W = []; // Weight matrices
+    this.b = []; // Biases
+    for (let l = 0; l < this.numLayers; l++) {
+      const inDim = (l === 0) ? this.featDim : this.hiddenDim;
+      const outDim = (l === this.numLayers - 1) ? this.numClasses : this.hiddenDim;
+      this.W.push(xavierInit(inDim, outDim, rng));
+      this.b.push(new Float32Array(outDim));
+    }
+  }
+
+  initAdam() {
+    this.mW = this.W.map(w => new Float32Array(w.length));
+    this.vW = this.W.map(w => new Float32Array(w.length));
+    this.mb = this.b.map(b => new Float32Array(b.length));
+    this.vb = this.b.map(b => new Float32Array(b.length));
+    this.adamT = 0;
+  }
+
+  // Forward pass - returns {logits, probs, layerOutputs, preActOutputs, dropMasks}
+  forward(features, N, adjNorm, dropoutRate, isTraining) {
+    const layerOutputs = []; // H after activation (or input)
+    const preActOutputs = []; // activation inputs before ReLU
+    const dropMasks = [];
+
+    // Input
+    let H = features.slice();
+    layerOutputs.push(H.slice()); // layer 0 = input features
+
+    for (let l = 0; l < this.numLayers; l++) {
+      const inDim = (l === 0) ? this.featDim : this.hiddenDim;
+      const outDim = (l === this.numLayers - 1) ? this.numClasses : this.hiddenDim;
+      const isLast = (l === this.numLayers - 1);
+
+      // adjNorm @ H: [N×N] @ [N×inDim] -> [N×inDim]
+      const AH = matmul(adjNorm, N, N, H, inDim);
+
+      // AH @ W + b: [N×inDim] @ [inDim×outDim] -> [N×outDim]
+      let Z = addBias(matmul(AH, N, inDim, this.W[l], outDim), N, outDim, this.b[l]);
+
+      // Residual connection (skip if dimensions don't match or last layer)
+      if (this.useResidual && !isLast && inDim === outDim && l > 0) {
+        for (let i = 0; i < N * outDim; i++) Z[i] += H[i];
+      }
+
+      preActOutputs.push(Z.slice());
+
+      // Activation
+      if (!isLast) {
+        Z = relu(Z);
+        // Dropout
+        let mask = null;
+        if (isTraining && dropoutRate > 0) {
+          mask = new Float32Array(N * outDim);
+          const keep = 1.0 - dropoutRate;
+          for (let i = 0; i < mask.length; i++) {
+            mask[i] = (Math.random() < keep) ? 1.0 / keep : 0;
+          }
+          for (let i = 0; i < Z.length; i++) Z[i] *= mask[i];
+        }
+        dropMasks.push(mask);
+        H = Z;
+        layerOutputs.push(H.slice());
+      } else {
+        dropMasks.push(null);
+        H = Z;
+      }
+    }
+
+    // Softmax on final output
+    const logits = H;
+    const probs = softmax(logits, N, this.numClasses);
+    layerOutputs.push(probs.slice()); // last entry = output probs
+
+    return { logits, probs, layerOutputs, preActOutputs, dropMasks };
+  }
+
+  // Backward pass + parameter update
+  backward(features, N, adjNorm, labels, trainMask, probs, layerOutputs, preActOutputs, dropMasks,
+           lr, optimizer, dropoutRate) {
+    const C = this.numClasses;
+    const nTrain = trainMask.reduce((a, b) => a + b, 0);
+
+    // dLoss/dLogits for cross-entropy + softmax combined
+    // For train nodes: dL/dZ = (probs - one_hot) / nTrain
+    // For test nodes: 0
+    let dH = new Float32Array(N * C);
+    for (let i = 0; i < N; i++) {
+      if (!trainMask[i]) continue;
+      for (let c = 0; c < C; c++) {
+        dH[i*C+c] = (probs[i*C+c] - (labels[i] === c ? 1 : 0)) / nTrain;
+      }
+    }
+
+    const dW_list = [];
+    const db_list = [];
+
+    // Backprop through layers in reverse
+    for (let l = this.numLayers - 1; l >= 0; l--) {
+      const inDim = (l === 0) ? this.featDim : this.hiddenDim;
+      const outDim = (l === this.numLayers - 1) ? C : this.hiddenDim;
+      const isLast = (l === this.numLayers - 1);
+
+      // The input to this layer's linear transform was: adjNorm @ H_prev
+      const H_prev = layerOutputs[l]; // before this layer
+      const AH_prev = matmul(adjNorm, N, N, H_prev, inDim);
+
+      // Residual gradient passthrough
+      let dH_res = null;
+      if (this.useResidual && !isLast && inDim === outDim && l > 0) {
+        dH_res = dH.slice();
+      }
+
+      // dW = AH_prev^T @ dH
+      const AH_T = transpose(AH_prev, N, inDim);
+      const dW = matmul(AH_T, inDim, N, dH, outDim);
+
+      // db = sum of dH over rows
+      const db = new Float32Array(outDim);
+      for (let i = 0; i < N; i++) {
+        for (let j = 0; j < outDim; j++) db[j] += dH[i*outDim+j];
+      }
+
+      dW_list.unshift(dW);
+      db_list.unshift(db);
+
+      if (l > 0) {
+        // Backprop through adjNorm: dH_in = adjNorm^T @ (dH @ W^T)
+        // adjNorm is symmetric, so adjNorm^T = adjNorm
+        const W_T = transpose(this.W[l], inDim, outDim);
+        let dZ = matmul(dH, N, outDim, W_T, inDim); // [N×inDim]
+        // Backprop through adjNorm
+        dZ = matmul(adjNorm, N, N, dZ, inDim); // [N×inDim]
+
+        // Residual
+        if (dH_res) {
+          for (let i = 0; i < N * inDim; i++) dZ[i] += dH_res[i];
+        }
+
+        // Backprop through dropout
+        if (dropMasks[l-1]) {
+          for (let i = 0; i < dZ.length; i++) dZ[i] *= dropMasks[l-1][i];
+        }
+
+        // Backprop through ReLU using the true activation input
+        // (after any residual addition, before ReLU).
+        const reluInput = preActOutputs[l-1];
+        for (let i = 0; i < dZ.length; i++) {
+          dZ[i] *= (reluInput[i] > 0 ? 1 : 0);
+        }
+
+        dH = dZ;
+      }
+    }
+
+    // Update weights
+    this.adamT++;
+    for (let l = 0; l < this.numLayers; l++) {
+      if (optimizer === 'adam') {
+        adamUpdate(this.W[l], dW_list[l], this.mW[l], this.vW[l], lr, this.adamT);
+        adamUpdate(this.b[l], db_list[l], this.mb[l], this.vb[l], lr, this.adamT);
+      } else {
+        sgdUpdate(this.W[l], dW_list[l], lr);
+        sgdUpdate(this.b[l], db_list[l], lr);
+      }
+    }
+  }
+}
+
+function sgdUpdate(W, dW, lr) {
+  for (let i = 0; i < W.length; i++) W[i] -= lr * dW[i];
+}
+
+function adamUpdate(W, dW, m, v, lr, t, beta1=0.9, beta2=0.999, eps=1e-8) {
+  const bc1 = 1 - Math.pow(beta1, t);
+  const bc2 = 1 - Math.pow(beta2, t);
+  for (let i = 0; i < W.length; i++) {
+    m[i] = beta1 * m[i] + (1 - beta1) * dW[i];
+    v[i] = beta2 * v[i] + (1 - beta2) * dW[i] * dW[i];
+    const mHat = m[i] / bc1;
+    const vHat = v[i] / bc2;
+    W[i] -= lr * mHat / (Math.sqrt(vHat) + eps);
+  }
+}
+
+function crossEntropyLoss(probs, labels, trainMask, N, C) {
+  let loss = 0, count = 0;
+  for (let i = 0; i < N; i++) {
+    if (!trainMask[i]) continue;
+    loss -= Math.log(Math.max(probs[i*C+labels[i]], 1e-10));
+    count++;
+  }
+  return count > 0 ? loss / count : 0;
+}
+
+function computeAccuracy(probs, labels, mask, N, C) {
+  let correct = 0, total = 0;
+  for (let i = 0; i < N; i++) {
+    if (!mask[i]) continue;
+    let maxP = -1, pred = 0;
+    for (let c = 0; c < C; c++) {
+      if (probs[i*C+c] > maxP) { maxP = probs[i*C+c]; pred = c; }
+    }
+    if (pred === labels[i]) correct++;
+    total++;
+  }
+  return total > 0 ? correct / total : 0;
+}
+
+// ============================================================
+// PCA
+// ============================================================
+function pca2D(H, N, dim) {
+  if (dim <= 0 || N <= 1) return new Float32Array(N * 2);
+  if (dim === 1) {
+    // Just use the single dim twice
+    const out = new Float32Array(N * 2);
+    for (let i = 0; i < N; i++) { out[i*2] = H[i]; out[i*2+1] = 0; }
+    return out;
+  }
+  if (dim === 2) {
+    // Already 2D
+    return H.slice(0, N * 2);
+  }
+
+  // Center
+  const mean = new Float32Array(dim);
+  for (let i = 0; i < N; i++) for (let d = 0; d < dim; d++) mean[d] += H[i*dim+d];
+  for (let d = 0; d < dim; d++) mean[d] /= N;
+  const Hc = H.slice(0, N * dim);
+  for (let i = 0; i < N; i++) for (let d = 0; d < dim; d++) Hc[i*dim+d] -= mean[d];
+
+  // Covariance matrix dim×dim
+  const cov = new Float32Array(dim * dim);
+  for (let i = 0; i < N; i++) {
+    for (let a = 0; a < dim; a++) {
+      for (let b = 0; b < dim; b++) {
+        cov[a*dim+b] += Hc[i*dim+a] * Hc[i*dim+b];
+      }
+    }
+  }
+  for (let i = 0; i < dim*dim; i++) cov[i] /= N;
+
+  // Power iteration for top-2 eigenvectors
+  const v1 = powerIterate(cov, dim, 30);
+  // Deflate
+  const cov2 = deflate(cov, dim, v1);
+  const v2 = powerIterate(cov2, dim, 30);
+
+  // Project
+  const proj = new Float32Array(N * 2);
+  for (let i = 0; i < N; i++) {
+    let p1 = 0, p2 = 0;
+    for (let d = 0; d < dim; d++) {
+      p1 += Hc[i*dim+d] * v1[d];
+      p2 += Hc[i*dim+d] * v2[d];
+    }
+    proj[i*2] = p1;
+    proj[i*2+1] = p2;
+  }
+  return proj;
+}
+
+function powerIterate(M, dim, iters) {
+  const rng = seededRandom(77);
+  const v = new Float32Array(dim);
+  for (let d = 0; d < dim; d++) v[d] = randn(rng);
+  for (let it = 0; it < iters; it++) {
+    const Mv = new Float32Array(dim);
+    for (let i = 0; i < dim; i++) for (let j = 0; j < dim; j++) Mv[i] += M[i*dim+j] * v[j];
+    let norm = 0;
+    for (let i = 0; i < dim; i++) norm += Mv[i]*Mv[i];
+    norm = Math.sqrt(norm) + 1e-10;
+    for (let i = 0; i < dim; i++) v[i] = Mv[i] / norm;
+  }
+  return v;
+}
+
+function deflate(M, dim, v) {
+  // M - (v^T M v) * v v^T
+  const Mv = new Float32Array(dim);
+  for (let i = 0; i < dim; i++) for (let j = 0; j < dim; j++) Mv[i] += M[i*dim+j] * v[j];
+  let lambda = 0;
+  for (let i = 0; i < dim; i++) lambda += v[i] * Mv[i];
+  const M2 = M.slice();
+  for (let i = 0; i < dim; i++) for (let j = 0; j < dim; j++) M2[i*dim+j] -= lambda * v[i] * v[j];
+  return M2;
+}
+
+// ============================================================
+// FORCE-DIRECTED LAYOUT
+// ============================================================
+class ForceLayout {
+  constructor(N, edges, w, h) {
+    this.N = N;
+    this.edges = edges;
+    this.w = w;
+    this.h = h;
+    this.x = new Float32Array(N);
+    this.y = new Float32Array(N);
+    this.vx = new Float32Array(N);
+    this.vy = new Float32Array(N);
+    this.pinned = new Uint8Array(N); // drag
+    this.initPositions();
+  }
+
+  initPositions() {
+    // Place nodes in a circle with some jitter
+    const cx = this.w / 2, cy = this.h / 2;
+    const r = Math.min(this.w, this.h) * 0.35;
+    const rng = seededRandom(55);
+    for (let i = 0; i < this.N; i++) {
+      const angle = (i / this.N) * 2 * Math.PI;
+      this.x[i] = cx + r * Math.cos(angle) + (rng() - 0.5) * 40;
+      this.y[i] = cy + r * Math.sin(angle) + (rng() - 0.5) * 40;
+    }
+  }
+
+  step(alpha) {
+    const N = this.N;
+    const cx = this.w / 2, cy = this.h / 2;
+    const repK = 1200;
+    const springK = 0.04;
+    const centerK = 0.02;
+    const damping = 0.85;
+
+    const fx = new Float32Array(N);
+    const fy = new Float32Array(N);
+
+    // Repulsion
+    for (let i = 0; i < N; i++) {
+      for (let j = i+1; j < N; j++) {
+        let dx = this.x[i] - this.x[j];
+        let dy = this.y[i] - this.y[j];
+        let d2 = dx*dx + dy*dy + 1;
+        let d = Math.sqrt(d2);
+        let f = repK / d2;
+        fx[i] += f * dx / d;
+        fy[i] += f * dy / d;
+        fx[j] -= f * dx / d;
+        fy[j] -= f * dy / d;
+      }
+    }
+
+    // Spring attraction along edges
+    for (const [u, v] of this.edges) {
+      let dx = this.x[u] - this.x[v];
+      let dy = this.y[u] - this.y[v];
+      let d = Math.sqrt(dx*dx + dy*dy) + 1e-6;
+      let f = springK * d;
+      fx[u] -= f * dx / d;
+      fy[u] -= f * dy / d;
+      fx[v] += f * dx / d;
+      fy[v] += f * dy / d;
+    }
+
+    // Centering
+    for (let i = 0; i < N; i++) {
+      fx[i] += centerK * (cx - this.x[i]);
+      fy[i] += centerK * (cy - this.y[i]);
+    }
+
+    // Integrate
+    for (let i = 0; i < N; i++) {
+      if (this.pinned[i]) continue;
+      this.vx[i] = (this.vx[i] + fx[i] * alpha) * damping;
+      this.vy[i] = (this.vy[i] + fy[i] * alpha) * damping;
+      this.x[i] += this.vx[i];
+      this.y[i] += this.vy[i];
+      // Clamp to canvas
+      this.x[i] = Math.max(20, Math.min(this.w - 20, this.x[i]));
+      this.y[i] = Math.max(20, Math.min(this.h - 20, this.y[i]));
+    }
+  }
+
+  warmUp(n) {
+    for (let i = 0; i < n; i++) this.step(1.0);
+  }
+}
+
+// ============================================================
+// APP STATE
+// ============================================================
+const CLASS_COLORS = ['#0877bd', '#e74c3c', '#27ae60'];
+const CLASS_COLORS_LIGHT = ['#cde8f8', '#fad4d4', '#c8eedb'];
+
+let graphData = null;
+let adjNorm = null;
+let model = null;
+let forceLayout = null;
+let epoch = 0;
+let isPlaying = false;
+let trainInterval = null;
+let lastProbs = null;
+let lastLayerOutputs = null;
+let selectedNode = -1;
+let highlightNeighbors = new Set();
+let lossHistory = [];
+let testAccHistory = [];
+let trainAccHistory = [];
+let pcaLayerIdx = 0; // which layer to show in PCA
+
+// Config
+let cfg = {
+  graph: 'sbm',
+  layers: 2,
+  hiddenDim: 16,
+  residual: false,
+  trainRatio: 30,
+  lr: 0.01,
+  optimizer: 'adam',
+  dropout: 0,
+};
+
+// ============================================================
+// DOM REFS
+// ============================================================
+const epochDisplay = document.getElementById('epoch-display');
+const btnPlay = document.getElementById('btn-play');
+const btnStep = document.getElementById('btn-step');
+const btnReset = document.getElementById('btn-reset');
+const selLr = document.getElementById('sel-lr');
+const selOptimizer = document.getElementById('sel-optimizer');
+const selDropout = document.getElementById('sel-dropout');
+const selGraph = document.getElementById('sel-graph');
+const layersVal = document.getElementById('layers-val');
+const btnLayersMinus = document.getElementById('btn-layers-minus');
+const btnLayersPlus = document.getElementById('btn-layers-plus');
+const cbResidual = document.getElementById('cb-residual');
+const slTrainRatio = document.getElementById('sl-trainratio');
+const trainratioVal = document.getElementById('trainratio-val');
+const graphCanvas = document.getElementById('graph-canvas');
+const graphCtx = graphCanvas.getContext('2d');
+const pcaCanvas = document.getElementById('pca-canvas');
+const pcaCtx = pcaCanvas.getContext('2d');
+const lossCanvas = document.getElementById('loss-canvas');
+const lossCtx = lossCanvas.getContext('2d');
+const nodeInfoEl = document.getElementById('node-info');
+const layerTabsEl = document.getElementById('layer-tabs');
+const graphStats = document.getElementById('graph-stats');
+const graphCanvasWrap = document.getElementById('graph-canvas-wrap');
+
+// ============================================================
+// CANVAS SIZING
+// ============================================================
+function resizeCanvases() {
+  const gw = graphCanvasWrap.clientWidth;
+  const gh = graphCanvasWrap.clientHeight;
+  graphCanvas.width = gw;
+  graphCanvas.height = gh;
+
+  const pcaWrap = document.getElementById('pca-canvas-wrap');
+  const pw = pcaWrap.clientWidth;
+  const ph = pcaWrap.clientHeight;
+  pcaCanvas.width = pw;
+  pcaCanvas.height = ph;
+
+  const lw = lossCanvas.parentElement.clientWidth;
+  lossCanvas.width = lw;
+  // lossCanvas.height already set
+}
+
+// ============================================================
+// GRAPH RENDERING
+// ============================================================
+function renderGraph() {
+  if (!graphData || !forceLayout) return;
+  const N = graphData.numNodes;
+  const w = graphCanvas.width, h = graphCanvas.height;
+  const ctx = graphCtx;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Background
+  ctx.fillStyle = '#fafafa';
+  ctx.fillRect(0, 0, w, h);
+
+  const probs = lastProbs;
+  const labels = graphData.labels;
+  const trainMask = graphData.trainMask;
+
+  // Draw edges
+  ctx.lineWidth = 1;
+  for (const [u, v] of graphData.edges) {
+    const isHighlight = highlightNeighbors.has(u) && highlightNeighbors.has(v);
+    ctx.beginPath();
+    ctx.moveTo(forceLayout.x[u], forceLayout.y[u]);
+    ctx.lineTo(forceLayout.x[v], forceLayout.y[v]);
+    ctx.strokeStyle = isHighlight ? 'rgba(200,140,0,0.7)' : 'rgba(150,150,150,0.35)';
+    ctx.lineWidth = isHighlight ? 2 : 1;
+    ctx.stroke();
+  }
+
+  // Draw nodes
+  for (let i = 0; i < N; i++) {
+    const x = forceLayout.x[i], y = forceLayout.y[i];
+    let predClass = labels[i];
+    let conf = 1.0;
+    if (probs) {
+      let maxP = -1;
+      for (let c = 0; c < graphData.numClasses; c++) {
+        if (probs[i*graphData.numClasses+c] > maxP) {
+          maxP = probs[i*graphData.numClasses+c];
+          predClass = c;
+        }
+      }
+      conf = maxP;
+    }
+
+    const isCorrect = predClass === labels[i];
+    const isTrain = trainMask[i];
+    const isSelected = i === selectedNode;
+    const isNeighbor = highlightNeighbors.has(i);
+
+    // Node size based on confidence
+    const baseR = 7;
+    const r = baseR + conf * 3.5;
+
+    // Color
+    const color = CLASS_COLORS[predClass % 3];
+    const lightColor = CLASS_COLORS_LIGHT[predClass % 3];
+
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, 2 * Math.PI);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = isNeighbor ? 1.0 : (highlightNeighbors.size > 0 && !isSelected ? 0.45 : 1.0);
+    ctx.fill();
+
+    // Border: thick for train, thin for test
+    ctx.strokeStyle = isSelected ? '#ff0' : (isTrain ? '#111' : '#aaa');
+    ctx.lineWidth = isSelected ? 3 : (isTrain ? 2.5 : 1.2);
+    ctx.stroke();
+    ctx.globalAlpha = 1.0;
+
+    // Misclassified cross mark
+    if (probs && !isCorrect) {
+      ctx.strokeStyle = 'rgba(255,220,0,0.9)';
+      ctx.lineWidth = 1.5;
+      const cr = r * 0.45;
+      ctx.beginPath();
+      ctx.moveTo(x - cr, y - cr); ctx.lineTo(x + cr, y + cr);
+      ctx.moveTo(x + cr, y - cr); ctx.lineTo(x - cr, y + cr);
+      ctx.stroke();
+    }
+
+    // Node index label for small graphs
+    if (N <= 24) {
+      ctx.fillStyle = '#fff';
+      ctx.font = `bold ${Math.floor(r * 0.85)}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(i, x, y);
+    }
+  }
+}
+
+// ============================================================
+// PCA RENDERING
+// ============================================================
+function renderPCA() {
+  if (!lastLayerOutputs || !graphData) return;
+  const w = pcaCanvas.width, h = pcaCanvas.height;
+  const ctx = pcaCtx;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, w, h);
+
+  const N = graphData.numNodes;
+  const C = graphData.numClasses;
+
+  // Which layer to show
+  let layerData = lastLayerOutputs[pcaLayerIdx];
+  if (!layerData) return;
+
+  // Determine dimension
+  let dim;
+  if (pcaLayerIdx === 0) dim = graphData.featDim;
+  else if (pcaLayerIdx === lastLayerOutputs.length - 1) dim = C;
+  else dim = cfg.hiddenDim;
+
+  const proj = pca2D(layerData, N, dim);
+
+  // Find bounds
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (let i = 0; i < N; i++) {
+    minX = Math.min(minX, proj[i*2]);
+    maxX = Math.max(maxX, proj[i*2]);
+    minY = Math.min(minY, proj[i*2+1]);
+    maxY = Math.max(maxY, proj[i*2+1]);
+  }
+  const pad = 24;
+  const sx = (maxX - minX) > 1e-6 ? (w - 2*pad) / (maxX - minX) : 1;
+  const sy = (maxY - minY) > 1e-6 ? (h - 2*pad) / (maxY - minY) : 1;
+  const scale = Math.min(sx, sy);
+
+  // Center the projection
+  const projW = (maxX - minX) * scale;
+  const projH = (maxY - minY) * scale;
+  const offX = (w - projW) / 2;
+  const offY = (h - projH) / 2;
+
+  function px(v) { return offX + (v - minX) * scale; }
+  function py(v) { return offY + (v - minY) * scale; }
+
+  // Draw points
+  for (let i = 0; i < N; i++) {
+    const x = px(proj[i*2]);
+    const y = py(proj[i*2+1]);
+    const c = graphData.labels[i];
+    const color = CLASS_COLORS[c % 3];
+    ctx.beginPath();
+    ctx.arc(x, y, 4.5, 0, 2*Math.PI);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = graphData.trainMask[i] ? 1.0 : 0.55;
+    ctx.fill();
+    ctx.strokeStyle = graphData.trainMask[i] ? '#111' : 'rgba(100,100,100,0.4)';
+    ctx.lineWidth = graphData.trainMask[i] ? 1.5 : 0.8;
+    ctx.stroke();
+    ctx.globalAlpha = 1.0;
+  }
+
+  // Label overlay
+  ctx.font = '10px sans-serif';
+  ctx.fillStyle = '#888';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText('PC1 →', 4, h - 14);
+}
+
+// ============================================================
+// LOSS CHART RENDERING
+// ============================================================
+function renderLossChart() {
+  const w = lossCanvas.width, h = lossCanvas.height || 100;
+  const ctx = lossCtx;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, w, h);
+
+  if (lossHistory.length < 2) return;
+
+  const pad = { l: 32, r: 8, t: 8, b: 18 };
+  const cw = w - pad.l - pad.r;
+  const ch = h - pad.t - pad.b;
+
+  // Y range
+  let maxLoss = 0, minAcc = 1, maxAcc = 0;
+  for (const v of lossHistory) maxLoss = Math.max(maxLoss, v);
+  for (const v of testAccHistory) { minAcc = Math.min(minAcc, v); maxAcc = Math.max(maxAcc, v); }
+  maxLoss = Math.max(maxLoss, 0.1);
+
+  const n = lossHistory.length;
+
+  function plotLine(data, colorStr, yScale, yOffset) {
+    if (data.length < 2) return;
+    ctx.beginPath();
+    ctx.strokeStyle = colorStr;
+    ctx.lineWidth = 1.5;
+    for (let i = 0; i < data.length; i++) {
+      const x = pad.l + (i / (n - 1)) * cw;
+      const y = pad.t + ch - (data[i] * yScale + yOffset);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  // Grid
+  ctx.strokeStyle = '#eee';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.t + (i / 4) * ch;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
+  }
+
+  // Axes
+  ctx.strokeStyle = '#ccc';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, pad.t + ch); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t + ch); ctx.lineTo(w - pad.r, pad.t + ch); ctx.stroke();
+
+  // Loss (blue, left axis, scale 0 to maxLoss)
+  plotLine(lossHistory, '#0877bd', ch / maxLoss, 0);
+
+  // Test acc (red, right axis, scale 0 to 1)
+  plotLine(testAccHistory, '#e74c3c', ch, 0);
+
+  // Axis labels
+  ctx.fillStyle = '#0877bd';
+  ctx.font = '9px sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText(maxLoss.toFixed(1), pad.l - 2, pad.t + 4);
+  ctx.fillText('0', pad.l - 2, pad.t + ch);
+
+  ctx.fillStyle = '#888';
+  ctx.textAlign = 'center';
+  ctx.fillText(n + ' ep', pad.l + cw/2, h - 2);
+}
+
+// ============================================================
+// LAYER TABS
+// ============================================================
+function updateLayerTabs() {
+  if (!model) return;
+  layerTabsEl.innerHTML = '';
+  const numTabs = model.numLayers + 2; // input + layers + output
+  for (let i = 0; i < numTabs; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'layer-tab' + (i === pcaLayerIdx ? ' active' : '');
+    if (i === 0) btn.textContent = t('layerInput');
+    else if (i === numTabs - 1) btn.textContent = t('layerOutput');
+    else btn.textContent = t('layerN', i);
+    btn.addEventListener('click', () => {
+      pcaLayerIdx = i;
+      document.querySelectorAll('.layer-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderPCA();
+    });
+    layerTabsEl.appendChild(btn);
+  }
+}
+
+// ============================================================
+// NODE INFO
+// ============================================================
+function showNodeInfo(nodeIdx) {
+  if (!graphData || nodeIdx < 0) {
+    nodeInfoEl.style.display = 'none';
+    return;
+  }
+  const N = graphData.numNodes, C = graphData.numClasses;
+  const label = graphData.labels[nodeIdx];
+  const isTrain = graphData.trainMask[nodeIdx];
+  let predClass = label, conf = 1.0;
+  if (lastProbs) {
+    let maxP = -1;
+    for (let c = 0; c < C; c++) {
+      if (lastProbs[nodeIdx*C+c] > maxP) { maxP = lastProbs[nodeIdx*C+c]; predClass = c; }
+    }
+    conf = maxP;
+  }
+  document.getElementById('ni-title').textContent = `Node ${nodeIdx}`;
+  const f0 = graphData.features[nodeIdx*2].toFixed(2);
+  const f1 = graphData.features[nodeIdx*2+1].toFixed(2);
+  document.getElementById('ni-feat').textContent = `[${f0}, ${f1}]`;
+  document.getElementById('ni-true').innerHTML = `<span class="class-dot" style="background:${CLASS_COLORS[label%3]}"></span>${label}`;
+  document.getElementById('ni-pred').innerHTML = `<span class="class-dot" style="background:${CLASS_COLORS[predClass%3]}"></span>${predClass}`;
+  document.getElementById('ni-conf').textContent = (conf * 100).toFixed(1) + '%';
+  document.getElementById('ni-train').textContent = isTrain ? t('yes') : t('no');
+  nodeInfoEl.style.display = 'block';
+}
+
+// ============================================================
+// DRAG + CLICK ON GRAPH CANVAS
+// ============================================================
+let dragNode = -1;
+let dragOffX = 0, dragOffY = 0;
+
+function getNodeAt(mx, my) {
+  if (!forceLayout) return -1;
+  const N = graphData.numNodes;
+  for (let i = N - 1; i >= 0; i--) {
+    const dx = forceLayout.x[i] - mx, dy = forceLayout.y[i] - my;
+    if (dx*dx + dy*dy < 100) return i;
+  }
+  return -1;
+}
+
+graphCanvas.addEventListener('mousedown', e => {
+  const rect = graphCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const n = getNodeAt(mx, my);
+  if (n >= 0) {
+    dragNode = n;
+    dragOffX = forceLayout.x[n] - mx;
+    dragOffY = forceLayout.y[n] - my;
+    forceLayout.pinned[n] = 1;
+    graphCanvas.style.cursor = 'grabbing';
+  }
+});
+
+graphCanvas.addEventListener('mousemove', e => {
+  const rect = graphCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  if (dragNode >= 0) {
+    forceLayout.x[dragNode] = mx + dragOffX;
+    forceLayout.y[dragNode] = my + dragOffY;
+    renderGraph();
+  } else {
+    const n = getNodeAt(mx, my);
+    graphCanvas.style.cursor = n >= 0 ? 'pointer' : 'default';
+  }
+});
+
+graphCanvas.addEventListener('mouseup', e => {
+  const rect = graphCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  if (dragNode >= 0) {
+    const moved = Math.abs(forceLayout.x[dragNode] - (mx + dragOffX)) < 2 &&
+                  Math.abs(forceLayout.y[dragNode] - (my + dragOffY)) < 2;
+    forceLayout.pinned[dragNode] = 1; // keep pinned after drag
+    dragNode = -1;
+    graphCanvas.style.cursor = 'default';
+  }
+});
+
+graphCanvas.addEventListener('click', e => {
+  if (dragNode >= 0) return;
+  const rect = graphCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const n = getNodeAt(mx, my);
+  if (n >= 0) {
+    selectedNode = (selectedNode === n) ? -1 : n;
+    if (selectedNode >= 0) {
+      // Highlight 1-hop neighborhood
+      highlightNeighbors.clear();
+      highlightNeighbors.add(n);
+      for (const [u, v] of graphData.edges) {
+        if (u === n) highlightNeighbors.add(v);
+        if (v === n) highlightNeighbors.add(u);
+      }
+    } else {
+      highlightNeighbors.clear();
+    }
+    showNodeInfo(selectedNode);
+    renderGraph();
+  } else {
+    selectedNode = -1;
+    highlightNeighbors.clear();
+    nodeInfoEl.style.display = 'none';
+    renderGraph();
+  }
+});
+
+// ============================================================
+// TRAINING STEP
+// ============================================================
+function trainStep() {
+  if (!model || !graphData) return;
+  const N = graphData.numNodes;
+  const C = graphData.numClasses;
+  const lr = parseFloat(selLr.value);
+  const opt = selOptimizer.value;
+  const dropRate = parseFloat(selDropout.value);
+
+  // Training-mode forward for gradients
+  const result = model.forward(graphData.features, N, adjNorm, dropRate, true);
+
+  // Backprop
+  model.backward(
+    graphData.features, N, adjNorm,
+    graphData.labels, graphData.trainMask,
+    result.probs, result.layerOutputs, result.preActOutputs, result.dropMasks,
+    lr, opt, dropRate
+  );
+
+  epoch++;
+  epochDisplay.textContent = epoch;
+
+  // Metrics should come from a clean inference pass after the update.
+  const evalResult = model.forward(graphData.features, N, adjNorm, 0, false);
+  lastProbs = evalResult.probs;
+  lastLayerOutputs = evalResult.layerOutputs;
+
+  const testMask = new Uint8Array(N);
+  for (let i = 0; i < N; i++) testMask[i] = graphData.trainMask[i] ? 0 : 1;
+
+  const loss = crossEntropyLoss(evalResult.probs, graphData.labels, graphData.trainMask, N, C);
+  const trainAcc = computeAccuracy(evalResult.probs, graphData.labels, graphData.trainMask, N, C);
+  const testAcc = computeAccuracy(evalResult.probs, graphData.labels, testMask, N, C);
+
+  lossHistory.push(loss);
+  testAccHistory.push(testAcc);
+  trainAccHistory.push(trainAcc);
+  if (lossHistory.length > 500) {
+    lossHistory.shift(); testAccHistory.shift(); trainAccHistory.shift();
+  }
+
+  // Update displays
+  document.getElementById('disp-train-loss').textContent = loss.toFixed(4);
+  document.getElementById('disp-test-acc').textContent = (testAcc * 100).toFixed(1) + '%';
+  document.getElementById('disp-train-acc').textContent = (trainAcc * 100).toFixed(1) + '%';
+  document.getElementById('disp-test-acc2').textContent = (testAcc * 100).toFixed(1) + '%';
+  document.getElementById('bar-train-acc').style.width = (trainAcc * 100) + '%';
+  document.getElementById('bar-test-acc').style.width = (testAcc * 100) + '%';
+
+  // Render
+  renderGraph();
+  renderPCA();
+  renderLossChart();
+  if (selectedNode >= 0) showNodeInfo(selectedNode);
+}
+
+// ============================================================
+// FORCE LAYOUT ANIMATION LOOP
+// ============================================================
+let layoutAnimating = false;
+let layoutRaf = null;
+
+function startLayoutAnimation(warmup = 80) {
+  layoutAnimating = true;
+  let alpha = 1.0;
+  // Run warmup iterations silently before rendering (prevents initial "flying" nodes)
+  for (let i = 0; i < warmup; i++) {
+    forceLayout.step(alpha);
+    alpha = Math.max(0.05, alpha * 0.97);
+  }
+  renderGraph();
+  function loop() {
+    if (!layoutAnimating) return;
+    forceLayout.step(alpha);
+    alpha = Math.max(0.05, alpha * 0.99);
+    renderGraph();
+    layoutRaf = requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+function stopLayoutAnimation() {
+  layoutAnimating = false;
+  if (layoutRaf) cancelAnimationFrame(layoutRaf);
+}
+
+// ============================================================
+// INIT / RESET
+// ============================================================
+function initGraph() {
+  stopLayoutAnimation();
+  stopTraining();
+  epoch = 0;
+  epochDisplay.textContent = 0;
+  lossHistory = []; testAccHistory = []; trainAccHistory = [];
+  lastProbs = null; lastLayerOutputs = null;
+  selectedNode = -1; highlightNeighbors.clear();
+  nodeInfoEl.style.display = 'none';
+  pcaLayerIdx = 0;
+
+  // Generate graph
+  const trainRatio = parseInt(slTrainRatio.value);
+  if (cfg.graph === 'sbm') graphData = generateSBM(trainRatio);
+  else if (cfg.graph === 'karate') graphData = generateKarate(trainRatio);
+  else graphData = generateRingOfCliques(trainRatio);
+
+  // Stats
+  graphStats.textContent = `N=${graphData.numNodes}  E=${graphData.edges.length}  C=${graphData.numClasses}`;
+
+  // Compute adjNorm
+  adjNorm = computeAdjNorm(graphData.numNodes, graphData.edges);
+
+  // Build model
+  model = new GCN(graphData.featDim, cfg.hiddenDim, graphData.numClasses, cfg.layers, cfg.residual);
+  updateLayerTabs();
+
+  // Force layout
+  resizeCanvases();
+  forceLayout = new ForceLayout(
+    graphData.numNodes, graphData.edges,
+    graphCanvas.width, graphCanvas.height
+  );
+  forceLayout.warmUp(120);
+
+  // Initial forward pass
+  const result = model.forward(graphData.features, graphData.numNodes, adjNorm, 0, false);
+  lastProbs = result.probs;
+  lastLayerOutputs = result.layerOutputs;
+
+  // Render
+  renderGraph();
+  renderPCA();
+  renderLossChart();
+  startLayoutAnimation();
+}
+
+// ============================================================
+// TRAINING CONTROL
+// ============================================================
+function startTraining() {
+  if (isPlaying) return;
+  isPlaying = true;
+  btnPlay.textContent = '⏸';
+  btnPlay.classList.add('playing');
+  trainInterval = setInterval(trainStep, 50);
+}
+
+function stopTraining() {
+  if (!isPlaying) return;
+  isPlaying = false;
+  btnPlay.textContent = '▶';
+  btnPlay.classList.remove('playing');
+  clearInterval(trainInterval);
+  trainInterval = null;
+}
+
+// ============================================================
+// PRESET CONFIGS
+// ============================================================
+const PRESETS = {
+  normal: {
+    graph: 'sbm', layers: 2, hiddenDim: 16, residual: false, trainRatio: 30,
+    lr: '0.01', optimizer: 'adam', dropout: '0'
+  },
+  oversmooth: {
+    graph: 'sbm', layers: 6, hiddenDim: 16, residual: false, trainRatio: 30,
+    lr: '0.01', optimizer: 'adam', dropout: '0'
+  },
+  residual: {
+    graph: 'sbm', layers: 6, hiddenDim: 16, residual: true, trainRatio: 30,
+    lr: '0.01', optimizer: 'adam', dropout: '0'
+  },
+  fewlabels: {
+    graph: 'sbm', layers: 2, hiddenDim: 16, residual: false, trainRatio: 10,
+    lr: '0.01', optimizer: 'adam', dropout: '0'
+  },
+  dropout: {
+    graph: 'sbm', layers: 2, hiddenDim: 16, residual: false, trainRatio: 30,
+    lr: '0.01', optimizer: 'adam', dropout: '0.3'
+  },
+};
+
+function applyPreset(name) {
+  const p = PRESETS[name];
+  if (!p) return;
+
+  cfg.graph = p.graph;
+  cfg.layers = p.layers;
+  cfg.hiddenDim = p.hiddenDim;
+  cfg.residual = p.residual;
+  cfg.trainRatio = p.trainRatio;
+
+  selGraph.value = p.graph;
+  layersVal.textContent = p.layers;
+  selLr.value = p.lr;
+  selOptimizer.value = p.optimizer;
+  selDropout.value = p.dropout;
+  cbResidual.checked = p.residual;
+  slTrainRatio.value = p.trainRatio;
+  trainratioVal.textContent = p.trainRatio + '%';
+
+  // Hidden dim radio
+  document.querySelectorAll('#rg-hidden label').forEach(lbl => {
+    const v = parseInt(lbl.getAttribute('data-val'));
+    if (v === p.hiddenDim) {
+      lbl.classList.add('checked');
+      lbl.querySelector('input').checked = true;
+    } else {
+      lbl.classList.remove('checked');
+    }
+  });
+
+  document.querySelectorAll('.btn-preset').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-preset') === name);
+  });
+
+  initGraph();
+}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+btnPlay.addEventListener('click', () => {
+  if (isPlaying) stopTraining(); else startTraining();
+});
+
+btnStep.addEventListener('click', () => {
+  stopTraining();
+  trainStep();
+});
+
+btnReset.addEventListener('click', () => {
+  stopTraining();
+  initGraph();
+});
+
+selGraph.addEventListener('change', () => {
+  cfg.graph = selGraph.value;
+  initGraph();
+});
+
+btnLayersMinus.addEventListener('click', () => {
+  if (cfg.layers > 1) {
+    cfg.layers--;
+    layersVal.textContent = cfg.layers;
+    initGraph();
+  }
+});
+btnLayersPlus.addEventListener('click', () => {
+  if (cfg.layers < 6) {
+    cfg.layers++;
+    layersVal.textContent = cfg.layers;
+    initGraph();
+  }
+});
+
+document.querySelectorAll('#rg-hidden label').forEach(lbl => {
+  lbl.addEventListener('click', () => {
+    document.querySelectorAll('#rg-hidden label').forEach(l => l.classList.remove('checked'));
+    lbl.classList.add('checked');
+    cfg.hiddenDim = parseInt(lbl.getAttribute('data-val'));
+    initGraph();
+  });
+});
+
+cbResidual.addEventListener('change', () => {
+  cfg.residual = cbResidual.checked;
+  initGraph();
+});
+
+slTrainRatio.addEventListener('input', () => {
+  cfg.trainRatio = parseInt(slTrainRatio.value);
+  trainratioVal.textContent = cfg.trainRatio + '%';
+});
+slTrainRatio.addEventListener('change', () => {
+  cfg.trainRatio = parseInt(slTrainRatio.value);
+  initGraph();
+});
+
+document.querySelectorAll('.btn-preset').forEach(btn => {
+  btn.addEventListener('click', () => {
+    applyPreset(btn.getAttribute('data-preset'));
+  });
+});
+
+document.getElementById('btn-lang').addEventListener('click', () => {
+  lang = lang === 'zh' ? 'en' : 'zh';
+  applyI18n();
+});
+
+// LR/Optimizer/Dropout changes take effect immediately (no need to reinit)
+selLr.addEventListener('change', () => cfg.lr = parseFloat(selLr.value));
+selOptimizer.addEventListener('change', () => cfg.optimizer = selOptimizer.value);
+selDropout.addEventListener('change', () => cfg.dropout = parseFloat(selDropout.value));
+
+// Resize handler
+window.addEventListener('resize', () => {
+  resizeCanvases();
+  if (forceLayout) {
+    forceLayout.w = graphCanvas.width;
+    forceLayout.h = graphCanvas.height;
+  }
+  renderGraph();
+  renderPCA();
+  renderLossChart();
+});
+
+// ============================================================
+// BOOTSTRAP
+// ============================================================
+window.addEventListener('load', () => {
+  applyI18n();
+  applyPreset('normal');
+});
+</script>
+</body>
+</html>

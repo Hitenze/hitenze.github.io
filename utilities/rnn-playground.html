@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RNN 游乐场</title>
+<style>
+/* ============ RESET & BASE ============ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+  background: #f7f7f7;
+  color: #333;
+  font-size: 13px;
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#page-content { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+#main { flex: 1; min-height: 520px; overflow: hidden; display: flex; }
+
+/* ============ HEADER ============ */
+#header {
+  background: #1a3a4a;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 48px;
+  gap: 16px;
+  flex-shrink: 0;
+}
+#header h1 { font-size: 18px; font-weight: 600; letter-spacing: 1px; }
+#header .subtitle { font-size: 12px; color: #8ab; margin-left: 4px; }
+#header .epoch-label { font-size: 14px; color: #acd; margin-left: auto; }
+#header .epoch-label span.val { color: #e74c3c; font-weight: 700; font-size: 16px; }
+
+/* ============ CONTROL BAR ============ */
+#control-bar {
+  background: #e8e8e8;
+  border-bottom: 1px solid #ccc;
+  padding: 4px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.ctrl-group { display: flex; align-items: center; gap: 4px; }
+.ctrl-group label { font-size: 11px; color: #666; white-space: nowrap; }
+.ctrl-group select {
+  font-size: 12px; padding: 3px 6px; border: 1px solid #bbb; border-radius: 3px;
+  background: #fff; cursor: pointer;
+}
+.btn-round {
+  width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  transition: background 0.15s;
+}
+.btn-play { background: #e74c3c; color: #fff; }
+.btn-play:hover { background: #c0392b; }
+.btn-play.playing { background: #0877bd; }
+.btn-step { background: #ddd; color: #333; }
+.btn-step:hover { background: #ccc; }
+.btn-reset { background: #ddd; color: #c33; }
+.btn-reset:hover { background: #ccc; }
+
+/* ============ PRESET BAR ============ */
+#preset-bar {
+  background: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+  padding: 4px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+#preset-bar .preset-label { font-size: 12px; color: #666; font-weight: 600; }
+.btn-preset {
+  font-size: 11px; padding: 4px 10px; border: 1px solid #bbb; border-radius: 14px;
+  background: #fff; cursor: pointer; transition: all 0.15s; color: #444;
+}
+.btn-preset:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+.btn-preset.active { background: #0877bd; color: #fff; border-color: #0877bd; }
+
+/* ============ LEFT SIDEBAR ============ */
+#sidebar {
+  width: 160px;
+  min-width: 160px;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  padding: 12px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+#sidebar h3 {
+  font-size: 11px; color: #888; margin-bottom: 8px;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.sidebar-section { margin-bottom: 14px; }
+.sidebar-section label { font-size: 11px; color: #555; display: block; margin-bottom: 3px; }
+.sidebar-section select {
+  width: 100%; font-size: 12px; padding: 4px 6px;
+  border: 1px solid #bbb; border-radius: 3px; background: #fff; cursor: pointer;
+}
+.sidebar-section input[type=range] { width: 100%; cursor: pointer; }
+.slider-val { font-size: 12px; font-weight: 700; color: #0877bd; text-align: center; margin-top: 2px; }
+.radio-group { display: flex; gap: 4px; flex-wrap: wrap; }
+.radio-group label {
+  display: flex; align-items: center; gap: 3px; cursor: pointer;
+  padding: 3px 6px; border: 1px solid #bbb; border-radius: 10px;
+  font-size: 11px; transition: all 0.1s; color: #444;
+}
+.radio-group label.checked { background: #0877bd; color: #fff; border-color: #0877bd; }
+.radio-group input { display: none; }
+
+/* ============ CENTER AREA ============ */
+#center-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  min-width: 0;
+}
+
+/* Sequence Prediction Plot */
+#pred-area {
+  flex: 1;
+  min-height: 0;
+  padding: 8px;
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.area-title {
+  font-size: 11px; color: #888; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;
+  display: flex; align-items: center; gap: 8px;
+}
+#pred-canvas-wrap { flex: 1; min-height: 0; position: relative; }
+#pred-canvas { display: block; width: 100%; height: 100%; }
+
+/* MSE display */
+.mse-row { display: flex; gap: 12px; font-size: 12px; padding: 3px 0; }
+.mse-item { display: flex; align-items: center; gap: 4px; }
+.mse-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.mse-val { font-weight: 700; font-family: monospace; }
+
+/* Gate Heatmap Area */
+#gate-area {
+  height: 200px;
+  flex-shrink: 0;
+  padding: 8px;
+  background: #fff;
+  border-top: 2px solid #e0e0e0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+#gate-canvas-wrap {
+  flex: 1; min-height: 0; position: relative; overflow: hidden;
+}
+#gate-canvas { display: block; }
+#gate-tooltip {
+  position: absolute;
+  background: rgba(26,58,74,0.92);
+  color: #fff;
+  font-size: 11px;
+  padding: 5px 9px;
+  border-radius: 5px;
+  pointer-events: none;
+  display: none;
+  white-space: pre;
+  line-height: 1.6;
+  z-index: 10;
+}
+
+/* ============ RIGHT PANEL ============ */
+#right-panel {
+  width: 240px;
+  min-width: 240px;
+  background: #fff;
+  padding: 8px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.panel-title {
+  font-size: 11px; color: #888; font-weight: 600; margin-bottom: 2px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.plot-container {
+  background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden;
+}
+.plot-container canvas { display: block; width: 100%; }
+.loss-info {
+  display: flex; gap: 10px; font-size: 12px; padding: 4px 0; flex-wrap: wrap;
+}
+.loss-item { display: flex; align-items: center; gap: 4px; }
+.loss-dot { width: 8px; height: 8px; border-radius: 50%; }
+.loss-value { font-weight: 700; font-family: "Courier New", monospace; font-size: 12px; }
+
+/* Gate Statistics */
+.gate-stat-row { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+.gate-stat-label { font-size: 11px; color: #555; width: 54px; flex-shrink: 0; }
+.gate-stat-bar-wrap { flex: 1; height: 12px; background: #f0f0f0; border-radius: 6px; overflow: hidden; }
+.gate-stat-bar { height: 100%; border-radius: 6px; transition: width 0.3s; }
+.gate-stat-val { font-size: 11px; font-family: monospace; width: 36px; text-align: right; color: #555; }
+
+/* ============ LANG BTN ============ */
+#btn-lang {
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; border-radius: 4px; padding: 2px 8px; cursor: pointer;
+  font-size: 12px; margin-left: 6px;
+}
+#btn-lang:hover { background: rgba(255,255,255,0.25); }
+
+/* Divider */
+.panel-divider { border: none; border-top: 1px solid #eee; margin: 2px 0; }
+
+/* Status indicator */
+#status-badge {
+  font-size: 11px; padding: 2px 8px; border-radius: 10px;
+  background: #e8f4e8; color: #2a7a2a; font-weight: 600;
+}
+#status-badge.running { background: #e8f0fa; color: #0877bd; }
+#status-badge.idle { background: #f0f0f0; color: #888; }
+</style>
+</head>
+<body>
+<div id="page-content">
+
+<!-- HEADER -->
+<div id="header">
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-label="RNN Logo">
+    <!-- Loop/cycle arrows representing recurrence -->
+    <circle cx="14" cy="14" r="10" stroke="#0877bd" stroke-width="2" fill="none" opacity="0.6"/>
+    <circle cx="14" cy="8" r="3" fill="#0877bd" opacity="0.9"/>
+    <circle cx="20" cy="18" r="3" fill="#e74c3c" opacity="0.9"/>
+    <circle cx="8" cy="18" r="3" fill="#0877bd" opacity="0.7"/>
+    <!-- Arrows indicating flow -->
+    <path d="M16.5 9.5 L18.5 15.5" stroke="white" stroke-width="1.2" marker-end="url(#arr)"/>
+    <path d="M18.5 18 L9.5 18" stroke="white" stroke-width="1.2"/>
+    <path d="M8.5 16.5 L12 9.5" stroke="white" stroke-width="1.2"/>
+  </svg>
+  <h1 data-i18n="title">RNN 游乐场</h1>
+  <div class="subtitle" data-i18n="subtitle">序列预测 · 门控机制</div>
+  <button id="btn-lang">中</button>
+  <span id="status-badge" class="idle" data-i18n="ready">就绪</span>
+  <div class="epoch-label"><span data-i18n="epoch">轮次</span>: <span class="val" id="epoch-display">0</span></div>
+</div>
+
+<!-- CONTROL BAR -->
+<div id="control-bar">
+  <button class="btn-round btn-play" id="btn-play" title="播放/暂停">▶</button>
+  <button class="btn-round btn-step" id="btn-step" title="单步">⏭</button>
+  <button class="btn-round btn-reset" id="btn-reset" title="重置">↺</button>
+  <div class="ctrl-group">
+    <label data-i18n="lr">学习率</label>
+    <select id="sel-lr">
+      <option value="0.01">0.01</option>
+      <option value="0.005" selected>0.005</option>
+      <option value="0.001">0.001</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <label data-i18n="optimizer">优化器</label>
+    <select id="sel-optimizer">
+      <option value="sgd">SGD</option>
+      <option value="adam" selected>Adam</option>
+    </select>
+  </div>
+</div>
+
+<!-- PRESET BAR -->
+<div id="preset-bar">
+  <span class="preset-label" data-i18n="presetLabel">快速演示：</span>
+  <button class="btn-preset active" data-preset="sine-rnn" data-i18n="presetSineRNN">正弦波</button>
+  <button class="btn-preset" data-preset="sine-lstm" data-i18n="presetSineLSTM">LSTM 正弦</button>
+  <button class="btn-preset" data-preset="square" data-i18n="presetSquare">方波</button>
+  <button class="btn-preset" data-preset="stock" data-i18n="presetStock">合成股价</button>
+  <button class="btn-preset" data-preset="deep" data-i18n="presetDeep">深层</button>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div id="main">
+  <!-- LEFT SIDEBAR -->
+  <div id="sidebar">
+    <h3 data-i18n="config">配置</h3>
+
+    <div class="sidebar-section">
+      <label data-i18n="dataset">数据集</label>
+      <select id="sel-dataset">
+        <option value="sine" data-i18n="sine">正弦波</option>
+        <option value="square" data-i18n="square">方波</option>
+        <option value="sawtooth" data-i18n="sawtooth">锯齿波</option>
+        <option value="stock" data-i18n="stock">合成股价</option>
+      </select>
+    </div>
+
+    <div class="sidebar-section">
+      <label data-i18n="cellType">单元类型</label>
+      <div class="radio-group" id="rg-cell">
+        <label class="checked" data-val="rnn"><input type="radio" name="cell" value="rnn"> RNN</label>
+        <label data-val="lstm"><input type="radio" name="cell" value="lstm"> LSTM</label>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <label data-i18n="hiddenSize">隐藏维度</label>
+      <div class="radio-group" id="rg-hidden">
+        <label data-val="4"><input type="radio" name="hidden" value="4"> 4</label>
+        <label class="checked" data-val="8"><input type="radio" name="hidden" value="8"> 8</label>
+        <label data-val="16"><input type="radio" name="hidden" value="16"> 16</label>
+        <label data-val="32"><input type="radio" name="hidden" value="32"> 32</label>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <label data-i18n="layers">层数</label>
+      <div class="radio-group" id="rg-layers">
+        <label class="checked" data-val="1"><input type="radio" name="layers" value="1"> 1</label>
+        <label data-val="2"><input type="radio" name="layers" value="2"> 2</label>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <label data-i18n="windowSize">窗口大小: <span id="win-label">10</span></label>
+      <input type="range" id="slider-window" min="5" max="20" value="10" step="1">
+    </div>
+  </div>
+
+  <!-- CENTER AREA -->
+  <div id="center-area">
+    <!-- Sequence Prediction Plot -->
+    <div id="pred-area">
+      <div class="area-title">
+        <span data-i18n="predTitle">序列预测</span>
+        <span class="mse-row">
+          <span class="mse-item"><span class="mse-dot" style="background:#0877bd"></span><span data-i18n="trainMSE">训练MSE</span>:&nbsp;<span class="mse-val" id="train-mse-val">—</span></span>
+          <span class="mse-item"><span class="mse-dot" style="background:#e74c3c"></span><span data-i18n="testMSE">测试MSE</span>:&nbsp;<span class="mse-val" id="test-mse-val">—</span></span>
+        </span>
+      </div>
+      <div id="pred-canvas-wrap">
+        <canvas id="pred-canvas"></canvas>
+      </div>
+    </div>
+
+    <!-- Gate Heatmap -->
+    <div id="gate-area">
+      <div class="area-title" data-i18n="gateTitle">LSTM 门状态热力图</div>
+      <div id="gate-canvas-wrap">
+        <canvas id="gate-canvas"></canvas>
+        <div id="gate-tooltip"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div id="right-panel">
+    <div class="panel-title" data-i18n="lossCurve">损失曲线</div>
+    <div class="plot-container">
+      <canvas id="canvas-loss" width="460" height="160"></canvas>
+    </div>
+    <div class="loss-info">
+      <div class="loss-item">
+        <div class="loss-dot" style="background:#0877bd"></div>
+        <span data-i18n="trainLoss">训练损失</span>:
+        <span class="loss-value" id="train-loss-val">—</span>
+      </div>
+      <div class="loss-item">
+        <div class="loss-dot" style="background:#e74c3c"></div>
+        <span data-i18n="testLoss">测试损失</span>:
+        <span class="loss-value" id="test-loss-val">—</span>
+      </div>
+    </div>
+
+    <hr class="panel-divider">
+
+    <div class="panel-title" data-i18n="gateStats">门统计</div>
+    <div id="gate-stats">
+      <!-- Forget gate -->
+      <div class="gate-stat-row" id="stat-forget-row">
+        <div class="gate-stat-label" data-i18n="forgetGate">遗忘门</div>
+        <div class="gate-stat-bar-wrap"><div class="gate-stat-bar" id="stat-forget-bar" style="width:50%;background:#9b59b6;"></div></div>
+        <div class="gate-stat-val" id="stat-forget-val">—</div>
+      </div>
+      <!-- Input gate -->
+      <div class="gate-stat-row" id="stat-input-row">
+        <div class="gate-stat-label" data-i18n="inputGate">输入门</div>
+        <div class="gate-stat-bar-wrap"><div class="gate-stat-bar" id="stat-input-bar" style="width:50%;background:#27ae60;"></div></div>
+        <div class="gate-stat-val" id="stat-input-val">—</div>
+      </div>
+      <!-- Output gate -->
+      <div class="gate-stat-row" id="stat-output-row">
+        <div class="gate-stat-label" data-i18n="outputGate">输出门</div>
+        <div class="gate-stat-bar-wrap"><div class="gate-stat-bar" id="stat-output-bar" style="width:50%;background:#e67e22;"></div></div>
+        <div class="gate-stat-val" id="stat-output-val">—</div>
+      </div>
+      <!-- RNN-only: hidden magnitude -->
+      <div class="gate-stat-row" id="stat-hidden-row" style="display:none;">
+        <div class="gate-stat-label" data-i18n="hiddenMag">隐藏幅值</div>
+        <div class="gate-stat-bar-wrap"><div class="gate-stat-bar" id="stat-hidden-bar" style="width:50%;background:#0877bd;"></div></div>
+        <div class="gate-stat-val" id="stat-hidden-val">—</div>
+      </div>
+    </div>
+
+    <hr class="panel-divider">
+
+    <div class="panel-title" data-i18n="networkInfo">网络信息</div>
+    <div id="net-info" style="font-size:11px;color:#555;line-height:1.8;">
+      <div><span style="color:#888;" data-i18n="params">参数量</span>: <span id="param-count" style="font-weight:700;color:#0877bd;">—</span></div>
+      <div><span style="color:#888;" data-i18n="seqLen">序列长度</span>: <span id="seq-len-val" style="font-weight:700;">—</span></div>
+      <div><span style="color:#888;" data-i18n="trainSamples">训练样本</span>: <span id="train-samples-val" style="font-weight:700;">—</span></div>
+    </div>
+  </div>
+</div>
+</div><!-- end page-content -->
+
+<script>
+// ============================================================
+// RNN / LSTM PLAYGROUND
+// ============================================================
+
+// ---- I18N ----
+let lang = 'en';
+const I18N = {
+  zh: {
+    title: 'RNN 游乐场',
+    subtitle: '序列预测 · 门控机制',
+    epoch: '轮次',
+    lr: '学习率',
+    optimizer: '优化器',
+    presetLabel: '快速演示：',
+    presetSineRNN: '正弦波',
+    presetSineLSTM: 'LSTM 正弦',
+    presetSquare: '方波',
+    presetStock: '合成股价',
+    presetDeep: '深层',
+    config: '配置',
+    dataset: '数据集',
+    sine: '正弦波',
+    square: '方波',
+    sawtooth: '锯齿波',
+    stock: '合成股价',
+    cellType: '单元类型',
+    hiddenSize: '隐藏维度',
+    layers: '层数',
+    windowSize: '窗口大小',
+    predTitle: '序列预测',
+    trainMSE: '训练MSE',
+    testMSE: '测试MSE',
+    gateTitle: 'LSTM 门状态热力图',
+    lossCurve: '损失曲线',
+    trainLoss: '训练损失',
+    testLoss: '测试损失',
+    gateStats: '门统计',
+    forgetGate: '遗忘门',
+    inputGate: '输入门',
+    outputGate: '输出门',
+    hiddenMag: '隐藏幅值',
+    networkInfo: '网络信息',
+    params: '参数量',
+    seqLen: '序列长度',
+    trainSamples: '训练样本',
+    ready: '就绪',
+    running: '运行中',
+    paused: '已暂停',
+    // heatmap row labels
+    forget: '遗忘',
+    input: '输入',
+    output: '输出',
+    cell: '细胞',
+    hidden: '隐藏',
+  },
+  en: {
+    title: 'RNN Playground',
+    subtitle: 'Sequence Prediction · Gate Mechanisms',
+    epoch: 'Epoch',
+    lr: 'Learning Rate',
+    optimizer: 'Optimizer',
+    presetLabel: 'Presets:',
+    presetSineRNN: 'Sine Wave',
+    presetSineLSTM: 'LSTM Sine',
+    presetSquare: 'Square Wave',
+    presetStock: 'Synth Stock',
+    presetDeep: 'Deep',
+    config: 'Config',
+    dataset: 'Dataset',
+    sine: 'Sine Wave',
+    square: 'Square Wave',
+    sawtooth: 'Sawtooth',
+    stock: 'Synth Stock',
+    cellType: 'Cell Type',
+    hiddenSize: 'Hidden Size',
+    layers: 'Layers',
+    windowSize: 'Window Size',
+    predTitle: 'Sequence Prediction',
+    trainMSE: 'Train MSE',
+    testMSE: 'Test MSE',
+    gateTitle: 'LSTM Gate State Heatmap',
+    lossCurve: 'Loss Curve',
+    trainLoss: 'Train Loss',
+    testLoss: 'Test Loss',
+    gateStats: 'Gate Statistics',
+    forgetGate: 'Forget Gate',
+    inputGate: 'Input Gate',
+    outputGate: 'Output Gate',
+    hiddenMag: 'Hidden Magnitude',
+    networkInfo: 'Network Info',
+    params: 'Parameters',
+    seqLen: 'Seq Length',
+    trainSamples: 'Train Samples',
+    ready: 'Ready',
+    running: 'Running',
+    paused: 'Paused',
+    forget: 'Forget',
+    input: 'Input',
+    output: 'Output',
+    cell: 'Cell',
+    hidden: 'Hidden',
+  }
+};
+function t(k) { return (I18N[lang] && I18N[lang][k]) || k; }
+function applyI18N() {
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  document.getElementById('btn-lang').textContent = lang === 'zh' ? 'EN' : '中';
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (el.tagName === 'OPTION') el.textContent = t(k);
+    else if (el.tagName === 'BUTTON') el.textContent = t(k);
+    else el.textContent = t(k);
+  });
+  // slider label
+  document.querySelector('label[for]') && null;
+  const wl = document.querySelector('#sidebar .sidebar-section label');
+  // Update window size label text (special case)
+  const sectionLabels = document.querySelectorAll('.sidebar-section label[data-i18n]');
+  sectionLabels.forEach(lbl => {
+    const k = lbl.getAttribute('data-i18n');
+    if (k === 'windowSize') {
+      lbl.innerHTML = t('windowSize') + ': <span id="win-label">' + CFG.windowSize + '</span>';
+    }
+  });
+  // update gate area title
+  if (CFG.cellType === 'rnn') {
+    document.querySelector('#gate-area .area-title').textContent = (lang === 'zh') ? 'RNN 隐藏状态热力图' : 'RNN Hidden State Heatmap';
+  } else {
+    document.querySelector('#gate-area .area-title').textContent = t('gateTitle');
+  }
+}
+
+document.getElementById('btn-lang').addEventListener('click', () => {
+  lang = lang === 'zh' ? 'en' : 'zh';
+  applyI18N();
+  render();
+});
+
+// ============================================================
+// CONFIG & STATE
+// ============================================================
+const CFG = {
+  dataset: 'sine',
+  cellType: 'rnn',
+  hiddenSize: 8,
+  numLayers: 1,
+  windowSize: 10,
+  lr: 0.005,
+  optimizer: 'adam',
+};
+
+let STATE = {
+  epoch: 0,
+  playing: false,
+  rafId: null,
+  lastStepTime: 0,
+  stepInterval: 60, // ms between training steps
+};
+
+// ============================================================
+// DATA GENERATION
+// ============================================================
+function generateData(type) {
+  const N = 64;
+  let raw = [];
+
+  if (type === 'sine') {
+    for (let i = 0; i < N; i++) raw.push(Math.sin(2 * Math.PI * i / 20));
+  } else if (type === 'square') {
+    for (let i = 0; i < N; i++) raw.push(Math.floor((i % 20) / 10) === 0 ? 1 : -1);
+  } else if (type === 'sawtooth') {
+    for (let i = 0; i < N; i++) raw.push(2 * ((i % 20) / 20) - 1);
+  } else if (type === 'stock') {
+    // Synthetic stock: periodic trend + mean reversion + moderate noise
+    // This has learnable structure (seasonal pattern) on top of noise
+    let seed = 42;
+    function rand() {
+      seed = (seed * 1664525 + 1013904223) & 0xffffffff;
+      const u = ((seed >>> 0) / 0xffffffff);
+      seed = (seed * 1664525 + 1013904223) & 0xffffffff;
+      const v = ((seed >>> 0) / 0xffffffff);
+      return Math.sqrt(-2 * Math.log(u + 1e-10)) * Math.cos(2 * Math.PI * v);
+    }
+    for (let i = 0; i < N; i++) {
+      // Learnable component: main cycle + harmonic + small noise
+      // Periods chosen so both train and test see full cycles
+      const trend = 0.5 * Math.sin(2 * Math.PI * i / 16)
+                  + 0.25 * Math.sin(2 * Math.PI * i / 7 + 0.8)
+                  + 0.1 * Math.cos(2 * Math.PI * i / 32);
+      // Small noise so the signal is learnable
+      const noise = 0.06 * rand();
+      raw.push(trend + noise);
+    }
+  }
+
+  const W = CFG.windowSize;
+  const splitPoint = Math.max(
+    W + 1,
+    Math.min(Math.floor(N * 0.7), N - W - 1)
+  );
+  const trainRaw = raw.slice(0, splitPoint);
+
+  // Normalize using only the training segment to avoid future leakage.
+  const mn = Math.min(...trainRaw);
+  const mx = Math.max(...trainRaw);
+  const range = mx - mn || 1;
+  const normalized = raw.map(v => 2 * (v - mn) / range - 1);
+
+  // Build sliding window samples with a clean temporal split:
+  // train windows stay entirely in the train segment, and test windows
+  // use only test-segment context.
+  const X_train = [], Y_train = [], trainTargetIdx = [];
+  const X_test = [], Y_test = [], testTargetIdx = [];
+
+  for (let i = 0; i + W < splitPoint; i++) {
+    X_train.push(normalized.slice(i, i + W));
+    Y_train.push(normalized[i + W]);
+    trainTargetIdx.push(i + W);
+  }
+
+  for (let i = splitPoint; i + W < normalized.length; i++) {
+    X_test.push(normalized.slice(i, i + W));
+    Y_test.push(normalized[i + W]);
+    testTargetIdx.push(i + W);
+  }
+
+  return {
+    raw: normalized,
+    X_train,
+    Y_train,
+    X_test,
+    Y_test,
+    trainTargetIdx,
+    testTargetIdx,
+    splitPoint,
+    N,
+    W,
+  };
+}
+
+// ============================================================
+// MATH UTILITIES
+// ============================================================
+function sigmoid(x) { return 1 / (1 + Math.exp(-x)); }
+function tanh(x) { return Math.tanh(x); }
+function dsigmoid(s) { return s * (1 - s); } // s = sigmoid output
+function dtanh(t) { return 1 - t * t; } // t = tanh output
+
+// Matrix-vector multiply: M (rows x cols) @ v (cols) -> out (rows)
+function matVec(M, v, rows, cols) {
+  const out = new Float64Array(rows);
+  for (let r = 0; r < rows; r++) {
+    let s = 0;
+    for (let c = 0; c < cols; c++) s += M[r * cols + c] * v[c];
+    out[r] = s;
+  }
+  return out;
+}
+
+// Element-wise add
+function vadd(a, b) {
+  const out = new Float64Array(a.length);
+  for (let i = 0; i < a.length; i++) out[i] = a[i] + b[i];
+  return out;
+}
+
+// Xavier init: uniform [-sqrt(6/(fan_in+fan_out)), ...]
+function xavierInit(rows, cols) {
+  const lim = Math.sqrt(6 / (rows + cols));
+  const W = new Float64Array(rows * cols);
+  for (let i = 0; i < W.length; i++) W[i] = (Math.random() * 2 - 1) * lim;
+  return W;
+}
+
+// ============================================================
+// NETWORK DEFINITION
+// ============================================================
+let NET = null; // current network weights
+let DATA = null; // current dataset
+
+function countParams() {
+  if (!NET) return 0;
+  let c = 0;
+  for (const key of Object.keys(NET)) {
+    if (NET[key] instanceof Float64Array) c += NET[key].length;
+  }
+  return c;
+}
+
+function buildNetwork() {
+  const H = CFG.hiddenSize;
+  const L = CFG.numLayers;
+  const cellType = CFG.cellType;
+
+  if (cellType === 'rnn') {
+    // Layer 1: input->hidden (W_xh: H x 1), hidden->hidden (W_hh: H x H), bias (H)
+    // Layer 2 (if L=2): same but input is H
+    // Output: W_hy (1 x H), b_y (1)
+    const net = { type: 'rnn', H, L };
+    for (let l = 0; l < L; l++) {
+      const inSize = l === 0 ? 1 : H;
+      net[`W_xh_${l}`] = xavierInit(H, inSize);
+      net[`W_hh_${l}`] = xavierInit(H, H);
+      net[`b_h_${l}`] = new Float64Array(H);
+    }
+    net.W_hy = xavierInit(1, H);
+    net.b_y = new Float64Array(1);
+    return net;
+  } else {
+    // LSTM: 4 gates each with W_x (H x inSize), W_h (H x H), b (H)
+    const net = { type: 'lstm', H, L };
+    const gates = ['f', 'i', 'g', 'o'];
+    for (let l = 0; l < L; l++) {
+      const inSize = l === 0 ? 1 : H;
+      for (const g of gates) {
+        net[`W_x${g}_${l}`] = xavierInit(H, inSize);
+        net[`W_h${g}_${l}`] = xavierInit(H, H);
+        net[`b_${g}_${l}`] = new Float64Array(H);
+      }
+      // Forget gate bias init to 1.0
+      net[`b_f_${l}`].fill(1.0);
+    }
+    net.W_hy = xavierInit(1, H);
+    net.b_y = new Float64Array(1);
+    return net;
+  }
+}
+
+// ============================================================
+// OPTIMIZER STATE (Adam)
+// ============================================================
+let OPT = null;
+function buildOptimizer() {
+  const m = {}, v2 = {}, t = { step: 0 };
+  for (const key of Object.keys(NET)) {
+    if (NET[key] instanceof Float64Array) {
+      m[key] = new Float64Array(NET[key].length);
+      v2[key] = new Float64Array(NET[key].length);
+    }
+  }
+  return { m, v: v2, t };
+}
+
+function applyGradients(grads) {
+  const lr = CFG.lr;
+  if (CFG.optimizer === 'sgd') {
+    for (const key of Object.keys(grads)) {
+      if (!(NET[key] instanceof Float64Array)) continue;
+      const g = grads[key];
+      for (let i = 0; i < g.length; i++) NET[key][i] -= lr * g[i];
+    }
+  } else {
+    // Adam
+    OPT.t.step++;
+    const beta1 = 0.9, beta2 = 0.999, eps = 1e-8;
+    const bc1 = 1 - Math.pow(beta1, OPT.t.step);
+    const bc2 = 1 - Math.pow(beta2, OPT.t.step);
+    for (const key of Object.keys(grads)) {
+      if (!(NET[key] instanceof Float64Array)) continue;
+      const g = grads[key], m = OPT.m[key], v = OPT.v[key];
+      for (let i = 0; i < g.length; i++) {
+        m[i] = beta1 * m[i] + (1 - beta1) * g[i];
+        v[i] = beta2 * v[i] + (1 - beta2) * g[i] * g[i];
+        const mhat = m[i] / bc1;
+        const vhat = v[i] / bc2;
+        NET[key][i] -= lr * mhat / (Math.sqrt(vhat) + eps);
+      }
+    }
+  }
+}
+
+// Gradient clipping by global norm
+function clipGradients(grads, maxNorm) {
+  let norm2 = 0;
+  for (const key of Object.keys(grads)) {
+    const g = grads[key];
+    if (!(g instanceof Float64Array)) continue;
+    for (let i = 0; i < g.length; i++) norm2 += g[i] * g[i];
+  }
+  const norm = Math.sqrt(norm2);
+  if (norm > maxNorm) {
+    const scale = maxNorm / norm;
+    for (const key of Object.keys(grads)) {
+      const g = grads[key];
+      if (!(g instanceof Float64Array)) continue;
+      for (let i = 0; i < g.length; i++) g[i] *= scale;
+    }
+  }
+}
+
+// ============================================================
+// RNN FORWARD PASS (single layer, one time step)
+// Returns { h_new, preact }
+function rnnStepForward(x, h_prev, l) {
+  const H = NET.H;
+  const inSize = x.length;
+  const Wxh = NET[`W_xh_${l}`], Whh = NET[`W_hh_${l}`], bh = NET[`b_h_${l}`];
+  const preact = new Float64Array(H);
+  // preact = Wxh @ x + Whh @ h_prev + bh
+  for (let r = 0; r < H; r++) {
+    let s = bh[r];
+    for (let c = 0; c < inSize; c++) s += Wxh[r * inSize + c] * x[c];
+    for (let c = 0; c < H; c++) s += Whh[r * H + c] * h_prev[c];
+    preact[r] = s;
+  }
+  const h_new = new Float64Array(H);
+  for (let i = 0; i < H; i++) h_new[i] = tanh(preact[i]);
+  return { h_new, preact };
+}
+
+// RNN output layer
+function rnnOutput(h) {
+  const H = NET.H;
+  let y = NET.b_y[0];
+  for (let c = 0; c < H; c++) y += NET.W_hy[c] * h[c];
+  return y;
+}
+
+// ============================================================
+// LSTM FORWARD PASS (single layer, one time step)
+function lstmStepForward(x, h_prev, c_prev, l) {
+  const H = NET.H;
+  const inSize = x.length;
+  const gates = {};
+  const preacts = {};
+
+  for (const g of ['f', 'i', 'g', 'o']) {
+    const Wxg = NET[`W_x${g}_${l}`], Whg = NET[`W_h${g}_${l}`], bg = NET[`b_${g}_${l}`];
+    const pre = new Float64Array(H);
+    for (let r = 0; r < H; r++) {
+      let s = bg[r];
+      for (let c = 0; c < inSize; c++) s += Wxg[r * inSize + c] * x[c];
+      for (let c = 0; c < H; c++) s += Whg[r * H + c] * h_prev[c];
+      pre[r] = s;
+    }
+    preacts[g] = pre;
+    const act = new Float64Array(H);
+    if (g === 'g') {
+      for (let i = 0; i < H; i++) act[i] = tanh(pre[i]);
+    } else {
+      for (let i = 0; i < H; i++) act[i] = sigmoid(pre[i]);
+    }
+    gates[g] = act;
+  }
+
+  const c_new = new Float64Array(H);
+  const tanh_c = new Float64Array(H);
+  const h_new = new Float64Array(H);
+
+  for (let i = 0; i < H; i++) {
+    c_new[i] = gates.f[i] * c_prev[i] + gates.i[i] * gates.g[i];
+    tanh_c[i] = tanh(c_new[i]);
+    h_new[i] = gates.o[i] * tanh_c[i];
+  }
+
+  return { h_new, c_new, gates, preacts, tanh_c };
+}
+
+// ============================================================
+// FULL SEQUENCE FORWARD PASS
+// Returns predictions array and cached states for BPTT
+function forwardSequence(X_seq, Y_seq, storeGates) {
+  const H = NET.H;
+  const L = NET.L;
+  const W = X_seq[0].length;
+  const T = X_seq.length;
+
+  let predictions = [];
+  let loss = 0;
+  // Gate storage for visualization
+  const gateHistory = storeGates ? { f: [], i: [], o: [], c: [], h: [], hidden: [] } : null;
+
+  // For each sample, run BPTT through window
+  const allCaches = [];
+
+  for (let t = 0; t < T; t++) {
+    const x_window = X_seq[t]; // shape [W]
+    // Init hidden & cell states per layer
+    const h0 = [], c0 = [];
+    for (let l = 0; l < L; l++) {
+      h0.push(new Float64Array(H));
+      c0.push(new Float64Array(H));
+    }
+
+    // Unroll through window
+    const cache = {
+      hs: Array.from({length: L}, () => [h0[l = 0] || new Float64Array(H)]),
+      cs: Array.from({length: L}, () => [c0[l = 0] || new Float64Array(H)]),
+      gates_all: Array.from({length: L}, () => []),
+      preacts_all: Array.from({length: L}, () => []),
+      tanh_c_all: Array.from({length: L}, () => []),
+      inputs: [],
+    };
+    // Reset properly
+    for (let l = 0; l < L; l++) {
+      cache.hs[l] = [new Float64Array(H)];
+      cache.cs[l] = [new Float64Array(H)];
+      cache.gates_all[l] = [];
+      cache.preacts_all[l] = [];
+      cache.tanh_c_all[l] = [];
+    }
+
+    let h_layer = [];
+    for (let l = 0; l < L; l++) h_layer.push(new Float64Array(H));
+    let c_layer = [];
+    for (let l = 0; l < L; l++) c_layer.push(new Float64Array(H));
+
+    // Store timestep inputs
+    for (let step = 0; step < W; step++) {
+      const x_in = new Float64Array([x_window[step]]);
+      cache.inputs.push(x_in);
+
+      for (let l = 0; l < L; l++) {
+        const inp = l === 0 ? x_in : h_layer[l - 1];
+
+        if (NET.type === 'rnn') {
+          const { h_new, preact } = rnnStepForward(inp, h_layer[l], l);
+          cache.hs[l].push(h_new);
+          cache.gates_all[l].push({ preact });
+          h_layer[l] = h_new;
+        } else {
+          const { h_new, c_new, gates, preacts, tanh_c } = lstmStepForward(inp, h_layer[l], c_layer[l], l);
+          cache.hs[l].push(h_new);
+          cache.cs[l].push(c_new);
+          cache.gates_all[l].push(gates);
+          cache.preacts_all[l].push(preacts);
+          cache.tanh_c_all[l].push(tanh_c);
+          h_layer[l] = h_new;
+          c_layer[l] = c_new;
+        }
+      }
+    }
+
+    // Output from last hidden state of last layer
+    const h_last = h_layer[L - 1];
+    const y_pred = rnnOutput(h_last);
+    predictions.push(y_pred);
+    const diff = y_pred - Y_seq[t];
+    loss += diff * diff;
+
+    cache.y_pred = y_pred;
+    cache.y_target = Y_seq[t];
+    cache.h_last = h_last;
+    allCaches.push(cache);
+
+    // Store gate history for visualization (last sample in batch)
+    if (storeGates && t === T - 1) {
+      if (NET.type === 'lstm') {
+        const l = L - 1; // use last layer for visualization
+        for (let step = 0; step < W; step++) {
+          const g = cache.gates_all[l][step];
+          gateHistory.f.push(Array.from(g.f));
+          gateHistory.i.push(Array.from(g.i));
+          gateHistory.o.push(Array.from(g.o));
+          const c = cache.cs[l][step + 1];
+          gateHistory.c.push(Array.from(c));
+          const h = cache.hs[l][step + 1];
+          gateHistory.h.push(Array.from(h));
+        }
+      } else {
+        const l = L - 1;
+        for (let step = 0; step < W; step++) {
+          const h = cache.hs[l][step + 1];
+          gateHistory.hidden.push(Array.from(h));
+        }
+      }
+    }
+  }
+
+  loss /= T;
+  return { predictions, loss, allCaches, gateHistory };
+}
+
+// ============================================================
+// BPTT BACKWARD PASS
+function backwardSequence(allCaches) {
+  const H = NET.H;
+  const L = NET.L;
+
+  // Initialize gradient accumulators
+  const grads = {};
+  for (const key of Object.keys(NET)) {
+    if (NET[key] instanceof Float64Array) {
+      grads[key] = new Float64Array(NET[key].length);
+    }
+  }
+
+  for (const cache of allCaches) {
+    const W_steps = cache.inputs.length;
+    const diff = cache.y_pred - cache.y_target;
+    const dLoss = 2 * diff / allCaches.length;
+
+    // Gradient w.r.t. output layer
+    const h_last = cache.h_last;
+    // dL/dWhy += dLoss * h_last
+    for (let c = 0; c < H; c++) grads.W_hy[c] += dLoss * h_last[c];
+    grads.b_y[0] += dLoss;
+
+    // dL/dh_last from output
+    const dh_output = new Float64Array(H);
+    for (let c = 0; c < H; c++) dh_output[c] = dLoss * NET.W_hy[c];
+
+    // BPTT through time steps
+    if (NET.type === 'rnn') {
+      let dhFromUpper = Array.from({ length: W_steps }, () => new Float64Array(H));
+
+      for (let l = L - 1; l >= 0; l--) {
+        const inSize = l === 0 ? 1 : H;
+        let dh_next = new Float64Array(H);
+        const dhToLower = l > 0
+          ? Array.from({ length: W_steps }, () => new Float64Array(H))
+          : null;
+
+        for (let step = W_steps - 1; step >= 0; step--) {
+          const h_prev = cache.hs[l][step];
+          const h_cur = cache.hs[l][step + 1];
+          const inp = l === 0 ? cache.inputs[step] : cache.hs[l - 1][step + 1];
+          const dh_total = new Float64Array(H);
+          for (let i = 0; i < H; i++) {
+            dh_total[i] = dh_next[i] + dhFromUpper[step][i];
+            if (l === L - 1 && step === W_steps - 1) dh_total[i] += dh_output[i];
+          }
+
+          // dtanh: d(tanh(preact)) = (1 - h_cur^2)
+          const d_preact = new Float64Array(H);
+          for (let i = 0; i < H; i++) {
+            d_preact[i] = dh_total[i] * (1 - h_cur[i] * h_cur[i]);
+          }
+
+          // Gradients for weights
+          const Wxh = NET[`W_xh_${l}`], Whh = NET[`W_hh_${l}`];
+          const gWxh = grads[`W_xh_${l}`], gWhh = grads[`W_hh_${l}`], gbh = grads[`b_h_${l}`];
+
+          for (let r = 0; r < H; r++) {
+            for (let c = 0; c < inSize; c++) gWxh[r * inSize + c] += d_preact[r] * inp[c];
+            for (let c = 0; c < H; c++) gWhh[r * H + c] += d_preact[r] * h_prev[c];
+            gbh[r] += d_preact[r];
+          }
+
+          // Backprop to h_prev
+          const dh_prev = new Float64Array(H);
+          for (let c = 0; c < H; c++) {
+            for (let r = 0; r < H; r++) dh_prev[c] += d_preact[r] * Whh[r * H + c];
+          }
+
+          if (dhToLower) {
+            const d_input = dhToLower[step];
+            for (let c = 0; c < inSize; c++) {
+              for (let r = 0; r < H; r++) d_input[c] += d_preact[r] * Wxh[r * inSize + c];
+            }
+          }
+
+          dh_next = dh_prev;
+        }
+
+        if (dhToLower) dhFromUpper = dhToLower;
+      }
+    } else {
+      // LSTM BPTT
+      let dhFromUpper = Array.from({ length: W_steps }, () => new Float64Array(H));
+
+      for (let l = L - 1; l >= 0; l--) {
+        const inSize = l === 0 ? 1 : H;
+        let dh_next = new Float64Array(H);
+        let dc_next = new Float64Array(H);
+        const dhToLower = l > 0
+          ? Array.from({ length: W_steps }, () => new Float64Array(H))
+          : null;
+
+        for (let step = W_steps - 1; step >= 0; step--) {
+          const gates = cache.gates_all[l][step];
+          const tanh_c = cache.tanh_c_all[l][step];
+          const h_prev = cache.hs[l][step];
+          const c_prev = cache.cs[l][step];
+          const inp = l === 0 ? cache.inputs[step] : cache.hs[l - 1][step + 1];
+          const { f, i, g, o } = gates;
+          const dh_total = new Float64Array(H);
+          for (let j = 0; j < H; j++) {
+            dh_total[j] = dh_next[j] + dhFromUpper[step][j];
+            if (l === L - 1 && step === W_steps - 1) dh_total[j] += dh_output[j];
+          }
+
+          // dh -> dc via output gate and tanh(c)
+          const dc = new Float64Array(H);
+          for (let j = 0; j < H; j++) {
+            dc[j] = dh_total[j] * o[j] * (1 - tanh_c[j] * tanh_c[j]) + dc_next[j];
+          }
+
+          // Gate gradients
+          const df = new Float64Array(H), di = new Float64Array(H);
+          const dg = new Float64Array(H), do_ = new Float64Array(H);
+          for (let j = 0; j < H; j++) {
+            df[j] = dc[j] * c_prev[j];
+            di[j] = dc[j] * g[j];
+            dg[j] = dc[j] * i[j];
+            do_[j] = dh_total[j] * tanh_c[j];
+          }
+
+          // Apply activation derivatives
+          const dp = { f: new Float64Array(H), i: new Float64Array(H), g: new Float64Array(H), o: new Float64Array(H) };
+          for (let j = 0; j < H; j++) {
+            dp.f[j] = df[j] * dsigmoid(f[j]);
+            dp.i[j] = di[j] * dsigmoid(i[j]);
+            dp.g[j] = dg[j] * dtanh(g[j]);
+            dp.o[j] = do_[j] * dsigmoid(o[j]);
+          }
+
+          // Accumulate weight gradients
+          for (const gname of ['f', 'i', 'g', 'o']) {
+            const Wxg = NET[`W_x${gname}_${l}`], Whg = NET[`W_h${gname}_${l}`];
+            const gWxg = grads[`W_x${gname}_${l}`], gWhg = grads[`W_h${gname}_${l}`], gbg = grads[`b_${gname}_${l}`];
+            const dpg = dp[gname];
+            for (let r = 0; r < H; r++) {
+              for (let c = 0; c < inSize; c++) gWxg[r * inSize + c] += dpg[r] * inp[c];
+              for (let c = 0; c < H; c++) gWhg[r * H + c] += dpg[r] * h_prev[c];
+              gbg[r] += dpg[r];
+            }
+          }
+
+          // Backprop to h_prev (sum over all gates)
+          const dh_prev = new Float64Array(H);
+          for (const gname of ['f', 'i', 'g', 'o']) {
+            const Whg = NET[`W_h${gname}_${l}`];
+            const dpg = dp[gname];
+            for (let c = 0; c < H; c++) {
+              for (let r = 0; r < H; r++) dh_prev[c] += dpg[r] * Whg[r * H + c];
+            }
+          }
+
+          if (dhToLower) {
+            const d_input = dhToLower[step];
+            for (const gname of ['f', 'i', 'g', 'o']) {
+              const Wxg = NET[`W_x${gname}_${l}`];
+              const dpg = dp[gname];
+              for (let c = 0; c < inSize; c++) {
+                for (let r = 0; r < H; r++) d_input[c] += dpg[r] * Wxg[r * inSize + c];
+              }
+            }
+          }
+
+          dh_next = dh_prev;
+
+          // dc_prev = dc * f
+          dc_next = new Float64Array(H);
+          for (let j = 0; j < H; j++) dc_next[j] = dc[j] * f[j];
+        }
+
+        if (dhToLower) dhFromUpper = dhToLower;
+      }
+    }
+  }
+
+  return grads;
+}
+
+// ============================================================
+// TRAINING STEP
+// ============================================================
+let LOSS_HISTORY = { train: [], test: [] };
+let LAST_GATE_HISTORY = null;
+let LAST_PREDICTIONS = null;
+
+function trainStep() {
+  if (!DATA || !NET) return;
+
+  // Shuffle training data
+  const N = DATA.X_train.length;
+  const perm = Array.from({length: N}, (_, i) => i);
+  for (let i = N - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [perm[i], perm[j]] = [perm[j], perm[i]];
+  }
+  const X_sh = perm.map(i => DATA.X_train[i]);
+  const Y_sh = perm.map(i => DATA.Y_train[i]);
+
+  // Forward
+  const { predictions: pTrain, loss: trainLoss, allCaches } = forwardSequence(X_sh, Y_sh, false);
+
+  // Backward
+  const grads = backwardSequence(allCaches);
+  clipGradients(grads, 5.0);
+  applyGradients(grads);
+
+  STATE.epoch++;
+
+  // Evaluate on test + get gate history
+  const { predictions: pTest, loss: testLoss, gateHistory } = forwardSequence(DATA.X_test, DATA.Y_test, true);
+  LAST_GATE_HISTORY = gateHistory;
+
+  // Also get full sequence predictions for plot
+  const allX = [...DATA.X_train, ...DATA.X_test];
+  const allY = [...DATA.Y_train, ...DATA.Y_test];
+  const { predictions: pAll } = forwardSequence(allX, allY, false);
+  LAST_PREDICTIONS = pAll;
+
+  LOSS_HISTORY.train.push(trainLoss);
+  LOSS_HISTORY.test.push(testLoss);
+
+  // Update gate stats
+  updateGateStats(gateHistory);
+
+  return { trainLoss, testLoss };
+}
+
+// ============================================================
+// GATE STATISTICS
+function updateGateStats(gh) {
+  if (!gh) return;
+  const cellType = NET.type;
+
+  const isLSTM = cellType === 'lstm';
+  document.getElementById('stat-forget-row').style.display = isLSTM ? '' : 'none';
+  document.getElementById('stat-input-row').style.display = isLSTM ? '' : 'none';
+  document.getElementById('stat-output-row').style.display = isLSTM ? '' : 'none';
+  document.getElementById('stat-hidden-row').style.display = isLSTM ? 'none' : '';
+
+  if (isLSTM) {
+    const avg = (arr2d) => {
+      let sum = 0, cnt = 0;
+      for (const row of arr2d) for (const v of row) { sum += v; cnt++; }
+      return cnt ? sum / cnt : 0;
+    };
+    const f = avg(gh.f), inp = avg(gh.i), o = avg(gh.o);
+    document.getElementById('stat-forget-bar').style.width = (f * 100).toFixed(1) + '%';
+    document.getElementById('stat-forget-val').textContent = f.toFixed(3);
+    document.getElementById('stat-input-bar').style.width = (inp * 100).toFixed(1) + '%';
+    document.getElementById('stat-input-val').textContent = inp.toFixed(3);
+    document.getElementById('stat-output-bar').style.width = (o * 100).toFixed(1) + '%';
+    document.getElementById('stat-output-val').textContent = o.toFixed(3);
+  } else {
+    const avg = (arr2d) => {
+      let sum = 0, cnt = 0;
+      for (const row of arr2d) for (const v of row) { sum += Math.abs(v); cnt++; }
+      return cnt ? sum / cnt : 0;
+    };
+    const hid = avg(gh.hidden);
+    document.getElementById('stat-hidden-bar').style.width = (hid * 100).toFixed(1) + '%';
+    document.getElementById('stat-hidden-val').textContent = hid.toFixed(3);
+  }
+}
+
+// ============================================================
+// PREDICTION PLOT
+// ============================================================
+function drawPredictionPlot() {
+  const canvas = document.getElementById('pred-canvas');
+  const wrap = document.getElementById('pred-canvas-wrap');
+  const W = wrap.clientWidth || 600;
+  const H = wrap.clientHeight || 200;
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  if (!DATA) return;
+
+  const raw = DATA.raw; // full normalized sequence
+  const N = raw.length;
+  const splitT = DATA.splitPoint;
+  const targetIdx = [...DATA.trainTargetIdx, ...DATA.testTargetIdx];
+
+  const pad = { l: 40, r: 12, t: 14, b: 26 };
+  const plotW = W - pad.l - pad.r;
+  const plotH = H - pad.t - pad.b;
+
+  const xScale = i => pad.l + (i / (N - 1)) * plotW;
+  const yScale = v => pad.t + (1 - (v + 1) / 2) * plotH;
+
+  // Train/test regions
+  const splitX = xScale(splitT);
+  ctx.fillStyle = 'rgba(8,119,189,0.04)';
+  ctx.fillRect(pad.l, pad.t, splitX - pad.l, plotH);
+  ctx.fillStyle = 'rgba(231,76,60,0.04)';
+  ctx.fillRect(splitX, pad.t, pad.l + plotW - splitX, plotH);
+
+  // Grid lines
+  ctx.strokeStyle = '#eee';
+  ctx.lineWidth = 1;
+  for (let v = -1; v <= 1; v += 0.5) {
+    const y = yScale(v);
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + plotW, y); ctx.stroke();
+  }
+
+  // Y-axis labels
+  ctx.fillStyle = '#aaa';
+  ctx.font = '10px monospace';
+  ctx.textAlign = 'right';
+  for (let v = -1; v <= 1; v += 0.5) {
+    ctx.fillText(v.toFixed(1), pad.l - 4, yScale(v) + 3);
+  }
+
+  // X axis
+  ctx.strokeStyle = '#ccc';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.l, yScale(0));
+  ctx.lineTo(pad.l + plotW, yScale(0));
+  ctx.stroke();
+
+  // Split line
+  ctx.strokeStyle = '#bbb';
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath(); ctx.moveTo(splitX, pad.t); ctx.lineTo(splitX, pad.t + plotH); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Labels
+  ctx.fillStyle = 'rgba(8,119,189,0.5)';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(lang === 'zh' ? '训练' : 'Train', pad.l + 4, pad.t + 12);
+  ctx.fillStyle = 'rgba(231,76,60,0.5)';
+  ctx.fillText(lang === 'zh' ? '测试' : 'Test', splitX + 4, pad.t + 12);
+
+  // Ground truth line (blue)
+  ctx.strokeStyle = '#0877bd';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (let i = 0; i < N; i++) {
+    const x = xScale(i), y = yScale(raw[i]);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Prediction line (red) — offset by window size
+  if (LAST_PREDICTIONS && LAST_PREDICTIONS.length > 0) {
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < LAST_PREDICTIONS.length; i++) {
+      const seqIdx = targetIdx[i];
+      if (seqIdx >= N) break;
+      const x = xScale(seqIdx), y = yScale(Math.max(-1.5, Math.min(1.5, LAST_PREDICTIONS[i])));
+      if (!started) { ctx.moveTo(x, y); started = true; }
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // MSE computation
+    const trainCount = DATA.X_train.length;
+    let trainMSE = 0, testMSE = 0;
+    for (let i = 0; i < LAST_PREDICTIONS.length; i++) {
+      const diff = (LAST_PREDICTIONS[i] - (i < trainCount ? DATA.Y_train[i] : DATA.Y_test[i - trainCount]));
+      if (i < trainCount) trainMSE += diff * diff;
+      else testMSE += diff * diff;
+    }
+    trainMSE /= trainCount;
+    testMSE /= (LAST_PREDICTIONS.length - trainCount || 1);
+    document.getElementById('train-mse-val').textContent = trainMSE.toFixed(5);
+    document.getElementById('test-mse-val').textContent = testMSE.toFixed(5);
+  }
+
+  // Legend
+  ctx.fillStyle = '#0877bd';
+  ctx.fillRect(pad.l, H - 14, 16, 2);
+  ctx.fillStyle = '#333';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(lang === 'zh' ? '真实值' : 'Ground Truth', pad.l + 18, H - 11);
+  ctx.fillStyle = '#e74c3c';
+  ctx.fillRect(pad.l + 80, H - 14, 16, 2);
+  ctx.fillStyle = '#333';
+  ctx.fillText(lang === 'zh' ? '预测值' : 'Prediction', pad.l + 98, H - 11);
+}
+
+// ============================================================
+// GATE HEATMAP
+// ============================================================
+const GATE_COLORS = {
+  f: { pos: '#9b59b6', neg: '#9b59b6' }, // purple for forget
+  i: { pos: '#27ae60', neg: '#27ae60' }, // green for input
+  o: { pos: '#e67e22', neg: '#e67e22' }, // orange for output
+  c: { posHex: '#0877bd', negHex: '#e74c3c' }, // blue/red diverging for cell state
+  h: { posHex: '#0877bd', negHex: '#e74c3c' }, // blue/red for hidden
+  hidden: { posHex: '#0877bd', negHex: '#e74c3c' },
+};
+
+// Convert value [0,1] to color with alpha
+function gateColor(val, type) {
+  val = Math.max(0, Math.min(1, val));
+  if (type === 'f') return `rgba(155,89,182,${0.1 + val * 0.9})`;
+  if (type === 'i') return `rgba(39,174,96,${0.1 + val * 0.9})`;
+  if (type === 'o') return `rgba(230,126,34,${0.1 + val * 0.9})`;
+  return null;
+}
+function divergingColor(val) {
+  // val in [-1,1] → blue (pos) or red (neg)
+  if (val >= 0) return `rgba(8,119,189,${0.05 + Math.min(1, val) * 0.9})`;
+  return `rgba(231,76,60,${0.05 + Math.min(1, -val) * 0.9})`;
+}
+
+let HOVER_COL = -1;
+
+function drawGateHeatmap() {
+  const canvas = document.getElementById('gate-canvas');
+  const wrap = document.getElementById('gate-canvas-wrap');
+  const W = wrap.clientWidth || 600;
+  const H = wrap.clientHeight || 160;
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  if (!LAST_GATE_HISTORY) {
+    ctx.fillStyle = '#aaa';
+    ctx.font = '13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(lang === 'zh' ? '训练后显示门状态...' : 'Gate states appear after training...', W / 2, H / 2);
+    return;
+  }
+
+  const gh = LAST_GATE_HISTORY;
+  const isLSTM = NET.type === 'lstm';
+
+  // Determine which rows to show
+  const rows = isLSTM
+    ? [
+        { key: 'f', label: t('forget') },
+        { key: 'i', label: t('input') },
+        { key: 'o', label: t('output') },
+        { key: 'c', label: t('cell') },
+        { key: 'h', label: t('hidden') },
+      ]
+    : [{ key: 'hidden', label: t('hidden') }];
+
+  const numRows = rows.length;
+  const labelW = 46;
+  const pad = { t: 4, b: 4, r: 4 };
+  const plotW = W - labelW - pad.r;
+  const rowH = (H - pad.t - pad.b) / numRows;
+
+  // Get columns (time steps) — show up to 20
+  const dataLen = isLSTM ? gh.f.length : gh.hidden.length;
+  const numCols = Math.min(dataLen, 20);
+  const startIdx = Math.max(0, dataLen - numCols);
+  const colW = plotW / numCols;
+
+  const minCellW = 8;
+  const actualCols = Math.max(1, Math.floor(plotW / minCellW));
+  const displayCols = Math.min(numCols, actualCols);
+
+  for (let ri = 0; ri < numRows; ri++) {
+    const { key, label } = rows[ri];
+    const y0 = pad.t + ri * rowH;
+
+    // Row label
+    ctx.fillStyle = '#666';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, labelW - 4, y0 + rowH / 2);
+
+    // Row border
+    ctx.strokeStyle = '#eee';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(labelW, y0); ctx.lineTo(W - pad.r, y0);
+    ctx.stroke();
+
+    const arr = gh[key];
+    const hiddenSize = arr.length > 0 ? arr[0].length : 1;
+
+    for (let ci = 0; ci < displayCols; ci++) {
+      const dataIdx = startIdx + (numCols - displayCols) + ci;
+      if (dataIdx < 0 || dataIdx >= arr.length) continue;
+      const vals = arr[dataIdx];
+
+      const x0 = labelW + ci * colW;
+      const isHovered = ci === HOVER_COL;
+
+      // Draw mini-heatmap for each hidden unit
+      const subH = rowH / hiddenSize;
+      for (let hi = 0; hi < hiddenSize; hi++) {
+        const v = vals[hi];
+        let color;
+        if (key === 'c' || key === 'h' || key === 'hidden') {
+          color = divergingColor(v);
+        } else {
+          color = gateColor(v, key);
+        }
+        ctx.fillStyle = color;
+        ctx.fillRect(x0 + 0.5, y0 + hi * subH + 0.5, colW - 1, subH - 0.5);
+      }
+
+      // Hover highlight
+      if (isHovered) {
+        ctx.strokeStyle = 'rgba(26,58,74,0.6)';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(x0, y0, colW, rowH);
+      }
+    }
+  }
+
+  // Column time labels
+  ctx.fillStyle = '#aaa';
+  ctx.font = '9px monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  const stepInterval = Math.max(1, Math.ceil(displayCols / 8));
+  for (let ci = 0; ci < displayCols; ci += stepInterval) {
+    const dataIdx = startIdx + (numCols - displayCols) + ci;
+    const x0 = labelW + ci * colW + colW / 2;
+    ctx.fillText(`t${dataIdx}`, x0, H - 1);
+  }
+}
+
+// Gate hover
+document.getElementById('gate-canvas').addEventListener('mousemove', (e) => {
+  const canvas = document.getElementById('gate-canvas');
+  const wrap = document.getElementById('gate-canvas-wrap');
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const labelW = 46;
+
+  if (!LAST_GATE_HISTORY) return;
+  const gh = LAST_GATE_HISTORY;
+  const isLSTM = NET && NET.type === 'lstm';
+  const dataLen = isLSTM ? gh.f.length : gh.hidden.length;
+  const numCols = Math.min(dataLen, 20);
+  const plotW = canvas.width - labelW - 4;
+  const colW = plotW / numCols;
+
+  const ci = Math.floor((mx - labelW) / colW);
+  if (ci >= 0 && ci < numCols) {
+    HOVER_COL = ci;
+    const dataIdx = Math.max(0, dataLen - numCols) + ci;
+
+    // Build tooltip
+    const tt = document.getElementById('gate-tooltip');
+    let text = `t = ${dataIdx}\n`;
+    if (isLSTM) {
+      const fmt = arr => arr.map(v => v.toFixed(3)).join(' ');
+      if (gh.f[dataIdx]) text += `${t('forget')}: [${fmt(gh.f[dataIdx])}]\n`;
+      if (gh.i[dataIdx]) text += `${t('input')}: [${fmt(gh.i[dataIdx])}]\n`;
+      if (gh.o[dataIdx]) text += `${t('output')}: [${fmt(gh.o[dataIdx])}]\n`;
+      if (gh.c[dataIdx]) text += `${t('cell')}: [${fmt(gh.c[dataIdx])}]\n`;
+    } else {
+      if (gh.hidden[dataIdx]) text += `${t('hidden')}: [${gh.hidden[dataIdx].map(v => v.toFixed(3)).join(' ')}]`;
+    }
+
+    tt.style.display = 'block';
+    tt.textContent = text.trim();
+    const tx = Math.min(e.clientX - rect.left + 10, canvas.width - 180);
+    const ty = Math.max(e.clientY - rect.top - 60, 4);
+    tt.style.left = tx + 'px';
+    tt.style.top = ty + 'px';
+    drawGateHeatmap();
+  }
+});
+
+document.getElementById('gate-canvas').addEventListener('mouseleave', () => {
+  HOVER_COL = -1;
+  document.getElementById('gate-tooltip').style.display = 'none';
+  drawGateHeatmap();
+});
+
+// ============================================================
+// LOSS CURVE
+// ============================================================
+function drawLossCurve() {
+  const canvas = document.getElementById('canvas-loss');
+  const W = canvas.clientWidth || 220;
+  const H_c = canvas.clientHeight || 160;
+  canvas.width = W;
+  canvas.height = H_c;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H_c);
+
+  const train = LOSS_HISTORY.train;
+  const test = LOSS_HISTORY.test;
+  if (train.length < 2) {
+    ctx.fillStyle = '#bbb';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(lang === 'zh' ? '等待训练...' : 'Waiting for training...', W / 2, H_c / 2);
+    return;
+  }
+
+  const pad = { l: 38, r: 8, t: 10, b: 22 };
+  const plotW = W - pad.l - pad.r;
+  const plotH = H_c - pad.t - pad.b;
+
+  const allLoss = [...train, ...test].filter(v => isFinite(v));
+  const maxL = Math.max(...allLoss, 0.01);
+  const xScale = i => pad.l + (i / (train.length - 1)) * plotW;
+  const yScale = v => pad.t + (1 - Math.min(v / maxL, 1)) * plotH;
+
+  // Grid
+  ctx.strokeStyle = '#eee';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.t + (i / 4) * plotH;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + plotW, y); ctx.stroke();
+    ctx.fillStyle = '#bbb';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(((1 - i / 4) * maxL).toFixed(3), pad.l - 3, y + 3);
+  }
+
+  // Train loss
+  ctx.strokeStyle = '#0877bd';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  train.forEach((v, i) => {
+    const x = xScale(i), y = yScale(v);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Test loss
+  ctx.strokeStyle = '#e74c3c';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  test.forEach((v, i) => {
+    const x = xScale(i), y = yScale(v);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // X label
+  ctx.fillStyle = '#bbb';
+  ctx.font = '9px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(lang === 'zh' ? `轮次 (${train.length})` : `Epoch (${train.length})`, pad.l + plotW / 2, H_c - 4);
+
+  // Update loss display
+  const lastTrain = train[train.length - 1];
+  const lastTest = test[test.length - 1];
+  document.getElementById('train-loss-val').textContent = lastTrain ? lastTrain.toFixed(5) : '—';
+  document.getElementById('test-loss-val').textContent = lastTest ? lastTest.toFixed(5) : '—';
+}
+
+// ============================================================
+// RENDER LOOP
+// ============================================================
+function render() {
+  // Update gate area title based on cell type
+  const gateAreaTitle = document.querySelector('#gate-area .area-title');
+  if (NET) {
+    if (NET.type === 'lstm') {
+      gateAreaTitle.textContent = lang === 'zh' ? 'LSTM 门状态热力图' : 'LSTM Gate State Heatmap';
+    } else {
+      gateAreaTitle.textContent = lang === 'zh' ? 'RNN 隐藏状态热力图' : 'RNN Hidden State Heatmap';
+    }
+  }
+  drawPredictionPlot();
+  drawGateHeatmap();
+  drawLossCurve();
+}
+
+// ============================================================
+// TRAINING LOOP
+// ============================================================
+function trainingLoop(ts) {
+  if (!STATE.playing) return;
+  if (ts - STATE.lastStepTime >= STATE.stepInterval) {
+    trainStep();
+    STATE.lastStepTime = ts;
+    document.getElementById('epoch-display').textContent = STATE.epoch;
+    render();
+  }
+  STATE.rafId = requestAnimationFrame(trainingLoop);
+}
+
+function startTraining() {
+  if (STATE.playing) return;
+  STATE.playing = true;
+  document.getElementById('btn-play').textContent = '⏸';
+  document.getElementById('btn-play').classList.add('playing');
+  const badge = document.getElementById('status-badge');
+  badge.textContent = t('running');
+  badge.className = 'running';
+  badge.removeAttribute('data-i18n');
+  STATE.lastStepTime = 0;
+  STATE.rafId = requestAnimationFrame(trainingLoop);
+}
+
+function pauseTraining() {
+  STATE.playing = false;
+  if (STATE.rafId) cancelAnimationFrame(STATE.rafId);
+  document.getElementById('btn-play').textContent = '▶';
+  document.getElementById('btn-play').classList.remove('playing');
+  const badge = document.getElementById('status-badge');
+  badge.textContent = t('paused');
+  badge.className = 'idle';
+  badge.removeAttribute('data-i18n');
+}
+
+function resetAll() {
+  pauseTraining();
+  STATE.epoch = 0;
+  document.getElementById('epoch-display').textContent = '0';
+  LOSS_HISTORY = { train: [], test: [] };
+  LAST_GATE_HISTORY = null;
+  LAST_PREDICTIONS = null;
+  document.getElementById('train-mse-val').textContent = '—';
+  document.getElementById('test-mse-val').textContent = '—';
+  document.getElementById('train-loss-val').textContent = '—';
+  document.getElementById('test-loss-val').textContent = '—';
+
+  DATA = generateData(CFG.dataset);
+  NET = buildNetwork();
+  OPT = buildOptimizer();
+
+  // Update network info
+  document.getElementById('param-count').textContent = countParams();
+  document.getElementById('seq-len-val').textContent = DATA.N;
+  document.getElementById('train-samples-val').textContent = DATA.X_train.length;
+
+  const badge = document.getElementById('status-badge');
+  badge.textContent = t('ready');
+  badge.className = 'idle';
+  badge.removeAttribute('data-i18n');
+
+  render();
+}
+
+// ============================================================
+// PRESET CONFIGS
+// ============================================================
+const PRESETS = {
+  'sine-rnn': { dataset: 'sine', cellType: 'rnn', hiddenSize: 8, numLayers: 1, windowSize: 10, lr: 0.005, optimizer: 'adam' },
+  'sine-lstm': { dataset: 'sine', cellType: 'lstm', hiddenSize: 8, numLayers: 1, windowSize: 10, lr: 0.005, optimizer: 'adam' },
+  'square': { dataset: 'square', cellType: 'lstm', hiddenSize: 16, numLayers: 1, windowSize: 10, lr: 0.005, optimizer: 'adam' },
+  'stock': { dataset: 'stock', cellType: 'lstm', hiddenSize: 16, numLayers: 1, windowSize: 15, lr: 0.005, optimizer: 'adam' },
+  'deep': { dataset: 'sine', cellType: 'lstm', hiddenSize: 16, numLayers: 2, windowSize: 10, lr: 0.005, optimizer: 'adam' },
+};
+
+function applyPreset(name) {
+  const p = PRESETS[name];
+  if (!p) return;
+  Object.assign(CFG, p);
+
+  // Update UI controls
+  document.getElementById('sel-dataset').value = CFG.dataset;
+  document.getElementById('sel-lr').value = CFG.lr;
+  document.getElementById('sel-optimizer').value = CFG.optimizer;
+  document.getElementById('slider-window').value = CFG.windowSize;
+  document.getElementById('win-label').textContent = CFG.windowSize;
+
+  // Radio groups
+  updateRadioGroup('rg-cell', CFG.cellType);
+  updateRadioGroup('rg-hidden', String(CFG.hiddenSize));
+  updateRadioGroup('rg-layers', String(CFG.numLayers));
+
+  // Active preset button
+  document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector(`.btn-preset[data-preset="${name}"]`);
+  if (btn) btn.classList.add('active');
+
+  resetAll();
+}
+
+function updateRadioGroup(id, val) {
+  const rg = document.getElementById(id);
+  if (!rg) return;
+  rg.querySelectorAll('label').forEach(lbl => {
+    lbl.classList.toggle('checked', lbl.getAttribute('data-val') === val);
+  });
+}
+
+// ============================================================
+// CONTROL WIRING
+// ============================================================
+document.getElementById('btn-play').addEventListener('click', () => {
+  STATE.playing ? pauseTraining() : startTraining();
+});
+
+document.getElementById('btn-step').addEventListener('click', () => {
+  if (STATE.playing) pauseTraining();
+  trainStep();
+  document.getElementById('epoch-display').textContent = STATE.epoch;
+  render();
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  resetAll();
+});
+
+document.getElementById('sel-lr').addEventListener('change', e => {
+  CFG.lr = parseFloat(e.target.value);
+  // Don't reset optimizer state for LR change
+});
+
+document.getElementById('sel-optimizer').addEventListener('change', e => {
+  CFG.optimizer = e.target.value;
+  if (OPT) OPT = buildOptimizer(); // rebuild optimizer state
+});
+
+document.getElementById('sel-dataset').addEventListener('change', e => {
+  CFG.dataset = e.target.value;
+  resetAll();
+});
+
+document.getElementById('slider-window').addEventListener('input', e => {
+  CFG.windowSize = parseInt(e.target.value);
+  document.getElementById('win-label').textContent = CFG.windowSize;
+  resetAll();
+});
+
+// Radio groups
+function setupRadioGroup(id, cfgKey, transform) {
+  const rg = document.getElementById(id);
+  if (!rg) return;
+  rg.addEventListener('click', e => {
+    const lbl = e.target.closest('label');
+    if (!lbl) return;
+    const val = lbl.getAttribute('data-val');
+    if (!val) return;
+    rg.querySelectorAll('label').forEach(l => l.classList.remove('checked'));
+    lbl.classList.add('checked');
+    CFG[cfgKey] = transform ? transform(val) : val;
+    resetAll();
+  });
+}
+
+setupRadioGroup('rg-cell', 'cellType');
+setupRadioGroup('rg-hidden', 'hiddenSize', v => parseInt(v));
+setupRadioGroup('rg-layers', 'numLayers', v => parseInt(v));
+
+// Presets
+document.querySelectorAll('.btn-preset').forEach(btn => {
+  btn.addEventListener('click', () => applyPreset(btn.getAttribute('data-preset')));
+});
+
+// Resize handler
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => render(), 100);
+});
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  applyPreset('sine-rnn');
+  applyI18N();
+}
+
+init();
+</script>
+</body>
+</html>
