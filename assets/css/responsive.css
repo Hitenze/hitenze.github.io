@@ -299,10 +299,13 @@
   }
   
   /* News */
+  .news-item {
+    grid-template-columns: 1fr;
+    row-gap: 0.5rem;
+  }
+
   .news-date {
-    display: block;
-    margin-bottom: 0.5rem;
-    width: auto;
+    width: fit-content;
   }
   
   /* Tables */
