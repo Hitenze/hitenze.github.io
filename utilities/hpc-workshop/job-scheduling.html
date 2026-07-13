@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Scheduling with Slurm | HPC Workshop</title>
+    <meta name="description" content="Master Slurm job scheduling, resource allocation, and performance optimization">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            scroll-behavior: smooth;
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-link:hover {
+            transform: translateY(-1px);
+            color: #2563eb;
+        }
+        .scheduler-card {
+            transition: all 0.3s ease-in-out;
+        }
+        .scheduler-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .code-block {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+        }
+        .code-block .comment { color: #6a9955; }
+        .code-block .directive { color: #569cd6; }
+        .code-block .keyword { color: #c586c0; }
+        .code-block .string { color: #ce9178; }
+        .code-block .variable { color: #9cdcfe; }
+        .progress-bar {
+            background: linear-gradient(90deg, #0EA5E9 0%, #0F172A 100%);
+        }
+        .copy-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .copy-button:hover {
+            background-color: #374151;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="index.html" class="text-xl font-bold text-gray-900">HPC Workshop</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Home</a>
+                        <a href="introduction.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Introduction</a>
+                        <a href="cluster-architecture.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Architecture</a>
+                        <a href="job-scheduling.html" class="nav-link text-blue-600 px-3 py-2 text-sm font-medium border-b-2 border-blue-600">Job Scheduling</a>
+                        <a href="workflow-tools.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Workflow</a>
+                        <a href="getting-started.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Get Started</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="bg-gray-200 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+                <a href="index.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Home</a>
+                <a href="introduction.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Introduction</a>
+                <a href="cluster-architecture.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Architecture</a>
+                <a href="job-scheduling.html" class="block px-3 py-2 text-base font-medium text-blue-600">Job Scheduling</a>
+                <a href="workflow-tools.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Workflow</a>
+                <a href="getting-started.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="bg-gray-200 h-1">
+        <div class="progress-bar h-1 w-3/5"></div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Job Scheduling with Slurm</h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Master resource allocation, job management, and performance optimization with the most widely-used HPC scheduler
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+
+        <!-- Section 0: Core Concepts -->
+        <section id="core-concepts" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Essential HPC Resource Concepts</h2>
+            
+            <div class="scheduler-card bg-white rounded-xl shadow-lg p-8 mb-8">
+                <p class="text-lg text-gray-700 text-center mb-8 max-w-4xl mx-auto">
+                    Before diving into job scheduling, it's crucial to understand the fundamental resources you'll be requesting. 
+                    These concepts form the foundation of every HPC job submission.
+                </p>
+
+                <!-- Resource Hierarchy Diagram -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 mb-8 border-2 border-blue-200">
+                    <h3 class="text-xl font-bold text-center mb-6 text-blue-900">Resource Hierarchy</h3>
+                    <div class="text-center space-y-4">
+                        <div class="inline-block bg-white rounded-lg p-4 shadow-md border-2 border-blue-400">
+                            <span class="text-lg font-bold text-blue-900">Cluster</span>
+                            <span class="text-sm text-gray-600 ml-2">(Entire HPC System)</span>
+                        </div>
+                        <div class="text-gray-400">↓</div>
+                        <div class="flex justify-center gap-4 flex-wrap">
+                            <div class="bg-white rounded-lg p-3 shadow-md border-2 border-green-400">
+                                <span class="font-bold text-green-900">Nodes</span>
+                                <span class="text-xs text-gray-600 block">(Physical Machines)</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 shadow-md border-2 border-green-400">
+                                <span class="font-bold text-green-900">Nodes</span>
+                                <span class="text-xs text-gray-600 block">(Physical Machines)</span>
+                            </div>
+                        </div>
+                        <div class="text-gray-400">↓</div>
+                        <div class="flex justify-center gap-3 flex-wrap">
+                            <div class="bg-white rounded-lg p-2 shadow border border-yellow-400">
+                                <span class="text-sm font-semibold text-yellow-900">CPU Cores</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-2 shadow border border-purple-400">
+                                <span class="text-sm font-semibold text-purple-900">Memory</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-2 shadow border border-red-400">
+                                <span class="text-sm font-semibold text-red-900">GPUs</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-2 shadow border border-cyan-400">
+                                <span class="text-sm font-semibold text-cyan-900">Storage</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Core Resource Definitions -->
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <!-- Physical Resources -->
+                    <div class="border-l-4 border-blue-500 pl-6">
+                        <h3 class="text-xl font-bold mb-4 text-gray-900">Physical Resources</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-semibold text-gray-900 flex items-center">
+                                    <span class="w-20 inline-block">Node</span>
+                                    <code class="text-sm bg-gray-100 px-2 py-1 rounded ml-2">--nodes</code>
+                                </h4>
+                                <p class="text-gray-700 text-sm mt-1">
+                                    A complete computer in the cluster with its own processors, memory, and often local storage. 
+                                    Think of it as one physical machine in a rack.
+                                </p>
+                                <p class="text-xs text-gray-500 mt-1">Example: A node might have 64 CPU cores, 256GB RAM, 2 GPUs</p>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-gray-900 flex items-center">
+                                    <span class="w-20 inline-block">CPU/Core</span>
+                                    <code class="text-sm bg-gray-100 px-2 py-1 rounded ml-2">--cpus-per-task</code>
+                                </h4>
+                                <p class="text-gray-700 text-sm mt-1">
+                                    Individual processing units that execute instructions. Note: Slurm uses "CPU" to mean "core" 
+                                    (not the physical processor chip).
+                                </p>
+                                <p class="text-xs text-gray-500 mt-1">⚠️ Important: In Slurm, CPU = Core, not the physical socket</p>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-gray-900 flex items-center">
+                                    <span class="w-20 inline-block">GPU</span>
+                                    <code class="text-sm bg-gray-100 px-2 py-1 rounded ml-2">--gres=gpu</code>
+                                </h4>
+                                <p class="text-gray-700 text-sm mt-1">
+                                    Graphics Processing Units for accelerated parallel computation. Allocated as whole units 
+                                    (you can't request 0.5 GPUs).
+                                </p>
+                                <p class="text-xs text-gray-500 mt-1">Types: V100, A100, H100, etc.</p>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-gray-900 flex items-center">
+                                    <span class="w-20 inline-block">Memory</span>
+                                    <code class="text-sm bg-gray-100 px-2 py-1 rounded ml-2">--mem</code>
+                                </h4>
+                                <p class="text-gray-700 text-sm mt-1">
+                                    RAM available for your job. Can be specified per node, per CPU, or per GPU. 
+                                    Jobs exceeding memory limits will be terminated.
+                                </p>
+                                <p class="text-xs text-gray-500 mt-1">Units: MB (default), GB (with G suffix)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Logical Resources -->
+                    <div class="border-l-4 border-green-500 pl-6">
+                        <h3 class="text-xl font-bold mb-4 text-gray-900">Logical Resources</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-semibold text-gray-900 flex items-center">
+                                    <span class="w-20 inline-block">Task</span>
+                                    <code class="text-sm bg-gray-100 px-2 py-1 rounded ml-2">--ntasks</code>
+                                </h4>
+                                <p class="text-gray-700 text-sm mt-1">
+                                    An independent process (instance of your program). For MPI jobs, each task is an MPI rank. 
+                                    Tasks can span multiple nodes.
+                                </p>
+                                <p class="text-xs text-gray-500 mt-1">Default: 1 task uses 1 CPU core</p>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-gray-900 flex items-center">
+                                    <span class="w-20 inline-block">Partition</span>
+                                    <code class="text-sm bg-gray-100 px-2 py-1 rounded ml-2">--partition</code>
+                                </h4>
+                                <p class="text-gray-700 text-sm mt-1">
+                                    Logical grouping of nodes with similar characteristics or policies. Also called "queue" 
+                                    in some systems.
+                                </p>
+                                <p class="text-xs text-gray-500 mt-1">Examples: standard, gpu, highmem, debug</p>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-gray-900 flex items-center">
+                                    <span class="w-20 inline-block">Job</span>
+                                    <code class="text-sm bg-gray-100 px-2 py-1 rounded ml-2">--job-name</code>
+                                </h4>
+                                <p class="text-gray-700 text-sm mt-1">
+                                    Your complete workload submission, including all resource requests and the script/program 
+                                    to run.
+                                </p>
+                                <p class="text-xs text-gray-500 mt-1">Types: Batch (sbatch), Interactive (srun), Allocation (salloc)</p>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-gray-900 flex items-center">
+                                    <span class="w-20 inline-block">Time</span>
+                                    <code class="text-sm bg-gray-100 px-2 py-1 rounded ml-2">--time</code>
+                                </h4>
+                                <p class="text-gray-700 text-sm mt-1">
+                                    Wall-clock time limit for your job. Jobs are terminated when this limit is reached, 
+                                    so always add a buffer.
+                                </p>
+                                <p class="text-xs text-gray-500 mt-1">Format: DD-HH:MM:SS or HH:MM:SS</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Relationships Box -->
+                <div class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-bold mb-4 text-yellow-900">🔑 Critical Resource Relationships</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-white rounded-lg p-4 border border-yellow-300">
+                            <h4 class="font-semibold text-gray-900 mb-2">The Golden Formula</h4>
+                            <div class="bg-gray-900 text-white p-3 rounded font-mono text-sm">
+                                Total Cores = nodes × ntasks-per-node × cpus-per-task
+                            </div>
+                            <p class="text-sm text-gray-700 mt-2">
+                                This relationship determines exactly how many CPU cores your job will use.
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-3 border border-yellow-300">
+                                <h5 class="font-semibold text-sm text-gray-900 mb-1">MPI Jobs (Distributed Memory)</h5>
+                                <code class="text-xs bg-gray-100 block p-2 rounded">
+                                    --ntasks=32<br>
+                                    --cpus-per-task=1
+                                </code>
+                                <p class="text-xs text-gray-600 mt-1">32 independent processes, each with 1 core</p>
+                            </div>
+                            
+                            <div class="bg-white rounded-lg p-3 border border-yellow-300">
+                                <h5 class="font-semibold text-sm text-gray-900 mb-1">OpenMP Jobs (Shared Memory)</h5>
+                                <code class="text-xs bg-gray-100 block p-2 rounded">
+                                    --ntasks=1<br>
+                                    --cpus-per-task=32
+                                </code>
+                                <p class="text-xs text-gray-600 mt-1">1 process with 32 threads on same node</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Common Parameter Combinations -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-4 text-gray-900">Common Resource Request Patterns</h3>
+                    
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Serial Job -->
+                        <div class="bg-white rounded-lg p-4 border border-gray-300">
+                            <h4 class="font-semibold text-blue-900 mb-2">Serial Job</h4>
+                            <div class="bg-gray-900 text-green-400 p-2 rounded text-xs font-mono">
+                                <div class="text-gray-500">#SBATCH --nodes=1</div>
+                                <div class="text-gray-500">#SBATCH --ntasks=1</div>
+                                <div class="text-gray-500">#SBATCH --cpus-per-task=1</div>
+                                <div class="text-gray-500">#SBATCH --mem=4G</div>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-2">Single process, single thread</p>
+                        </div>
+
+                        <!-- Pure MPI -->
+                        <div class="bg-white rounded-lg p-4 border border-gray-300">
+                            <h4 class="font-semibold text-green-900 mb-2">Pure MPI</h4>
+                            <div class="bg-gray-900 text-green-400 p-2 rounded text-xs font-mono">
+                                <div class="text-gray-500">#SBATCH --nodes=4</div>
+                                <div class="text-gray-500">#SBATCH --ntasks-per-node=32</div>
+                                <div class="text-gray-500">#SBATCH --cpus-per-task=1</div>
+                                <div class="text-gray-500">#SBATCH --mem=128G</div>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-2">128 MPI processes across 4 nodes</p>
+                        </div>
+
+                        <!-- Pure OpenMP -->
+                        <div class="bg-white rounded-lg p-4 border border-gray-300">
+                            <h4 class="font-semibold text-purple-900 mb-2">Pure OpenMP</h4>
+                            <div class="bg-gray-900 text-green-400 p-2 rounded text-xs font-mono">
+                                <div class="text-gray-500">#SBATCH --nodes=1</div>
+                                <div class="text-gray-500">#SBATCH --ntasks=1</div>
+                                <div class="text-gray-500">#SBATCH --cpus-per-task=64</div>
+                                <div class="text-gray-500">#SBATCH --mem=128G</div>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-2">1 process with 64 threads</p>
+                        </div>
+
+                        <!-- Hybrid MPI+OpenMP -->
+                        <div class="bg-white rounded-lg p-4 border border-gray-300">
+                            <h4 class="font-semibold text-red-900 mb-2">Hybrid MPI+OpenMP</h4>
+                            <div class="bg-gray-900 text-green-400 p-2 rounded text-xs font-mono">
+                                <div class="text-gray-500">#SBATCH --nodes=4</div>
+                                <div class="text-gray-500">#SBATCH --ntasks-per-node=2</div>
+                                <div class="text-gray-500">#SBATCH --cpus-per-task=32</div>
+                                <div class="text-gray-500">#SBATCH --mem=128G</div>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-2">8 MPI ranks, 32 threads each</p>
+                        </div>
+
+                        <!-- GPU Job -->
+                        <div class="bg-white rounded-lg p-4 border border-gray-300">
+                            <h4 class="font-semibold text-cyan-900 mb-2">GPU Job</h4>
+                            <div class="bg-gray-900 text-green-400 p-2 rounded text-xs font-mono">
+                                <div class="text-gray-500">#SBATCH --nodes=1</div>
+                                <div class="text-gray-500">#SBATCH --ntasks=1</div>
+                                <div class="text-gray-500">#SBATCH --cpus-per-task=8</div>
+                                <div class="text-gray-500">#SBATCH --gpus-per-task=1</div>
+                                <div class="text-gray-500">#SBATCH --mem=64G</div>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-2">1 GPU with 8 CPU cores</p>
+                        </div>
+
+                        <!-- Array Job -->
+                        <div class="bg-white rounded-lg p-4 border border-gray-300">
+                            <h4 class="font-semibold text-indigo-900 mb-2">Array Job</h4>
+                            <div class="bg-gray-900 text-green-400 p-2 rounded text-xs font-mono">
+                                <div class="text-gray-500">#SBATCH --array=1-100%10</div>
+                                <div class="text-gray-500">#SBATCH --nodes=1</div>
+                                <div class="text-gray-500">#SBATCH --ntasks=1</div>
+                                <div class="text-gray-500">#SBATCH --cpus-per-task=4</div>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-2">100 similar jobs, max 10 concurrent</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Common Pitfalls (simplified, myth vs reality) -->
+                <div class="bg-red-50 border-2 border-red-200 rounded-xl p-6 mt-8">
+                    <h3 class="text-xl font-bold mb-4 text-red-900">Common Mistakes &amp; Myths</h3>
+                    <div class="space-y-3">
+                        <!-- Memory limit -->
+                        <div class="bg-white rounded p-4 border border-red-200">
+                            <h4 class="font-semibold text-red-900 text-sm mb-1">Memory limit</h4>
+                            <p class="text-red-700 text-xs"><strong>Myth:</strong> The system will give more memory if I need it.</p>
+                            <p class="text-red-700 text-xs"><strong>Reality:</strong> If your job uses more than you requested, it gets killed (OOM).</p>
+                        </div>
+                        <!-- Time limit -->
+                        <div class="bg-white rounded p-4 border border-red-200">
+                            <h4 class="font-semibold text-red-900 text-sm mb-1">Time limit</h4>
+                            <p class="text-red-700 text-xs"><strong>Myth:</strong> Jobs run until they finish.</p>
+                            <p class="text-red-700 text-xs"><strong>Reality:</strong> When the time limit is reached, the scheduler cancels the job.</p>
+                        </div>
+                        <!-- Wrong partition -->
+                        <div class="bg-white rounded p-4 border border-red-200">
+                            <h4 class="font-semibold text-red-900 text-sm mb-1">Wrong partition</h4>
+                            <p class="text-red-700 text-xs"><strong>Myth:</strong> Any partition is fine.</p>
+                            <p class="text-red-700 text-xs"><strong>Reality:</strong> Partitions map to different hardware/policies; the wrong one can wait forever or fail (e.g., GPU job in a CPU queue).</p>
+                        </div>
+                        <!-- More nodes = faster -->
+                        <div class="bg-white rounded p-4 border border-red-200">
+                            <h4 class="font-semibold text-red-900 text-sm mb-1">“More nodes = faster”</h4>
+                            <p class="text-red-700 text-xs"><strong>Myth:</strong> Adding nodes always speeds things up.</p>
+                            <p class="text-red-700 text-xs"><strong>Reality:</strong> Only distributed programs benefit; extra nodes add communication overhead and can be slower.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 1: Understanding the Scheduler -->
+        <section id="scheduler-role" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">The Role of a Job Scheduler</h2>
+            
+            <div class="scheduler-card bg-white rounded-xl shadow-lg p-8 mb-8">
+                <div class="text-center mb-8">
+                    <p class="text-lg text-gray-700 max-w-4xl mx-auto">
+                        Slurm (Simple Linux Utility for Resource Management) orchestrates the efficient, fair, and orderly allocation 
+                        of computational resources across hundreds or thousands of users and jobs.
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Resource Management -->
+                    <div class="text-center p-6 bg-blue-50 rounded-lg border border-blue-200">
+                        <div class="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-1.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25A2.25 2.25 0 015.25 3h13.5A2.25 2.25 0 0121 5.25z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-blue-900">Resource Management</h3>
+                        <p class="text-blue-700 text-sm">
+                            Tracks CPU cores, memory, GPUs, nodes (and other GRES).
+                        </p>
+                    </div>
+
+                    <!-- Job Queuing -->
+                    <div class="text-center p-6 bg-green-50 rounded-lg border border-green-200">
+                        <div class="w-16 h-16 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-green-900">Job Queuing</h3>
+                        <p class="text-green-700 text-sm">
+                            Fair-share, priority, and backfill to keep the cluster busy.
+                        </p>
+                    </div>
+
+                    <!-- Quality of Service -->
+                    <div class="text-center p-6 bg-slate-50 rounded-lg border border-slate-200">
+                        <div class="w-16 h-16 bg-slate-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-slate-900">Quality of Service</h3>
+                        <p class="text-slate-700 text-sm">
+                            Policies/limits to prevent monopolization (time, cores, GPUs, jobs).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Interactive Jobs -->
+        <section id="interactive-jobs" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Interactive Jobs: Real-Time Computing</h2>
+            
+            <div class="scheduler-card bg-white rounded-xl shadow-lg p-8 mb-8">
+                <p class="text-lg text-gray-700 text-center mb-8 max-w-4xl mx-auto">
+                    Interactive jobs provide real-time access to compute resources, perfect for development, debugging, 
+                    and exploratory data analysis. Unlike batch jobs that run unattended, interactive jobs let you work 
+                    directly on powerful compute nodes.
+                </p>
+
+                <!-- Interactive vs Batch Comparison -->
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-200">
+                        <h3 class="text-xl font-bold mb-4 text-green-900">🖥️ Interactive Jobs</h3>
+                        <ul class="space-y-2 text-sm text-green-800">
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Real-time command execution and feedback</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Perfect for debugging and development</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Immediate resource allocation when available</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Interactive data exploration and visualization</span>
+                            </li>
+                        </ul>
+                        <div class="mt-4 p-3 bg-green-100 rounded-lg">
+                            <p class="text-xs text-green-900"><strong>Best for:</strong> Development, debugging, testing, data exploration</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-200">
+                        <h3 class="text-xl font-bold mb-4 text-blue-900">📋 Batch Jobs</h3>
+                        <ul class="space-y-2 text-sm text-blue-800">
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Run unattended without user interaction</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Ideal for production runs and long computations</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Output saved to files for later review</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Can queue and wait for resources</span>
+                            </li>
+                        </ul>
+                        <div class="mt-4 p-3 bg-blue-100 rounded-lg">
+                            <p class="text-xs text-blue-900"><strong>Best for:</strong> Production runs, overnight jobs, parameter sweeps</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Job Commands -->
+                <div class="bg-gray-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-bold mb-6 text-gray-900">Common Interactive Job Commands</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- srun interactive -->
+                        <div class="bg-white rounded-lg p-4 border border-gray-300">
+                            <h4 class="font-semibold text-gray-900 mb-2">Direct Interactive Session (srun)</h4>
+                            <div class="bg-gray-900 text-green-400 p-3 rounded text-sm font-mono mb-3">
+                                <div class="text-gray-500"># Basic interactive shell</div>
+                                <div>srun --pty --time=01:00:00 bash</div>
+                                <div class="mt-2 text-gray-500"># With specific resources</div>
+                                <div>srun --mem=16G --cpus-per-task=4 --pty bash</div>
+                                <div class="mt-2 text-gray-500"># GPU interactive session</div>
+                                <div>srun --gres=gpu:1 --time=02:00:00 --pty bash</div>
+                            </div>
+                            <p class="text-xs text-gray-600">Immediate interactive access to compute node</p>
+                        </div>
+
+                        <!-- salloc -->
+                        <div class="bg-white rounded-lg p-4 border border-gray-300">
+                            <h4 class="font-semibold text-gray-900 mb-2">Resource Allocation (salloc)</h4>
+                            <div class="bg-gray-900 text-green-400 p-3 rounded text-sm font-mono mb-3">
+                                <div class="text-gray-500"># Allocate resources</div>
+                                <div>salloc --nodes=2 --time=02:00:00</div>
+                                <div class="mt-2 text-gray-500"># Then run commands</div>
+                                <div>srun hostname</div>
+                                <div>srun ./my_program</div>
+                                <div class="mt-2 text-gray-500"># Exit to release</div>
+                                <div>exit</div>
+                            </div>
+                            <p class="text-xs text-gray-600">Allocate resources for multiple srun commands</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Use Cases -->
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-lg p-4 border-l-4 border-purple-400">
+                        <h4 class="font-semibold text-purple-900 mb-2">Development & Debugging</h4>
+                        <ul class="text-xs text-gray-700 space-y-1">
+                            <li>• Step through code execution</li>
+                            <li>• Test small code segments</li>
+                            <li>• Debug MPI applications</li>
+                            <li>• Profile performance</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg p-4 border-l-4 border-cyan-400">
+                        <h4 class="font-semibold text-cyan-900 mb-2">Data Exploration</h4>
+                        <ul class="text-xs text-gray-700 space-y-1">
+                            <li>• Interactive data analysis</li>
+                            <li>• Jupyter notebooks</li>
+                            <li>• Real-time visualization</li>
+                            <li>• Testing pipelines</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg p-4 border-l-4 border-orange-400">
+                        <h4 class="font-semibold text-orange-900 mb-2">Software Testing</h4>
+                        <ul class="text-xs text-gray-700 space-y-1">
+                            <li>• Compile and test code</li>
+                            <li>• Verify installations</li>
+                            <li>• Benchmark performance</li>
+                            <li>• Validate results</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Interactive Applications Examples -->
+                <div class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6">
+                    <h3 class="text-lg font-bold mb-4 text-yellow-900">📝 Common Interactive Applications</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg p-3 border border-yellow-300">
+                            <h5 class="font-semibold text-sm text-gray-900 mb-2">Jupyter Notebook</h5>
+                            <div class="bg-gray-900 text-green-400 p-2 rounded text-xs font-mono">
+                                srun --time=02:00:00 --mem=16G --pty jupyter notebook
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg p-3 border border-yellow-300">
+                            <h5 class="font-semibold text-sm text-gray-900 mb-2">Python with GPU</h5>
+                            <div class="bg-gray-900 text-green-400 p-2 rounded text-xs font-mono">
+                                srun --gres=gpu:1 --time=01:00:00 --pty python
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg p-3 border border-yellow-300">
+                            <h5 class="font-semibold text-sm text-gray-900 mb-2">R Session</h5>
+                            <div class="bg-gray-900 text-green-400 p-2 rounded text-xs font-mono">
+                                srun --mem=8G --time=01:00:00 --pty R
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg p-3 border border-yellow-300">
+                            <h5 class="font-semibold text-sm text-gray-900 mb-2">MATLAB</h5>
+                            <div class="bg-gray-900 text-green-400 p-2 rounded text-xs font-mono">
+                                srun --cpus-per-task=4 --pty matlab -nodisplay
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Important Notes -->
+                <div class="bg-red-50 border-2 border-red-200 rounded-xl p-6 mt-8">
+                    <h3 class="text-lg font-bold mb-4 text-red-900">⚠️ Important Considerations</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <ul class="space-y-2 text-sm text-red-800">
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-red-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                <span>Session ends if connection drops</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-red-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                <span>Resources charged even when idle</span>
+                            </li>
+                        </ul>
+                        <ul class="space-y-2 text-sm text-red-800">
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-red-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                <span>Limited to shorter walltimes</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-red-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                <span>Use batch jobs for production runs</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Web-based Interfaces -->
+        <section id="web-interfaces" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Web-based HPC Access</h2>
+            
+            <div class="scheduler-card bg-white rounded-xl shadow-lg p-8 mb-8">
+                <p class="text-lg text-gray-700 text-center mb-8 max-w-4xl mx-auto">
+                    Modern HPC clusters often provide web-based interfaces that make supercomputing accessible through 
+                    your browser. No command-line experience needed – just point, click, and compute!
+                </p>
+
+                <!-- Open OnDemand -->
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8 border-2 border-indigo-200">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-indigo-900">Open OnDemand</h3>
+                            <p class="text-sm text-indigo-700">The Most Popular Web Portal for HPC</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-indigo-900 mb-3">Key Features</h4>
+                            <ul class="space-y-2 text-sm text-indigo-800">
+                                <li class="flex items-start">
+                                    <svg class="w-4 h-4 text-indigo-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span>File browser with drag-and-drop upload</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-4 h-4 text-indigo-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span>Job submission through web forms</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-4 h-4 text-indigo-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span>Built-in terminal for command access</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-4 h-4 text-indigo-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span>Job monitoring and queue visualization</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-semibold text-indigo-900 mb-3">Interactive Apps</h4>
+                            <ul class="space-y-2 text-sm text-indigo-800">
+                                <li class="flex items-start">
+                                    <svg class="w-4 h-4 text-indigo-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    <span>Jupyter Notebook/Lab</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-4 h-4 text-indigo-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    <span>RStudio Server</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-4 h-4 text-indigo-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    <span>VS Code Server</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-4 h-4 text-indigo-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    <span>Remote Desktop (VNC/DCV)</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Available Web Applications -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold mb-6 text-gray-900 text-center">Common Web-based Applications</h3>
+                    
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- JupyterLab -->
+                        <div class="bg-white rounded-lg p-4 border border-gray-300 hover:shadow-lg transition-shadow">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-xl">📓</span>
+                                </div>
+                                <h4 class="font-semibold text-gray-900">JupyterLab</h4>
+                            </div>
+                            <p class="text-xs text-gray-700 mb-2">
+                                Multi-user notebook server with HPC integration
+                            </p>
+                            <ul class="text-xs text-gray-600 space-y-1">
+                                <li>• Python, R, Julia kernels</li>
+                                <li>• GPU-accelerated computing</li>
+                                <li>• Persistent sessions</li>
+                            </ul>
+                        </div>
+
+                        <!-- RStudio Server -->
+                        <div class="bg-white rounded-lg p-4 border border-gray-300 hover:shadow-lg transition-shadow">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-xl">📊</span>
+                                </div>
+                                <h4 class="font-semibold text-gray-900">RStudio Server</h4>
+                            </div>
+                            <p class="text-xs text-gray-700 mb-2">
+                                Full RStudio IDE in your browser
+                            </p>
+                            <ul class="text-xs text-gray-600 space-y-1">
+                                <li>• Statistical computing</li>
+                                <li>• Data visualization</li>
+                                <li>• Package management</li>
+                            </ul>
+                        </div>
+
+                        <!-- VS Code Server -->
+                        <div class="bg-white rounded-lg p-4 border border-gray-300 hover:shadow-lg transition-shadow">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-xl">💻</span>
+                                </div>
+                                <h4 class="font-semibold text-gray-900">VS Code Server</h4>
+                            </div>
+                            <p class="text-xs text-gray-700 mb-2">
+                                Full IDE experience for development
+                            </p>
+                            <ul class="text-xs text-gray-600 space-y-1">
+                                <li>• Code editing & debugging</li>
+                                <li>• Git integration</li>
+                                <li>• Extension support</li>
+                            </ul>
+                        </div>
+
+                        <!-- Remote Desktop -->
+                        <div class="bg-white rounded-lg p-4 border border-gray-300 hover:shadow-lg transition-shadow">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-xl">🖥️</span>
+                                </div>
+                                <h4 class="font-semibold text-gray-900">Remote Desktop</h4>
+                            </div>
+                            <p class="text-xs text-gray-700 mb-2">
+                                Full Linux desktop environment
+                            </p>
+                            <ul class="text-xs text-gray-600 space-y-1">
+                                <li>• GUI applications</li>
+                                <li>• 3D visualization</li>
+                                <li>• Persistent sessions</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Typical Workflow -->
+                <div class="bg-gray-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-bold mb-6 text-gray-900 text-center">Typical Web-based Workflow</h3>
+                    
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div class="flex-1 text-center">
+                            <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 text-white text-2xl font-bold">1</div>
+                            <h4 class="font-semibold text-gray-900 mb-1">Login</h4>
+                            <p class="text-xs text-gray-600">Access portal via browser with credentials</p>
+                        </div>
+                        
+                        <div class="hidden md:block text-gray-400 text-2xl">→</div>
+                        
+                        <div class="flex-1 text-center">
+                            <div class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-3 text-white text-2xl font-bold">2</div>
+                            <h4 class="font-semibold text-gray-900 mb-1">Select App</h4>
+                            <p class="text-xs text-gray-600">Choose Jupyter, RStudio, or other tools</p>
+                        </div>
+                        
+                        <div class="hidden md:block text-gray-400 text-2xl">→</div>
+                        
+                        <div class="flex-1 text-center">
+                            <div class="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-3 text-white text-2xl font-bold">3</div>
+                            <h4 class="font-semibold text-gray-900 mb-1">Configure</h4>
+                            <p class="text-xs text-gray-600">Set resources (CPU, GPU, memory, time)</p>
+                        </div>
+                        
+                        <div class="hidden md:block text-gray-400 text-2xl">→</div>
+                        
+                        <div class="flex-1 text-center">
+                            <div class="w-16 h-16 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-3 text-white text-2xl font-bold">4</div>
+                            <h4 class="font-semibold text-gray-900 mb-1">Launch</h4>
+                            <p class="text-xs text-gray-600">Work interactively in your browser</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Benefits -->
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-green-50 rounded-xl p-6 border-2 border-green-200">
+                        <h3 class="text-lg font-bold mb-4 text-green-900">✅ Benefits for Beginners</h3>
+                        <ul class="space-y-2 text-sm text-green-800">
+                            <li>• No command-line knowledge required</li>
+                            <li>• Familiar graphical interfaces</li>
+                            <li>• Guided resource selection</li>
+                            <li>• Visual file management</li>
+                            <li>• Integrated help and documentation</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-blue-50 rounded-xl p-6 border-2 border-blue-200">
+                        <h3 class="text-lg font-bold mb-4 text-blue-900">🚀 Benefits for Power Users</h3>
+                        <ul class="space-y-2 text-sm text-blue-800">
+                            <li>• Quick access without SSH setup</li>
+                            <li>• Convenient for graphical applications</li>
+                            <li>• Efficient for interactive development</li>
+                            <li>• Great for collaboration and teaching</li>
+                            <li>• Easy demonstration and sharing</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Access Example -->
+                <div class="bg-indigo-50 border-2 border-indigo-200 rounded-xl p-6">
+                    <h3 class="text-lg font-bold mb-4 text-indigo-900">🌐 How to Access</h3>
+                    <p class="text-sm text-indigo-800 mb-4">
+                        Most HPC centers provide web portals at addresses like:
+                    </p>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg p-3 border border-indigo-300">
+                            <code class="text-sm text-indigo-900">https://ondemand.hpc-cluster.edu</code>
+                            <p class="text-xs text-gray-600 mt-1">Open OnDemand portal</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-indigo-300">
+                            <code class="text-sm text-indigo-900">https://jupyter.hpc-cluster.edu</code>
+                            <p class="text-xs text-gray-600 mt-1">Direct JupyterLab access</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-indigo-700 mt-4">
+                        <strong>Note:</strong> Check with your HPC center for specific URLs and available applications.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <div class="flex justify-between items-center pt-8 border-t border-gray-200">
+            <a href="cluster-architecture.html" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition duration-200">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                Previous: Cluster Architecture
+            </a>
+            <div class="text-center">
+                <p class="text-sm text-gray-500">Module 3 of 5</p>
+            </div>
+            <a href="workflow-tools.html" class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 transition duration-200">
+                Next: Workflow & Tools
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </a>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">HPC Workshop</h3>
+                    <p class="text-gray-300">HPC Cluster 101.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="introduction.html" class="hover:text-white transition duration-200">Introduction to HPC</a></li>
+                        <li><a href="cluster-architecture.html" class="hover:text-white transition duration-200">Cluster Architecture</a></li>
+                        <li><a href="job-scheduling.html" class="hover:text-white transition duration-200">Job Scheduling</a></li>
+                        <li><a href="getting-started.html" class="hover:text-white transition duration-200">Getting Started</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Resources</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="https://slurm.schedmd.com/" class="hover:text-white transition duration-200">Slurm Documentation</a></li>
+                        <li><a href="https://docs.github.com/en" class="hover:text-white transition duration-200">GitHub Docs</a></li>
+                        <li><a href="https://www.anaconda.com/docs/main" class="hover:text-white transition duration-200">Anaconda Docs</a></li>
+                        <li><a href="https://modules.readthedocs.io/en/latest/" class="hover:text-white transition duration-200">Environment Modules Docs</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 mt-8 text-center text-gray-400">
+                <p>&copy; 2025 HPC Workshop. Created with AI assistance for educational purposes.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Copy code functionality
+        function copyCode(elementId) {
+            const codeElement = document.getElementById(elementId);
+            const range = document.createRange();
+            range.selectNode(codeElement);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            
+            try {
+                document.execCommand('copy');
+                // Show feedback
+                const button = event.target.closest('button');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Copied!';
+                button.classList.add('bg-green-600');
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('bg-green-600');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
+            
+            window.getSelection().removeAllRanges();
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HPC Workshop — Slides</title>
+    <meta name="description" content="Slides for the HPC Workshop (Graduate Researchers)">
+
+    <!-- Always open links in a new tab/window -->
+    <base target="_blank" />
+
+    <!-- Fonts (match site style) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Reveal.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/white.css" id="theme">
+    <!-- Code highlight theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/highlight/monokai.css">
+
+    <style>
+      :root { --r-main-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+      .reveal pre code { font-size: 0.9em; }
+      .reveal section img { max-height: 70vh; border-radius: 8px; }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <!-- Title -->
+        <section>
+          <h1>HPC Workshop</h1>
+          <h3>High-Performance Computing 101</h3>
+          <p><small>Tianshi Xu / Department of Mathematics · <span id="today"></span></small></p>
+        </section>
+
+        <!-- Agenda mapped 1:1 to site pages -->
+        <section>
+          <section>
+          <h2>Agenda</h2>
+          <ul>
+            <li><a href="introduction.html">Introduction</a></li>
+            <li><a href="cluster-architecture.html">Cluster Architecture</a></li>
+            <li><a href="job-scheduling.html">Job Scheduling (Slurm)</a></li>
+            <li><a href="workflow-tools.html">Workflow &amp; Tools</a></li>
+            <li><a href="getting-started.html">Getting Started</a></li>
+          </ul>
+          </section>  
+          <section>
+            <p>tianshixu.com/utilities/hpc-workshop/index.html</p>
+            <img src="assets/qr.png" alt="https://tianshixu.com/utilities/hpc-workshop/index.html" />
+          </section>
+        </section>
+
+        <!-- Introduction section (vertical stack) -->
+        <section>
+          <!-- Intro index -->
+          <section>
+            <h2>Introduction</h2>
+            <p><a href="introduction.html">Open: Introduction</a></p>
+          </section>
+
+          <!-- Motivation 1 (image only; presenter explains) -->
+          <section>
+            <h3>Motivation</h3>
+            <img src="assets/motivation-1.png" alt="Motivation illustration 1" />
+          </section>
+
+          <!-- Motivation 2 (image only; presenter explains) -->
+          <section>
+            <h3>Motivation</h3>
+            <img src="assets/motivation-2.png" alt="Motivation illustration 2" />
+          </section>
+
+          <!-- Serial vs Parallel (one-line contrast; you narrate) -->
+          <section>
+            <h3>Serial vs. Parallel Computing</h3>
+            <ul>
+              <li><strong>Serial:</strong> one worker, step by step</li>
+              <li><strong>Parallel:</strong> many workers at once</li>
+            </ul>
+          </section>
+
+          <!-- What is HPC (one-sentence) -->
+          <section>
+            <h3>What is HPC</h3>
+            <p><strong>HPC ≈ many computers working together as one.</strong></p>
+          </section>
+
+          <!-- Jump to the doc to discuss problem types -->
+          <section>
+            <h3>Where HPC Helps</h3>
+            <p><a href="introduction.html">Open: Introduction</a></p>
+          </section>
+          
+          <!-- Memory models (simple analogy) -->
+          <section>
+            <h3>Shared vs Distributed Memory</h3>
+            <ul>
+              <li><strong>Shared memory:</strong> Same library building; grab from the local shelf. Fast, but limited by one machine.</li>
+              <li><strong>Distributed memory:</strong> Interlibrary loan; fetch from other libraries (e.g., GT). Scales capacity, remote is slower.</li>
+            </ul>
+            <p><a href="introduction.html#programming-paradigms">Open: Shared / Distributed</a></p>
+          </section>
+
+          <!-- CPU vs GPU (simple analogy) -->
+          <section>
+            <h3>CPU vs GPU</h3>
+            <ul>
+              <li><strong>CPU:</strong> Few expert librarians handle diverse, complex requests.</li>
+              <li><strong>GPU:</strong> Hundreds of interns do the same simple task across many shelves; very high throughput.</li>
+            </ul>
+            <p><a href="introduction.html#programming-paradigms">Open: GPU</a></p>
+          </section>
+        </section>
+
+        <!-- Architecture (vertical stack) -->
+        <section>
+          <!-- Section title -->
+          <section>
+            <h2>Architecture</h2>
+            <p><a href="cluster-architecture.html">Open: Architecture</a></p>
+          </section>
+          <!-- Analogy: Auto Repair Shop (lead-in, simplified) -->
+          <section>
+            <h2>Auto Repair Shop</h2>
+            <ul>
+              <li><strong>Front desk:</strong> check in; <em>no repairs</em>.</li>
+              <li><strong>Work bays:</strong> where the work happens.</li>
+              <li><strong>Warehouse:</strong> parts in/out; storage only.</li>
+              <li><strong>Aisles:</strong> fast movement of cars and parts.</li>
+            </ul>
+            <p><a href="cluster-architecture.html#cluster-overview">Open: Cluster Overview</a></p>
+          </section>
+
+          <!-- Cluster Overview -->
+          <section>
+            <h2>Cluster Overview</h2>
+            <ul>
+              <li><strong>Login nodes (front desk):</strong> sign in; <em>no heavy runs</em>.</li>
+              <li><strong>Compute nodes (work bays):</strong> CPUs/GPUs run jobs.</li>
+              <li><strong>Storage (warehouse):</strong> shared data in/out.</li>
+              <li><strong>Interconnect (aisles):</strong> high-speed links.</li>
+            </ul>
+            <p><a href="cluster-architecture.html#cluster-overview">Open: Cluster Overview</a></p>
+          </section>
+
+          <!-- Login Nodes -->
+          <section>
+            <h3>Login Nodes — Do / Don’t</h3>
+            <ul>
+              <li><strong>Do:</strong> edit code, manage files, submit/monitor jobs</li>
+              <li><strong>Don’t:</strong> run heavy compute on login nodes</li>
+            </ul>
+            <p><a href="cluster-architecture.html#login-nodes">Open: Login Nodes</a></p>
+          </section>
+
+          <!-- Compute Nodes -->
+          <section>
+            <h3>Compute Nodes — Classes</h3>
+            <ul>
+              <li><strong>Standard CPU:</strong> multi‑core, MPI/threads</li>
+              <li><strong>GPU nodes:</strong> 1–8 GPUs/node for ML/acceleration</li>
+              <li><strong>High‑memory:</strong> 1–4 TB RAM for big data</li>
+            </ul>
+            <p><a href="cluster-architecture.html#compute-nodes">Open: Compute Nodes</a></p>
+          </section>
+
+          <!-- Storage Hierarchy -->
+          <section>
+            <h3>Storage Hierarchy</h3>
+            <ul>
+              <li><code>/home</code> (small, backed) · <code>/scratch</code> (fast, purgeable) · <code>/project</code> (team, long‑term)</li>
+              <li>Data flow: stage → run → archive → clean</li>
+            </ul>
+            <p><a href="cluster-architecture.html#storage-systems">Open: Storage</a></p>
+          </section>
+
+          <!-- Interconnects -->
+          <section>
+            <h3>Interconnects</h3>
+            <ul>
+              <li><strong>Ethernet:</strong> 1–100 Gbps, 10–100 µs</li>
+              <li><strong>InfiniBand:</strong> 25–800 Gbps, 0.5–2 µs (MPI/low‑latency)</li>
+            </ul>
+            <p><a href="cluster-architecture.html#interconnects">Open: Interconnects</a></p>
+          </section>
+        </section>
+
+        <!-- Job Scheduling (vertical stack) -->
+        <section>
+          <!-- Section title -->
+          <section>
+            <h2>Job Scheduling (Slurm)</h2>
+            <p><a href="job-scheduling.html">Open: Job Scheduling</a></p>
+          </section>
+
+          <!-- Why a Dispatcher? (as provided) -->
+          <section>
+            <h2>Why a Dispatcher?</h2>
+            <ul>
+              <li><strong>Fairness:</strong> many cars, limited bays — someone must queue and prioritize.</li>
+              <li><strong>Utilization:</strong> keep bays busy; avoid idle gaps and pile-ups.</li>
+              <li><strong>Right tools:</strong> match jobs with bays that have the needed gear.</li>
+              <li><strong>Time & parts:</strong> book a time window and ensure parts are available.</li>
+              <li><strong>Safety & records:</strong> work happens in bays with tracking and logs.</li>
+            </ul>
+            <p><a href="job-scheduling.html">Open: Job Scheduling</a></p>
+          </section>
+          <!-- Dispatcher → Slurm (I): essentials -->
+          <section>
+            <h2>Dispatcher → Slurm (I)</h2>
+            <ul>
+              <li><strong>Work order → job script:</strong> what to do + resources.</li>
+              <li><strong>Bay type → partition:</strong> standard / gpu / highmem.</li>
+              <li><strong>Booked time →</strong> <code>--time</code></li>
+              <li><strong>Parts on hand →</strong> <code>--mem=</code></li>
+              <li><strong>Special tool →</strong> <code>--gres=gpu:1</code></li>
+            </ul>
+            <p><a href="job-scheduling.html#scheduler-role">Open: Scheduler Role</a></p>
+          </section>
+
+          <!-- Dispatcher → Slurm (II): scale & policy -->
+          <section>
+            <h2>Dispatcher → Slurm (II)</h2>
+            <ul>
+              <li><strong>How many bays/techs →</strong> nodes / tasks / CPUs</li>
+              <li><strong>Rush vs routine →</strong> priority</li>
+              <li><strong>Fill short gaps →</strong> backfill</li>
+              <li><strong>Link repairs →</strong> job dependencies</li>
+            </ul>
+            <p><a href="job-scheduling.html#scheduler-role">Open: Scheduler Role</a></p>
+          </section>
+
+          <!-- Slurm Common Patterns -->
+          <section>
+          <h2>Common Request Patterns</h2>
+          <pre><code class="language-bash" data-trim>
+# MPI (distributed memory)
+#SBATCH --ntasks=32
+#SBATCH --cpus-per-task=1
+
+# OpenMP (shared memory)
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=32
+
+# Hybrid (MPI + OpenMP)
+#SBATCH --ntasks-per-node=2
+#SBATCH --cpus-per-task=32
+          </code></pre>
+          </section>
+
+          <!-- Essential Commands (kept simple) -->
+          <section>
+            <h2>Essential Commands</h2>
+            <pre><code class="language-bash" data-trim>
+sinfo
+squeue --user=$USER
+sbatch job.sh
+srun --pty --time=01:00:00 bash
+scancel 12345
+            </code></pre>
+            <p><a href="job-scheduling.html#essential-commands">Open: Essential Commands</a></p>
+          </section>
+
+          <!-- Interactive vs Batch -->
+          <section>
+            <h2>Interactive vs Batch</h2>
+            <ul>
+              <li><strong>Interactive (while-you-wait):</strong> you stay on site, adjust on the fly; good for debugging and small tests.</li>
+              <li><strong>Batch (drop-off):</strong> leave a work order and go; runs when scheduled, best for long or many jobs.</li>
+            </ul>
+            <p><a href="job-scheduling.html#interactive-jobs">Guide: Interactive Jobs</a></p>
+          </section>
+        </section>
+
+        <!-- Workflow & Tools (vertical stack) -->
+        <section>
+          <!-- Section title -->
+          <section>
+            <h2>Workflow &amp; Tools</h2>
+            <p><a href="workflow-tools.html">Open: Workflow &amp; Tools</a></p>
+          </section>
+
+          <!-- Analogy: Tool sets as environments -->
+          <section>
+            <h2>Tool Sets (as Environments)</h2>
+            <ul>
+              <li><strong>Preset kits by car type:</strong> German / American / Japanese.</li>
+              <li><strong>Pick one kit for this job:</strong> use that set only.</li>
+              <li><strong>No mixing:</strong> finish and return the kit; keep the floor clean.</li>
+              <li><strong>Checklist per kit:</strong> so any tech can repeat the same setup.</li>
+            </ul>
+            <p><a href="workflow-tools.html#environment-management">Open: Environment Management</a></p>
+          </section>
+
+          <!-- Environments: unified idea -->
+          <section>
+            <h2>Environments (unified idea)</h2>
+            <ul>
+              <li><strong>One preset per job:</strong> a defined set of tools/libraries.</li>
+              <li><strong>Activate → run → deactivate:</strong> keep jobs isolated.</li>
+              <li><strong>No mixing:</strong> avoid conflicts by sticking to one preset.</li>
+              <li><strong>Save the spec:</strong> share a file/list so others can reproduce.</li>
+            </ul>
+            <p><a href="workflow-tools.html#environment-management">Open: Environment Management</a></p>
+          </section>
+
+          <!-- Remote Development (VS Code first) -->
+          <section>
+            <h3>Remote Development (VS Code)</h3>
+            <ul>
+              <li>Install Remote‑SSH → Connect to Host</li>
+              <li>Open folder on the cluster: <code>$HOME</code></li>
+              <li>Explorer: drag‑and‑drop upload/download; rename/move</li>
+              <li>Built‑in terminal: run commands when needed</li>
+            </ul>
+            <p><a href="workflow-tools.html#remote-development">Open: Remote Development</a></p>
+          </section>
+
+          <!-- The Loop: edit → submit → check → iterate -->
+          <section>
+            <h3>The Loop</h3>
+            <ul>
+              <li>Edit in VS Code; keep input/output organized</li>
+              <li>Submit in terminal: <code>sbatch job.sh</code></li>
+              <li>Check: <code>squeue --user=$USER</code>; open <code>.out/.err</code> in editor</li>
+              <li>Iterate: adjust resources/env; resubmit</li>
+            </ul>
+            <p><a href="getting-started.html#first-job">Open: First Job</a></p>
+          </section>
+        </section>
+
+        <!-- Getting Started (vertical stack) -->
+        <section>
+          <!-- Section title -->
+          <section>
+            <h2>Getting Started</h2>
+            <p><a href="getting-started.html">Open: Getting Started</a></p>
+          </section>
+          <section>
+            <h2>Acknowledgments</h2>
+            <ul>
+                <li>Workshop organizing committee for their dedication and planning</li>
+                <li>Emory Math/CS IT Support for providing computing resources and technical assistance</li>
+                <li>All participants and contributors who made this workshop possible through their engagement and collaboration</li>
+            </ul>
+        </section>
+          <section>
+            <h3>Questions &amp; Practices</h3>
+            <ul>
+              <li>Install VS Code</li>
+              <li>Install extensions like <code>Remote - SSH</code> and <code>Python</code></li>
+              <li>Try Google Colab</li>
+              <li>Optional: Install <code>Docker</code> or <code>WSL2</code> (16GB or above RAM recommended)</li>
+            </ul>
+          </section>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- Reveal.js core & plugins -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/highlight/highlight.js"></script>
+    <script>
+      // Set today's date on title slide
+      document.getElementById('today').textContent = new Date().toLocaleDateString();
+
+      // Init Reveal
+      Reveal.initialize({
+        hash: true,
+        slideNumber: 'c/t',
+        plugins: [ RevealHighlight ],
+      });
+    </script>
+  </body>
+  
+</html>

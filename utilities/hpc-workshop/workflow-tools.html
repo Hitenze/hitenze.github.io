@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Development Workflow & Tools | HPC Workshop</title>
+    <meta name="description" content="Modern development practices, version control, and tools for HPC research">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            scroll-behavior: smooth;
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-link:hover {
+            transform: translateY(-1px);
+            color: #2563eb;
+        }
+        .workflow-card {
+            transition: all 0.3s ease-in-out;
+        }
+        .workflow-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .code-block {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+        }
+        .code-block .comment { color: #6a9955; }
+        .code-block .command { color: #569cd6; }
+        .code-block .string { color: #ce9178; }
+        .code-block .variable { color: #9cdcfe; }
+        .progress-bar {
+            background: linear-gradient(90deg, #0EA5E9 0%, #0F172A 100%);
+        }
+        .terminal-window {
+            background: linear-gradient(to bottom, #2d3748 0%, #1a202c 100%);
+            border-radius: 8px;
+        }
+        .terminal-header {
+            background: #2d3748;
+            border-radius: 8px 8px 0 0;
+            padding: 8px 16px;
+            border-bottom: 1px solid #4a5568;
+        }
+        .step-indicator {
+            background: linear-gradient(135deg, #0F172A 0%, #0EA5E9 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="index.html" class="text-xl font-bold text-gray-900">HPC Workshop</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Home</a>
+                        <a href="introduction.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Introduction</a>
+                        <a href="cluster-architecture.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Architecture</a>
+                        <a href="job-scheduling.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Job Scheduling</a>
+                        <a href="workflow-tools.html" class="nav-link text-blue-600 px-3 py-2 text-sm font-medium border-b-2 border-blue-600">Workflow</a>
+                        <a href="getting-started.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Get Started</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="bg-gray-200 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+                <a href="index.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Home</a>
+                <a href="introduction.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Introduction</a>
+                <a href="cluster-architecture.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Architecture</a>
+                <a href="job-scheduling.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Job Scheduling</a>
+                <a href="workflow-tools.html" class="block px-3 py-2 text-base font-medium text-blue-600">Workflow</a>
+                <a href="getting-started.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="bg-gray-200 h-1">
+        <div class="progress-bar h-1 w-4/5"></div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Development Workflow & Tools</h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Modern development practices and tools for efficient HPC research and collaboration
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+
+        <!-- Section 1: Environment Management -->
+        <section id="environment-management" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Environment Management</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Module System -->
+                <div class="workflow-card bg-white rounded-xl shadow-lg p-6 border-t-4 border-blue-500">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900">Module System</h3>
+                            <p class="text-gray-600 text-sm">Dynamic environment management</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <p class="text-gray-700 text-sm">
+                            The module system provides a clean way to manage multiple versions of software packages and their dependencies.
+                        </p>
+                        
+                        <div class="code-block p-3 text-sm overflow-x-auto">
+                            <pre class="text-white"><code><span class="comment"># List available modules</span>
+<span class="command">module avail</span>
+
+<span class="comment"># Load specific version</span>
+<span class="command">module load gcc/11.2.0</span>
+
+<span class="comment"># Load multiple modules</span>
+<span class="command">module load openmpi python</span>
+
+<span class="comment"># Show loaded modules</span>
+<span class="command">module list</span>
+
+<span class="comment"># Unload all modules</span>
+<span class="command">module purge</span></code></pre>
+                        </div>
+                        
+                        <div class="bg-blue-50 p-4 rounded border border-blue-200">
+                            <h4 class="font-semibold text-blue-800 mb-2">Best Practices:</h4>
+                            <ul class="text-blue-700 text-sm space-y-1">
+                                <li>• Always specify versions for reproducibility</li>
+                                <li>• Use module purge before loading new environments</li>
+                                <li>• Document module requirements in your scripts</li>
+                                <li>• Test with different compiler versions</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conda & Virtual Environments -->
+                <div class="workflow-card bg-white rounded-xl shadow-lg p-6 border-t-4 border-green-500">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900">Python Environments</h3>
+                            <p class="text-gray-600 text-sm">Isolated package management</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <p class="text-gray-700 text-sm">
+                            Manage Python packages and dependencies in isolated environments to avoid conflicts and ensure reproducibility.
+                        </p>
+                        
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-2">Conda Environment Setup:</h4>
+                            <div class="code-block p-3 text-sm overflow-x-auto">
+                                <pre class="text-white"><code><span class="comment"># Create environment with specific Python version</span>
+<span class="command">conda create -n myproject python=3.9 numpy scipy matplotlib</span>
+
+<span class="comment"># Activate environment</span>
+<span class="command">conda activate myproject</span>
+
+<span class="comment"># Install additional packages</span>
+<span class="command">conda install -c conda-forge mpi4py h5py</span>
+
+<span class="comment"># Export environment for reproducibility</span>
+<span class="command">conda env export > environment.yml</span>
+
+<span class="comment"># Create from exported environment</span>
+<span class="command">conda env create -f environment.yml</span></code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
+                            <h4 class="font-semibold text-yellow-800 mb-2">Virtual Environments:</h4>
+                            <div class="text-yellow-700 text-sm space-y-2">
+                                <div class="font-mono bg-yellow-100 p-2 rounded">python -m venv myenv</div>
+                                <div class="font-mono bg-yellow-100 p-2 rounded">source myenv/bin/activate</div>
+                                <div class="font-mono bg-yellow-100 p-2 rounded">pip install -r requirements.txt</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Remote Development -->
+        <section id="remote-development" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Remote Development</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- VS Code Remote SSH -->
+                <div class="workflow-card bg-white rounded-xl shadow-lg p-6 border-l-4 border-cyan-500">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900">VS Code Remote-SSH</h3>
+                            <p class="text-gray-600 text-sm">Professional remote development environment</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-purple-50 p-4 rounded border border-purple-200">
+                            <div class="flex items-center mb-2">
+                                <svg class="w-5 h-5 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                                <span class="font-semibold text-purple-800">Recommended Approach</span>
+                            </div>
+                            <p class="text-purple-700 text-sm">
+                                VS Code Remote-SSH provides a seamless development experience with full IDE functionality on HPC systems.
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-3">Setup Steps:</h4>
+                            <div class="space-y-3">
+                                <div class="flex items-start">
+                                    <div class="step-indicator w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3 mt-0.5">1</div>
+                                    <div class="text-sm">
+                                        <p class="font-semibold">Install Remote-SSH Extension</p>
+                                        <p class="text-gray-600">Search for "Remote-SSH" in VS Code extensions</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="step-indicator w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3 mt-0.5">2</div>
+                                    <div class="text-sm">
+                                        <p class="font-semibold">Configure SSH Connection</p>
+                                        <p class="text-gray-600">Ctrl/Command+Shift+P → "Remote-SSH: Open SSH Configuration File"</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="step-indicator w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3 mt-0.5">3</div>
+                                    <div class="text-sm">
+                                        <p class="font-semibold">Connect and Open Folder</p>
+                                        <p class="text-gray-600">Choose your project directory on the cluster</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-green-50 p-4 rounded border border-green-200">
+                            <h4 class="font-semibold text-green-800 mb-2">Benefits:</h4>
+                            <ul class="text-green-700 text-sm space-y-1">
+                                <li>• Full IDE experience on remote systems</li>
+                                <li>• Integrated terminal and file explorer</li>
+                                <li>• IntelliSense and debugging support</li>
+                                <li>• Extension support for languages and tools</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terminal Editors -->
+                <div class="workflow-card bg-white rounded-xl shadow-lg p-6 border-l-4 border-indigo-500">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900">Terminal Editors</h3>
+                            <p class="text-gray-600 text-sm">Lightweight command-line editing</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Nano -->
+                        <div class="border border-gray-200 rounded p-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-gray-800">Nano</h4>
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Beginner-Friendly</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-2">Simple editor with on-screen help</p>
+                            <div class="bg-gray-100 p-2 rounded text-xs font-mono">
+                                nano filename.txt
+                            </div>
+                            <div class="mt-2 text-xs text-gray-500">
+                                Ctrl+X to exit, Ctrl+O to save
+                            </div>
+                        </div>
+
+                        <!-- Vim -->
+                        <div class="border border-gray-200 rounded p-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-gray-800">Vim</h4>
+                                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Powerful</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-2">Modal editor with extensive features</p>
+                            <div class="bg-gray-100 p-2 rounded text-xs font-mono space-y-1">
+                                <div>vim filename.txt    <span class="text-gray-500"># Open file</span></div>
+                                <div>i                   <span class="text-gray-500"># Insert mode</span></div>
+                                <div>:wq                 <span class="text-gray-500"># Save and quit</span></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded">
+                            <h4 class="font-semibold text-gray-800 mb-2">Quick Vim Survival Guide:</h4>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div><code class="bg-white px-1">i</code> - Insert mode</div>
+                                <div><code class="bg-white px-1">Esc</code> - Normal mode</div>
+                                <div><code class="bg-white px-1">:w</code> - Save file</div>
+                                <div><code class="bg-white px-1">:q</code> - Quit</div>
+                                <div><code class="bg-white px-1">dd</code> - Delete line</div>
+                                <div><code class="bg-white px-1">u</code> - Undo</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="hidden" data-removed="version-control">
+        <section id="version-control" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Version Control with Git</h2>
+            
+            <div class="workflow-card bg-white rounded-xl shadow-lg p-8">
+                <div class="text-center mb-8">
+                    <p class="text-lg text-gray-700 max-w-4xl mx-auto">
+                        Version control is essential for reproducible research, collaboration, and tracking the evolution of your research code and data.
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8 mb-8">
+                    <!-- Reproducibility -->
+                    <div class="text-center p-6 bg-green-50 rounded-lg border border-green-200">
+                        <div class="w-16 h-16 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-green-900">Reproducibility</h3>
+                        <p class="text-green-700 text-sm">
+                            Track every change to recreate exact experimental conditions and results.
+                        </p>
+                    </div>
+
+                    <!-- Collaboration -->
+                    <div class="text-center p-6 bg-blue-50 rounded-lg border border-blue-200">
+                        <div class="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-blue-900">Collaboration</h3>
+                        <p class="text-blue-700 text-sm">
+                            Work seamlessly with team members and share code across institutions.
+                        </p>
+                    </div>
+
+                    <!-- Backup & Recovery -->
+                    <div class="text-center p-6 bg-slate-50 rounded-lg border border-slate-200">
+                        <div class="w-16 h-16 bg-slate-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-slate-900">Backup & Recovery</h3>
+                        <p class="text-slate-700 text-sm">
+                            Never lose work and easily revert to previous working states.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Git Workflow -->
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-gray-900">Essential Git Workflow</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 text-blue-600 font-bold text-sm">1</div>
+                                <div class="code-block flex-1 p-2 text-sm">
+                                    <span class="text-blue-400">git clone</span> <span class="text-gray-300">https://github.com/user/repo.git</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 text-blue-600 font-bold text-sm">2</div>
+                                <div class="code-block flex-1 p-2 text-sm">
+                                    <span class="text-blue-400">git pull</span> <span class="text-gray-300">origin main</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 text-green-600 font-bold text-sm">3</div>
+                                <div class="flex-1 text-sm text-gray-600">
+                                    <strong>Edit your code and data</strong>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center mr-3 text-yellow-600 font-bold text-sm">4</div>
+                                <div class="code-block flex-1 p-2 text-sm">
+                                    <span class="text-blue-400">git add</span> <span class="text-gray-300">.</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3 text-purple-600 font-bold text-sm">5</div>
+                                <div class="code-block flex-1 p-2 text-sm">
+                                    <span class="text-blue-400">git commit</span> <span class="text-gray-300">-m "Descriptive message"</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-3 text-red-600 font-bold text-sm">6</div>
+                                <div class="code-block flex-1 p-2 text-sm">
+                                    <span class="text-blue-400">git push</span> <span class="text-gray-300">origin main</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-gray-900">Research-Specific Best Practices</h3>
+                        <div class="space-y-4">
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">Repository Structure:</h4>
+                                <div class="text-sm font-mono text-gray-600">
+                                    <div>project/</div>
+                                    <div>├── src/           <span class="text-gray-500"># Source code</span></div>
+                                    <div>├── data/          <span class="text-gray-500"># Small datasets</span></div>
+                                    <div>├── scripts/       <span class="text-gray-500"># Analysis scripts</span></div>
+                                    <div>├── results/       <span class="text-gray-500"># Generated outputs</span></div>
+                                    <div>├── docs/          <span class="text-gray-500"># Documentation</span></div>
+                                    <div>├── requirements.txt</div>
+                                    <div>└── README.md</div>
+                                </div>
+                            </div>
+
+                            <div class="bg-blue-50 p-4 rounded border border-blue-200">
+                                <h4 class="font-semibold text-blue-800 mb-2">Commit Message Guidelines:</h4>
+                                <ul class="text-blue-700 text-sm space-y-1">
+                                    <li>• Use present tense: "Add feature" not "Added feature"</li>
+                                    <li>• Be specific about changes and their purpose</li>
+                                    <li>• Reference issues or experiments when relevant</li>
+                                    <li>• Include performance impact if significant</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-red-50 p-4 rounded border border-red-200">
+                                <h4 class="font-semibold text-red-800 mb-2">What NOT to Commit:</h4>
+                                <ul class="text-red-700 text-sm space-y-1">
+                                    <li>• Large datasets (use Git LFS or external storage)</li>
+                                    <li>• Compiled binaries and temporary files</li>
+                                    <li>• Personal configuration files</li>
+                                    <li>• Sensitive information (passwords, keys)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        </div>
+
+        <!-- Optional: Getting Help & Colab -->
+        <section id="getting-help" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-2 text-blue-600">Getting Help from HPC Support</h2>
+            <p class="text-center text-gray-600 mb-8">Quick self-checks and what to send for faster resolution.</p>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div class="workflow-card bg-white rounded-xl shadow-lg p-6 border-l-4 border-yellow-500">
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900">Try this first (≤5 min)</h3>
+                    <ul class="text-sm text-gray-700 space-y-2 mb-3">
+                        <li>• Open .out/.err; search for OUT OF MEMORY, TIME LIMIT, command not found</li>
+                        <li>• Check pending reason or failure cause</li>
+                    </ul>
+                    <div class="code-block p-2 text-xs overflow-x-auto"><pre class="text-white"><code>squeue -j &lt;JOBID&gt; -o "%.18i %.9P %.20j %.2t %.10M %.6D %R"</code></pre></div>
+                </div>
+
+                <div class="workflow-card bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900">When to open a ticket</h3>
+                    <ul class="text-sm text-gray-700 space-y-2">
+                        <li>• Self‑check done; still failing or inconsistent</li>
+                        <li>• Account/quota/permission issues</li>
+                        <li>• Suspected node/filesystem problems</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="workflow-card bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900">What to include</h3>
+                    <ul class="text-sm text-gray-700 space-y-2">
+                        <li>• Username; cluster/partition; JobID(s)</li>
+                        <li>• How you ran it (batch / interactive)</li>
+                        <li>• Job script and submit command</li>
+                        <li>• Error lines from .out/.err</li>
+                        <li>• Minimal repro if possible</li>
+                        <li>• Environment (module list / env name; GPU model)</li>
+                    </ul>
+                </div>
+
+                <div class="workflow-card bg-white rounded-xl shadow-lg p-6 border-l-4 border-indigo-500">
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900">Handy commands</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="code-block p-2 text-xs overflow-x-auto"><pre class="text-white"><code>squeue -u $USER</code></pre></div>
+                        <div class="code-block p-2 text-xs overflow-x-auto"><pre class="text-white"><code>tail -n 50 job_&lt;JOBID&gt;.out</code></pre></div>
+                        <div class="code-block p-2 text-xs overflow-x-auto"><pre class="text-white"><code>sinfo -s</code></pre></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Optional: Google Colab -->
+        <section id="colab" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-2 text-blue-600">Google Colab</h2>
+            <div class="workflow-card bg-white rounded-xl shadow-lg p-6">
+                <ul class="text-sm text-gray-700 space-y-2 mb-3">
+                    <li>• Good for quick Python notebooks and prototyping with small data</li>
+                    <li>• GPU availability and session limits vary; not a replacement for the cluster</li>
+                    <li>• Move workloads to HPC for large runs, queues, and shared storage</li>
+                </ul>
+                <p class="text-xs text-gray-500">Link: <a href="https://colab.research.google.com" class="text-blue-600 hover:underline">Google Colab</a></p>
+            </div>
+        </section>
+
+        <!-- Section 5: Modern HPC Practices -->
+        <section id="modern-practices" class="mb-16 hidden" data-removed="modern-practices">
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Modern HPC Practices</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Containers -->
+                <div class="workflow-card bg-white rounded-xl shadow-lg p-6 border-t-4 border-indigo-500">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900">Containers (Singularity/Apptainer)</h3>
+                            <p class="text-gray-600 text-sm">Reproducible software environments</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <p class="text-gray-700 text-sm">
+                            Containers package applications and dependencies for consistent execution across different HPC systems.
+                        </p>
+                        
+                        <div class="bg-indigo-50 p-4 rounded border border-indigo-200">
+                            <h4 class="font-semibold text-indigo-800 mb-2">Benefits:</h4>
+                            <ul class="text-indigo-700 text-sm space-y-1">
+                                <li>• Reproducible software environments</li>
+                                <li>• Easy software distribution</li>
+                                <li>• Bypass dependency conflicts</li>
+                                <li>• Run legacy software on modern systems</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-2">Basic Singularity Usage:</h4>
+                            <div class="code-block p-3 text-sm overflow-x-auto">
+                                <pre class="text-white"><code><span class="comment"># Pull container from Docker Hub</span>
+<span class="command">singularity pull docker://ubuntu:20.04</span>
+
+<span class="comment"># Run interactive shell</span>
+<span class="command">singularity shell ubuntu_20.04.sif</span>
+
+<span class="comment"># Execute command in container</span>
+<span class="command">singularity exec ubuntu_20.04.sif python my_script.py</span>
+
+<span class="comment"># Submit container job</span>
+<span class="command">sbatch --wrap="singularity exec myapp.sif ./run_analysis"</span></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Workflow Management -->
+                <div class="workflow-card bg-white rounded-xl shadow-lg p-6 border-t-4 border-orange-500">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900">Workflow Management</h3>
+                            <p class="text-gray-600 text-sm">Automate complex analysis pipelines</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <p class="text-gray-700 text-sm">
+                            Workflow management systems automate complex computational pipelines with dependency tracking and error handling.
+                        </p>
+                        
+                        <!-- Snakemake -->
+                        <div class="border border-gray-200 rounded p-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-gray-800">Snakemake</h4>
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Python-based</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-2">Python-based workflow management with automatic parallelization</p>
+                            <div class="code-block p-2 text-xs overflow-x-auto">
+                                <pre class="text-white"><code><span class="comment"># Simple Snakemake rule</span>
+<span class="keyword">rule</span> process_data:
+    <span class="keyword">input:</span> <span class="string">"data/{sample}.txt"</span>
+    <span class="keyword">output:</span> <span class="string">"results/{sample}.out"</span>
+    <span class="keyword">shell:</span> <span class="string">"process_script.py {input} {output}"</span></code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Nextflow -->
+                        <div class="border border-gray-200 rounded p-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-gray-800">Nextflow</h4>
+                                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Container-native</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-2">Scalable and portable workflows with native container support</p>
+                            <div class="code-block p-2 text-xs overflow-x-auto">
+                                <pre class="text-white"><code><span class="comment"># Nextflow process</span>
+<span class="keyword">process</span> analyze {
+    <span class="keyword">input:</span> path(datafile)
+    <span class="keyword">output:</span> path(<span class="string">"result.txt"</span>)
+    <span class="string">"""
+    analyze_tool $datafile > result.txt
+    """</span>
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-orange-50 p-4 rounded border border-orange-200">
+                            <h4 class="font-semibold text-orange-800 mb-2">Workflow Advantages:</h4>
+                            <ul class="text-orange-700 text-sm space-y-1">
+                                <li>• Automatic dependency resolution</li>
+                                <li>• Parallel execution optimization</li>
+                                <li>• Resume failed runs from checkpoints</li>
+                                <li>• Portable across different clusters</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Data Management -->
+        <section id="data-management" class="mb-16 hidden" data-removed="data-management">
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Data Management Best Practices</h2>
+            
+            <div class="workflow-card bg-white rounded-xl shadow-lg p-8">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- File Transfer -->
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-gray-900">Efficient File Transfer</h3>
+                        
+                        <div class="space-y-4">
+                            <!-- scp -->
+                            <div class="border-l-4 border-blue-500 pl-4 bg-blue-50 p-3 rounded-r">
+                                <h4 class="font-semibold text-blue-800 mb-2">SCP (Secure Copy)</h4>
+                                <div class="code-block p-2 text-xs overflow-x-auto">
+                                    <pre class="text-white"><code><span class="comment"># Upload to cluster</span>
+<span class="command">scp -r local_dir/ user@cluster:/scratch/project/</span>
+
+<span class="comment"># Download from cluster</span>
+<span class="command">scp user@cluster:/home/results.tar.gz ./</span></code></pre>
+                                </div>
+                            </div>
+
+                            <!-- rsync -->
+                            <div class="border-l-4 border-green-500 pl-4 bg-green-50 p-3 rounded-r">
+                                <h4 class="font-semibold text-green-800 mb-2">Rsync (Efficient Sync)</h4>
+                                <div class="code-block p-2 text-xs overflow-x-auto">
+                                    <pre class="text-white"><code><span class="comment"># Sync directories (only transfer changes)</span>
+<span class="command">rsync -avz --progress local_dir/ user@cluster:/project/</span>
+
+<span class="comment"># Resume interrupted transfers</span>
+<span class="command">rsync -avz --partial --progress large_file user@cluster:/scratch/</span></code></pre>
+                                </div>
+                            </div>
+
+                            <!-- Globus -->
+                            <div class="border-l-4 border-purple-500 pl-4 bg-purple-50 p-3 rounded-r">
+                                <h4 class="font-semibold text-purple-800 mb-2">Globus (Large-scale Transfer)</h4>
+                                <p class="text-purple-700 text-sm">
+                                    Web-based service for reliable, high-speed transfer of large datasets between institutions.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Storage Strategy -->
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-gray-900">Storage Strategy</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
+                                <h4 class="font-semibold text-yellow-800 mb-2">⚠️ Critical Data Management Rules</h4>
+                                <ul class="text-yellow-700 text-sm space-y-1">
+                                    <li>• <strong>Never rely solely on /scratch for important data</strong></li>
+                                    <li>• Backup results immediately after job completion</li>
+                                    <li>• Use /project for long-term collaborative storage</li>
+                                    <li>• Monitor quota usage regularly</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-3">Data Lifecycle:</h4>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex items-center">
+                                        <div class="w-4 h-4 bg-blue-500 rounded-full mr-3"></div>
+                                        <span><strong>Input:</strong> Upload to /scratch for processing</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-4 h-4 bg-green-500 rounded-full mr-3"></div>
+                                        <span><strong>Processing:</strong> Work in /scratch for speed</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-4 h-4 bg-orange-500 rounded-full mr-3"></div>
+                                        <span><strong>Results:</strong> Copy to /project or /home</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-4 h-4 bg-purple-500 rounded-full mr-3"></div>
+                                        <span><strong>Archive:</strong> Download important results locally</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-4 h-4 bg-red-500 rounded-full mr-3"></div>
+                                        <span><strong>Cleanup:</strong> Remove temporary files from /scratch</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-blue-50 p-4 rounded border border-blue-200">
+                                <h4 class="font-semibold text-blue-800 mb-2">Automation Script Example:</h4>
+                                <div class="code-block p-2 text-xs overflow-x-auto">
+                                    <pre class="text-white"><code><span class="comment">#!/bin/bash</span>
+<span class="comment"># Auto-backup important results</span>
+<span class="keyword">if</span> [ $SLURM_JOB_EXITCODE -eq 0 ]; <span class="keyword">then</span>
+    <span class="command">cp</span> results.dat $HOME/research_backup/
+    <span class="command">echo</span> <span class="string">"Results backed up successfully"</span>
+<span class="keyword">fi</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <div class="flex justify-between items-center pt-8 border-t border-gray-200">
+            <a href="job-scheduling.html" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition duration-200">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                Previous: Job Scheduling
+            </a>
+            <div class="text-center">
+                <p class="text-sm text-gray-500">Module 4 of 5</p>
+            </div>
+            <a href="getting-started.html" class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 transition duration-200">
+                Next: Getting Started
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </a>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">HPC Workshop</h3>
+                    <p class="text-gray-300">HPC Cluster 101.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="introduction.html" class="hover:text-white transition duration-200">Introduction to HPC</a></li>
+                        <li><a href="cluster-architecture.html" class="hover:text-white transition duration-200">Cluster Architecture</a></li>
+                        <li><a href="job-scheduling.html" class="hover:text-white transition duration-200">Job Scheduling</a></li>
+                        <li><a href="getting-started.html" class="hover:text-white transition duration-200">Getting Started</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Resources</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="https://slurm.schedmd.com/" class="hover:text-white transition duration-200">Slurm Documentation</a></li>
+                        <li><a href="https://docs.github.com/en" class="hover:text-white transition duration-200">GitHub Docs</a></li>
+                        <li><a href="https://www.anaconda.com/docs/main" class="hover:text-white transition duration-200">Anaconda Docs</a></li>
+                        <li><a href="https://modules.readthedocs.io/en/latest/" class="hover:text-white transition duration-200">Environment Modules Docs</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 mt-8 text-center text-gray-400">
+                <p>&copy; 2025 HPC Workshop. Created with AI assistance for educational purposes.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
