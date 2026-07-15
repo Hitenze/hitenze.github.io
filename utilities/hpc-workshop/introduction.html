@@ -4,37 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Introduction to High-Performance Computing | HPC Workshop</title>
-    <meta name="description" content="Learn HPC fundamentals, real-world applications, and the world's most powerful supercomputers">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            scroll-behavior: smooth;
-        }
-        .nav-link {
-            transition: all 0.2s ease-in-out;
-        }
-        .nav-link:hover {
-            transform: translateY(-1px);
-            color: #2563eb;
-        }
-        .section-card {
-            transition: all 0.3s ease-in-out;
-        }
-        .section-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        .formula-box {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-        }
-        .progress-bar {
-            background: linear-gradient(90deg, #0EA5E9 0%, #0F172A 100%);
-        }
-    </style>
+    <meta name="description" content="Learn parallel-computing fundamentals, Amdahl's Law, scientific workloads, and the June 2026 TOP500 snapshot.">
+    <link rel="stylesheet" href="assets/workshop.css">
 </head>
 <body class="bg-gray-50 text-gray-900">
 
@@ -44,21 +15,21 @@
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <a href="index.html" class="text-xl font-bold text-gray-900">HPC Workshop</a>
+                        <a href="index.html" class="workshop-brand">HPC Workshop</a>
                     </div>
                 </div>
-                <div class="hidden md:block">
+                <div class="hidden lg:block">
                     <div class="ml-10 flex items-baseline space-x-4">
                         <a href="index.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Home</a>
-                        <a href="introduction.html" class="nav-link text-blue-600 px-3 py-2 text-sm font-medium border-b-2 border-blue-600">Introduction</a>
+                        <a href="introduction.html" aria-current="page" class="nav-link text-blue-600 px-3 py-2 text-sm font-medium border-b-2 border-blue-600">Introduction</a>
                         <a href="cluster-architecture.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Architecture</a>
                         <a href="job-scheduling.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Job Scheduling</a>
                         <a href="workflow-tools.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Workflow</a>
                         <a href="getting-started.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Get Started</a>
                     </div>
                 </div>
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" class="bg-gray-200 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
+                <div class="lg:hidden">
+                    <button id="mobile-menu-button" type="button" aria-label="Toggle workshop navigation" aria-controls="mobile-menu" aria-expanded="false" class="bg-gray-200 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
                         <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
@@ -66,12 +37,12 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Mobile menu -->
-        <div id="mobile-menu" class="md:hidden hidden">
+        <div id="mobile-menu" class="lg:hidden hidden">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
                 <a href="index.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Home</a>
-                <a href="introduction.html" class="block px-3 py-2 text-base font-medium text-blue-600">Introduction</a>
+                <a href="introduction.html" aria-current="page" class="block px-3 py-2 text-base font-medium text-blue-600">Introduction</a>
                 <a href="cluster-architecture.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Architecture</a>
                 <a href="job-scheduling.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Job Scheduling</a>
                 <a href="workflow-tools.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Workflow</a>
@@ -89,6 +60,7 @@
     <header class="bg-white border-b border-gray-200">
         <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div class="text-center">
+                <p class="manual-kicker">Module 01 / Core</p>
                 <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Introduction to High-Performance Computing</h1>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
                     Understanding why HPC is essential for modern research and the fundamental concepts of parallel computing
@@ -98,11 +70,13 @@
     </header>
 
     <main class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div class="manual-layout">
+            <div class="manual-content min-w-0">
 
         <!-- Section 1: Why HPC Matters -->
         <section id="why-hpc" class="mb-16">
             <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Why HPC Matters for Research</h2>
-            
+
             <div class="grid md:grid-cols-2 gap-8 mb-12">
                 <!-- Computational-Intensive Problems -->
                 <div class="section-card bg-white rounded-xl shadow-lg p-8 border-l-4 border-red-500">
@@ -171,12 +145,12 @@
         <!-- Section 2: Serial vs Parallel Computing -->
         <section id="serial-parallel" class="mb-16">
             <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Serial vs. Parallel Computing</h2>
-            
+
             <div class="section-card bg-white rounded-xl shadow-lg p-8 mb-8">
                 <div class="grid md:grid-cols-2 gap-8 items-center">
                     <div class="text-center p-6 border-2 border-gray-200 rounded-lg">
                         <h3 class="text-xl font-semibold mb-4 text-gray-900">Serial Computing</h3>
-                        <div class="text-6xl mb-4">💻</div>
+                        <div class="manual-glyph">SERIAL</div>
                         <p class="text-gray-600 mb-4">
                             Instructions executed sequentially, one at a time, on a single processing unit.
                         </p>
@@ -186,7 +160,7 @@
                     </div>
                     <div class="text-center p-6 border-2 border-blue-400 bg-blue-50 rounded-lg">
                         <h3 class="text-xl font-semibold mb-4 text-blue-800">Parallel Computing</h3>
-                        <div class="text-6xl mb-4">🖥️🖥️🖥️🖥️</div>
+                        <div class="manual-glyph">PARALLEL</div>
                         <p class="text-blue-700 mb-4">
                             Multiple instructions executed simultaneously across multiple processing units.
                         </p>
@@ -195,7 +169,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="mt-8 bg-gray-50 p-6 rounded-lg">
                     <h4 class="text-lg font-semibold mb-3 text-gray-900">Key Concepts:</h4>
                     <div class="grid md:grid-cols-3 gap-4 text-sm">
@@ -213,12 +187,35 @@
             </div>
         </section>
 
+        <!-- Core concept: Amdahl's Law -->
+        <section id="amdahl" class="mb-16">
+            <p class="manual-section-label">Core concept / scaling limit</p>
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Amdahl's Law</h2>
+            <div class="manual-panel p-8">
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <p class="text-gray-700 mb-4">
+                            Parallel hardware accelerates only the part of a program that can run concurrently. If a fraction <code>f</code> is parallel and the rest is serial, the ideal speedup on <code>N</code> workers is
+                        </p>
+                        <div class="bg-gray-900 text-white p-4 font-mono text-center text-lg">
+                            S(N) = 1 / ((1 - f) + f / N)
+                        </div>
+                    </div>
+                    <div class="field-note p-5">
+                        <h3 class="text-lg font-bold mb-2">Example</h3>
+                        <p class="text-sm mb-2">With 95% parallel work and 32 workers, the ideal speedup is about 12.5x, not 32x.</p>
+                        <p class="text-sm mb-0">Even with unlimited workers, the remaining 5% serial fraction caps speedup at 20x. Optimize the bottleneck before requesting more nodes.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Section 3: Real-World HPC Applications -->
         <section id="hpc-applications" class="mb-16">
-            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Real-World HPC Applications Changing Our World</h2>
-            
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Research Applications</h2>
+
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                <!-- Climate & Weather -->
+                <!-- Climate &amp; Weather -->
                 <div class="section-card bg-white rounded-xl shadow-lg p-6 border-t-4 border-blue-500">
                     <div class="flex items-center mb-4">
                         <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
@@ -226,13 +223,13 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
                             </svg>
                         </div>
-                        <h3 class="text-lg font-bold text-gray-900">Climate & Weather</h3>
+                        <h3 class="text-lg font-bold text-gray-900">Climate &amp; Weather</h3>
                     </div>
                     <p class="text-gray-700 text-sm mb-3">
-                        AI models like FourCastNet deliver forecasts <strong>45,000x faster</strong> using 12,000x less energy.
+                        High-resolution simulations and ensemble forecasts combine numerical models, observations, and learning-based components.
                     </p>
                     <div class="bg-blue-50 p-3 rounded text-xs">
-                        <p class="text-blue-700"><strong>Impact:</strong> Taiwan reduced typhoon prediction costs from $3M to $60K using NVIDIA CorrDiff.</p>
+                        <p class="text-blue-700"><strong>HPC role:</strong> Run many scenarios quickly enough to quantify uncertainty and support time-sensitive forecasts.</p>
                     </div>
                 </div>
 
@@ -244,13 +241,13 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                             </svg>
                         </div>
-                        <h3 class="text-lg font-bold text-gray-900">Drug Discovery</h3>
+                        <h3 class="text-lg font-bold text-gray-900">Drug &amp; Materials Discovery</h3>
                     </div>
                     <p class="text-gray-700 text-sm mb-3">
-                        Discovered <strong>380,000 stable materials</strong> from 2.2 million crystals - equivalent to 800 years of knowledge.
+                        Molecular simulation, structure prediction, and large candidate searches help researchers prioritize expensive laboratory experiments.
                     </p>
                     <div class="bg-green-50 p-3 rounded text-xs">
-                        <p class="text-green-700"><strong>Milestone:</strong> First AI-generated drug entered Phase 2 trials in June 2023.</p>
+                        <p class="text-green-700"><strong>HPC role:</strong> Evaluate many structures and parameter choices while retaining physically meaningful models.</p>
                     </div>
                 </div>
 
@@ -265,10 +262,10 @@
                         <h3 class="text-lg font-bold text-gray-900">AI/ML Training</h3>
                     </div>
                     <p class="text-gray-700 text-sm mb-3">
-                        GPT-4 required <strong>21 billion petaFLOPS</strong> for training. Over 30 models trained at this scale in 2024.
+                        Modern machine learning workloads distribute training, inference, and data preparation across accelerators and compute nodes.
                     </p>
                     <div class="bg-purple-50 p-3 rounded text-xs">
-                        <p class="text-purple-700"><strong>Parameter Evolution:</strong> GPT-2 (1.5B) → GPT-3 (175B) → GPT-4 (est. 1.8T) </p>
+                        <p class="text-purple-700"><strong>HPC role:</strong> Balance computation, memory, and communication instead of treating more GPUs as automatic speedup.</p>
                     </div>
                 </div>
 
@@ -283,10 +280,10 @@
                         <h3 class="text-lg font-bold text-gray-900">Genomics</h3>
                     </div>
                     <p class="text-gray-700 text-sm mb-3">
-                        Full genome analysis reduced from <strong>days to under 1 hour</strong>, enabling rapid clinical diagnosis.
+                        Genome alignment, variant calling, and population-scale analysis combine large datasets with parallel pipelines.
                     </p>
                     <div class="bg-red-50 p-3 rounded text-xs">
-                        <p class="text-red-700"><strong>Achievement:</strong> Up to 65x speedup with GPU acceleration, 75% cost reduction.</p>
+                        <p class="text-red-700"><strong>HPC role:</strong> Process independent samples concurrently while managing I/O and reproducible environments.</p>
                     </div>
                 </div>
 
@@ -301,10 +298,10 @@
                         <h3 class="text-lg font-bold text-gray-900">Astrophysics</h3>
                     </div>
                     <p class="text-gray-700 text-sm mb-3">
-                        Processing JWST data revealing unexpected early universe galaxies. Simulating <strong>1.6 billion atoms</strong> in systems.
+                        N-body simulations, hydrodynamics, and telescope pipelines connect physical models with large observational datasets.
                     </p>
                     <div class="bg-indigo-50 p-3 rounded text-xs">
-                        <p class="text-indigo-700"><strong>Scale:</strong> 46 days on 9,600 cores for black hole collision simulations.</p>
+                        <p class="text-indigo-700"><strong>HPC role:</strong> Couple large simulations with distributed analysis and visualization.</p>
                     </div>
                 </div>
 
@@ -320,10 +317,10 @@
                         <h3 class="text-lg font-bold text-gray-900">Engineering</h3>
                     </div>
                     <p class="text-gray-700 text-sm mb-3">
-                        Full aircraft simulations in a day. EV thermal analysis with 9x speedup.
+                        Computational fluid dynamics and finite-element models support design studies that would be costly to reproduce physically.
                     </p>
                     <div class="bg-yellow-50 p-3 rounded text-xs">
-                        <p class="text-yellow-700"><strong>Capability:</strong> Billion-cell meshes for CFD/FEA analysis.</p>
+                        <p class="text-yellow-700"><strong>HPC role:</strong> Run parameter sweeps and high-fidelity models while tracking resource cost.</p>
                     </div>
                 </div>
             </div>
@@ -332,56 +329,59 @@
         <!-- Section 4: TOP500 Supercomputers -->
         <section id="top500" class="mb-16">
             <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">TOP500 Supercomputers</h2>
-            
+
             <!-- TOP 5 List -->
             <div class="section-card bg-white rounded-xl shadow-lg p-8 mb-8">
-                <h3 class="text-xl font-bold mb-6 text-gray-900">TOP 5 Supercomputers (June 2025)</h3>
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-0">TOP 5 Supercomputers (June 2026)</h3>
+                    <a href="https://www.top500.org/lists/top500/list/2026/06/?page=1" class="font-mono text-sm text-blue-700">Official TOP500 snapshot</a>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full">
                         <thead>
                             <tr class="border-b-2 border-gray-200">
-                                <th class="text-left py-3 px-4">Rank</th>
-                                <th class="text-left py-3 px-4">System</th>
-                                <th class="text-left py-3 px-4">Site</th>
-                                <th class="text-right py-3 px-4">Performance</th>
-                                <th class="text-right py-3 px-4">Cores</th>
+                                <th scope="col" class="text-left py-3 px-4">Rank</th>
+                                <th scope="col" class="text-left py-3 px-4">System</th>
+                                <th scope="col" class="text-left py-3 px-4">Site</th>
+                                <th scope="col" class="text-right py-3 px-4">HPL Rmax</th>
+                                <th scope="col" class="text-right py-3 px-4">Cores</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="border-b border-gray-100 bg-yellow-50">
                                 <td class="py-3 px-4 font-bold text-yellow-600">1</td>
-                                <td class="py-3 px-4 font-semibold">El Capitan</td>
-                                <td class="py-3 px-4 text-sm text-gray-600">LLNL, USA</td>
-                                <td class="py-3 px-4 text-right font-mono font-bold">1.742 EFlops</td>
-                                <td class="py-3 px-4 text-right text-sm">11,039,616</td>
+                                <td class="py-3 px-4 font-semibold">LineShine</td>
+                                <td class="py-3 px-4 text-sm text-gray-600">NSCS Shenzhen, China</td>
+                                <td class="py-3 px-4 text-right font-mono font-bold">2.198 EFlop/s</td>
+                                <td class="py-3 px-4 text-right text-sm">13,789,440</td>
                             </tr>
                             <tr class="border-b border-gray-100">
                                 <td class="py-3 px-4 font-bold text-gray-600">2</td>
-                                <td class="py-3 px-4 font-semibold">Frontier</td>
-                                <td class="py-3 px-4 text-sm text-gray-600">Oak Ridge, USA</td>
-                                <td class="py-3 px-4 text-right font-mono">1.353 EFlops</td>
-                                <td class="py-3 px-4 text-right text-sm">9,066,176</td>
+                                <td class="py-3 px-4 font-semibold">El Capitan</td>
+                                <td class="py-3 px-4 text-sm text-gray-600">LLNL, USA</td>
+                                <td class="py-3 px-4 text-right font-mono">1.809 EFlop/s</td>
+                                <td class="py-3 px-4 text-right text-sm">11,340,000</td>
                             </tr>
                             <tr class="border-b border-gray-100">
                                 <td class="py-3 px-4 font-bold text-gray-600">3</td>
-                                <td class="py-3 px-4 font-semibold">Aurora</td>
-                                <td class="py-3 px-4 text-sm text-gray-600">Argonne, USA</td>
-                                <td class="py-3 px-4 text-right font-mono">1.012 EFlops</td>
-                                <td class="py-3 px-4 text-right text-sm">9,264,128</td>
+                                <td class="py-3 px-4 font-semibold">Frontier</td>
+                                <td class="py-3 px-4 text-sm text-gray-600">Oak Ridge, USA</td>
+                                <td class="py-3 px-4 text-right font-mono">1.353 EFlop/s</td>
+                                <td class="py-3 px-4 text-right text-sm">9,066,176</td>
                             </tr>
                             <tr class="border-b border-gray-100">
                                 <td class="py-3 px-4 font-bold text-gray-600">4</td>
-                                <td class="py-3 px-4 font-semibold">JUPITER Booster</td>
-                                <td class="py-3 px-4 text-sm text-gray-600">Jülich, Germany</td>
-                                <td class="py-3 px-4 text-right font-mono">793.4 PFlops</td>
-                                <td class="py-3 px-4 text-right text-sm">4,801,344</td>
+                                <td class="py-3 px-4 font-semibold">Aurora</td>
+                                <td class="py-3 px-4 text-sm text-gray-600">Argonne, USA</td>
+                                <td class="py-3 px-4 text-right font-mono">1.012 EFlop/s</td>
+                                <td class="py-3 px-4 text-right text-sm">9,264,128</td>
                             </tr>
                             <tr class="border-b border-gray-100">
                                 <td class="py-3 px-4 font-bold text-gray-600">5</td>
-                                <td class="py-3 px-4 font-semibold">Eagle</td>
-                                <td class="py-3 px-4 text-sm text-gray-600">Microsoft Azure, USA</td>
-                                <td class="py-3 px-4 text-right font-mono">561.2 PFlops</td>
-                                <td class="py-3 px-4 text-right text-sm">2,073,600</td>
+                                <td class="py-3 px-4 font-semibold">JUPITER Booster</td>
+                                <td class="py-3 px-4 text-sm text-gray-600">Jülich, Germany</td>
+                                <td class="py-3 px-4 text-right font-mono">1.000 EFlop/s</td>
+                                <td class="py-3 px-4 text-right text-sm">4,801,344</td>
                             </tr>
                         </tbody>
                     </table>
@@ -392,14 +392,9 @@
             <div class="section-card bg-white rounded-xl shadow-lg p-8">
                 <h3 class="text-lg font-bold mb-4 text-gray-900">Current HPC Trends</h3>
                 <ul class="list-disc pl-6 space-y-2 text-gray-700 text-sm md:text-base">
-                    <li><strong>GPU‑accelerated HPC —</strong> Modern supercomputers lean on accelerators (AMD/Intel/NVIDIA GPUs) for massive parallelism.</li>
-                    <li><strong>Neuromorphic computing —</strong> Brain‑inspired, ultra‑low‑power spiking chips (e.g., research systems like Intel’s), targeting energy‑efficient AI.</li>
-                    <li><strong>Quantum–HPC convergence —</strong> Hybrid workflows where quantum processors tackle niche subproblems while classical HPC does the heavy lifting; still early and focused on error correction.</li>
-                    <li><strong>Photonic (optical) computing —</strong> Using light for compute/interconnect to cut latency and power; promising prototypes, commercialization in progress.</li>
-                    <li><strong>Analog / in‑memory computing —</strong> Analog MAC arrays (e.g., SRAM/memristor crossbars) that compute inside memory for higher energy efficiency; active research and early devices.</li>
-                    <li><strong>Green computing —</strong> Efficiency becomes a first‑class goal: liquid cooling, heat reuse, power/thermal‑aware scheduling, and “right‑sizing” jobs to avoid waste.</li>
-                    <li><strong>DNA storage / biocomputing —</strong> DNA as ultra‑dense archival storage with experimental molecular logic; research stage, not production.</li>
-                    <li><strong>Edge + HPC —</strong> Preprocess near sensors (edge) and send distilled data to the cluster; reduces bandwidth, cost, and latency while HPC handles the heavy compute.</li>
+                    <li><strong>Accelerator-heavy systems:</strong> CPUs coordinate work while GPUs and other accelerators provide much of the throughput.</li>
+                    <li><strong>Heterogeneous and mixed precision:</strong> algorithms must balance speed, memory traffic, numerical stability, and communication.</li>
+                    <li><strong>Energy and resource efficiency:</strong> right-sizing jobs, reducing data movement, and measuring useful throughput are core design goals.</li>
                 </ul>
             </div>
         </section>
@@ -407,7 +402,7 @@
         <!-- Section 5: Parallel Programming Paradigms -->
         <section id="programming-paradigms" class="mb-16">
             <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Parallel Programming Paradigms</h2>
-            
+
             <div class="grid md:grid-cols-3 gap-8">
                 <!-- Shared Memory / OpenMP -->
                 <div class="section-card bg-white rounded-xl shadow-lg p-6 border-t-4 border-green-500">
@@ -420,12 +415,12 @@
                         <h3 class="text-xl font-bold text-gray-900">Shared Memory</h3>
                         <p class="text-gray-600 text-sm">(OpenMP)</p>
                     </div>
-                    
+
                     <div class="space-y-4">
                         <p class="text-gray-700 text-sm">
                             Multiple threads within a single process share the same memory space and can access common data structures.
                         </p>
-                        
+
                         <div class="bg-green-50 p-4 rounded-lg">
                             <h4 class="font-semibold text-green-800 text-sm mb-2">Characteristics:</h4>
                             <ul class="text-green-700 text-xs space-y-1">
@@ -435,7 +430,7 @@
                                 <li>• Compiler directive-based</li>
                             </ul>
                         </div>
-                        
+
                         <div class="bg-gray-100 p-3 rounded">
                             <code class="text-xs text-gray-800">
                                 #pragma omp parallel for<br>
@@ -458,12 +453,12 @@
                         <h3 class="text-xl font-bold text-gray-900">Distributed Memory</h3>
                         <p class="text-gray-600 text-sm">(MPI)</p>
                     </div>
-                    
+
                     <div class="space-y-4">
                         <p class="text-gray-700 text-sm">
                             Independent processes with private memory spaces communicate through explicit message passing over a network.
                         </p>
-                        
+
                         <div class="bg-blue-50 p-4 rounded-lg">
                             <h4 class="font-semibold text-blue-800 text-sm mb-2">Characteristics:</h4>
                             <ul class="text-blue-700 text-xs space-y-1">
@@ -473,13 +468,13 @@
                                 <li>• Network-based data exchange</li>
                             </ul>
                         </div>
-                        
+
                         <div class="bg-gray-100 p-3 rounded">
                             <code class="text-xs text-gray-800">
                                 MPI_Send(data, count, MPI_INT,<br>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dest, tag, MPI_COMM_WORLD);<br>
                                 MPI_Recv(buffer, count, MPI_INT,<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source, tag, MPI_COMM_WORLD, &status);
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source, tag, MPI_COMM_WORLD, &amp;status);
                             </code>
                         </div>
                     </div>
@@ -496,22 +491,22 @@
                         <h3 class="text-xl font-bold text-gray-900">GPU Computing</h3>
                         <p class="text-gray-600 text-sm">(CUDA/OpenCL)</p>
                     </div>
-                    
+
                     <div class="space-y-4">
                         <p class="text-gray-700 text-sm">
                             Massively parallel computing using Graphics Processing Units with thousands of lightweight cores for data-parallel workloads.
                         </p>
-                        
+
                         <div class="bg-cyan-50 p-4 rounded-lg">
                             <h4 class="font-semibold text-cyan-800 text-sm mb-2">Characteristics:</h4>
                             <ul class="text-cyan-700 text-xs space-y-1">
                                 <li>• Thousands of cores</li>
-                                <li>• SIMD execution model</li>
+                                <li>• SIMT/SIMD-style execution</li>
                                 <li>• High memory bandwidth</li>
                                 <li>• Specialized for data parallelism</li>
                             </ul>
                         </div>
-                        
+
                         <div class="bg-gray-100 p-3 rounded">
                             <code class="text-xs text-gray-800">
                                 __global__ void kernel(float *data) {<br>
@@ -545,6 +540,17 @@
             </a>
         </div>
 
+            </div>
+            <aside class="manual-toc" aria-label="On this page">
+                <h2>On this page</h2>
+                    <a href="#why-hpc">Why HPC</a>
+                    <a href="#serial-parallel">Serial vs parallel</a>
+                    <a href="#amdahl">Amdahl's Law</a>
+                    <a href="#hpc-applications">Applications</a>
+                    <a href="#top500">June 2026 TOP500</a>
+                    <a href="#programming-paradigms">Programming models</a>
+            </aside>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -569,37 +575,16 @@
                     <ul class="space-y-2 text-gray-300">
                         <li><a href="https://slurm.schedmd.com/" class="hover:text-white transition duration-200">Slurm Documentation</a></li>
                         <li><a href="https://docs.github.com/en" class="hover:text-white transition duration-200">GitHub Docs</a></li>
-                        <li><a href="https://www.anaconda.com/docs/main" class="hover:text-white transition duration-200">Anaconda Docs</a></li>
+                        <li><a href="https://docs.astral.sh/uv/" class="hover:text-white transition duration-200">uv Documentation</a></li>
                         <li><a href="https://modules.readthedocs.io/en/latest/" class="hover:text-white transition duration-200">Environment Modules Docs</a></li>
                     </ul>
                 </div>
             </div>
             <div class="border-t border-gray-700 pt-8 mt-8 text-center text-gray-400">
-                <p>&copy; 2025 HPC Workshop. Created with AI assistance for educational purposes.</p>
+                <p>&copy; 2026 Tianshi Xu. Developed and reviewed with assistance from GPT 5.6-Sol.</p>
             </div>
         </div>
     </footer>
-
-    <script>
-        // Mobile menu toggle
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-    </script>
+    <script src="assets/workshop.js"></script>
 </body>
 </html>

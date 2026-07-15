@@ -4,34 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HPC Workshop for Graduate Researchers</title>
-    <meta name="description" content="Comprehensive High-Performance Computing workshop for Master's and PhD students">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-        .nav-link {
-            transition: all 0.2s ease-in-out;
-        }
-        .nav-link:hover {
-            transform: translateY(-1px);
-            color: #2563eb;
-        }
-        .workshop-card {
-            transition: all 0.3s ease-in-out;
-        }
-        .workshop-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        /* Emory Blue hero background */
-        .gradient-bg {
-            background: linear-gradient(135deg, #0C2340 0%, #012169 100%);
-        }
-    </style>
+    <meta name="description" content="A practical 90-minute introduction to HPC clusters, Slurm, reproducible Python workflows, and a first validated job.">
+    <link rel="stylesheet" href="assets/workshop.css">
 </head>
 <body class="bg-gray-50 text-gray-900">
 
@@ -41,12 +15,12 @@
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <h1 class="text-xl font-bold text-gray-900">HPC Workshop</h1>
+                        <a href="index.html" class="workshop-brand">HPC Workshop</a>
                     </div>
                 </div>
-                <div class="hidden md:block">
+                <div class="hidden lg:block">
                     <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="#home" class="nav-link text-gray-900 hover:text-blue-600 px-3 py-2 text-sm font-medium">Home</a>
+                        <a href="#home" aria-current="page" class="nav-link text-gray-900 hover:text-blue-600 px-3 py-2 text-sm font-medium">Home</a>
                         <a href="introduction.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Introduction</a>
                         <a href="cluster-architecture.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Architecture</a>
                         <a href="job-scheduling.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Job Scheduling</a>
@@ -54,8 +28,8 @@
                         <a href="getting-started.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Get Started</a>
                     </div>
                 </div>
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" class="bg-gray-200 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
+                <div class="lg:hidden">
+                    <button id="mobile-menu-button" type="button" aria-label="Toggle workshop navigation" aria-controls="mobile-menu" aria-expanded="false" class="bg-gray-200 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
                         <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
@@ -63,11 +37,11 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Mobile menu -->
-        <div id="mobile-menu" class="md:hidden hidden">
+        <div id="mobile-menu" class="lg:hidden hidden">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
-                <a href="#home" class="block px-3 py-2 text-base font-medium text-gray-900 hover:text-blue-600">Home</a>
+                <a href="#home" aria-current="page" class="block px-3 py-2 text-base font-medium text-gray-900 hover:text-blue-600">Home</a>
                 <a href="introduction.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Introduction</a>
                 <a href="cluster-architecture.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Architecture</a>
                 <a href="job-scheduling.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Job Scheduling</a>
@@ -81,14 +55,15 @@
     <div id="home" class="gradient-bg">
         <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
             <div class="text-center">
+                <p class="manual-kicker">Field Guide 01 / Core Workshop</p>
                 <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
                     HPC Workshop
                 </h1>
                 <p class="text-xl md:text-2xl text-white mb-8 max-w-3xl mx-auto">
-                    HPC 101: Getting Started
+                    A practical 90-minute introduction to research computing
                 </p>
-                <p class="text-lg text-blue-100 mb-10 max-w-2xl mx-auto">
-                    This website is provided “as is” for educational use. Examples target Linux + Slurm clusters and may differ from your institution’s setup. Always follow your site’s documentation and policies. Scripts may require edits; use at your own risk. For help, contact your cluster’s support (ticket or email).
+                <p class="manual-intro text-lg mb-10 mx-auto">
+                    Learn how clusters are organized, request resources with Slurm, and run a small Python job without treating the login node as a workstation.
                 </p>
                 <div class="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center">
                     <a href="introduction.html" class="inline-block bg-white text-blue-600 font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-gray-50 transition duration-200">
@@ -101,16 +76,21 @@
                         Slides
                     </a>
                 </div>
+                <p class="mt-8 text-sm text-blue-100 max-w-3xl mx-auto">
+                    Examples target Linux and Slurm. Accounts, partitions, modules, and GPU syntax are site-specific; always follow your institution's documentation and policies.
+                </p>
             </div>
         </div>
     </div>
 
+    <main>
     <!-- Workshop Overview -->
     <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
+            <p class="manual-section-label">Core path / 90 minutes</p>
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Workshop Modules</h2>
             <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                Five comprehensive modules covering everything from HPC fundamentals to advanced workflow management.
+                Five focused modules form the live workshop. Extended workflow, Git, Remote-SSH troubleshooting, and agentic practices remain available as optional reference material.
             </p>
         </div>
 
@@ -123,6 +103,7 @@
                     </svg>
                 </div>
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">Introduction to HPC</h3>
+                <span class="core-badge mb-3">Core</span>
                 <p class="text-gray-600 mb-4">
                     Learn why HPC matters for research, understand parallel computing concepts, and explore Amdahl's Law.
                 </p>
@@ -140,6 +121,7 @@
                     </svg>
                 </div>
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">Cluster Architecture</h3>
+                <span class="core-badge mb-3">Core</span>
                 <p class="text-gray-600 mb-4">
                     Understand HPC system components, storage hierarchies, and network interconnects.
                 </p>
@@ -157,6 +139,7 @@
                     </svg>
                 </div>
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">Job Scheduling</h3>
+                <span class="core-badge mb-3">Core</span>
                 <p class="text-gray-600 mb-4">
                     Master Slurm commands, write effective job scripts, and optimize resource allocation.
                 </p>
@@ -174,9 +157,10 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                 </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">Workflow & Tools</h3>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Workflow &amp; Tools</h3>
+                <span class="optional-badge mb-3">Core + Reference</span>
                 <p class="text-gray-600 mb-4">
-                    Learn modern development practices, version control, and remote development with VS Code.
+                    Use reproducible Python environments and safe remote development, with Git and agentic practices as optional references.
                 </p>
                 <div class="flex justify-between items-center">
                     <span class="text-sm text-gray-500">Module 4</span>
@@ -192,8 +176,9 @@
                     </svg>
                 </div>
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">Getting Started</h3>
+                <span class="core-badge mb-3">Core</span>
                 <p class="text-gray-600 mb-4">
-                    Step-by-step tutorial to run your first HPC job with practical examples and troubleshooting.
+                    Run, validate, and inspect a small dependency-free Python job, then try the optional NumPy example.
                 </p>
                 <div class="flex justify-between items-center">
                     <span class="text-sm text-gray-500">Module 5</span>
@@ -210,17 +195,17 @@
                 </div>
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">Learning Path</h3>
                 <p class="text-gray-600 mb-4">
-                    Follow our recommended sequence for optimal learning progression from beginner to advanced.
+                    Complete the core sequence in about 90 minutes, then return to the optional material as a field reference.
                 </p>
                 <div class="text-sm text-cyan-700 font-medium">
-                    Estimated Duration: 90 minutes
+                    Core duration: approximately 90 minutes
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Workshop Information -->
-    <div class="bg-white">
+    <div class="workshop-info bg-white">
         <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-2 gap-12">
                 <!-- Who Should Attend -->
@@ -257,13 +242,13 @@
                             </div>
                             <div class="ml-3">
                                 <h3 class="text-lg font-medium text-gray-900">Anyone Curious About HPC</h3>
-                                <p class="text-gray-600">Explore how supercomputers can transform your research</p>
+                                <p class="text-gray-600">Learn when cluster resources are a practical fit for your workload</p>
                             </div>
                         </div>
                     </div>
                     <div class="mt-6 p-4 bg-blue-50 rounded-lg">
                         <p class="text-sm text-blue-800">
-                            <strong>No prerequisites required!</strong> We'll teach everything from scratch.
+                            <strong>No prior HPC experience is required.</strong> You will still need a cluster account, an SSH client, and your institution's login and MFA details for the hands-on steps.
                         </p>
                     </div>
                 </div>
@@ -289,7 +274,7 @@
                                 </svg>
                             </div>
                             <div class="ml-3">
-                                <p class="text-gray-600">Log in, move files, and choose the right partition/time/memory/CPUs/GPUs</p>
+                                <p class="text-gray-600">Connect securely and translate a workload into site-appropriate time, memory, CPU-slot, and GPU requests</p>
                             </div>
                         </div>
                         <div class="flex items-start">
@@ -309,7 +294,7 @@
                                 </svg>
                             </div>
                             <div class="ml-3">
-                                <p class="text-gray-600">Use common workflows</p>
+                                <p class="text-gray-600">Validate scripts, inspect job evidence, and keep Python environments reproducible</p>
                             </div>
                         </div>
                     </div>
@@ -317,6 +302,7 @@
             </div>
         </div>
     </div>
+    </main>
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-white">
@@ -327,9 +313,9 @@
                     <p class="text-gray-300">
                         HPC Cluster 101
                     </p>
-		    <p class="text-gray-300">
-		    	tianshi (dot) xu (at) emory (dot) edu
-		    </p>
+                    <p class="text-gray-300">
+                        tianshi (dot) xu (at) emory (dot) edu
+                    </p>
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
@@ -345,37 +331,16 @@
                     <ul class="space-y-2 text-gray-300">
                         <li><a href="https://slurm.schedmd.com/" class="hover:text-white transition duration-200">Slurm Documentation</a></li>
                         <li><a href="https://docs.github.com/en" class="hover:text-white transition duration-200">GitHub Docs</a></li>
-                        <li><a href="https://www.anaconda.com/docs/main" class="hover:text-white transition duration-200">Anaconda Docs</a></li>
+                        <li><a href="https://docs.astral.sh/uv/" class="hover:text-white transition duration-200">uv Documentation</a></li>
                         <li><a href="https://modules.readthedocs.io/en/latest/" class="hover:text-white transition duration-200">Environment Modules Docs</a></li>
                     </ul>
                 </div>
             </div>
             <div class="border-t border-gray-700 pt-8 mt-8 text-center text-gray-400">
-                <p>&copy; 2025 HPC Workshop. Created with AI assistance for educational purposes.</p>
+                <p>&copy; 2026 Tianshi Xu. Developed and reviewed with assistance from GPT 5.6-Sol.</p>
             </div>
         </div>
     </footer>
-
-    <script>
-        // Mobile menu toggle
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-    </script>
+    <script src="assets/workshop.js"></script>
 </body>
 </html>

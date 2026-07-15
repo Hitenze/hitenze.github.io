@@ -1,382 +1,569 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>HPC Workshop — Slides</title>
-    <meta name="description" content="Slides for the HPC Workshop (Graduate Researchers)">
-
-    <!-- Always open links in a new tab/window -->
-    <base target="_blank" />
-
-    <!-- Fonts (match site style) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <!-- Reveal.js CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/white.css" id="theme">
-    <!-- Code highlight theme -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/highlight/monokai.css">
-
-    <style>
-      :root { --r-main-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-      .reveal pre code { font-size: 0.9em; }
-      .reveal section img { max-height: 70vh; border-radius: 8px; }
-    </style>
-  </head>
-  <body>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HPC Workshop - Technical Field Manual Slides</title>
+    <meta name="description" content="A 90-minute practical introduction to HPC clusters, Slurm, remote workflows, and a first Python job.">
+    <link rel="stylesheet" href="assets/vendor/reveal/reveal.css">
+    <link rel="stylesheet" href="assets/vendor/reveal/plugin/highlight/monokai.css">
+    <link rel="stylesheet" href="assets/slides.css">
+</head>
+<body>
     <div class="reveal">
-      <div class="slides">
+        <div class="slides">
+            <!-- 01 -->
+            <section class="section-divider title-slide">
+                <div>
+                    <p class="slide-label">Technical Field Manual / 90-minute core</p>
+                    <h1>HPC Cluster 101</h1>
+                    <p class="subtitle">From login node to a validated Slurm job without guessing at site policy.</p>
+                    <p class="meta">Tianshi Xu / Department of Mathematics<br>Last reviewed: July 2026<br>Developed and reviewed with assistance from GPT 5.6-Sol.</p>
+                </div>
+                <div class="qr-panel">
+                    <img src="assets/qr.png" alt="QR code for the HPC Workshop website">
+                    <code>tianshixu.com/utilities/<br>hpc-workshop/</code>
+                </div>
+            </section>
 
-        <!-- Title -->
-        <section>
-          <h1>HPC Workshop</h1>
-          <h3>High-Performance Computing 101</h3>
-          <p><small>Tianshi Xu / Department of Mathematics · <span id="today"></span></small></p>
-        </section>
+            <!-- 02 -->
+            <section>
+                <p class="slide-label">Field map / Core route</p>
+                <h2>Five modules, one working job</h2>
+                <div class="grid-3 compact">
+                    <div class="panel"><h3>01 / Why</h3><p>Parallel work, limits, and Amdahl's Law.</p></div>
+                    <div class="panel"><h3>02 / Where</h3><p>Login, compute, storage, and network.</p></div>
+                    <div class="panel"><h3>03 / How</h3><p>Slurm resources, scripts, and evidence.</p></div>
+                    <div class="panel"><h3>04 / Tools</h3><p><code>uv</code>, Remote-SSH, and safe agents.</p></div>
+                    <div class="panel"><h3>05 / Execute</h3><p>Validate and run a dependency-free Python job.</p></div>
+                    <div class="panel"><h3>Appendix</h3><p>Threads, Git, data, containers, and notebooks.</p></div>
+                </div>
+                <p class="callout">Core path: 90 minutes. Optional material stays out of the critical path.</p>
+            </section>
 
-        <!-- Agenda mapped 1:1 to site pages -->
-        <section>
-          <section>
-          <h2>Agenda</h2>
-          <ul>
-            <li><a href="introduction.html">Introduction</a></li>
-            <li><a href="cluster-architecture.html">Cluster Architecture</a></li>
-            <li><a href="job-scheduling.html">Job Scheduling (Slurm)</a></li>
-            <li><a href="workflow-tools.html">Workflow &amp; Tools</a></li>
-            <li><a href="getting-started.html">Getting Started</a></li>
-          </ul>
-          </section>  
-          <section>
-            <p>tianshixu.com/utilities/hpc-workshop/index.html</p>
-            <img src="assets/qr.png" alt="https://tianshixu.com/utilities/hpc-workshop/index.html" />
-          </section>
-        </section>
+            <!-- 03 -->
+            <section>
+                <section class="section-divider">
+                    <p class="slide-label">Module 01 / Core</p>
+                    <h1>Why HPC?</h1>
+                    <p>Scale the work, not just the machine.</p>
+                </section>
 
-        <!-- Introduction section (vertical stack) -->
-        <section>
-          <!-- Intro index -->
-          <section>
-            <h2>Introduction</h2>
-            <p><a href="introduction.html">Open: Introduction</a></p>
-          </section>
+                <!-- 04 -->
+                <section>
+                    <p class="slide-label">01.1 / Parallel work</p>
+                    <div class="full-bleed-image">
+                        <div>
+                            <h2>Expose independent work</h2>
+                            <p>Parallel hardware helps only when the algorithm provides work that can proceed concurrently.</p>
+                            <p class="callout">More resources do not repair serial dependencies, load imbalance, or excessive communication.</p>
+                        </div>
+                        <img src="assets/motivation-parallel.webp" alt="Technical illustration contrasting one serial lane with several parallel compute lanes">
+                    </div>
+                </section>
 
-          <!-- Motivation 1 (image only; presenter explains) -->
-          <section>
-            <h3>Motivation</h3>
-            <img src="assets/motivation-1.png" alt="Motivation illustration 1" />
-          </section>
+                <!-- 05 -->
+                <section>
+                    <p class="slide-label">01.2 / Execution models</p>
+                    <h2>Serial and parallel are algorithm choices</h2>
+                    <div class="grid-2">
+                        <div class="panel">
+                            <h3>Serial</h3>
+                            <ul>
+                                <li>One ordered stream of work</li>
+                                <li>Simple dependencies</li>
+                                <li>Limited by one execution path</li>
+                            </ul>
+                        </div>
+                        <div class="panel">
+                            <h3>Parallel</h3>
+                            <ul>
+                                <li>Threads, processes, accelerators, or jobs</li>
+                                <li>Requires partitioning and coordination</li>
+                                <li>Limited by serial work and overhead</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
 
-          <!-- Motivation 2 (image only; presenter explains) -->
-          <section>
-            <h3>Motivation</h3>
-            <img src="assets/motivation-2.png" alt="Motivation illustration 2" />
-          </section>
+                <!-- 06 -->
+                <section>
+                    <p class="slide-label">01.3 / Amdahl's Law</p>
+                    <h2>The serial fraction sets the ceiling</h2>
+                    <div class="equation">S(N) = 1 / ((1 - f) + f / N)</div>
+                    <div class="grid-2 compact">
+                        <div class="panel">
+                            <h3>Example</h3>
+                            <p>If 95% of a program is parallel, 32 workers give at most about <strong>12.5x</strong> speedup.</p>
+                        </div>
+                        <div class="panel">
+                            <h3>Limit</h3>
+                            <p>Even infinitely many workers cannot exceed <strong>20x</strong> while 5% remains serial.</p>
+                        </div>
+                    </div>
+                    <p class="callout">Optimize the dominant serial and communication costs before requesting a larger allocation.</p>
+                </section>
 
-          <!-- Serial vs Parallel (one-line contrast; you narrate) -->
-          <section>
-            <h3>Serial vs. Parallel Computing</h3>
-            <ul>
-              <li><strong>Serial:</strong> one worker, step by step</li>
-              <li><strong>Parallel:</strong> many workers at once</li>
-            </ul>
-          </section>
+                <!-- 07 -->
+                <section>
+                    <p class="slide-label">01.4 / Scientific workloads</p>
+                    <h2>HPC is an end-to-end system</h2>
+                    <div class="grid-3 compact">
+                        <div class="panel"><h3>Simulation</h3><p>PDEs, particles, climate, fluids, and materials.</p></div>
+                        <div class="panel"><h3>Data</h3><p>Genomics, imaging, inverse problems, and ensembles.</p></div>
+                        <div class="panel"><h3>Learning</h3><p>Training, inference, parameter sweeps, and uncertainty.</p></div>
+                    </div>
+                    <p class="callout">Compute, memory, storage, and communication must all fit the workload. The June 2026 TOP500 snapshot is linked from the field manual.</p>
+                </section>
+            </section>
 
-          <!-- What is HPC (one-sentence) -->
-          <section>
-            <h3>What is HPC</h3>
-            <p><strong>HPC ≈ many computers working together as one.</strong></p>
-          </section>
+            <!-- 08 -->
+            <section>
+                <section class="section-divider">
+                    <p class="slide-label">Module 02 / Core</p>
+                    <h1>Cluster Architecture</h1>
+                    <p>Know where each kind of work belongs.</p>
+                </section>
 
-          <!-- Jump to the doc to discuss problem types -->
-          <section>
-            <h3>Where HPC Helps</h3>
-            <p><a href="introduction.html">Open: Introduction</a></p>
-          </section>
-          
-          <!-- Memory models (simple analogy) -->
-          <section>
-            <h3>Shared vs Distributed Memory</h3>
-            <ul>
-              <li><strong>Shared memory:</strong> Same library building; grab from the local shelf. Fast, but limited by one machine.</li>
-              <li><strong>Distributed memory:</strong> Interlibrary loan; fetch from other libraries (e.g., GT). Scales capacity, remote is slower.</li>
-            </ul>
-            <p><a href="introduction.html#programming-paradigms">Open: Shared / Distributed</a></p>
-          </section>
+                <!-- 09 -->
+                <section>
+                    <p class="slide-label">02.1 / System map</p>
+                    <h2>A cluster has distinct operational zones</h2>
+                    <div class="workflow-line">
+                        <span>Laptop</span><b>→</b><span>Login node</span><b>→</b><span>Scheduler</span><b>→</b><span>Compute node(s)</span>
+                    </div>
+                    <div class="grid-3 compact">
+                        <div class="panel"><h3>Login</h3><p>Edit, transfer, inspect, and submit.</p></div>
+                        <div class="panel"><h3>Compute</h3><p>Run CPU, GPU, and high-memory work.</p></div>
+                        <div class="panel"><h3>Storage</h3><p>Home, project, scratch, and archive have different policies.</p></div>
+                    </div>
+                </section>
 
-          <!-- CPU vs GPU (simple analogy) -->
-          <section>
-            <h3>CPU vs GPU</h3>
-            <ul>
-              <li><strong>CPU:</strong> Few expert librarians handle diverse, complex requests.</li>
-              <li><strong>GPU:</strong> Hundreds of interns do the same simple task across many shelves; very high throughput.</li>
-            </ul>
-            <p><a href="introduction.html#programming-paradigms">Open: GPU</a></p>
-          </section>
-        </section>
+                <!-- 10 -->
+                <section>
+                    <p class="slide-label">02.2 / Login boundary</p>
+                    <h2>The login node is a control plane</h2>
+                    <div class="grid-2">
+                        <div class="panel">
+                            <h3>Appropriate</h3>
+                            <ul>
+                                <li>Small edits and static checks</li>
+                                <li>File transfer and Git</li>
+                                <li><code>sbatch</code>, <code>squeue</code>, <code>sacct</code></li>
+                            </ul>
+                        </div>
+                        <div class="panel">
+                            <h3>Move to an allocation</h3>
+                            <ul>
+                                <li>Training and simulation</li>
+                                <li>Large builds or test suites</li>
+                                <li>Data processing and notebooks</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="callout">VS Code Server, remote extensions, and agent terminals run on the remote login host too.</p>
+                </section>
 
-        <!-- Architecture (vertical stack) -->
-        <section>
-          <!-- Section title -->
-          <section>
-            <h2>Architecture</h2>
-            <p><a href="cluster-architecture.html">Open: Architecture</a></p>
-          </section>
-          <!-- Analogy: Auto Repair Shop (lead-in, simplified) -->
-          <section>
-            <h2>Auto Repair Shop</h2>
-            <ul>
-              <li><strong>Front desk:</strong> check in; <em>no repairs</em>.</li>
-              <li><strong>Work bays:</strong> where the work happens.</li>
-              <li><strong>Warehouse:</strong> parts in/out; storage only.</li>
-              <li><strong>Aisles:</strong> fast movement of cars and parts.</li>
-            </ul>
-            <p><a href="cluster-architecture.html#cluster-overview">Open: Cluster Overview</a></p>
-          </section>
+                <!-- 11 -->
+                <section>
+                    <p class="slide-label">02.3 / Node anatomy</p>
+                    <h2>Resource topology matters</h2>
+                    <div class="grid-3 compact">
+                        <div class="panel"><h3>CPU</h3><p>Sockets, cores, hardware threads, caches, and NUMA domains.</p></div>
+                        <div class="panel"><h3>Memory</h3><p>Capacity and bandwidth are node-local constraints.</p></div>
+                        <div class="panel"><h3>GPU</h3><p>Accelerators have model-specific memory and interconnects.</p></div>
+                    </div>
+                    <p class="callout">Inspect the site's node definitions before translating “CPU” into a physical core or hardware thread.</p>
+                </section>
 
-          <!-- Cluster Overview -->
-          <section>
-            <h2>Cluster Overview</h2>
-            <ul>
-              <li><strong>Login nodes (front desk):</strong> sign in; <em>no heavy runs</em>.</li>
-              <li><strong>Compute nodes (work bays):</strong> CPUs/GPUs run jobs.</li>
-              <li><strong>Storage (warehouse):</strong> shared data in/out.</li>
-              <li><strong>Interconnect (aisles):</strong> high-speed links.</li>
-            </ul>
-            <p><a href="cluster-architecture.html#cluster-overview">Open: Cluster Overview</a></p>
-          </section>
+                <!-- 12 -->
+                <section>
+                    <p class="slide-label">02.4 / Data path</p>
+                    <h2>Storage and networks are part of performance</h2>
+                    <div class="grid-2 compact">
+                        <div class="panel">
+                            <h3>Storage policy</h3>
+                            <div class="metric-row"><strong>HOME</strong><span>Code and small persistent files</span></div>
+                            <div class="metric-row"><strong>PROJECT</strong><span>Shared durable research data</span></div>
+                            <div class="metric-row"><strong>SCRATCH</strong><span>Fast temporary working data; purge policies apply</span></div>
+                        </div>
+                        <div class="panel">
+                            <h3>Communication</h3>
+                            <p>Interconnect latency and bandwidth matter for MPI, distributed training, and parallel I/O.</p>
+                            <p>Local GPU links and the cluster fabric solve different communication problems.</p>
+                        </div>
+                    </div>
+                </section>
+            </section>
 
-          <!-- Login Nodes -->
-          <section>
-            <h3>Login Nodes — Do / Don’t</h3>
-            <ul>
-              <li><strong>Do:</strong> edit code, manage files, submit/monitor jobs</li>
-              <li><strong>Don’t:</strong> run heavy compute on login nodes</li>
-            </ul>
-            <p><a href="cluster-architecture.html#login-nodes">Open: Login Nodes</a></p>
-          </section>
+            <!-- 13 -->
+            <section>
+                <section class="section-divider">
+                    <p class="slide-label">Module 03 / Core</p>
+                    <h1>Scheduling with Slurm</h1>
+                    <p>Describe resources, submit work, inspect evidence.</p>
+                </section>
 
-          <!-- Compute Nodes -->
-          <section>
-            <h3>Compute Nodes — Classes</h3>
-            <ul>
-              <li><strong>Standard CPU:</strong> multi‑core, MPI/threads</li>
-              <li><strong>GPU nodes:</strong> 1–8 GPUs/node for ML/acceleration</li>
-              <li><strong>High‑memory:</strong> 1–4 TB RAM for big data</li>
-            </ul>
-            <p><a href="cluster-architecture.html#compute-nodes">Open: Compute Nodes</a></p>
-          </section>
+                <!-- 14 -->
+                <section>
+                    <p class="slide-label">03.1 / Scheduler role</p>
+                    <div class="full-bleed-image">
+                        <div>
+                            <h2>The scheduler matches requests to resources</h2>
+                            <p>Jobs wait until compatible CPU, GPU, memory, time, and policy constraints are available.</p>
+                            <p class="callout">A pending job is not necessarily broken. Inspect its reason before changing the request.</p>
+                        </div>
+                        <img src="assets/motivation-scheduler.webp" alt="Technical illustration of a scheduler dispatching queued jobs to CPU, GPU, and high-memory resources">
+                    </div>
+                </section>
 
-          <!-- Storage Hierarchy -->
-          <section>
-            <h3>Storage Hierarchy</h3>
-            <ul>
-              <li><code>/home</code> (small, backed) · <code>/scratch</code> (fast, purgeable) · <code>/project</code> (team, long‑term)</li>
-              <li>Data flow: stage → run → archive → clean</li>
-            </ul>
-            <p><a href="cluster-architecture.html#storage-systems">Open: Storage</a></p>
-          </section>
+                <!-- 15 -->
+                <section>
+                    <p class="slide-label">03.2 / Resource language</p>
+                    <h2>Request what the program can use</h2>
+                    <div class="grid-3 compact">
+                        <div class="panel"><h3>Tasks</h3><p><code>--ntasks</code> usually maps to processes or ranks.</p></div>
+                        <div class="panel"><h3>CPU slots</h3><p><code>--cpus-per-task</code> reserves schedulable CPU units for each task.</p></div>
+                        <div class="panel"><h3>Memory</h3><p><code>--mem</code> is per node, not a job-wide total.</p></div>
+                        <div class="panel"><h3>GPU</h3><p><code>--gres=gpu:1</code> is the generic baseline used here.</p></div>
+                        <div class="panel"><h3>Time</h3><p><code>--time</code> is a hard wall-clock limit.</p></div>
+                        <div class="panel"><h3>Site policy</h3><p>Account and partition remain cluster-specific.</p></div>
+                    </div>
+                </section>
 
-          <!-- Interconnects -->
-          <section>
-            <h3>Interconnects</h3>
-            <ul>
-              <li><strong>Ethernet:</strong> 1–100 Gbps, 10–100 µs</li>
-              <li><strong>InfiniBand:</strong> 25–800 Gbps, 0.5–2 µs (MPI/low‑latency)</li>
-            </ul>
-            <p><a href="cluster-architecture.html#interconnects">Open: Interconnects</a></p>
-          </section>
-        </section>
+                <!-- 16 -->
+                <section>
+                    <p class="slide-label">03.3 / Common layouts</p>
+                    <h2>Slots describe capacity, not utilization</h2>
+                    <div class="equation">requested CPU slots = nodes × tasks per node × CPUs per task</div>
+                    <div class="grid-3 compact">
+                        <div class="panel"><h3>MPI</h3><p>Many tasks, usually one or a few CPU slots each.</p></div>
+                        <div class="panel"><h3>Threads</h3><p>One task, multiple CPU slots, matching thread controls.</p></div>
+                        <div class="panel"><h3>Hybrid</h3><p>Several tasks, each with multiple threads.</p></div>
+                    </div>
+                    <p class="callout">Your application must create the matching ranks or threads. Slurm does not parallelize it automatically.</p>
+                </section>
 
-        <!-- Job Scheduling (vertical stack) -->
-        <section>
-          <!-- Section title -->
-          <section>
-            <h2>Job Scheduling (Slurm)</h2>
-            <p><a href="job-scheduling.html">Open: Job Scheduling</a></p>
-          </section>
-
-          <!-- Why a Dispatcher? (as provided) -->
-          <section>
-            <h2>Why a Dispatcher?</h2>
-            <ul>
-              <li><strong>Fairness:</strong> many cars, limited bays — someone must queue and prioritize.</li>
-              <li><strong>Utilization:</strong> keep bays busy; avoid idle gaps and pile-ups.</li>
-              <li><strong>Right tools:</strong> match jobs with bays that have the needed gear.</li>
-              <li><strong>Time & parts:</strong> book a time window and ensure parts are available.</li>
-              <li><strong>Safety & records:</strong> work happens in bays with tracking and logs.</li>
-            </ul>
-            <p><a href="job-scheduling.html">Open: Job Scheduling</a></p>
-          </section>
-          <!-- Dispatcher → Slurm (I): essentials -->
-          <section>
-            <h2>Dispatcher → Slurm (I)</h2>
-            <ul>
-              <li><strong>Work order → job script:</strong> what to do + resources.</li>
-              <li><strong>Bay type → partition:</strong> standard / gpu / highmem.</li>
-              <li><strong>Booked time →</strong> <code>--time</code></li>
-              <li><strong>Parts on hand →</strong> <code>--mem=</code></li>
-              <li><strong>Special tool →</strong> <code>--gres=gpu:1</code></li>
-            </ul>
-            <p><a href="job-scheduling.html#scheduler-role">Open: Scheduler Role</a></p>
-          </section>
-
-          <!-- Dispatcher → Slurm (II): scale & policy -->
-          <section>
-            <h2>Dispatcher → Slurm (II)</h2>
-            <ul>
-              <li><strong>How many bays/techs →</strong> nodes / tasks / CPUs</li>
-              <li><strong>Rush vs routine →</strong> priority</li>
-              <li><strong>Fill short gaps →</strong> backfill</li>
-              <li><strong>Link repairs →</strong> job dependencies</li>
-            </ul>
-            <p><a href="job-scheduling.html#scheduler-role">Open: Scheduler Role</a></p>
-          </section>
-
-          <!-- Slurm Common Patterns -->
-          <section>
-          <h2>Common Request Patterns</h2>
-          <pre><code class="language-bash" data-trim>
-# MPI (distributed memory)
-#SBATCH --ntasks=32
-#SBATCH --cpus-per-task=1
-
-# OpenMP (shared memory)
+                <!-- 17 -->
+                <section>
+                    <p class="slide-label">03.4 / Batch script anatomy</p>
+                    <h2>A conservative baseline</h2>
+                    <pre><code class="language-bash">#!/bin/bash
+#SBATCH --job-name=hello_hpc
+#SBATCH --output=hello_hpc_%j.out
+#SBATCH --error=hello_hpc_%j.err
+#SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=32
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1G
+#SBATCH --time=00:05:00
 
-# Hybrid (MPI + OpenMP)
-#SBATCH --ntasks-per-node=2
-#SBATCH --cpus-per-task=32
-          </code></pre>
-          </section>
+set -euo pipefail
 
-          <!-- Essential Commands (kept simple) -->
-          <section>
-            <h2>Essential Commands</h2>
-            <pre><code class="language-bash" data-trim>
-sinfo
-squeue --user=$USER
-sbatch job.sh
-srun --pty --time=01:00:00 bash
-scancel 12345
-            </code></pre>
-            <p><a href="job-scheduling.html#essential-commands">Open: Essential Commands</a></p>
-          </section>
+# Add account, partition, and a Python module only when required.
+cd "${SLURM_SUBMIT_DIR:-$PWD}"
+python3 -u hello_hpc.py</code></pre>
+                    <p class="callout">Leave account and partition unset unless the local documentation requires them.</p>
+                </section>
 
-          <!-- Interactive vs Batch -->
-          <section>
-            <h2>Interactive vs Batch</h2>
-            <ul>
-              <li><strong>Interactive (while-you-wait):</strong> you stay on site, adjust on the fly; good for debugging and small tests.</li>
-              <li><strong>Batch (drop-off):</strong> leave a work order and go; runs when scheduled, best for long or many jobs.</li>
-            </ul>
-            <p><a href="job-scheduling.html#interactive-jobs">Guide: Interactive Jobs</a></p>
-          </section>
-        </section>
+                <!-- 18 -->
+                <section>
+                    <p class="slide-label">03.5 / Essential commands</p>
+                    <h2>Inspect before guessing</h2>
+                    <div class="grid-3 compact">
+                        <div class="panel"><h3><code>sbatch</code></h3><p>Submit a batch script.</p></div>
+                        <div class="panel"><h3><code>squeue</code></h3><p>Inspect queued and running jobs.</p></div>
+                        <div class="panel"><h3><code>scontrol</code></h3><p>Explain job and node state.</p></div>
+                        <div class="panel"><h3><code>sacct</code></h3><p>Read state, time, memory, and exit code.</p></div>
+                        <div class="panel"><h3><code>scancel</code></h3><p>Stop a job intentionally.</p></div>
+                        <div class="panel"><h3><code>sinfo</code></h3><p>Summarize partitions and availability.</p></div>
+                    </div>
+                </section>
 
-        <!-- Workflow & Tools (vertical stack) -->
-        <section>
-          <!-- Section title -->
-          <section>
-            <h2>Workflow &amp; Tools</h2>
-            <p><a href="workflow-tools.html">Open: Workflow &amp; Tools</a></p>
-          </section>
+                <!-- 19 -->
+                <section>
+                    <p class="slide-label">03.6 / Failure evidence</p>
+                    <h2>Diagnose from records, not anecdotes</h2>
+                    <pre><code class="language-bash">sacct -j 12345 --format=JobID,State,Elapsed,MaxRSS,ExitCode
+scontrol show job 12345
+tail -n 80 hello_hpc_12345.out
+tail -n 80 hello_hpc_12345.err</code></pre>
+                    <div class="grid-3 compact">
+                        <div class="panel"><h3>OUT_OF_MEMORY</h3><p>Measure peak use; fix the program or right-size memory.</p></div>
+                        <div class="panel"><h3>TIMEOUT</h3><p>Estimate runtime or checkpoint; do not request arbitrary days.</p></div>
+                        <div class="panel"><h3>PENDING</h3><p>Read the reason: resources, dependency, policy, or reservation.</p></div>
+                    </div>
+                </section>
+            </section>
 
-          <!-- Analogy: Tool sets as environments -->
-          <section>
-            <h2>Tool Sets (as Environments)</h2>
-            <ul>
-              <li><strong>Preset kits by car type:</strong> German / American / Japanese.</li>
-              <li><strong>Pick one kit for this job:</strong> use that set only.</li>
-              <li><strong>No mixing:</strong> finish and return the kit; keep the floor clean.</li>
-              <li><strong>Checklist per kit:</strong> so any tech can repeat the same setup.</li>
-            </ul>
-            <p><a href="workflow-tools.html#environment-management">Open: Environment Management</a></p>
-          </section>
+            <!-- 20 -->
+            <section>
+                <section class="section-divider">
+                    <p class="slide-label">Module 04 / Core</p>
+                    <h1>Workflow and Tools</h1>
+                    <p>Reproducible environments, safe remote work, bounded automation.</p>
+                </section>
 
-          <!-- Environments: unified idea -->
-          <section>
-            <h2>Environments (unified idea)</h2>
-            <ul>
-              <li><strong>One preset per job:</strong> a defined set of tools/libraries.</li>
-              <li><strong>Activate → run → deactivate:</strong> keep jobs isolated.</li>
-              <li><strong>No mixing:</strong> avoid conflicts by sticking to one preset.</li>
-              <li><strong>Save the spec:</strong> share a file/list so others can reproduce.</li>
-            </ul>
-            <p><a href="workflow-tools.html#environment-management">Open: Environment Management</a></p>
-          </section>
+                <!-- 21 -->
+                <section>
+                    <p class="slide-label">04.1 / Python 3.12 + uv</p>
+                    <h2>Lock the project, not the login node</h2>
+                    <pre><code class="language-bash">module spider python
+module load python/&lt;site-version&gt;
 
-          <!-- Remote Development (VS Code first) -->
-          <section>
-            <h3>Remote Development (VS Code)</h3>
-            <ul>
-              <li>Install Remote‑SSH → Connect to Host</li>
-              <li>Open folder on the cluster: <code>$HOME</code></li>
-              <li>Explorer: drag‑and‑drop upload/download; rename/move</li>
-              <li>Built‑in terminal: run commands when needed</li>
-            </ul>
-            <p><a href="workflow-tools.html#remote-development">Open: Remote Development</a></p>
-          </section>
+uv init --python 3.12 myproject
+cd myproject
+uv add numpy scipy matplotlib
+uv sync --locked
+uv run --frozen python analysis.py
 
-          <!-- The Loop: edit → submit → check → iterate -->
-          <section>
-            <h3>The Loop</h3>
-            <ul>
-              <li>Edit in VS Code; keep input/output organized</li>
-              <li>Submit in terminal: <code>sbatch job.sh</code></li>
-              <li>Check: <code>squeue --user=$USER</code>; open <code>.out/.err</code> in editor</li>
-              <li>Iterate: adjust resources/env; resubmit</li>
-            </ul>
-            <p><a href="getting-started.html#first-job">Open: First Job</a></p>
-          </section>
-        </section>
+git add pyproject.toml uv.lock
+echo ".venv/" &gt;&gt; .gitignore</code></pre>
+                    <p class="callout">Conda or Mamba remains useful for site-provided MPI, CUDA, or compiled dependency stacks.</p>
+                </section>
 
-        <!-- Getting Started (vertical stack) -->
-        <section>
-          <!-- Section title -->
-          <section>
-            <h2>Getting Started</h2>
-            <p><a href="getting-started.html">Open: Getting Started</a></p>
-          </section>
-          <section>
-            <h2>Acknowledgments</h2>
-            <ul>
-                <li>Workshop organizing committee for their dedication and planning</li>
-                <li>Emory Math/CS IT Support for providing computing resources and technical assistance</li>
-                <li>All participants and contributors who made this workshop possible through their engagement and collaboration</li>
-            </ul>
-        </section>
-          <section>
-            <h3>Questions &amp; Practices</h3>
-            <ul>
-              <li>Install VS Code</li>
-              <li>Install extensions like <code>Remote - SSH</code> and <code>Python</code></li>
-              <li>Try Google Colab</li>
-              <li>Optional: Install <code>Docker</code> or <code>WSL2</code> (16GB or above RAM recommended)</li>
-            </ul>
-          </section>
-        </section>
+                <!-- 22 -->
+                <section>
+                    <p class="slide-label">04.2 / Remote-SSH</p>
+                    <h2>Connect in a terminal first</h2>
+                    <div class="grid-2">
+                        <div>
+                            <pre><code class="language-bash">Host research-cluster
+  HostName login.example.edu
+  User your_username
+  IdentityFile ~/.ssh/id_ed25519
+  ServerAliveInterval 60
+  # ProxyJump gateway.example.edu</code></pre>
+                        </div>
+                        <div class="panel compact">
+                            <h3>Safe path</h3>
+                            <ol>
+                                <li>Verify <code>ssh research-cluster</code>.</li>
+                                <li>Complete MFA.</li>
+                                <li>Open <code>$HOME/project-name</code>, not all of home.</li>
+                                <li>Run heavy work through Slurm.</li>
+                                <li>Forward Jupyter ports; never expose them publicly.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
 
-      </div>
+                <!-- 23 -->
+                <section>
+                    <p class="slide-label">04.3 / Safe agentic workflow</p>
+                    <h2>Automation stops before submission</h2>
+                    <div class="workflow-line">
+                        <span>Plan</span><b>→</b><span>Validate</span><b>→</b><span>Smoke-test</span><b>→</b><span>Submit</span><b>→</b><span>Inspect</span>
+                    </div>
+                    <div class="grid-2 compact">
+                        <div class="panel">
+                            <h3>Agent may</h3>
+                            <ul>
+                                <li>Draft and explain scripts</li>
+                                <li>Run static checks</li>
+                                <li>Summarize <code>.out</code>, <code>.err</code>, and <code>sacct</code></li>
+                            </ul>
+                        </div>
+                        <div class="panel">
+                            <h3>Requires approval</h3>
+                            <ul>
+                                <li><code>sbatch</code> or <code>scancel</code></li>
+                                <li>Account and partition choices</li>
+                                <li>Secrets or private data access</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="callout">Review <code>git diff</code> before submitting anything the agent changed.</p>
+                </section>
+            </section>
+
+            <!-- 24 -->
+            <section>
+                <section class="section-divider">
+                    <p class="slide-label">Module 05 / Core</p>
+                    <h1>Your First Job</h1>
+                    <p>Make one small claim and collect the evidence.</p>
+                </section>
+
+                <!-- 25 -->
+                <section>
+                    <p class="slide-label">05.1 / Program</p>
+                    <h2>Dependency-free Python smoke test</h2>
+                    <pre><code class="language-python"># Abridged: use the full reviewed file in the field exercise
+import os
+import platform
+import socket
+
+def slurm_value(name):
+    return os.environ.get(name, "not set")
+
+work_items = 250_000
+checksum = sum((i * i) % 97 for i in range(work_items))
+
+print("=== HPC environment ===")
+print(f"Hostname: {socket.gethostname()}")
+print(f"Python: {platform.python_version()}")
+print(f"Slurm job ID: {slurm_value('SLURM_JOB_ID')}")
+print(f"Slurm node list: {slurm_value('SLURM_JOB_NODELIST')}")
+print(f"CPU slots for task: {slurm_value('SLURM_CPUS_PER_TASK')}")
+print(f"Deterministic checksum ({work_items:,} items): {checksum}")</code></pre>
+                </section>
+
+                <!-- 26 -->
+                <section>
+                    <p class="slide-label">05.2 / Allocation</p>
+                    <h2>Keep the first request small</h2>
+                    <pre><code class="language-bash">#!/bin/bash
+#SBATCH --job-name=hello_hpc
+#SBATCH --output=hello_hpc_%j.out
+#SBATCH --error=hello_hpc_%j.err
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1G
+#SBATCH --time=00:05:00
+
+set -euo pipefail
+
+# Add account, partition, and a Python module only when required.
+cd "${SLURM_SUBMIT_DIR:-$PWD}"
+python3 -u hello_hpc.py</code></pre>
+                    <p class="callout">This dependency-free smoke test uses the site's <code>python3</code>; project environments use Python 3.12 + uv.</p>
+                </section>
+
+                <!-- 27 -->
+                <section>
+                    <p class="slide-label">05.3 / Validation sequence</p>
+                    <h2>Cheap checks first</h2>
+                    <div class="workflow-line">
+                        <span>bash -n</span><b>→</b><span>sbatch --test-only</span><b>→</b><span>small sbatch</span><b>→</b><span>sacct + logs</span>
+                    </div>
+                    <pre><code class="language-bash">bash -n hello_hpc.slurm
+sbatch --test-only hello_hpc.slurm   # when supported
+sbatch hello_hpc.slurm
+squeue -u "$USER"
+sacct -j 12345 --format=JobID,State,Elapsed,MaxRSS,ExitCode
+cat hello_hpc_12345.out
+cat hello_hpc_12345.err</code></pre>
+                </section>
+
+                <!-- 28 -->
+                <section>
+                    <p class="slide-label">Core route / Complete</p>
+                    <h2>A successful first job proves the path</h2>
+                    <div class="grid-3 compact">
+                        <div class="panel"><h3>Placement</h3><p>The program ran on a compute node.</p></div>
+                        <div class="panel"><h3>Allocation</h3><p>Slurm metadata matches the request.</p></div>
+                        <div class="panel"><h3>Evidence</h3><p>State is <code>COMPLETED</code>, exit code is <code>0:0</code>, and stderr is empty.</p></div>
+                    </div>
+                    <p class="callout">Next: measure the real workload, request only what it can use, and keep the run reproducible.</p>
+                    <p><a href="getting-started.html" target="_blank" rel="noopener">Open the complete field exercise</a></p>
+                </section>
+            </section>
+
+            <!-- Optional appendix -->
+            <section>
+                <section class="section-divider">
+                    <p class="slide-label">Optional / Reference</p>
+                    <h1>Field Appendix</h1>
+                    <p>Use these only when the project needs them.</p>
+                </section>
+
+                <section>
+                    <span class="appendix-badge">Appendix A / NumPy threads</span>
+                    <h2>Match BLAS threads to CPU slots</h2>
+                    <pre><code class="language-bash">#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+
+export OMP_NUM_THREADS="$SLURM_CPUS_PER_TASK"
+export OPENBLAS_NUM_THREADS="$SLURM_CPUS_PER_TASK"
+export MKL_NUM_THREADS="$SLURM_CPUS_PER_TASK"
+export NUMEXPR_NUM_THREADS="$SLURM_CPUS_PER_TASK"
+uv run --frozen python -u numpy_threads.py</code></pre>
+                    <p class="callout">Benchmark 1, 2, and 4 threads. More threads can lose to startup, memory bandwidth, or nested parallelism.</p>
+                </section>
+
+                <section>
+                    <span class="appendix-badge">Appendix B / Git</span>
+                    <h2>Capture code and environment, not generated data</h2>
+                    <pre><code class="language-text">project/
+├── pyproject.toml
+├── uv.lock
+├── src/
+├── scripts/
+├── tests/
+└── .gitignore    # .venv/, outputs/, large data</code></pre>
+                    <p class="callout">Commit scripts and lockfiles. Record the commit ID with each production run.</p>
+                </section>
+
+                <section>
+                    <span class="appendix-badge">Appendix C / Data</span>
+                    <h2>Stage, compute, retain</h2>
+                    <div class="workflow-line">
+                        <span>Project storage</span><b>→</b><span>Scratch</span><b>→</b><span>Compute</span><b>→</b><span>Validated results</span><b>→</b><span>Archive</span>
+                    </div>
+                    <ul class="compact">
+                        <li>Check quota, purge, backup, and retention policies.</li>
+                        <li>Do not treat scratch as durable storage.</li>
+                        <li>Move many tiny files in archives or containers when appropriate.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <span class="appendix-badge">Appendix D / Containers</span>
+                    <h2>Use the runtime supported by the site</h2>
+                    <pre><code class="language-bash">apptainer pull python_3.12.sif docker://python:3.12-slim
+apptainer exec python_3.12.sif python --version
+sbatch --job-name=analysis \
+  --time=00:30:00 --mem=4G --cpus-per-task=1 \
+  --output=analysis_%j.out --error=analysis_%j.err \
+  --wrap='apptainer exec myapp.sif ./run_analysis'</code></pre>
+                    <p class="callout">GPU, MPI, filesystem binding, and image-cache behavior remain site-specific.</p>
+                </section>
+
+                <section>
+                    <span class="appendix-badge">Appendix E / Jupyter</span>
+                    <h2>Run the kernel in an allocation</h2>
+                    <pre><code class="language-bash"># On the allocated compute node
+jupyter lab --no-browser --ip=127.0.0.1 --port=8888
+
+# From the laptop, if direct compute-node SSH is permitted
+ssh -N -J research-cluster \
+  -L 8888:127.0.0.1:8888 your_username@compute-node</code></pre>
+                    <p class="callout">Use the allocated hostname. Otherwise follow the site's Open OnDemand or documented relay-tunnel pattern.</p>
+                </section>
+
+                <section>
+                    <span class="appendix-badge">Appendix F / Remote-SSH troubleshooting</span>
+                    <h2>Start below the IDE</h2>
+                    <ol class="compact">
+                        <li>Run <code>ssh -vv research-cluster</code> in a terminal.</li>
+                        <li>Confirm host, username, key, MFA, and <code>ProxyJump</code>.</li>
+                        <li>Check whether rotating login nodes require <code>ControlMaster</code>.</li>
+                        <li>Remove stale VS Code Server state only after reviewing site guidance.</li>
+                    </ol>
+                </section>
+            </section>
+        </div>
     </div>
 
-    <!-- Reveal.js core & plugins -->
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/highlight/highlight.js"></script>
+    <script src="assets/vendor/reveal/reveal.js"></script>
+    <script src="assets/vendor/reveal/plugin/highlight/highlight.js"></script>
     <script>
-      // Set today's date on title slide
-      document.getElementById('today').textContent = new Date().toLocaleDateString();
-
-      // Init Reveal
-      Reveal.initialize({
-        hash: true,
-        slideNumber: 'c/t',
-        plugins: [ RevealHighlight ],
-      });
+        Reveal.initialize({
+            hash: true,
+            controls: true,
+            controlsTutorial: false,
+            progress: true,
+            slideNumber: "c/t",
+            width: 1600,
+            height: 900,
+            margin: 0.035,
+            center: false,
+            transition: "none",
+            backgroundTransition: "none",
+            plugins: [RevealHighlight]
+        });
     </script>
-  </body>
-  
+</body>
 </html>

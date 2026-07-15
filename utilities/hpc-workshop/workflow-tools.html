@@ -3,56 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Development Workflow & Tools | HPC Workshop</title>
-    <meta name="description" content="Modern development practices, version control, and tools for HPC research">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            scroll-behavior: smooth;
-        }
-        .nav-link {
-            transition: all 0.2s ease-in-out;
-        }
-        .nav-link:hover {
-            transform: translateY(-1px);
-            color: #2563eb;
-        }
-        .workflow-card {
-            transition: all 0.3s ease-in-out;
-        }
-        .workflow-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        .code-block {
-            background-color: #1e1e1e;
-            border-radius: 8px;
-        }
-        .code-block .comment { color: #6a9955; }
-        .code-block .command { color: #569cd6; }
-        .code-block .string { color: #ce9178; }
-        .code-block .variable { color: #9cdcfe; }
-        .progress-bar {
-            background: linear-gradient(90deg, #0EA5E9 0%, #0F172A 100%);
-        }
-        .terminal-window {
-            background: linear-gradient(to bottom, #2d3748 0%, #1a202c 100%);
-            border-radius: 8px;
-        }
-        .terminal-header {
-            background: #2d3748;
-            border-radius: 8px 8px 0 0;
-            padding: 8px 16px;
-            border-bottom: 1px solid #4a5568;
-        }
-        .step-indicator {
-            background: linear-gradient(135deg, #0F172A 0%, #0EA5E9 100%);
-        }
-    </style>
+    <title>Development Workflow &amp; Tools | HPC Workshop</title>
+    <meta name="description" content="Use uv, Remote-SSH, Git, data lifecycle practices, and guarded agentic workflows for HPC research.">
+    <link rel="stylesheet" href="assets/workshop.css">
 </head>
 <body class="bg-gray-50 text-gray-900">
 
@@ -62,21 +15,21 @@
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <a href="index.html" class="text-xl font-bold text-gray-900">HPC Workshop</a>
+                        <a href="index.html" class="workshop-brand">HPC Workshop</a>
                     </div>
                 </div>
-                <div class="hidden md:block">
+                <div class="hidden lg:block">
                     <div class="ml-10 flex items-baseline space-x-4">
                         <a href="index.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Home</a>
                         <a href="introduction.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Introduction</a>
                         <a href="cluster-architecture.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Architecture</a>
                         <a href="job-scheduling.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Job Scheduling</a>
-                        <a href="workflow-tools.html" class="nav-link text-blue-600 px-3 py-2 text-sm font-medium border-b-2 border-blue-600">Workflow</a>
+                        <a href="workflow-tools.html" aria-current="page" class="nav-link text-blue-600 px-3 py-2 text-sm font-medium border-b-2 border-blue-600">Workflow</a>
                         <a href="getting-started.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Get Started</a>
                     </div>
                 </div>
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" class="bg-gray-200 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
+                <div class="lg:hidden">
+                    <button id="mobile-menu-button" type="button" aria-label="Toggle workshop navigation" aria-controls="mobile-menu" aria-expanded="false" class="bg-gray-200 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
                         <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
@@ -84,15 +37,15 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Mobile menu -->
-        <div id="mobile-menu" class="md:hidden hidden">
+        <div id="mobile-menu" class="lg:hidden hidden">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
                 <a href="index.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Home</a>
                 <a href="introduction.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Introduction</a>
                 <a href="cluster-architecture.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Architecture</a>
                 <a href="job-scheduling.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Job Scheduling</a>
-                <a href="workflow-tools.html" class="block px-3 py-2 text-base font-medium text-blue-600">Workflow</a>
+                <a href="workflow-tools.html" aria-current="page" class="block px-3 py-2 text-base font-medium text-blue-600">Workflow</a>
                 <a href="getting-started.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Get Started</a>
             </div>
         </div>
@@ -107,7 +60,8 @@
     <header class="bg-white border-b border-gray-200">
         <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div class="text-center">
-                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Development Workflow & Tools</h1>
+                <p class="manual-kicker">Module 04 / Core + Reference</p>
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Development Workflow &amp; Tools</h1>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
                     Modern development practices and tools for efficient HPC research and collaboration
                 </p>
@@ -116,11 +70,13 @@
     </header>
 
     <main class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div class="manual-layout">
+            <div class="manual-content min-w-0">
 
         <!-- Section 1: Environment Management -->
         <section id="environment-management" class="mb-16">
             <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Environment Management</h2>
-            
+
             <div class="grid md:grid-cols-2 gap-8">
                 <!-- Module System -->
                 <div class="workflow-card bg-white rounded-xl shadow-lg p-6 border-t-4 border-blue-500">
@@ -135,18 +91,21 @@
                             <p class="text-gray-600 text-sm">Dynamic environment management</p>
                         </div>
                     </div>
-                    
+
                     <div class="space-y-4">
                         <p class="text-gray-700 text-sm">
                             The module system provides a clean way to manage multiple versions of software packages and their dependencies.
                         </p>
-                        
+
                         <div class="code-block p-3 text-sm overflow-x-auto">
                             <pre class="text-white"><code><span class="comment"># List available modules</span>
 <span class="command">module avail</span>
 
-<span class="comment"># Load specific version</span>
-<span class="command">module load gcc/11.2.0</span>
+<span class="comment"># Discover versions on this cluster</span>
+<span class="command">module spider gcc</span>
+
+<span class="comment"># Load a site-provided version</span>
+<span class="command">module load gcc/&lt;site-version&gt;</span>
 
 <span class="comment"># Load multiple modules</span>
 <span class="command">module load openmpi python</span>
@@ -157,12 +116,12 @@
 <span class="comment"># Unload all modules</span>
 <span class="command">module purge</span></code></pre>
                         </div>
-                        
+
                         <div class="bg-blue-50 p-4 rounded border border-blue-200">
                             <h4 class="font-semibold text-blue-800 mb-2">Best Practices:</h4>
                             <ul class="text-blue-700 text-sm space-y-1">
-                                <li>• Always specify versions for reproducibility</li>
-                                <li>• Use module purge before loading new environments</li>
+                                <li>• Record exact module names and versions for reproducibility</li>
+                                <li>• Use <code>module purge</code> only when your site's documentation recommends it</li>
                                 <li>• Document module requirements in your scripts</li>
                                 <li>• Test with different compiler versions</li>
                             </ul>
@@ -170,7 +129,7 @@
                     </div>
                 </div>
 
-                <!-- Conda & Virtual Environments -->
+                <!-- uv and Python environments -->
                 <div class="workflow-card bg-white rounded-xl shadow-lg p-6 border-t-4 border-green-500">
                     <div class="flex items-center mb-4">
                         <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
@@ -180,43 +139,38 @@
                         </div>
                         <div>
                             <h3 class="text-xl font-semibold text-gray-900">Python Environments</h3>
-                            <p class="text-gray-600 text-sm">Isolated package management</p>
+                            <p class="text-gray-600 text-sm">Python 3.12 projects with uv</p>
                         </div>
                     </div>
-                    
+
                     <div class="space-y-4">
                         <p class="text-gray-700 text-sm">
                             Manage Python packages and dependencies in isolated environments to avoid conflicts and ensure reproducibility.
                         </p>
-                        
+
                         <div>
-                            <h4 class="font-semibold text-gray-800 mb-2">Conda Environment Setup:</h4>
+                            <h4 class="font-semibold text-gray-800 mb-2">Recommended uv Project:</h4>
                             <div class="code-block p-3 text-sm overflow-x-auto">
-                                <pre class="text-white"><code><span class="comment"># Create environment with specific Python version</span>
-<span class="command">conda create -n myproject python=3.9 numpy scipy matplotlib</span>
+                                <pre class="text-white"><code><span class="comment"># Use a site module or an approved uv installation</span>
+<span class="command">module load python</span>
 
-<span class="comment"># Activate environment</span>
-<span class="command">conda activate myproject</span>
+<span class="comment"># Create a Python 3.12 project and lock dependencies</span>
+<span class="command">uv init --python 3.12 myproject</span>
+<span class="command">cd myproject</span>
+<span class="command">uv add numpy scipy matplotlib</span>
 
-<span class="comment"># Install additional packages</span>
-<span class="command">conda install -c conda-forge mpi4py h5py</span>
-
-<span class="comment"># Export environment for reproducibility</span>
-<span class="command">conda env export > environment.yml</span>
-
-<span class="comment"># Create from exported environment</span>
-<span class="command">conda env create -f environment.yml</span></code></pre>
+<span class="comment"># Recreate and run the locked environment</span>
+<span class="command">uv sync --locked</span>
+<span class="command">uv run --frozen python analysis.py</span></code></pre>
                             </div>
                         </div>
-                        
+
                         <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
-                            <h4 class="font-semibold text-yellow-800 mb-2">Virtual Environments:</h4>
-                            <div class="text-yellow-700 text-sm space-y-2">
-                                <div class="font-mono bg-yellow-100 p-2 rounded">python -m venv myenv</div>
-                                <div class="font-mono bg-yellow-100 p-2 rounded">source myenv/bin/activate</div>
-                                <div class="font-mono bg-yellow-100 p-2 rounded">pip install -r requirements.txt</div>
-                            </div>
+                            <h4 class="font-semibold text-yellow-800 mb-2">What to Commit</h4>
+                            <p class="text-yellow-700 text-sm mb-2">Commit <code>pyproject.toml</code> and <code>uv.lock</code>. Put <code>.venv/</code> in <code>.gitignore</code>.</p>
+                            <p class="text-yellow-700 text-sm mb-0">Conda or Mamba remains useful when a site distributes MPI, CUDA, or other compiled stacks through Conda. Do not mix package managers in one environment without a specific reason.</p>
                         </div>
+                        <p class="text-xs text-gray-500">Install uv only through your institution's approved method or the <a href="https://docs.astral.sh/uv/getting-started/installation/" class="text-blue-700">official installation guide</a>; this tutorial intentionally avoids piping remote scripts into a shell.</p>
                     </div>
                 </div>
             </div>
@@ -225,7 +179,7 @@
         <!-- Section 2: Remote Development -->
         <section id="remote-development" class="mb-16">
             <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Remote Development</h2>
-            
+
             <div class="grid md:grid-cols-2 gap-8">
                 <!-- VS Code Remote SSH -->
                 <div class="workflow-card bg-white rounded-xl shadow-lg p-6 border-l-4 border-cyan-500">
@@ -240,7 +194,7 @@
                             <p class="text-gray-600 text-sm">Professional remote development environment</p>
                         </div>
                     </div>
-                    
+
                     <div class="space-y-4">
                         <div class="bg-purple-50 p-4 rounded border border-purple-200">
                             <div class="flex items-center mb-2">
@@ -253,34 +207,55 @@
                                 VS Code Remote-SSH provides a seamless development experience with full IDE functionality on HPC systems.
                             </p>
                         </div>
-                        
+
                         <div>
                             <h4 class="font-semibold text-gray-800 mb-3">Setup Steps:</h4>
                             <div class="space-y-3">
                                 <div class="flex items-start">
                                     <div class="step-indicator w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3 mt-0.5">1</div>
                                     <div class="text-sm">
-                                        <p class="font-semibold">Install Remote-SSH Extension</p>
-                                        <p class="text-gray-600">Search for "Remote-SSH" in VS Code extensions</p>
+                                        <p class="font-semibold">Verify SSH in a terminal</p>
+                                        <p class="text-gray-600"><code>ssh user@cluster.example.edu</code> must work before debugging VS Code.</p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
                                     <div class="step-indicator w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3 mt-0.5">2</div>
                                     <div class="text-sm">
-                                        <p class="font-semibold">Configure SSH Connection</p>
-                                        <p class="text-gray-600">Ctrl/Command+Shift+P → "Remote-SSH: Open SSH Configuration File"</p>
+                                        <p class="font-semibold">Install Remote-SSH</p>
+                                        <p class="text-gray-600">Install Microsoft's Remote-SSH extension in VS Code.</p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
                                     <div class="step-indicator w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3 mt-0.5">3</div>
                                     <div class="text-sm">
-                                        <p class="font-semibold">Connect and Open Folder</p>
-                                        <p class="text-gray-600">Choose your project directory on the cluster</p>
+                                        <p class="font-semibold">Configure the host</p>
+                                        <p class="text-gray-600">Open the SSH configuration file and add a short host alias.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="step-indicator w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3 mt-0.5">4</div>
+                                    <div class="text-sm">
+                                        <p class="font-semibold">Connect and open a project</p>
+                                        <p class="text-gray-600">Open a specific project directory, not your entire home directory.</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-2">Minimal <code>~/.ssh/config</code></h4>
+                            <div class="code-block p-3 text-xs overflow-x-auto">
+                                <pre class="text-white"><code>Host my-cluster
+    HostName cluster.example.edu
+    User your_username
+    IdentityFile ~/.ssh/id_ed25519
+    ServerAliveInterval 60
+
+<span class="comment"># If your institution requires a jump host:</span>
+<span class="comment"># ProxyJump your_username@login.example.edu</span></code></pre>
+                            </div>
+                        </div>
+
                         <div class="bg-green-50 p-4 rounded border border-green-200">
                             <h4 class="font-semibold text-green-800 mb-2">Benefits:</h4>
                             <ul class="text-green-700 text-sm space-y-1">
@@ -306,7 +281,7 @@
                             <p class="text-gray-600 text-sm">Lightweight command-line editing</p>
                         </div>
                     </div>
-                    
+
                     <div class="space-y-4">
                         <!-- Nano -->
                         <div class="border border-gray-200 rounded p-3">
@@ -351,19 +326,32 @@
                     </div>
                 </div>
             </div>
+            <div class="field-note p-5 mt-6 text-sm">
+                <strong>Login-node boundary:</strong> the VS Code server, remote extensions, terminals, and coding agents run on the remote login host. Keep extensions lightweight and use <code>srun</code>, <code>salloc</code>, or <code>sbatch</code> for computation. MFA and rotating login nodes can require site-specific configuration; on macOS/Linux, SSH connection sharing with <code>ControlMaster</code> can help when two VS Code connections otherwise land on different hosts. Use VS Code's Ports view or SSH forwarding for Jupyter instead of exposing notebook servers publicly.
+            </div>
+            <div class="code-block p-4 text-xs overflow-x-auto mt-4">
+                <pre><code><span class="comment"># On the allocated compute node</span>
+<span class="command">jupyter lab</span> --no-browser --ip=127.0.0.1 --port=8888
+
+<span class="comment"># From the laptop, when direct compute-node SSH is permitted</span>
+<span class="command">ssh -N -J</span> my-cluster \
+  -L 8888:127.0.0.1:8888 your_username@compute-node</code></pre>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">Replace <code>compute-node</code> with the allocated hostname. If compute-node SSH is disabled, use the site's documented Open OnDemand or relay-tunnel workflow instead; do not expose Jupyter on a public interface.</p>
         </section>
 
-        <div class="hidden" data-removed="version-control">
+        <div class="optional-reference p-6 mb-16">
         <section id="version-control" class="mb-16">
+            <p class="manual-section-label">Optional reference / reproducible work</p>
             <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Version Control with Git</h2>
-            
+
             <div class="workflow-card bg-white rounded-xl shadow-lg p-8">
                 <div class="text-center mb-8">
                     <p class="text-lg text-gray-700 max-w-4xl mx-auto">
                         Version control is essential for reproducible research, collaboration, and tracking the evolution of your research code and data.
                     </p>
                 </div>
-                
+
                 <div class="grid md:grid-cols-3 gap-8 mb-8">
                     <!-- Reproducibility -->
                     <div class="text-center p-6 bg-green-50 rounded-lg border border-green-200">
@@ -391,16 +379,16 @@
                         </p>
                     </div>
 
-                    <!-- Backup & Recovery -->
+                    <!-- History &amp; Recovery -->
                     <div class="text-center p-6 bg-slate-50 rounded-lg border border-slate-200">
                         <div class="w-16 h-16 bg-slate-600 rounded-lg flex items-center justify-center mx-auto mb-4">
                             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold mb-3 text-slate-900">Backup & Recovery</h3>
+                        <h3 class="text-xl font-semibold mb-3 text-slate-900">History &amp; Recovery</h3>
                         <p class="text-slate-700 text-sm">
-                            Never lose work and easily revert to previous working states.
+                            Recover tracked changes and return to earlier working states. Push to a protected remote for off-machine redundancy.
                         </p>
                     </div>
                 </div>
@@ -461,7 +449,8 @@
                                     <div>├── scripts/       <span class="text-gray-500"># Analysis scripts</span></div>
                                     <div>├── results/       <span class="text-gray-500"># Generated outputs</span></div>
                                     <div>├── docs/          <span class="text-gray-500"># Documentation</span></div>
-                                    <div>├── requirements.txt</div>
+                                    <div>├── pyproject.toml</div>
+                                    <div>├── uv.lock</div>
                                     <div>└── README.md</div>
                                 </div>
                             </div>
@@ -492,8 +481,9 @@
         </section>
         </div>
 
-        <!-- Optional: Getting Help & Colab -->
-        <section id="getting-help" class="mb-16">
+        <!-- Optional: Getting Help &amp; Colab -->
+        <section id="getting-help" class="mb-16 optional-reference p-6">
+            <p class="manual-section-label">Optional reference / troubleshooting</p>
             <h2 class="text-3xl font-bold text-center mb-2 text-blue-600">Getting Help from HPC Support</h2>
             <p class="text-center text-gray-600 mb-8">Quick self-checks and what to send for faster resolution.</p>
 
@@ -542,7 +532,8 @@
         </section>
 
         <!-- Optional: Google Colab -->
-        <section id="colab" class="mb-16">
+        <section id="colab" class="mb-16 optional-reference p-6">
+            <p class="manual-section-label">Optional reference / quick prototyping</p>
             <h2 class="text-3xl font-bold text-center mb-2 text-blue-600">Google Colab</h2>
             <div class="workflow-card bg-white rounded-xl shadow-lg p-6">
                 <ul class="text-sm text-gray-700 space-y-2 mb-3">
@@ -555,9 +546,10 @@
         </section>
 
         <!-- Section 5: Modern HPC Practices -->
-        <section id="modern-practices" class="mb-16 hidden" data-removed="modern-practices">
+        <section id="modern-practices" class="mb-16 optional-reference p-6">
+            <p class="manual-section-label">Optional reference / portable workflows</p>
             <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Modern HPC Practices</h2>
-            
+
             <div class="grid md:grid-cols-2 gap-8">
                 <!-- Containers -->
                 <div class="workflow-card bg-white rounded-xl shadow-lg p-6 border-t-4 border-indigo-500">
@@ -568,16 +560,16 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-xl font-semibold text-gray-900">Containers (Singularity/Apptainer)</h3>
+                            <h3 class="text-xl font-semibold text-gray-900">Containers with Apptainer</h3>
                             <p class="text-gray-600 text-sm">Reproducible software environments</p>
                         </div>
                     </div>
-                    
+
                     <div class="space-y-4">
                         <p class="text-gray-700 text-sm">
                             Containers package applications and dependencies for consistent execution across different HPC systems.
                         </p>
-                        
+
                         <div class="bg-indigo-50 p-4 rounded border border-indigo-200">
                             <h4 class="font-semibold text-indigo-800 mb-2">Benefits:</h4>
                             <ul class="text-indigo-700 text-sm space-y-1">
@@ -587,22 +579,26 @@
                                 <li>• Run legacy software on modern systems</li>
                             </ul>
                         </div>
-                        
+
                         <div>
-                            <h4 class="font-semibold text-gray-800 mb-2">Basic Singularity Usage:</h4>
+                            <h4 class="font-semibold text-gray-800 mb-2">Basic Apptainer Usage:</h4>
                             <div class="code-block p-3 text-sm overflow-x-auto">
                                 <pre class="text-white"><code><span class="comment"># Pull container from Docker Hub</span>
-<span class="command">singularity pull docker://ubuntu:20.04</span>
+<span class="command">apptainer pull python_3.12.sif docker://python:3.12-slim</span>
 
 <span class="comment"># Run interactive shell</span>
-<span class="command">singularity shell ubuntu_20.04.sif</span>
+<span class="command">apptainer shell python_3.12.sif</span>
 
 <span class="comment"># Execute command in container</span>
-<span class="command">singularity exec ubuntu_20.04.sif python my_script.py</span>
+<span class="command">apptainer exec python_3.12.sif python my_script.py</span>
 
-<span class="comment"># Submit container job</span>
-<span class="command">sbatch --wrap="singularity exec myapp.sif ./run_analysis"</span></code></pre>
+<span class="comment"># Submit a bounded container job</span>
+<span class="command">sbatch</span> --job-name=analysis \
+  --time=00:30:00 --mem=4G --cpus-per-task=1 \
+  --output=analysis_%j.out --error=analysis_%j.err \
+  --wrap='apptainer exec myapp.sif ./run_analysis'</code></pre>
                             </div>
+                            <p class="text-xs text-gray-500 mt-2">Some sites still expose the legacy <code>singularity</code> command. Container availability, bind mounts, and registry access are site-specific.</p>
                         </div>
                     </div>
                 </div>
@@ -620,12 +616,12 @@
                             <p class="text-gray-600 text-sm">Automate complex analysis pipelines</p>
                         </div>
                     </div>
-                    
+
                     <div class="space-y-4">
                         <p class="text-gray-700 text-sm">
                             Workflow management systems automate complex computational pipelines with dependency tracking and error handling.
                         </p>
-                        
+
                         <!-- Snakemake -->
                         <div class="border border-gray-200 rounded p-3">
                             <div class="flex items-center justify-between mb-2">
@@ -655,7 +651,7 @@
     <span class="keyword">input:</span> path(datafile)
     <span class="keyword">output:</span> path(<span class="string">"result.txt"</span>)
     <span class="string">"""
-    analyze_tool $datafile > result.txt
+    analyze_tool $datafile &gt; result.txt
     """</span>
 }</code></pre>
                             </div>
@@ -675,16 +671,48 @@
             </div>
         </section>
 
+        <section id="agentic-workflow" class="mb-16 optional-reference p-6">
+            <p class="manual-section-label">Optional reference / guarded automation</p>
+            <h2 class="text-3xl font-bold text-center mb-3 text-blue-600">Safe Agentic HPC Workflow</h2>
+            <p class="text-center text-gray-600 mb-8">Use an agent to prepare and check work, not to bypass scheduler policy.</p>
+            <div class="grid lg:grid-cols-2 gap-8">
+                <div class="workflow-card bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Plan → Validate → Smoke-test → Submit → Inspect</h3>
+                    <ol class="space-y-3 text-sm text-gray-700 list-decimal pl-5">
+                        <li>Ask the agent to read the project rules and explain assumptions before editing.</li>
+                        <li>Generate the script without running <code>sbatch</code> or <code>scancel</code>.</li>
+                        <li>Review <code>git diff</code>, then run <code>bash -n job.slurm</code> and <code>sbatch --test-only job.slurm</code> when available.</li>
+                        <li>Submit a short, small-resource smoke job only after human approval.</li>
+                        <li>Diagnose from stdout, stderr, and <code>sacct</code>; do not guess or silently request more resources.</li>
+                    </ol>
+                </div>
+                <div class="workflow-card bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-3">Example <code>AGENTS.md</code> Rules</h3>
+                    <div class="code-block p-3 text-xs overflow-x-auto mb-4">
+                        <pre class="text-white"><code>- Never run compute-heavy commands on login nodes.
+- Do not call sbatch or scancel without explicit approval.
+- Treat account, partition, and GPU type as site-specific.
+- Validate scripts before suggesting submission.
+- Never read, print, or commit secrets or private data.</code></pre>
+                    </div>
+                    <h4 class="font-semibold mb-2">Prompt pattern</h4>
+                    <p class="text-sm text-gray-700 mb-0">“Read AGENTS.md and this Slurm script. Do not submit jobs. Prepare a 30-minute, 1-GPU smoke job, leave site-specific fields unset, run static validation, and summarize every assumption.”</p>
+                </div>
+            </div>
+        </section>
+
         <!-- Section 6: Data Management -->
-        <section id="data-management" class="mb-16 hidden" data-removed="data-management">
+        <section id="data-management" class="mb-16 optional-reference p-6">
+            <p class="manual-section-label">Optional reference / storage lifecycle</p>
             <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Data Management Best Practices</h2>
-            
+
             <div class="workflow-card bg-white rounded-xl shadow-lg p-8">
                 <div class="grid md:grid-cols-2 gap-8">
                     <!-- File Transfer -->
                     <div>
                         <h3 class="text-xl font-semibold mb-4 text-gray-900">Efficient File Transfer</h3>
-                        
+                        <p class="text-sm text-gray-600 mb-4">The paths below illustrate common roles. Replace them with the working and retained-storage paths documented by your site.</p>
+
                         <div class="space-y-4">
                             <!-- scp -->
                             <div class="border-l-4 border-blue-500 pl-4 bg-blue-50 p-3 rounded-r">
@@ -723,14 +751,14 @@
                     <!-- Storage Strategy -->
                     <div>
                         <h3 class="text-xl font-semibold mb-4 text-gray-900">Storage Strategy</h3>
-                        
+
                         <div class="space-y-4">
                             <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
-                                <h4 class="font-semibold text-yellow-800 mb-2">⚠️ Critical Data Management Rules</h4>
+                                <h4 class="font-semibold text-yellow-800 mb-2">Critical Data Management Rules</h4>
                                 <ul class="text-yellow-700 text-sm space-y-1">
-                                    <li>• <strong>Never rely solely on /scratch for important data</strong></li>
+                                    <li>• <strong>Never rely solely on temporary or purgeable storage for important data</strong></li>
                                     <li>• Backup results immediately after job completion</li>
-                                    <li>• Use /project for long-term collaborative storage</li>
+                                    <li>• Use the site's protected project storage for retained collaborative data</li>
                                     <li>• Monitor quota usage regularly</li>
                                 </ul>
                             </div>
@@ -740,23 +768,23 @@
                                 <div class="space-y-2 text-sm">
                                     <div class="flex items-center">
                                         <div class="w-4 h-4 bg-blue-500 rounded-full mr-3"></div>
-                                        <span><strong>Input:</strong> Upload to /scratch for processing</span>
+                                        <span><strong>Input:</strong> Stage data in the site's recommended working filesystem</span>
                                     </div>
                                     <div class="flex items-center">
                                         <div class="w-4 h-4 bg-green-500 rounded-full mr-3"></div>
-                                        <span><strong>Processing:</strong> Work in /scratch for speed</span>
+                                        <span><strong>Processing:</strong> Use scratch only when its policy fits the workload</span>
                                     </div>
                                     <div class="flex items-center">
                                         <div class="w-4 h-4 bg-orange-500 rounded-full mr-3"></div>
-                                        <span><strong>Results:</strong> Copy to /project or /home</span>
+                                        <span><strong>Results:</strong> Copy validated outputs to protected project storage</span>
                                     </div>
                                     <div class="flex items-center">
                                         <div class="w-4 h-4 bg-purple-500 rounded-full mr-3"></div>
-                                        <span><strong>Archive:</strong> Download important results locally</span>
+                                        <span><strong>Archive:</strong> Move retained outputs to approved archival storage</span>
                                     </div>
                                     <div class="flex items-center">
                                         <div class="w-4 h-4 bg-red-500 rounded-full mr-3"></div>
-                                        <span><strong>Cleanup:</strong> Remove temporary files from /scratch</span>
+                                        <span><strong>Cleanup:</strong> Remove temporary files according to site policy</span>
                                     </div>
                                 </div>
                             </div>
@@ -765,11 +793,19 @@
                                 <h4 class="font-semibold text-blue-800 mb-2">Automation Script Example:</h4>
                                 <div class="code-block p-2 text-xs overflow-x-auto">
                                     <pre class="text-white"><code><span class="comment">#!/bin/bash</span>
-<span class="comment"># Auto-backup important results</span>
-<span class="keyword">if</span> [ $SLURM_JOB_EXITCODE -eq 0 ]; <span class="keyword">then</span>
-    <span class="command">cp</span> results.dat $HOME/research_backup/
-    <span class="command">echo</span> <span class="string">"Results backed up successfully"</span>
-<span class="keyword">fi</span></code></pre>
+<span class="comment"># Capture the application status in the batch script</span>
+<span class="command">uv run --frozen python</span> analysis.py
+status=$?
+
+<span class="keyword">if</span> [ "$status" -eq 0 ]; <span class="keyword">then</span>
+    archive_dir="${PROJECT_RESULTS_DIR:?Set PROJECT_RESULTS_DIR to retained storage}"
+    <span class="command">mkdir</span> -p "$archive_dir"
+    <span class="command">cp</span> results.dat "$archive_dir/"
+    status=$?
+    [ "$status" -eq 0 ] &amp;&amp; <span class="command">echo</span> <span class="string">"Results copied to retained storage"</span>
+<span class="keyword">fi</span>
+
+<span class="keyword">exit</span> "$status"</code></pre>
                                 </div>
                             </div>
                         </div>
@@ -797,6 +833,19 @@
             </a>
         </div>
 
+            </div>
+            <aside class="manual-toc" aria-label="On this page">
+                <h2>On this page</h2>
+                    <a href="#environment-management">Environments</a>
+                    <a href="#remote-development">Remote development</a>
+                    <a href="#version-control">Git reference</a>
+                    <a href="#getting-help">Getting help</a>
+                    <a href="#colab">Colab reference</a>
+                    <a href="#modern-practices">Modern practices</a>
+                    <a href="#agentic-workflow">Agentic workflow</a>
+                    <a href="#data-management">Data management</a>
+            </aside>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -821,37 +870,16 @@
                     <ul class="space-y-2 text-gray-300">
                         <li><a href="https://slurm.schedmd.com/" class="hover:text-white transition duration-200">Slurm Documentation</a></li>
                         <li><a href="https://docs.github.com/en" class="hover:text-white transition duration-200">GitHub Docs</a></li>
-                        <li><a href="https://www.anaconda.com/docs/main" class="hover:text-white transition duration-200">Anaconda Docs</a></li>
+                        <li><a href="https://docs.astral.sh/uv/" class="hover:text-white transition duration-200">uv Documentation</a></li>
                         <li><a href="https://modules.readthedocs.io/en/latest/" class="hover:text-white transition duration-200">Environment Modules Docs</a></li>
                     </ul>
                 </div>
             </div>
             <div class="border-t border-gray-700 pt-8 mt-8 text-center text-gray-400">
-                <p>&copy; 2025 HPC Workshop. Created with AI assistance for educational purposes.</p>
+                <p>&copy; 2026 Tianshi Xu. Developed and reviewed with assistance from GPT 5.6-Sol.</p>
             </div>
         </div>
     </footer>
-
-    <script>
-        // Mobile menu toggle
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-    </script>
+    <script src="assets/workshop.js"></script>
 </body>
 </html>

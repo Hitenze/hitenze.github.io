@@ -4,62 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Getting Started: Your First HPC Job | HPC Workshop</title>
-    <meta name="description" content="Step-by-step tutorial to run your first HPC job with practical examples">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            scroll-behavior: smooth;
-        }
-        .nav-link {
-            transition: all 0.2s ease-in-out;
-        }
-        .nav-link:hover {
-            transform: translateY(-1px);
-            color: #2563eb;
-        }
-        .tutorial-card {
-            transition: all 0.3s ease-in-out;
-        }
-        .tutorial-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        .code-block {
-            background-color: #1e1e1e;
-            border-radius: 8px;
-        }
-        .code-block .comment { color: #6a9955; }
-        .code-block .command { color: #569cd6; }
-        .code-block .string { color: #ce9178; }
-        .code-block .variable { color: #9cdcfe; }
-        .code-block .directive { color: #c586c0; }
-        .progress-bar {
-            background: linear-gradient(90deg, #0EA5E9 0%, #0F172A 100%);
-        }
-        .step-number {
-            background: linear-gradient(135deg, #0F172A 0%, #0EA5E9 100%);
-        }
-        .checklist-item {
-            transition: all 0.2s ease-in-out;
-        }
-        .checklist-item:hover {
-            background-color: #f9fafb;
-        }
-        .terminal-prompt {
-            color: #22c55e;
-        }
-        .success-animation {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-    </style>
+    <meta name="description" content="Run and inspect a dependency-free Python job, then extend the workflow with an optional NumPy example.">
+    <link rel="stylesheet" href="assets/workshop.css">
 </head>
 <body class="bg-gray-50 text-gray-900">
 
@@ -69,21 +15,21 @@
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <a href="index.html" class="text-xl font-bold text-gray-900">HPC Workshop</a>
+                        <a href="index.html" class="workshop-brand">HPC Workshop</a>
                     </div>
                 </div>
-                <div class="hidden md:block">
+                <div class="hidden lg:block">
                     <div class="ml-10 flex items-baseline space-x-4">
                         <a href="index.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Home</a>
                         <a href="introduction.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Introduction</a>
                         <a href="cluster-architecture.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Architecture</a>
                         <a href="job-scheduling.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Job Scheduling</a>
                         <a href="workflow-tools.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Workflow</a>
-                        <a href="getting-started.html" class="nav-link text-blue-600 px-3 py-2 text-sm font-medium border-b-2 border-blue-600">Get Started</a>
+                        <a href="getting-started.html" aria-current="page" class="nav-link text-blue-600 px-3 py-2 text-sm font-medium border-b-2 border-blue-600">Get Started</a>
                     </div>
                 </div>
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" class="bg-gray-200 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
+                <div class="lg:hidden">
+                    <button id="mobile-menu-button" type="button" aria-label="Toggle workshop navigation" aria-controls="mobile-menu" aria-expanded="false" class="bg-gray-200 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
                         <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
@@ -91,16 +37,16 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Mobile menu -->
-        <div id="mobile-menu" class="md:hidden hidden">
+        <div id="mobile-menu" class="lg:hidden hidden">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
                 <a href="index.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Home</a>
                 <a href="introduction.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Introduction</a>
                 <a href="cluster-architecture.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Architecture</a>
                 <a href="job-scheduling.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Job Scheduling</a>
                 <a href="workflow-tools.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Workflow</a>
-                <a href="getting-started.html" class="block px-3 py-2 text-base font-medium text-blue-600">Get Started</a>
+                <a href="getting-started.html" aria-current="page" class="block px-3 py-2 text-base font-medium text-blue-600">Get Started</a>
             </div>
         </div>
     </nav>
@@ -114,6 +60,7 @@
     <header class="bg-gradient-to-r from-[#0C2340] to-[#012169] text-white">
         <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
             <div class="text-center">
+                <p class="manual-kicker">Module 05 / Core + Reference</p>
                 <h1 class="text-4xl md:text-5xl font-bold mb-4">Getting Started: Your First HPC Job</h1>
                 <p class="text-xl max-w-3xl mx-auto opacity-90">
                     Follow this step-by-step tutorial to run your first high-performance computing job successfully
@@ -123,6 +70,8 @@
     </header>
 
     <main class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div class="manual-layout">
+            <div class="manual-content min-w-0">
 
         <!-- Section 1: Quick start in 3 columns (VS Code path) -->
         <section id="checklist" class="mb-16">
@@ -143,8 +92,9 @@
                     <ul class="text-gray-700 text-sm space-y-2">
                         <li>• Install VS Code and the “Remote – SSH” extension</li>
                         <li>• Connect: <code>Ctrl/Cmd+Shift+P</code> → Remote‑SSH: Connect to Host… → <code>your_user@cluster.address</code> → enter password/MFA</li>
-                        <li>• Connected when the bottom‑left shows “&gt;&lt; SSH”</li>
-                        <li>• Open Folder: Explorer → Open Folder… → choose <code>/home/your_user</code> → create <code>hpc101/</code></li>
+                        <li>• Verify <code>ssh your_user@cluster.address</code> in a terminal before troubleshooting VS Code</li>
+                        <li>• Connected when the bottom-left shows “&gt;&lt; SSH”</li>
+                        <li>• Open Folder: choose the specific project directory <code>$HOME/hpc_tutorial</code>, not all of <code>$HOME</code></li>
                     </ul>
                 </div>
                 <div class="tutorial-card bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
@@ -160,213 +110,135 @@
 
         <!-- Section 2: Your First Job -->
         <section id="first-job" class="mb-16">
-            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Your First HPC Job: "Hello World"</h2>
-            
+            <p class="manual-section-label">Field exercise 05.1 / Core</p>
+            <h2 class="text-3xl font-bold text-center mb-3 text-blue-600">Your First HPC Job: Python</h2>
+            <p class="text-center text-gray-600 max-w-3xl mx-auto mb-8">
+                This dependency-free program confirms that Slurm placed the work on a compute node and populated the expected allocation metadata.
+            </p>
+
             <div class="tutorial-card bg-white rounded-xl shadow-lg p-8">
-                <div class="text-center mb-8">
-                    <p class="text-lg text-gray-700">
-                        Let's create and submit a simple job to verify everything works correctly.
-                    </p>
-                </div>
-                
-                <!-- Step-by-step tutorial -->
-                <div class="space-y-8">
-                    <!-- Step 1: Create Directory -->
+                <div class="space-y-10">
                     <div class="flex items-start">
                         <div class="step-number w-10 h-10 rounded-full flex items-center justify-center text-white font-bold mr-4 mt-1">1</div>
-                        <div class="flex-1">
-                            <h3 class="text-xl font-semibold mb-3 text-gray-900">Create a Working Directory</h3>
-                            <p class="text-gray-600 mb-4">Organize your work by creating a dedicated directory for this tutorial.</p>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-xl font-semibold mb-3 text-gray-900">Create a project directory</h3>
                             <div class="code-block p-4 text-sm overflow-x-auto">
-                                <pre class="text-white"><code><span class="terminal-prompt">$ </span><span class="command">cd</span> $HOME                        <span class="comment"># Go to home directory</span>
-<span class="terminal-prompt">$ </span><span class="command">mkdir</span> hpc_tutorial               <span class="comment"># Create tutorial directory</span>
-<span class="terminal-prompt">$ </span><span class="command">cd</span> hpc_tutorial                <span class="comment"># Enter the directory</span>
-<span class="terminal-prompt">$ </span><span class="command">pwd</span>                            <span class="comment"># Verify location</span></code></pre>
+                                <pre><code><span class="terminal-prompt">$ </span><span class="command">mkdir -p</span> "$HOME/hpc_tutorial"
+<span class="terminal-prompt">$ </span><span class="command">cd</span> "$HOME/hpc_tutorial"
+<span class="terminal-prompt">$ </span><span class="command">pwd</span></code></pre>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Step 2: Create Simple Program -->
                     <div class="flex items-start">
                         <div class="step-number w-10 h-10 rounded-full flex items-center justify-center text-white font-bold mr-4 mt-1">2</div>
-                        <div class="flex-1">
-                            <h3 class="text-xl font-semibold mb-3 text-gray-900">Create a Simple Program</h3>
-                            <p class="text-gray-600 mb-4">Create a basic C program that demonstrates HPC environment information.</p>
-                            
-                            <div class="mb-4">
-                                <h4 class="font-semibold text-gray-800 mb-2">Create hello_hpc.c:</h4>
-                                <div class="code-block p-4 text-sm overflow-x-auto">
-                                    <pre class="text-white"><code><span class="terminal-prompt">$ </span><span class="command">nano hello_hpc.c</span>               <span class="comment"># Create and edit file</span></code></pre>
-                                </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-xl font-semibold mb-3 text-gray-900">Create the Python program</h3>
+                            <p class="text-gray-600 mb-4">
+                                Save the following as <code>hello_hpc.py</code>, or
+                                <a href="examples/hello_hpc.py" download>download the reviewed example</a>.
+                            </p>
+                            <div class="flex justify-end mb-2">
+                                <button type="button" class="copy-button px-3" data-copy-target="hello-python-code" aria-label="Copy the Python example" aria-live="polite">Copy</button>
                             </div>
-                            
-                            <div class="bg-gray-50 p-4 rounded border">
-                                <h4 class="font-semibold text-gray-800 mb-2">Copy this C code:</h4>
-                                <div class="code-block p-4 text-sm overflow-x-auto">
-                                    <pre class="text-white"><code><span class="directive">#include</span> <span class="string">&lt;stdio.h&gt;</span>
-<span class="directive">#include</span> <span class="string">&lt;stdlib.h&gt;</span>
-<span class="directive">#include</span> <span class="string">&lt;unistd.h&gt;</span>
-<span class="directive">#include</span> <span class="string">&lt;sys/utsname.h&gt;</span>
+                            <div class="code-block p-4 text-sm overflow-x-auto">
+                                <pre id="hello-python-code"><code><span class="directive">#!/usr/bin/env python3</span>
+<span class="string">"""Small dependency-free program for a first Slurm job."""</span>
 
-<span class="command">int</span> main() {
-    <span class="command">struct utsname</span> system_info;
-    <span class="command">char</span> hostname[256];
-    <span class="command">char</span> *slurm_job_id;
-    <span class="command">char</span> *slurm_node_list;
-    
-    <span class="comment">// Get system information</span>
-    uname(&system_info);
-    gethostname(hostname, <span class="command">sizeof</span>(hostname));
-    
-    <span class="comment">// Get Slurm environment variables</span>
-    slurm_job_id = getenv(<span class="string">"SLURM_JOB_ID"</span>);
-    slurm_node_list = getenv(<span class="string">"SLURM_JOB_NODELIST"</span>);
-    
-    printf(<span class="string">"=== HPC Environment Information ===\n"</span>);
-    printf(<span class="string">"Hello from HPC cluster!\n"</span>);
-    printf(<span class="string">"Hostname: %s\n"</span>, hostname);
-    printf(<span class="string">"Operating System: %s %s\n"</span>, system_info.sysname, system_info.release);
-    printf(<span class="string">"Architecture: %s\n"</span>, system_info.machine);
-    
-    <span class="command">if</span> (slurm_job_id) {
-        printf(<span class="string">"Slurm Job ID: %s\n"</span>, slurm_job_id);
-    }
-    <span class="command">if</span> (slurm_node_list) {
-        printf(<span class="string">"Slurm Node List: %s\n"</span>, slurm_node_list);
-    }
-    
-    printf(<span class="string">"Process ID: %d\n"</span>, getpid());
-    printf(<span class="string">"User ID: %d\n"</span>, getuid());
-    printf(<span class="string">"===============================\n"</span>);
-    
-    <span class="command">return</span> 0;
-}</code></pre>
-                                </div>
-                            </div>
-                            
-                            <div class="mt-4 bg-blue-50 p-3 rounded border border-blue-200">
-                                <p class="text-blue-700 text-sm">
-                                    <strong>💡 Tip:</strong> In nano, press Ctrl+O to save, then Ctrl+X to exit.
-                                </p>
+<span class="keyword">from</span> __future__ <span class="keyword">import</span> annotations
+
+<span class="keyword">import</span> os
+<span class="keyword">import</span> platform
+<span class="keyword">import</span> socket
+
+
+<span class="command">def</span> slurm_value(name: str) -&gt; str:
+    <span class="string">"""Return a Slurm value, or a useful label outside an allocation."""</span>
+    <span class="keyword">return</span> os.environ.get(name, <span class="string">"not set"</span>)
+
+
+<span class="command">def</span> main() -&gt; None:
+    work_items = 250_000
+    checksum = sum((index * index) % 97 <span class="keyword">for</span> index <span class="keyword">in</span> range(work_items))
+
+    print(<span class="string">"=== HPC environment ==="</span>)
+    print(<span class="string">f"Hostname: {socket.gethostname()}"</span>)
+    print(<span class="string">f"Python: {platform.python_version()}"</span>)
+    print(<span class="string">f"Slurm job ID: {slurm_value('SLURM_JOB_ID')}"</span>)
+    print(<span class="string">f"Slurm node list: {slurm_value('SLURM_JOB_NODELIST')}"</span>)
+    print(<span class="string">f"CPU slots for task: {slurm_value('SLURM_CPUS_PER_TASK')}"</span>)
+    print(<span class="string">f"Deterministic checksum ({work_items:,} items): {checksum}"</span>)
+
+
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    main()</code></pre>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Step 3: Create Job Script -->
                     <div class="flex items-start">
                         <div class="step-number w-10 h-10 rounded-full flex items-center justify-center text-white font-bold mr-4 mt-1">3</div>
-                        <div class="flex-1">
-                            <h3 class="text-xl font-semibold mb-3 text-gray-900">Create a Job Script</h3>
-                            <p class="text-gray-600 mb-4">Create a Slurm job script to compile and run your program.</p>
-                            
-                            <div class="mb-4">
-                                <h4 class="font-semibold text-gray-800 mb-2">Create run_hello.sh:</h4>
-                                <div class="code-block p-4 text-sm overflow-x-auto">
-                                    <pre class="text-white"><code><span class="terminal-prompt">$ </span><span class="command">nano run_hello.sh</span>             <span class="comment"># Create job script</span></code></pre>
-                                </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-xl font-semibold mb-3 text-gray-900">Create the Slurm script</h3>
+                            <p class="text-gray-600 mb-4">
+                                Save this as <code>hello_hpc.slurm</code>, or
+                                <a href="examples/hello_hpc.slurm" download>download the reviewed script</a>.
+                                Add an account, partition, or Python module only if your site requires it.
+                            </p>
+                            <div class="flex justify-end mb-2">
+                                <button type="button" class="copy-button px-3" data-copy-target="hello-slurm-code" aria-label="Copy the Slurm example" aria-live="polite">Copy</button>
                             </div>
-                            
-                            <div class="bg-gray-50 p-4 rounded border">
-                                <h4 class="font-semibold text-gray-800 mb-2">Copy this job script:</h4>
-                                <div class="code-block p-4 text-sm overflow-x-auto">
-                                    <pre class="text-white"><code><span class="directive">#!/bin/bash</span>
+                            <div class="code-block p-4 text-sm overflow-x-auto">
+                                <pre id="hello-slurm-code"><code><span class="directive">#!/bin/bash</span>
+<span class="directive">#SBATCH --job-name=hello_hpc</span>
+<span class="directive">#SBATCH --output=hello_hpc_%j.out</span>
+<span class="directive">#SBATCH --error=hello_hpc_%j.err</span>
+<span class="directive">#SBATCH --nodes=1</span>
+<span class="directive">#SBATCH --ntasks=1</span>
+<span class="directive">#SBATCH --cpus-per-task=1</span>
+<span class="directive">#SBATCH --mem=1G</span>
+<span class="directive">#SBATCH --time=00:05:00</span>
 
-<span class="comment"># Job identification</span>
-<span class="directive">#SBATCH --job-name=</span><span class="string">hello_hpc</span>
-<span class="directive">#SBATCH --output=</span><span class="string">hello_hpc_%j.out</span>
-<span class="directive">#SBATCH --error=</span><span class="string">hello_hpc_%j.err</span>
+set -euo pipefail
 
-<span class="comment"># Resource allocation (minimal for this example)</span>
-<span class="directive">#SBATCH --nodes=</span><span class="string">1</span>
-<span class="directive">#SBATCH --ntasks=</span><span class="string">1</span>
-<span class="directive">#SBATCH --cpus-per-task=</span><span class="string">1</span>
-<span class="directive">#SBATCH --mem=</span><span class="string">1G</span>
-<span class="directive">#SBATCH --time=</span><span class="string">00:05:00</span>
-
-<span class="comment"># Specify partition (adjust for your cluster)</span>
-<span class="directive">#SBATCH --partition=</span><span class="string">debug</span>
-
-<span class="comment"># Print job information</span>
-<span class="command">echo</span> <span class="string">"=========================================="</span>
-<span class="command">echo</span> <span class="string">"Job started on: $(date)"</span>
-<span class="command">echo</span> <span class="string">"Job ID: $SLURM_JOB_ID"</span>
-<span class="command">echo</span> <span class="string">"Node: $SLURM_JOB_NODELIST"</span>
-<span class="command">echo</span> <span class="string">"Working directory: $(pwd)"</span>
-<span class="command">echo</span> <span class="string">"=========================================="</span>
-
-<span class="comment"># Go to the directory where the job was submitted</span>
-<span class="command">cd $SLURM_SUBMIT_DIR</span>
-
-<span class="comment"># Load necessary modules (adjust for your cluster)</span>
-<span class="command">module purge</span>
-<span class="command">module load gcc</span>
-
-<span class="comment"># Compile the program</span>
-<span class="command">echo</span> <span class="string">"Compiling hello_hpc.c..."</span>
-<span class="command">gcc -o hello_hpc hello_hpc.c</span>
-
-<span class="comment"># Check if compilation was successful</span>
-<span class="command">if</span> [ $? -eq 0 ]; <span class="command">then</span>
-    <span class="command">echo</span> <span class="string">"Compilation successful!"</span>
-    <span class="command">echo</span> <span class="string">"Running the program..."</span>
-    <span class="command">echo</span> <span class="string">"=========================================="</span>
-    
-    <span class="comment"># Run the program</span>
-    <span class="command">./hello_hpc</span>
-    
-    <span class="command">echo</span> <span class="string">"=========================================="</span>
-    <span class="command">echo</span> <span class="string">"Program execution completed."</span>
-<span class="command">else</span>
-    <span class="command">echo</span> <span class="string">"Compilation failed!"</span>
-    <span class="command">exit</span> 1
-<span class="command">fi</span>
-
-<span class="command">echo</span> <span class="string">"Job completed on: $(date)"</span></code></pre>
-                                </div>
+<span class="comment"># Add account, partition, and a Python module only when your site requires them.</span>
+cd <span class="string">"${SLURM_SUBMIT_DIR:-$PWD}"</span>
+python3 -u hello_hpc.py</code></pre>
                             </div>
-                            
-                            <div class="mt-4 bg-yellow-50 p-3 rounded border border-yellow-200">
-                                <p class="text-yellow-700 text-sm">
-                                    <strong>⚠️ Note:</strong> Adjust the partition name (<code class="bg-yellow-100 px-1 rounded">debug</code>) and module names to match your cluster configuration.
-                                </p>
+                            <div class="field-note mt-4 p-4 text-sm">
+                                <strong>Site-specific fields:</strong> do not copy an account, partition, module version, or GPU type from another cluster. Check the local quickstart first.
                             </div>
                         </div>
                     </div>
 
-                    <!-- Step 4: Submit Job -->
                     <div class="flex items-start">
                         <div class="step-number w-10 h-10 rounded-full flex items-center justify-center text-white font-bold mr-4 mt-1">4</div>
-                        <div class="flex-1">
-                            <h3 class="text-xl font-semibold mb-3 text-gray-900">Submit and Monitor Your Job</h3>
-                            <p class="text-gray-600 mb-4">Submit the job and monitor its progress.</p>
-                            
-                            <div class="code-block p-4 text-sm overflow-x-auto mb-4">
-                                <pre class="text-white"><code><span class="comment"># Submit the job</span>
-<span class="terminal-prompt">$ </span><span class="command">sbatch run_hello.sh</span>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-xl font-semibold mb-3 text-gray-900">Validate, smoke-test, and inspect</h3>
+                            <p class="text-gray-600 mb-4">Run cheap checks before asking the scheduler to execute anything.</p>
+                            <div class="code-block p-4 text-sm overflow-x-auto">
+                                <pre><code><span class="comment"># Shell syntax check</span>
+<span class="terminal-prompt">$ </span><span class="command">bash -n</span> hello_hpc.slurm
+
+<span class="comment"># Ask Slurm to validate the request, when supported</span>
+<span class="terminal-prompt">$ </span><span class="command">sbatch --test-only</span> hello_hpc.slurm
+
+<span class="comment"># Submit the five-minute smoke job</span>
+<span class="terminal-prompt">$ </span><span class="command">sbatch</span> hello_hpc.slurm
 Submitted batch job 12345
 
-<span class="comment"># Check job status</span>
-<span class="terminal-prompt">$ </span><span class="command">squeue -u $USER</span>
-             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
-             12345     debug hello_hp username  R       0:01      1 compute-001
-
-<span class="comment"># Wait for completion, then check output</span>
-<span class="terminal-prompt">$ </span><span class="command">ls -la</span>
-total 16
--rw-r--r-- 1 user group  1234 Jan 15 10:30 hello_hpc_12345.out
--rw-r--r-- 1 user group     0 Jan 15 10:30 hello_hpc_12345.err
--rwxr-xr-x 1 user group  8760 Jan 15 10:30 hello_hpc
--rw-r--r-- 1 user group  1456 Jan 15 10:29 hello_hpc.c
--rw-r--r-- 1 user group  1234 Jan 15 10:29 run_hello.sh</code></pre>
+<span class="terminal-prompt">$ </span><span class="command">squeue -j</span> 12345
+<span class="terminal-prompt">$ </span><span class="command">sacct -j</span> 12345 <span class="variable">--format=JobID,State,Elapsed,MaxRSS,ExitCode</span>
+<span class="terminal-prompt">$ </span><span class="command">cat</span> hello_hpc_12345.out
+<span class="terminal-prompt">$ </span><span class="command">cat</span> hello_hpc_12345.err</code></pre>
                             </div>
-                            
-                            <div class="bg-green-50 p-4 rounded border border-green-200">
-                                <h4 class="font-semibold text-green-800 mb-2">🎉 Success Indicators:</h4>
+                            <div class="bg-green-50 p-4 rounded border border-green-200 mt-4">
+                                <h4 class="font-semibold text-green-800 mb-2">Success criteria</h4>
                                 <ul class="text-green-700 text-sm space-y-1">
-                                    <li>• Job submission returns a job ID</li>
-                                    <li>• Job status shows "R" (Running) then disappears (Completed)</li>
-                                    <li>• Output file created with job ID in filename</li>
-                                    <li>• Error file is empty or contains only warnings</li>
+                                    <li>The job reaches <code>COMPLETED</code> with exit code <code>0:0</code>.</li>
+                                    <li>The hostname is a compute node, not the login host.</li>
+                                    <li>The job ID, node list, and CPU allocation are populated.</li>
+                                    <li>The error file is empty.</li>
                                 </ul>
                             </div>
                         </div>
@@ -377,111 +249,98 @@ total 16
 
         <!-- Section 3: Analyzing Results -->
         <section id="results" class="mb-16">
-            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Analyzing Your Job Results</h2>
-            
+            <p class="manual-section-label">Field exercise 05.2 / Core</p>
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Read the Evidence</h2>
             <div class="grid md:grid-cols-2 gap-8">
-                <!-- Output Analysis -->
                 <div class="tutorial-card bg-white rounded-xl shadow-lg p-6">
-                    <h3 class="text-xl font-semibold mb-4 text-gray-900">Examining Job Output</h3>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <h4 class="font-semibold text-gray-800 mb-2">View the output file:</h4>
-                            <div class="code-block p-3 text-sm overflow-x-auto">
-                                <pre class="text-white"><code><span class="terminal-prompt">$ </span><span class="command">cat hello_hpc_12345.out</span></code></pre>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-gray-50 p-4 rounded border">
-                            <h4 class="font-semibold text-gray-800 mb-2">Expected output:</h4>
-                            <div class="text-sm font-mono text-gray-700">
-                                <div>==========================================</div>
-                                <div>Job started on: Mon Jan 15 10:30:15 PST 2024</div>
-                                <div>Job ID: 12345</div>
-                                <div>Node: compute-001</div>
-                                <div>Working directory: /home/username/hpc_tutorial</div>
-                                <div>==========================================</div>
-                                <div>Compiling hello_hpc.c...</div>
-                                <div>Compilation successful!</div>
-                                <div>Running the program...</div>
-                                <div>==========================================</div>
-                                <div>=== HPC Environment Information ===</div>
-                                <div>Hello from HPC cluster!</div>
-                                <div>Hostname: compute-001</div>
-                                <div>Operating System: Linux 4.18.0</div>
-                                <div>Architecture: x86_64</div>
-                                <div>Slurm Job ID: 12345</div>
-                                <div>Slurm Node List: compute-001</div>
-                                <div>Process ID: 15678</div>
-                                <div>User ID: 1001</div>
-                                <div>===============================</div>
-                                <div>==========================================</div>
-                                <div>Program execution completed.</div>
-                                <div>Job completed on: Mon Jan 15 10:30:17 PST 2024</div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-blue-50 p-4 rounded border border-blue-200">
-                            <h4 class="font-semibold text-blue-800 mb-2">Key Information:</h4>
-                            <ul class="text-blue-700 text-sm space-y-1">
-                                <li>• Job ran on a compute node (not login node)</li>
-                                <li>• Slurm environment variables were populated</li>
-                                <li>• Compilation and execution were successful</li>
-                                <li>• Total runtime was about 2 seconds</li>
-                            </ul>
-                        </div>
+                    <h3 class="text-xl font-semibold mb-4 text-gray-900">Program output</h3>
+                    <div class="code-block p-4 text-sm overflow-x-auto">
+                        <pre><code>=== HPC environment ===
+Hostname: compute-001
+Python: &lt;site version&gt;
+Slurm job ID: 12345
+Slurm node list: compute-001
+CPU slots for task: 1
+Deterministic checksum (250,000 items): 11999819</code></pre>
                     </div>
+                    <p class="text-gray-600 text-sm mt-4">
+                        Exact hostnames and Python versions vary. This dependency-free smoke test intentionally uses the site's <code>python3</code>; use the Python 3.12 + uv workflow for project environments. The important distinction is that the program ran inside the allocation, not on the login node.
+                    </p>
                 </div>
 
-                <!-- Performance Analysis -->
                 <div class="tutorial-card bg-white rounded-xl shadow-lg p-6">
-                    <h3 class="text-xl font-semibold mb-4 text-gray-900">Performance Analysis</h3>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <h4 class="font-semibold text-gray-800 mb-2">Check job efficiency:</h4>
-                            <div class="code-block p-3 text-sm overflow-x-auto">
-                                <pre class="text-white"><code><span class="terminal-prompt">$ </span><span class="command">sacct -j 12345 --format=JobID,JobName,Elapsed,CPUTime,MaxRSS,State</span></code></pre>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-gray-50 p-4 rounded border">
-                            <h4 class="font-semibold text-gray-800 mb-2">Sample output:</h4>
-                            <div class="text-xs font-mono text-gray-700">
-                                <div>       JobID    JobName    Elapsed    CPUTime     MaxRSS      State</div>
-                                <div>------------ ---------- ---------- ---------- ---------- ----------</div>
-                                <div>       12345  hello_hpc   00:00:02   00:00:02       1234K  COMPLETED</div>
-                                <div>   12345.ba+      batch   00:00:02   00:00:02       1234K  COMPLETED</div>
-                            </div>
-                        </div>
-                        
-                        <div class="space-y-3">
-                            <div class="bg-green-50 p-3 rounded border border-green-200">
-                                <h4 class="font-semibold text-green-800 text-sm">✅ What This Tells Us:</h4>
-                                <ul class="text-green-700 text-xs space-y-1">
-                                    <li>• Job completed successfully (COMPLETED state)</li>
-                                    <li>• Very fast execution (2 seconds)</li>
-                                    <li>• Low memory usage (1.2 MB)</li>
-                                    <li>• Efficient for this simple task</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="bg-yellow-50 p-3 rounded border border-yellow-200">
-                                <h4 class="font-semibold text-yellow-800 text-sm">📊 Efficiency Note:</h4>
-                                <p class="text-yellow-700 text-xs">
-                                    This job was over-provisioned (requested 1GB memory, used 1.2MB). 
-                                    For real applications, optimize resource requests based on actual usage.
-                                </p>
-                            </div>
-                        </div>
+                    <h3 class="text-xl font-semibold mb-4 text-gray-900">Scheduler record</h3>
+                    <div class="code-block p-4 text-sm overflow-x-auto">
+                        <pre><code><span class="terminal-prompt">$ </span><span class="command">sacct -j</span> 12345 \
+  <span class="variable">--format=JobID,State,Elapsed,MaxRSS,ExitCode</span>
+
+JobID       State     Elapsed  MaxRSS  ExitCode
+12345       COMPLETED 00:00:02          0:0
+12345.batch COMPLETED 00:00:02 14M      0:0</code></pre>
                     </div>
+                    <p class="text-gray-600 text-sm mt-4">
+                        Use measured elapsed time and peak memory to right-size the next request. A successful smoke job validates the path, not application scaling.
+                    </p>
                 </div>
             </div>
         </section>
 
+        <section id="numpy-example" class="optional-reference mb-16 p-8">
+            <p class="manual-section-label">Reference 05.A / Python threads</p>
+            <h2 class="text-3xl font-bold mb-4 text-blue-600">Optional NumPy Threading Example</h2>
+            <p class="text-gray-700 mb-5">
+                Use <code>uv</code> to lock NumPy and map one Slurm CPU allocation to the common BLAS thread controls. More threads do not guarantee faster execution; benchmark on your cluster.
+            </p>
+            <div class="grid lg:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold mb-3">Create the environment</h3>
+                    <div class="code-block p-4 text-sm overflow-x-auto">
+                        <pre><code><span class="terminal-prompt">$ </span><span class="command">uv init</span> <span class="variable">--python 3.12</span>
+<span class="terminal-prompt">$ </span><span class="command">uv add</span> numpy
+<span class="terminal-prompt">$ </span><span class="command">uv sync</span> <span class="variable">--locked</span>
+<span class="terminal-prompt">$ </span><span class="command">git add</span> pyproject.toml uv.lock</code></pre>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-3">Match allocation and threads</h3>
+                    <div class="code-block p-4 text-sm overflow-x-auto">
+                        <pre><code><span class="directive">#SBATCH --cpus-per-task=4</span>
+
+export OMP_NUM_THREADS=<span class="string">"$SLURM_CPUS_PER_TASK"</span>
+export OPENBLAS_NUM_THREADS=<span class="string">"$SLURM_CPUS_PER_TASK"</span>
+export MKL_NUM_THREADS=<span class="string">"$SLURM_CPUS_PER_TASK"</span>
+export NUMEXPR_NUM_THREADS=<span class="string">"$SLURM_CPUS_PER_TASK"</span>
+uv run --frozen python -u numpy_threads.py</code></pre>
+                    </div>
+                </div>
+            </div>
+            <p class="mt-5 text-sm">
+                Download <a href="examples/numpy_threads.py" download><code>numpy_threads.py</code></a> and
+                <a href="examples/numpy_threads.slurm" download><code>numpy_threads.slurm</code></a>.
+                Run the environment-creation commands in the same project directory before submission. The Slurm script expects <code>pyproject.toml</code> and <code>uv.lock</code> there. Commit those two files and ignore <code>.venv/</code>.
+            </p>
+        </section>
+
+        <section id="compiled-variant" class="optional-reference mb-16 p-8">
+            <p class="manual-section-label">Reference 05.B / Compiled code</p>
+            <h2 class="text-3xl font-bold mb-4 text-blue-600">Compiled-Code Variant</h2>
+            <p class="text-gray-700 mb-5">
+                For C, C++, or Fortran, compile on the cluster with its reviewed compiler module, then run the executable in a batch allocation. Keep compilation separate from repeated production runs.
+            </p>
+            <div class="code-block p-4 text-sm overflow-x-auto">
+                <pre><code><span class="terminal-prompt">$ </span><span class="command">module spider</span> gcc
+<span class="terminal-prompt">$ </span><span class="command">module load</span> gcc/&lt;site-version&gt;
+<span class="terminal-prompt">$ </span><span class="command">gcc</span> -O2 -Wall -Wextra hello_hpc.c -o hello_hpc
+<span class="terminal-prompt">$ </span><span class="command">sbatch</span> run_compiled.slurm</code></pre>
+            </div>
+            <p class="field-note mt-4 p-4 text-sm">
+                Record the compiler and module versions used to build the executable. Rebuild when moving between incompatible CPU architectures or software stacks.
+            </p>
+        </section>
+
         <!-- Congratulations Section -->
         <section id="congratulations" class="mb-16">
-            <div class="tutorial-card bg-gradient-to-r from-[#0C2340] to-[#012169] text-white rounded-xl shadow-lg p-8 text-center">
+            <div class="manual-panel p-8 text-center">
                 <h2 class="text-3xl font-bold mb-4">Workshop Wrap-up</h2>
                 <p class="text-xl mb-6">
                     What you did today: connected, moved files, submitted a job, checked logs.
@@ -498,7 +357,7 @@ total 16
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
-                Previous: Workflow & Tools
+                Previous: Workflow &amp; Tools
             </a>
             <div class="text-center">
                 <p class="text-sm text-gray-500">Module 5 of 5 - Complete!</p>
@@ -511,6 +370,17 @@ total 16
             </a>
         </div>
 
+            </div>
+            <aside class="manual-toc" aria-label="On this page">
+                <h2>On this page</h2>
+                    <a href="#checklist">Connection checklist</a>
+                    <a href="#first-job">First Python job</a>
+                    <a href="#results">Read the evidence</a>
+                    <a href="#numpy-example">NumPy threads</a>
+                    <a href="#compiled-variant">Compiled code</a>
+                    <a href="#congratulations">Wrap-up</a>
+            </aside>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -535,55 +405,16 @@ total 16
                     <ul class="space-y-2 text-gray-300">
                         <li><a href="https://slurm.schedmd.com/" class="hover:text-white transition duration-200">Slurm Documentation</a></li>
                         <li><a href="https://docs.github.com/en" class="hover:text-white transition duration-200">GitHub Docs</a></li>
-                        <li><a href="https://www.anaconda.com/docs/main" class="hover:text-white transition duration-200">Anaconda Docs</a></li>
+                        <li><a href="https://docs.astral.sh/uv/" class="hover:text-white transition duration-200">uv Documentation</a></li>
                         <li><a href="https://modules.readthedocs.io/en/latest/" class="hover:text-white transition duration-200">Environment Modules Docs</a></li>
                     </ul>
                 </div>
             </div>
             <div class="border-t border-gray-700 pt-8 mt-8 text-center text-gray-400">
-                <p>&copy; 2025 HPC Workshop. Created with AI assistance for educational purposes.</p>
+                <p>&copy; 2026 Tianshi Xu. Developed and reviewed with assistance from GPT 5.6-Sol.</p>
             </div>
         </div>
     </footer>
-
-    <script>
-        // Mobile menu toggle
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        // Checklist functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const item = this.closest('.checklist-item');
-                    if (this.checked) {
-                        item.classList.add('bg-green-50', 'border-green-300');
-                        item.classList.remove('border-gray-200');
-                    } else {
-                        item.classList.remove('bg-green-50', 'border-green-300');
-                        item.classList.add('border-gray-200');
-                    }
-                });
-            });
-        });
-
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-    </script>
+    <script src="assets/workshop.js"></script>
 </body>
 </html>

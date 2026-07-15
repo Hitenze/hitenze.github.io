@@ -4,54 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HPC Cluster Architecture | HPC Workshop</title>
-    <meta name="description" content="Understanding HPC cluster components: login nodes, compute nodes, storage, and interconnects">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            scroll-behavior: smooth;
-        }
-        .nav-link {
-            transition: all 0.2s ease-in-out;
-        }
-        .nav-link:hover {
-            transform: translateY(-1px);
-            color: #2563eb;
-        }
-        .architecture-card {
-            transition: all 0.3s ease-in-out;
-        }
-        .architecture-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        .interconnect-grid {
-            background-image: 
-                linear-gradient(rgba(156, 163, 175, 0.2) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(156, 163, 175, 0.2) 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
-        .progress-bar {
-            background: linear-gradient(90deg, #0EA5E9 0%, #0F172A 100%);
-        }
-        .storage-icon::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
-            animation: shimmer 2s infinite;
-        }
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-    </style>
+    <meta name="description" content="Understand HPC login and compute nodes, site-specific storage roles, and cluster interconnects.">
+    <link rel="stylesheet" href="assets/workshop.css">
 </head>
 <body class="bg-gray-50 text-gray-900">
 
@@ -61,21 +15,21 @@
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <a href="index.html" class="text-xl font-bold text-gray-900">HPC Workshop</a>
+                        <a href="index.html" class="workshop-brand">HPC Workshop</a>
                     </div>
                 </div>
-                <div class="hidden md:block">
+                <div class="hidden lg:block">
                     <div class="ml-10 flex items-baseline space-x-4">
                         <a href="index.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Home</a>
                         <a href="introduction.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Introduction</a>
-                        <a href="cluster-architecture.html" class="nav-link text-blue-600 px-3 py-2 text-sm font-medium border-b-2 border-blue-600">Architecture</a>
+                        <a href="cluster-architecture.html" aria-current="page" class="nav-link text-blue-600 px-3 py-2 text-sm font-medium border-b-2 border-blue-600">Architecture</a>
                         <a href="job-scheduling.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Job Scheduling</a>
                         <a href="workflow-tools.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Workflow</a>
                         <a href="getting-started.html" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Get Started</a>
                     </div>
                 </div>
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" class="bg-gray-200 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
+                <div class="lg:hidden">
+                    <button id="mobile-menu-button" type="button" aria-label="Toggle workshop navigation" aria-controls="mobile-menu" aria-expanded="false" class="bg-gray-200 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
                         <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
@@ -83,13 +37,13 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Mobile menu -->
-        <div id="mobile-menu" class="md:hidden hidden">
+        <div id="mobile-menu" class="lg:hidden hidden">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
                 <a href="index.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Home</a>
                 <a href="introduction.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Introduction</a>
-                <a href="cluster-architecture.html" class="block px-3 py-2 text-base font-medium text-blue-600">Architecture</a>
+                <a href="cluster-architecture.html" aria-current="page" class="block px-3 py-2 text-base font-medium text-blue-600">Architecture</a>
                 <a href="job-scheduling.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Job Scheduling</a>
                 <a href="workflow-tools.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Workflow</a>
                 <a href="getting-started.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Get Started</a>
@@ -106,6 +60,7 @@
     <header class="bg-white border-b border-gray-200">
         <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div class="text-center">
+                <p class="manual-kicker">Module 02 / Core</p>
                 <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">HPC Cluster Architecture</h1>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
                     Understanding the components and infrastructure that make high-performance computing possible
@@ -115,19 +70,21 @@
     </header>
 
     <main class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div class="manual-layout">
+            <div class="manual-content min-w-0">
 
         <!-- Section 1: Cluster Overview -->
         <section id="cluster-overview" class="mb-16">
             <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Anatomy of an HPC Cluster</h2>
-            
+
             <div class="architecture-card bg-white rounded-xl shadow-lg p-8 mb-8">
                 <div class="text-center mb-8">
                     <p class="text-lg text-gray-700 max-w-4xl mx-auto">
-                        An HPC cluster is a collection of interconnected computers working together as a unified computing resource. 
+                        An HPC cluster is a collection of interconnected computers working together as a unified computing resource.
                         Understanding the architecture is crucial for effective utilization of HPC resources.
                     </p>
                 </div>
-                
+
                 <!-- Simplified Cluster Diagram -->
                 <div class="bg-gray-50 p-8 rounded-lg border-2 border-dashed border-gray-300">
                     <div class="flex flex-col lg:flex-row items-center justify-center gap-8">
@@ -140,7 +97,7 @@
                             </div>
                             <span class="text-sm font-semibold text-gray-900">Research User</span>
                         </div>
-                        
+
                         <!-- SSH Arrow -->
                         <div class="hidden lg:flex items-center">
                             <div class="text-xl text-gray-400 mx-4">SSH →</div>
@@ -148,11 +105,11 @@
                         <div class="lg:hidden">
                             <div class="text-xl text-gray-400 my-2">↓ SSH</div>
                         </div>
-                        
+
                         <!-- Cluster System Box -->
                         <div class="border-4 border-blue-500 rounded-2xl p-6 bg-blue-50 max-w-4xl w-full">
                             <h3 class="text-xl font-bold text-center mb-6 text-blue-900">HPC Cluster</h3>
-                            
+
                             <!-- High-Speed Interconnect Network Bar -->
                             <div class="mb-8">
                                 <div class="bg-gradient-to-r from-cyan-100 to-cyan-200 border-2 border-cyan-500 rounded-lg p-3 text-center">
@@ -165,10 +122,10 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
                                         </svg>
                                     </div>
-                                    <p class="text-xs text-cyan-700 mt-1">InfiniBand / Ethernet (10-400 Gbps)</p>
+                                    <p class="text-xs text-cyan-700 mt-1">InfiniBand, Ethernet, or another site-specific fabric</p>
                                 </div>
                             </div>
-                            
+
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <!-- Login Nodes -->
                                 <div class="relative">
@@ -185,7 +142,7 @@
                                         <p class="text-xs text-blue-600 mt-2">• User access<br>• Job submission</p>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Compute Nodes -->
                                 <div class="relative">
                                     <!-- Connector line from network -->
@@ -198,10 +155,10 @@
                                         </div>
                                         <h4 class="font-bold text-red-900">Compute Nodes</h4>
                                         <p class="text-xs text-red-700 mt-1">Processing Power</p>
-                                        <p class="text-xs text-red-600 mt-2">• CPU/GPU cores<br>• Job execution</p>
+                                        <p class="text-xs text-red-600 mt-2">• CPU/GPU resources<br>• Job execution</p>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Storage -->
                                 <div class="relative">
                                     <!-- Connector line from network -->
@@ -227,25 +184,25 @@
         <!-- Section 2: Login Nodes -->
         <section id="login-nodes" class="mb-16">
             <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Login Nodes: Your Gateway to the Cluster</h2>
-            
+
             <div class="architecture-card bg-white rounded-xl shadow-lg p-8 border-l-4 border-blue-500">
                 <div class="grid md:grid-cols-2 gap-8">
                     <div>
                         <h3 class="text-2xl font-semibold mb-4 text-gray-900">Purpose and Function</h3>
                         <p class="text-gray-700 mb-6">
-                            Login nodes serve as the access point to the cluster, providing a command-line interface for users to interact with the HPC system. 
+                            Login nodes serve as the access point to the cluster, providing a command-line interface for users to interact with the HPC system.
                             They are shared resources designed for light computational tasks and job management.
                         </p>
-                        
-                        <h4 class="text-lg font-semibold mb-3 text-gray-900">Typical Specifications:</h4>
+
+                        <h4 class="text-lg font-semibold mb-3 text-gray-900">Operational Characteristics:</h4>
                         <div class="space-y-2 text-sm">
                             <div class="flex justify-between">
-                                <span class="text-gray-600">CPU Cores:</span>
-                                <span class="font-semibold">8-16 cores</span>
+                                <span class="text-gray-600">CPU and memory:</span>
+                                <span class="font-semibold">Shared by many users</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Memory:</span>
-                                <span class="font-semibold">32-128 GB RAM</span>
+                                <span class="text-gray-600">Process limits:</span>
+                                <span class="font-semibold">Set by site policy</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Storage:</span>
@@ -257,7 +214,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div>
                         <h3 class="text-2xl font-semibold mb-4 text-gray-900">Appropriate Activities</h3>
                         <div class="space-y-4">
@@ -276,7 +233,7 @@
                                 </svg>
                                 <div>
                                     <h4 class="font-semibold text-gray-900">Code Development</h4>
-                                    <p class="text-gray-600 text-sm">Edit source code, compile programs, and debug applications</p>
+                                    <p class="text-gray-600 text-sm">Edit code, run static checks, and perform small builds; use an allocation for expensive compilation or tests</p>
                                 </div>
                             </div>
                             <div class="flex items-start">
@@ -289,11 +246,11 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="mt-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
-                            <h4 class="font-bold text-red-800 mb-2">⚠️ Critical Rule:</h4>
+                            <h4 class="font-bold text-red-800 mb-2">Critical Rule:</h4>
                             <p class="text-red-700 text-sm">
-                                <strong>Never run computational jobs directly on login nodes.</strong> 
+                                <strong>Never run computational jobs directly on login nodes.</strong>
                                 These shared resources are not designed for intensive computations and doing so can impact other users.
                             </p>
                         </div>
@@ -305,7 +262,7 @@
         <!-- Section 3: Compute Nodes -->
         <section id="compute-nodes" class="mb-16">
             <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Compute Nodes: The Computational Workhorses</h2>
-            
+
             <div class="grid md:grid-cols-2 gap-8">
                 <!-- Standard Compute Nodes -->
                 <div class="architecture-card bg-white rounded-xl shadow-lg p-6 border-t-4 border-red-500">
@@ -317,26 +274,26 @@
                         </div>
                         <h3 class="text-xl font-bold text-gray-900">Standard Compute Nodes</h3>
                     </div>
-                    
+
                     <div class="space-y-4">
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <h4 class="font-semibold text-gray-900 mb-2">Typical Configuration:</h4>
                             <div class="space-y-1 text-sm">
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">CPU Cores:</span>
-                                    <span class="font-semibold">24-128 cores</span>
+                                    <span class="font-semibold">Site and node-type specific</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Memory:</span>
-                                    <span class="font-semibold">128-512 GB RAM</span>
+                                    <span class="font-semibold">Site and node-type specific</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Architecture:</span>
-                                    <span class="font-semibold">x86_64 (Intel/AMD)</span>
+                                    <span class="font-semibold">Commonly x86_64; Arm also exists</span>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="bg-gray-50 p-3 rounded border border-gray-200">
                             <p class="text-gray-700 text-sm"><strong>Typical role:</strong> General‑purpose compute.</p>
                         </div>
@@ -361,11 +318,11 @@
                         <div class="text-sm space-y-2">
                             <div class="flex justify-between">
                                 <span class="text-gray-600">GPUs:</span>
-                                <span class="font-semibold">1-8 per node</span>
+                                <span class="font-semibold">Model and count vary by node</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">GPU Memory:</span>
-                                <span class="font-semibold">16-80 GB per GPU</span>
+                                <span class="font-semibold">Model-specific; inspect before requesting</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Best For:</span>
@@ -390,11 +347,11 @@
                         <div class="text-sm space-y-2">
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Memory:</span>
-                                <span class="font-semibold">1-4 TB RAM</span>
+                                <span class="font-semibold">More than standard nodes; site-specific</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">CPU Cores:</span>
-                                <span class="font-semibold">48-256 cores</span>
+                                <span class="font-semibold">Site and node-type specific</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Best For:</span>
@@ -409,15 +366,19 @@
         <!-- Section 4: Storage Systems -->
         <section id="storage-systems" class="mb-16">
             <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Storage Hierarchy: Understanding Data Management</h2>
-            
+
             <div class="architecture-card bg-white rounded-xl shadow-lg p-8">
                 <div class="text-center mb-8">
                     <p class="text-lg text-gray-700 max-w-4xl mx-auto">
-                        HPC systems employ a hierarchical storage architecture designed to balance performance, capacity, and data safety. 
+                        HPC systems employ a hierarchical storage architecture designed to balance performance, capacity, and data safety.
                         Understanding each tier is crucial for effective data management.
                     </p>
                 </div>
-                
+
+                <div class="field-note p-4 mb-8 text-sm">
+                    The names below describe common roles, not universal paths or guarantees. Verify quotas, snapshots, backup coverage, purge rules, and retention with your site's storage documentation.
+                </div>
+
                 <div class="grid md:grid-cols-3 gap-8">
                     <!-- Home Directory -->
                     <div class="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
@@ -429,18 +390,18 @@
                             </div>
                         </div>
                         <h3 class="text-xl font-bold text-center mb-4 text-blue-900">/home Directory</h3>
-                        
+
                         <div class="space-y-3 text-sm">
                             <div class="bg-white bg-opacity-60 p-3 rounded">
                                 <h4 class="font-semibold text-blue-800 mb-2">Characteristics:</h4>
                                 <ul class="text-blue-700 space-y-1">
-                                    <li>• <strong>Size:</strong> 10-50 GB quota</li>
-                                    <li>• <strong>Backup:</strong> Daily backups</li>
-                                    <li>• <strong>Access:</strong> Private to user</li>
-                                    <li>• <strong>Performance:</strong> Standard I/O</li>
+                                    <li>• <strong>Quota:</strong> Usually limited; site-specific</li>
+                                    <li>• <strong>Protection:</strong> Snapshots or backups vary by site</li>
+                                    <li>• <strong>Access:</strong> User-oriented persistent storage</li>
+                                    <li>• <strong>Performance:</strong> Not intended for heavy parallel I/O</li>
                                 </ul>
                             </div>
-                            
+
                             <div class="bg-green-50 p-3 rounded border border-green-200">
                                 <h4 class="font-semibold text-green-800 mb-2">Best For:</h4>
                                 <ul class="text-green-700 space-y-1 text-xs">
@@ -463,18 +424,18 @@
                             </div>
                         </div>
                         <h3 class="text-xl font-bold text-center mb-4 text-yellow-900">/scratch Directory</h3>
-                        
+
                         <div class="space-y-3 text-sm">
                             <div class="bg-white bg-opacity-60 p-3 rounded">
                                 <h4 class="font-semibold text-yellow-800 mb-2">Characteristics:</h4>
                                 <ul class="text-yellow-700 space-y-1">
-                                    <li>• <strong>Size:</strong> 1-10 TB quota</li>
-                                    <li>• <strong>Backup:</strong> No backups</li>
-                                    <li>• <strong>Cleanup:</strong> Auto-purged (30-90 days)</li>
-                                    <li>• <strong>Performance:</strong> High-speed I/O</li>
+                                    <li>• <strong>Quota:</strong> Larger working capacity; site-specific</li>
+                                    <li>• <strong>Protection:</strong> Treat as unprotected unless documented otherwise</li>
+                                    <li>• <strong>Cleanup:</strong> Purge and retention rules are site-specific</li>
+                                    <li>• <strong>Performance:</strong> Intended for active computational I/O</li>
                                 </ul>
                             </div>
-                            
+
                             <div class="bg-orange-50 p-3 rounded border border-orange-200">
                                 <h4 class="font-semibold text-orange-800 mb-2">Best For:</h4>
                                 <ul class="text-orange-700 space-y-1 text-xs">
@@ -484,9 +445,9 @@
                                     <li>• High I/O applications</li>
                                 </ul>
                             </div>
-                            
+
                             <div class="bg-red-50 p-3 rounded border border-red-200">
-                                <p class="text-red-700 text-xs font-semibold">⚠️ Data not backed up and may be deleted!</p>
+                                <p class="text-red-700 text-xs font-semibold">Assume data can be deleted until the local policy says otherwise.</p>
                             </div>
                         </div>
                     </div>
@@ -501,18 +462,18 @@
                             </div>
                         </div>
                         <h3 class="text-xl font-bold text-center mb-4 text-green-900">/project Directory</h3>
-                        
+
                         <div class="space-y-3 text-sm">
                             <div class="bg-white bg-opacity-60 p-3 rounded">
                                 <h4 class="font-semibold text-green-800 mb-2">Characteristics:</h4>
                                 <ul class="text-green-700 space-y-1">
-                                    <li>• <strong>Size:</strong> 100 GB - 10 TB</li>
-                                    <li>• <strong>Backup:</strong> Weekly backups</li>
-                                    <li>• <strong>Access:</strong> Team shared</li>
-                                    <li>• <strong>Retention:</strong> Long-term</li>
+                                    <li>• <strong>Quota:</strong> Project and allocation specific</li>
+                                    <li>• <strong>Protection:</strong> Backup and snapshot coverage varies</li>
+                                    <li>• <strong>Access:</strong> Commonly shared through groups</li>
+                                    <li>• <strong>Retention:</strong> Defined by the project's policy</li>
                                 </ul>
                             </div>
-                            
+
                             <div class="bg-blue-50 p-3 rounded border border-blue-200">
                                 <h4 class="font-semibold text-blue-800 mb-2">Best For:</h4>
                                 <ul class="text-blue-700 space-y-1 text-xs">
@@ -525,29 +486,29 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Storage Best Practices -->
                 <div class="mt-8 bg-gray-50 p-6 rounded-lg">
                     <h3 class="text-xl font-semibold mb-4 text-gray-900">Storage Best Practices</h3>
                     <div class="grid md:grid-cols-2 gap-6">
                         <div>
-                            <h4 class="font-semibold text-green-800 mb-2">✅ DO:</h4>
+                            <h4 class="font-semibold text-green-800 mb-2">Recommended:</h4>
                             <ul class="text-green-700 text-sm space-y-1">
-                                <li>• Keep code and small files in /home</li>
-                                <li>• Use /scratch for active computations</li>
-                                <li>• Move important results to /project or local storage</li>
+                                <li>• Keep code and small files in user-oriented persistent storage</li>
+                                <li>• Use the recommended working filesystem for active computations</li>
+                                <li>• Move important results to protected project or archival storage</li>
                                 <li>• Monitor your quota usage regularly</li>
-                                <li>• Clean up /scratch frequently</li>
+                                <li>• Clean up temporary storage according to site policy</li>
                             </ul>
                         </div>
                         <div>
-                            <h4 class="font-semibold text-red-800 mb-2">❌ DON'T:</h4>
+                            <h4 class="font-semibold text-red-800 mb-2">Avoid:</h4>
                             <ul class="text-red-700 text-sm space-y-1">
-                                <li>• Store large datasets in /home</li>
-                                <li>• Rely on /scratch for permanent storage</li>
+                                <li>• Store large datasets in a filesystem not intended for them</li>
+                                <li>• Rely on temporary or purgeable storage for permanent data</li>
                                 <li>• Ignore quota warnings</li>
-                                <li>• Run I/O intensive jobs from /home</li>
-                                <li>• Forget to backup important data</li>
+                                <li>• Run I/O-intensive jobs from user-oriented persistent storage</li>
+                                <li>• Assume a filesystem is backed up without checking its policy</li>
                             </ul>
                         </div>
                     </div>
@@ -558,15 +519,15 @@
         <!-- Section 5: Interconnects -->
         <section id="interconnects" class="mb-16">
             <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">High-Speed Interconnects: The Cluster's Nervous System</h2>
-            
+
             <div class="architecture-card bg-white rounded-xl shadow-lg p-8">
                 <div class="text-center mb-8">
                     <p class="text-lg text-gray-700 max-w-4xl mx-auto">
-                        The interconnect network is crucial for parallel computing performance, enabling rapid communication 
+                        The interconnect network is crucial for parallel computing performance, enabling rapid communication
                         between compute nodes and access to shared storage systems.
                     </p>
                 </div>
-                
+
                 <div class="grid md:grid-cols-3 gap-6">
                     <!-- Ethernet (simplified) -->
                     <div class="bg-gray-50 p-6 rounded-lg border border-gray-300">
@@ -632,6 +593,16 @@
             </a>
         </div>
 
+            </div>
+            <aside class="manual-toc" aria-label="On this page">
+                <h2>On this page</h2>
+                    <a href="#cluster-overview">System map</a>
+                    <a href="#login-nodes">Login nodes</a>
+                    <a href="#compute-nodes">Compute nodes</a>
+                    <a href="#storage-systems">Storage</a>
+                    <a href="#interconnects">Interconnects</a>
+            </aside>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -656,37 +627,16 @@
                     <ul class="space-y-2 text-gray-300">
                         <li><a href="https://slurm.schedmd.com/" class="hover:text-white transition duration-200">Slurm Documentation</a></li>
                         <li><a href="https://docs.github.com/en" class="hover:text-white transition duration-200">GitHub Docs</a></li>
-                        <li><a href="https://www.anaconda.com/docs/main" class="hover:text-white transition duration-200">Anaconda Docs</a></li>
+                        <li><a href="https://docs.astral.sh/uv/" class="hover:text-white transition duration-200">uv Documentation</a></li>
                         <li><a href="https://modules.readthedocs.io/en/latest/" class="hover:text-white transition duration-200">Environment Modules Docs</a></li>
                     </ul>
                 </div>
             </div>
             <div class="border-t border-gray-700 pt-8 mt-8 text-center text-gray-400">
-                <p>&copy; 2025 HPC Workshop. Created with AI assistance for educational purposes.</p>
+                <p>&copy; 2026 Tianshi Xu. Developed and reviewed with assistance from GPT 5.6-Sol.</p>
             </div>
         </div>
     </footer>
-
-    <script>
-        // Mobile menu toggle
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-    </script>
+    <script src="assets/workshop.js"></script>
 </body>
 </html>
