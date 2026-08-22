@@ -98,6 +98,17 @@
         .section-hidden {
             display: none;
         }
+
+        @media (max-width: 600px) {
+            .filter-label,
+            .filter-buttons {
+                flex: 0 0 100%;
+            }
+
+            .filter-label {
+                margin-right: 0;
+            }
+        }
     </style>
     <style>
         .page-publications .page-content { padding: 2rem 0; }
@@ -111,6 +122,10 @@
         .page-publications .publication-links { margin-top: 0.25rem; }
         .page-publications .publication-links .btn-sm { padding: 0.35rem 0.6rem; font-size: 0.85rem; line-height: 1; margin-right: 0.5rem; }
         .page-publications .publication-links .btn-sm:last-child { margin-right: 0; }
+
+        @media (max-width: 600px) {
+            .page-publications .section { padding: 1.25rem; }
+        }
 
         @media (min-width: 1100px) {
             .page-publications .publication {
@@ -209,19 +224,22 @@
                 
                 <!-- Filter -->
                 <div class="filter-container" id="filterContainer">
-                    <span class="filter-label">Filter by Research Direction:</span>
+                    <span class="filter-label">Filter by Topic:</span>
                     <div class="filter-buttons">
                         <button class="filter-btn active" data-filter="all">All</button>
-                        <button class="filter-btn" data-filter="models">Models</button>
-                        <button class="filter-btn" data-filter="optimization">Optimization</button>
-                        <button class="filter-btn" data-filter="computation">Computation</button>
+                        <button class="filter-btn" data-filter="sciml" aria-label="Scientific Machine Learning" title="Scientific Machine Learning">SciML</button>
+                        <button class="filter-btn" data-filter="stochastic">Stochastic Optimization</button>
+                        <button class="filter-btn" data-filter="hpc" aria-label="High-Performance Computing" title="High-Performance Computing">HPC</button>
+                        <button class="filter-btn" data-filter="nla">Numerical Linear Algebra</button>
+                        <button class="filter-btn" data-filter="gp">Gaussian Processes</button>
+                        <button class="filter-btn" data-filter="preconditioning">Preconditioning</button>
                     </div>
                 </div>
                 
                 <!-- Submitted -->
                 <h2 data-section="preprints">Submitted</h2>
 
-                <div class="publication publication-preprint" data-category="optimization computation">
+                <div class="publication publication-preprint" data-category="stochastic hpc nla">
                     <div class="publication-title">
                         Hierarchical Muon: Tiled Newton-Schulz Updates for Efficient Muon Optimization
                     </div>
@@ -238,7 +256,7 @@
                     </div>
                 </div>
 
-                <div class="publication publication-preprint" data-category="computation">
+                <div class="publication publication-preprint" data-category="nla preconditioning">
                     <div class="publication-title">
                         Factored Sparse Approximate Inverse Preconditioning via Spectral Optimization
                     </div>
@@ -254,7 +272,7 @@
                     </div>
                 </div>
 
-                <div class="publication publication-preprint" data-category="models computation">
+                <div class="publication publication-preprint" data-category="sciml nla preconditioning">
                     <div class="publication-title">
                         Neural Approximate Inverse Preconditioners
                     </div>
@@ -273,7 +291,7 @@
                 <!-- Published -->
                 <h2 data-section="published">Published</h2>
 
-                <div class="publication publication-journal" data-category="optimization">
+                <div class="publication publication-journal" data-category="stochastic nla preconditioning">
                     <div class="publication-title">
                         Preconditioned Truncated Single-Sample Estimators for Scalable Stochastic Optimization
                     </div>
@@ -289,7 +307,7 @@
                     </div>
                 </div>
 
-                <div class="publication publication-journal" data-category="optimization">
+                <div class="publication publication-journal" data-category="stochastic preconditioning">
                     <div class="publication-title">
                         Design Criteria for SGD Preconditioners: Local Conditioning, Noise Floors, and Basin Stability
                     </div>
@@ -306,7 +324,7 @@
                     </div>
                 </div>
 
-                <div class="publication publication-journal" data-category="optimization computation">
+                <div class="publication publication-journal" data-category="stochastic gp nla preconditioning">
                     <div class="publication-title">
                         Preconditioned Additive Gaussian Processes with Fourier Acceleration
                     </div>
@@ -323,7 +341,7 @@
                     </div>
                 </div>
 
-                <div class="publication publication-journal" data-category="computation">
+                <div class="publication publication-journal" data-category="hpc nla">
                     <div class="publication-title">
                         Mixed-Precision Orthogonalization-Free Projection Methods for Eigenvalue and Singular Value Problems
                     </div>
@@ -340,7 +358,7 @@
                     </div>
                 </div>
                 
-                <div class="publication publication-journal" data-category="optimization computation">
+                <div class="publication publication-journal" data-category="hpc nla gp preconditioning">
                     <div class="publication-title">
                         HiGP: A High-Performance Python Package for Gaussian Processes
                     </div>
@@ -357,7 +375,7 @@
                     </div>
                 </div>
 
-                <div class="publication publication-journal" data-category="models">
+                <div class="publication publication-journal" data-category="sciml">
                     <div class="publication-title">
                         Multiscale Neural Networks for Approximating Green's Functions
                     </div>
@@ -374,7 +392,7 @@
                     </div>
                 </div>
                 
-                <div class="publication publication-journal" data-category="computation">
+                <div class="publication publication-journal" data-category="hpc nla preconditioning">
                     <div class="publication-title">
                         A Two-level GPU-Accelerated Incomplete LU Preconditioner for General Sparse Linear Systems
                     </div>
@@ -391,7 +409,7 @@
                     </div>
                 </div>
                 
-                <div class="publication publication-journal" data-category="optimization">
+                <div class="publication publication-journal" data-category="nla">
                     <div class="publication-title">
                         Anderson Acceleration with Truncated Gram-Schmidt
                     </div>
@@ -408,7 +426,7 @@
                     </div>
                 </div>
                 
-                <div class="publication publication-journal" data-category="optimization computation">
+                <div class="publication publication-journal" data-category="nla preconditioning">
                     <div class="publication-title">
                         An Adaptive Factorized Nyström Preconditioner for Regularized Kernel Matrices
                     </div>
@@ -425,7 +443,7 @@
                     </div>
                 </div>
                 
-                <div class="publication publication-journal" data-category="computation">
+                <div class="publication publication-journal" data-category="hpc nla">
                     <div class="publication-title">
                         A Parallel Algorithm for Computing Partial Spectral Factorizations of Matrix Pencils via Chebyshev Approximation
                     </div>
@@ -442,7 +460,7 @@
                     </div>
                 </div>
                 
-                <div class="publication publication-journal" data-category="computation">
+                <div class="publication publication-journal" data-category="hpc nla preconditioning">
                     <div class="publication-title">
                         parGeMSLR: A Parallel Multilevel Schur Complement Low-Rank Preconditioning and Solution Package for General Sparse Matrices
                     </div>
@@ -477,7 +495,7 @@
                 <!-- PhD Dissertation -->
                 <h2 data-section="dissertation">PhD Dissertation</h2>
                 
-                <div class="publication publication-dissertation" data-category="computation">
+                <div class="publication publication-dissertation" data-category="hpc nla preconditioning">
                     <div class="publication-title">
                         Parallel Schur Complement Algorithms for the Solution of Sparse Linear Systems and Eigenvalue Problems
                     </div>

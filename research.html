@@ -3,7 +3,7 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta name="description" content="Research - Tianshi Xu. Structure-aware models, geometry-aware optimization, and hardware-efficient scientific computing.">
+   <meta name="description" content="Research - Tianshi Xu. Scientific machine learning, stochastic optimization, and high-performance computing.">
    <title>Research - Tianshi Xu</title>
 
    <!-- Theme boot (avoid flash on navigation) -->
@@ -64,11 +64,11 @@
          align-items: start;
       }
       
-      .research-card:nth-child(2) {
+      .research-card-stochastic {
          border-left-color: var(--info-color);
       }
       
-      .research-card:nth-child(3) {
+      .research-card-hpc {
          border-left-color: var(--warning-color);
       }
       
@@ -121,17 +121,57 @@
          margin-right: 0.4rem;
          margin-bottom: 0.4rem;
       }
+
+      .research-overview a.research-tag {
+         text-decoration: none;
+         transition: var(--transition);
+      }
+
+      .research-overview a.research-tag:hover {
+         background: rgba(52, 152, 219, 0.25);
+         transform: translateY(-1px);
+      }
+
+      .research-overview a.research-tag:focus-visible {
+         outline: 2px solid var(--accent-color);
+         outline-offset: 2px;
+      }
       
-      .research-card-image {
+      .research-card-visual {
          grid-column: 2;
          grid-row: 1 / span 4;
          align-self: center;
          width: 100%;
+      }
+
+      .research-card-image {
+         display: block;
+         width: 100%;
          height: auto;
          border-radius: 6px;
          object-fit: contain;
-         background: white;
-         padding: 0.5rem;
+      }
+
+      .research-card-image-dark {
+         display: none;
+      }
+
+      html.dark-mode .research-card-image-light {
+         display: none;
+      }
+
+      html.dark-mode .research-card-image-dark {
+         display: block;
+      }
+
+      @media (prefers-color-scheme: dark) {
+         html:not(.light-mode):not(.dark-mode) .research-card-image-light {
+            display: none;
+         }
+
+         html:not(.light-mode):not(.dark-mode) .research-card-image-dark {
+            display: block;
+         }
       }
       
       @media (max-width: 900px) {
@@ -143,7 +183,7 @@
          .research-card-title { grid-column: 1; grid-row: 1; }
          .research-card-description { grid-column: 1; grid-row: 2; }
          .tag-container { grid-column: 1; grid-row: 3; }
-         .research-card-image {
+         .research-card-visual {
             grid-column: 1;
             grid-row: 4;
             max-width: 280px;
@@ -223,64 +263,75 @@
             <h2>Overview</h2>
             <div class="research-overview">
                <p>
-                  My research bridges computational mathematics, machine learning, and scientific computing to advance learning-augmented scientific discovery. Rather than treating learning as a black-box surrogate, I embed it directly within numerical algorithms to accelerate and stabilize many-solve workflows. Achieving accuracy, convergence, and scalability requires end-to-end co-design, integrating structure-aware models, geometry-aware optimization, and hardware-efficient computation into unified solvers.
+                  My research lies at the interface of computational mathematics, machine learning, and scientific computing, with emphasis on scientific machine learning, stochastic optimization, and high-performance computing. Numerical linear algebra provides a common mathematical and algorithmic foundation across these topics. I exploit structure in differential operators, optimization geometry, sparse matrices, and modern computing architectures to link mathematical analysis and algorithm design to efficient, scalable implementations. A particular focus is learning-augmented numerical methods, in which learned components complement rather than replace the mathematical structure of classical solvers.
                </p>
                <div class="tag-container">
-                  <span class="research-tag">Scientific Machine Learning</span>
-                  <span class="research-tag">Algorithm Co-design</span>
-                  <span class="research-tag">Numerical Linear Algebra</span>
-                  <span class="research-tag">High-Performance Computing</span>
+                  <a href="publications.html?filter=sciml" class="research-tag">SciML</a>
+                  <a href="publications.html?filter=stochastic" class="research-tag">Stochastic Optimization</a>
+                  <a href="publications.html?filter=hpc" class="research-tag">HPC</a>
                </div>
             </div>
             
             <!-- Research Directions -->
             <h2 style="margin-top: 2.5rem;">Research Directions</h2>
             
-            <div class="research-card">
-               <h3 class="research-card-title">Models: Structure-Aware Representations</h3>
+            <div class="research-card research-card-sciml">
+               <h3 class="research-card-title">Scientific Machine Learning</h3>
                <p class="research-card-description">
-                  From a numerical perspective, representation power alone is insufficient; models must define an approximation space compatible with underlying physical operators. I design physics- and structure-aware architectures such as multiscale networks for Green's functions and line-graph models that explicitly capture locality and sparsity, ensuring parameter efficiency and reliable generalization across varying regimes.
+                  Many scientific applications require solving families of PDEs as coefficients, source terms, or boundary conditions vary. I develop multiscale neural representations of Green's functions and learning-augmented preconditioners that encode the structure of the underlying operator. Applications include many-query elliptic PDEs, nonlinear time-dependent PDEs, and inverse problems, with learned components working alongside numerical solvers.
                </p>
                <div class="tag-container">
-                  <span class="research-tag">Operator Learning</span>
-                  <span class="research-tag">Structure-Aware Models</span>
+                  <span class="research-tag">PDEs</span>
+                  <span class="research-tag">Multiscale Learning</span>
                   <span class="research-tag">Green's Functions</span>
+                  <span class="research-tag">Learned Preconditioners</span>
                </div>
-               <img src="assets/images/research2.png" alt="Models and Representations" class="research-card-image">
+               <div class="research-card-visual" role="img" aria-label="Learned Green's functions across varying PDE operators">
+                  <img src="assets/images/research-sciml-light.png" alt="" width="800" height="800" loading="lazy" decoding="async" class="research-card-image research-card-image-light">
+                  <img src="assets/images/research-sciml-dark.png" alt="" width="800" height="800" loading="lazy" decoding="async" class="research-card-image research-card-image-dark">
+               </div>
                <div class="research-card-links">
-                  <a href="publications.html?filter=models" class="btn btn-sm btn-primary">Related Publications</a>
+                  <a href="publications.html?filter=sciml" class="btn btn-sm btn-primary">Related Publications</a>
                </div>
             </div>
             
-            <div class="research-card">
-               <h3 class="research-card-title">Optimization: Geometry-Aware Convergence</h3>
+            <div class="research-card research-card-stochastic">
+               <h3 class="research-card-title">Stochastic Optimization</h3>
                <p class="research-card-description">
-                  Embedding learning inside numerical solvers introduces large-scale, ill-conditioned optimization challenges, often under severe stochastic noise. I develop geometry-aware optimization methods, including preconditioned stochastic gradient descent and adapted Anderson acceleration. These techniques reshape the optimization landscape, enabling stable, fast convergence and significant variance reduction for complex scientific machine learning tasks.
+                  Large-scale machine learning often involves ill-conditioned optimization and noisy estimates of matrix quantities. I use preconditioning both to improve stochastic gradient methods and to reduce the variance of trace and log-determinant estimators. Applications range from classical machine learning and Gaussian-process inference to large language model training.
                </p>
                <div class="tag-container">
                   <span class="research-tag">Preconditioned SGD</span>
-                  <span class="research-tag">Anderson Acceleration</span>
-                  <span class="research-tag">Variance Reduction</span>
+                  <span class="research-tag">Stochastic Trace Estimation</span>
+                  <span class="research-tag">Gaussian Processes</span>
+                  <span class="research-tag">LLM Training</span>
                </div>
-               <img src="assets/images/research1.png" alt="Optimization Methods" class="research-card-image">
+               <div class="research-card-visual" role="img" aria-label="HiMuon workflow from gradient tiling to per-tile Newton-Schulz updates">
+                  <img src="assets/images/research-optimization-light.png" alt="" width="800" height="800" loading="lazy" decoding="async" class="research-card-image research-card-image-light">
+                  <img src="assets/images/research-optimization-dark.png" alt="" width="800" height="800" loading="lazy" decoding="async" class="research-card-image research-card-image-dark">
+               </div>
                <div class="research-card-links">
-                  <a href="publications.html?filter=optimization" class="btn btn-sm btn-primary">Related Publications</a>
+                  <a href="publications.html?filter=stochastic" class="btn btn-sm btn-primary">Related Publications</a>
                </div>
             </div>
             
-            <div class="research-card">
-               <h3 class="research-card-title">Computation: Hardware-Efficient Scalability</h3>
+            <div class="research-card research-card-hpc">
+               <h3 class="research-card-title">High-Performance Computing</h3>
                <p class="research-card-description">
-                  For mathematically accurate and convergent methods to be practically viable, they must map efficiently to modern hardware. I treat computational efficiency as a core algorithm design constraint. Through domain decomposition, memory-aware kernels, and mixed-precision linear algebra, I ensure these end-to-end solvers scale seamlessly on GPU-accelerated and distributed-memory systems.
+                  Modern scientific computing and machine-learning workloads require algorithms that account for memory movement, communication, parallelism, and finite-precision arithmetic. I develop scalable algorithms and efficient implementations for numerical solvers, optimization methods, and scientific machine-learning models, with emphasis on distributed-memory parallelism, GPU computing, and mixed precision.
                </p>
                <div class="tag-container">
+                  <span class="research-tag">Scalable Algorithms</span>
+                  <span class="research-tag">Distributed Computing</span>
                   <span class="research-tag">GPU Acceleration</span>
-                  <span class="research-tag">Distributed Systems</span>
-                  <span class="research-tag">Mixed-Precision</span>
+                  <span class="research-tag">Mixed Precision</span>
                </div>
-               <img src="assets/images/research3.png" alt="Computational Scalability" class="research-card-image">
+               <div class="research-card-visual" role="img" aria-label="Distributed structure in a large sparse system">
+                  <img src="assets/images/research-hpc-light.png" alt="" width="800" height="800" loading="lazy" decoding="async" class="research-card-image research-card-image-light">
+                  <img src="assets/images/research-hpc-dark.png" alt="" width="800" height="800" loading="lazy" decoding="async" class="research-card-image research-card-image-dark">
+               </div>
                <div class="research-card-links">
-                  <a href="publications.html?filter=computation" class="btn btn-sm btn-primary">Related Publications</a>
+                  <a href="publications.html?filter=hpc" class="btn btn-sm btn-primary">Related Publications</a>
                </div>
             </div>
             

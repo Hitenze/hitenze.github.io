@@ -59,13 +59,42 @@
             align-items: center;
         }
         
-        .software-image {
+        .software-visual {
             width: 100%;
             height: 180px;
+            display: grid;
+            place-items: center;
+        }
+
+        .software-image {
+            grid-area: 1 / 1;
+            display: block;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
-            background: white;
-            padding: 1rem;
             border-radius: 8px;
+        }
+
+        .software-image-dark {
+            display: none;
+        }
+
+        html.dark-mode .software-image-light {
+            display: none;
+        }
+
+        html.dark-mode .software-image-dark {
+            display: block;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            html:not(.light-mode):not(.dark-mode) .software-image-light {
+                display: none;
+            }
+
+            html:not(.light-mode):not(.dark-mode) .software-image-dark {
+                display: block;
+            }
         }
         
         .software-title {
@@ -116,7 +145,7 @@
                 grid-template-columns: 1fr;
             }
             
-            .software-image {
+            .software-visual {
                 max-width: 300px;
                 margin: 0 auto;
             }
@@ -187,13 +216,12 @@
                         <div>
                             <span class="contributor-badge">Main Developer</span>
                             <h3 class="software-title">
-                                ParGeMSLR: Parallel Generalized Multilevel Low-rank Preconditioner
+                                ParGeMSLR: Parallel Generalized Multilevel Low-Rank Preconditioner
                             </h3>
                             <p class="software-description">
-                                ParGeMSLR (Parallel Generalized Multilevel Schur Low-Rank) is a MPI-based C++ library. 
-                                This is a distributed-memory Multilevel Low-Rank Preconditioning and Solution package 
-                                for the solution of large and sparse (non)symmetric linear systems of equations. 
-                                The Parallel GeMSLR preconditioner is purely algebraic.
+                                ParGeMSLR (Parallel Generalized Multilevel Schur Low-Rank) is an MPI-based C++ library
+                                for solving large, sparse symmetric and nonsymmetric linear systems. Its purely algebraic
+                                preconditioner combines a multilevel Schur-complement hierarchy with low-rank corrections.
                             </p>
                             <div>
                                 <span class="software-tag">C++</span>
@@ -209,7 +237,10 @@
                                 </a>
                             </div>
                         </div>
-                        <img src="assets/images/pargemslr.png" alt="ParGeMSLR" class="software-image">
+                        <div class="software-visual" role="img" aria-label="ParGeMSLR multilevel low-rank preconditioner structure">
+                            <img src="assets/images/pargemslr-light.png" alt="" width="668" height="410" loading="lazy" decoding="async" class="software-image software-image-light">
+                            <img src="assets/images/pargemslr-dark.png" alt="" width="668" height="410" loading="lazy" decoding="async" class="software-image software-image-dark">
+                        </div>
                     </div>
                 </div>
                 
@@ -221,11 +252,10 @@
                                 SchurCheb: Schur Complement Chebyshev Eigenvalue Solver
                             </h3>
                             <p class="software-description">
-                                SchurCheb is a MPI-based C++ research code for computing partial spectral factorizations 
-                                of matrix pencils via Chebyshev approximation. This is a distributed-memory package for 
-                                computing all the eigenvalues (and corresponding eigenvectors) of a large, sparse, real 
-                                symmetric positive definite matrix pencil that lie within a target interval. 
-                                The algorithm is purely algebraic.
+                                SchurCheb is an MPI-based C++ research code for computing partial spectral factorizations
+                                of matrix pencils via Chebyshev approximation. The distributed-memory implementation
+                                computes the eigenvalues and corresponding eigenvectors of a large, sparse, real symmetric
+                                positive-definite matrix pencil that lie within a target interval.
                             </p>
                             <div>
                                 <span class="software-tag">C++</span>
@@ -241,7 +271,10 @@
                                 </a>
                             </div>
                         </div>
-                        <img src="assets/images/schurcheb.png" alt="SchurCheb" class="software-image">
+                        <div class="software-visual" role="img" aria-label="SchurCheb Chebyshev filtered spectral decomposition">
+                            <img src="assets/images/schurcheb-light.png" alt="" width="359" height="262" loading="lazy" decoding="async" class="software-image software-image-light">
+                            <img src="assets/images/schurcheb-dark.png" alt="" width="359" height="262" loading="lazy" decoding="async" class="software-image software-image-dark">
+                        </div>
                     </div>
                 </div>
                 
@@ -253,9 +286,9 @@
                                 SchurILU: NumPy/SciPy ILU Baselines
                             </h3>
                             <p class="software-description">
-                                SchurILU is a NumPy/SciPy-based library for incomplete LU preconditioners with explicit 
-                                Schur complement support, designed to provide a clean, reproducible ILU baseline for 
-                                research in iterative solvers and learning-based preconditioning.
+                                SchurILU is a NumPy/SciPy library for incomplete LU preconditioners with explicit
+                                Schur-complement support. It provides reproducible ILU baselines for research in
+                                iterative solvers and learning-based preconditioning.
                             </p>
                             <div>
                                 <span class="software-tag">Python</span>
@@ -274,7 +307,10 @@
                                 </a>
                             </div>
                         </div>
-                        <img src="assets/images/schurilu.png" alt="SchurILU" class="software-image">
+                        <div class="software-visual" role="img" aria-label="SchurILU block Schur complement sparsity structure">
+                            <img src="assets/images/schurilu-light.png" alt="" width="1200" height="1200" loading="lazy" decoding="async" class="software-image software-image-light">
+                            <img src="assets/images/schurilu-dark.png" alt="" width="1200" height="1200" loading="lazy" decoding="async" class="software-image software-image-dark">
+                        </div>
                     </div>
                 </div>
                 
@@ -286,7 +322,7 @@
                                 HYPRE: High Performance Preconditioners
                             </h3>
                             <p class="software-description">
-                                HYPRE is a library of high performance preconditioners and solvers featuring 
+                                HYPRE is a library of high-performance preconditioners and solvers featuring
                                 multigrid methods for the solution of large, sparse linear systems of equations 
                                 on massively parallel computers. I contribute to the development of GPU-accelerated 
                                 incomplete LU preconditioners.
@@ -308,7 +344,10 @@
                                 </a>
                             </div>
                         </div>
-                        <img src="assets/images/hypre.png" alt="HYPRE" class="software-image">
+                        <div class="software-visual" role="img" aria-label="HYPRE high-performance preconditioners logo">
+                            <img src="assets/images/hypre-light.png" alt="" width="512" height="180" loading="lazy" decoding="async" class="software-image software-image-light">
+                            <img src="assets/images/hypre-dark.png" alt="" width="512" height="180" loading="lazy" decoding="async" class="software-image software-image-dark">
+                        </div>
                     </div>
                 </div>
                 
@@ -317,13 +356,12 @@
                         <div>
                             <span class="contributor-badge collaborator-badge">Co-developer</span>
                             <h3 class="software-title">
-                                HiGP: High-Performance Package for Large-Scale Gaussian Process
+                                HiGP: High-Performance Package for Large-Scale Gaussian Processes
                             </h3>
                             <p class="software-description">
-                                Gaussian processes (GPs) are a set of flexible, non-parametric Bayesian methods 
-                                for modeling complex data. HiGP is a high-performance Python package for GP 
-                                regression (GPR) and GP classification (GPC), designed to handle large-scale 
-                                datasets efficiently.
+                                HiGP is a high-performance Python package for large-scale Gaussian process regression
+                                and classification. It provides C++ and Python interfaces for efficient training and
+                                prediction on large datasets.
                             </p>
                             <div>
                                 <span class="software-tag">C++</span>
@@ -333,12 +371,15 @@
                                 <a href="https://github.com/huanghua1994/HiGP" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
                                     View on GitHub
                                 </a>
-                                <a href="https://arxiv.org/abs/2503.02259" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+                                <a href="https://doi.org/10.21105/joss.08621" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
                                     Related Paper
                                 </a>
                             </div>
                         </div>
-                        <img src="assets/images/higp.png" alt="HiGP" class="software-image">
+                        <div class="software-visual" role="img" aria-label="HiGP hierarchical matrix structure">
+                            <img src="assets/images/higp-light.png" alt="" width="201" height="202" loading="lazy" decoding="async" class="software-image software-image-light">
+                            <img src="assets/images/higp-dark.png" alt="" width="201" height="202" loading="lazy" decoding="async" class="software-image software-image-dark">
+                        </div>
                     </div>
                 </div>
                 
