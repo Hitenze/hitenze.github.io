@@ -3,6 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+    /* Theme boot: apply a saved choice before CSS paints (no flash); otherwise CSS follows the system. */
+    (function () {
+      var d = document.documentElement, t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t === 'dark-mode' || t === 'light-mode') { d.classList.add(t); d.setAttribute('data-theme', t === 'dark-mode' ? 'dark' : 'light'); }
+      else { d.setAttribute('data-theme', window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+    })();
+  </script>
+<link rel="stylesheet" href="../assets/css/tokens.css">
+<link rel="stylesheet" href="../assets/css/site-bar.css">
+<script src="../assets/js/site.js" defer></script>
 <title>RNN 游乐场</title>
 <style>
 /* ============ RESET & BASE ============ */
@@ -35,7 +47,7 @@ body {
 #header h1 { font-size: 18px; font-weight: 600; letter-spacing: 1px; }
 #header .subtitle { font-size: 12px; color: #8ab; margin-left: 4px; }
 #header .epoch-label { font-size: 14px; color: #acd; margin-left: auto; }
-#header .epoch-label span.val { color: #e74c3c; font-weight: 700; font-size: 16px; }
+#header .epoch-label span.val { color: #c0392b; font-weight: 700; font-size: 16px; }
 
 /* ============ CONTROL BAR ============ */
 #control-bar {
@@ -97,7 +109,7 @@ body {
   flex-shrink: 0;
 }
 #sidebar h3 {
-  font-size: 11px; color: #888; margin-bottom: 8px;
+  font-size: 11px; color: #595959; margin-bottom: 8px;
   text-transform: uppercase; letter-spacing: 1px;
 }
 .sidebar-section { margin-bottom: 14px; }
@@ -140,7 +152,7 @@ body {
   overflow: hidden;
 }
 .area-title {
-  font-size: 11px; color: #888; font-weight: 600;
+  font-size: 11px; color: #595959; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;
   display: flex; align-items: center; gap: 8px;
 }
@@ -195,7 +207,7 @@ body {
   flex-shrink: 0;
 }
 .panel-title {
-  font-size: 11px; color: #888; font-weight: 600; margin-bottom: 2px;
+  font-size: 11px; color: #595959; font-weight: 600; margin-bottom: 2px;
   text-transform: uppercase; letter-spacing: 0.5px;
 }
 .plot-container {
@@ -233,10 +245,18 @@ body {
   background: #e8f4e8; color: #2a7a2a; font-weight: 600;
 }
 #status-badge.running { background: #e8f0fa; color: #0877bd; }
-#status-badge.idle { background: #f0f0f0; color: #888; }
+#status-badge.idle { background: #f0f0f0; color: #595959; }
 </style>
+<link rel="stylesheet" href="playgrounds-theme.css">
 </head>
-<body>
+<body class="pg pg-rnn">
+<a class="sb-skip" href="#main">Skip to content</a>
+<div class="sb-bar" role="navigation" aria-label="Site">
+  <a class="sb-brand" href="../index.html">Tianshi Xu</a><span class="sb-sep" aria-hidden="true">/</span><a class="sb-link" href="index.html">Resources</a>
+  <span class="sb-spacer"></span>
+  <button type="button" class="sb-theme js-theme-toggle" aria-label="Dark theme" aria-describedby="theme-state" title="Toggle color theme"><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg></button>
+  <span id="theme-state" class="sb-sr"></span>
+</div>
 <div id="page-content">
 
 <!-- HEADER -->
@@ -292,7 +312,7 @@ body {
 </div>
 
 <!-- MAIN LAYOUT -->
-<div id="main">
+<div id="main" tabindex="-1">
   <!-- LEFT SIDEBAR -->
   <div id="sidebar">
     <h3 data-i18n="config">配置</h3>
@@ -418,9 +438,9 @@ body {
 
     <div class="panel-title" data-i18n="networkInfo">网络信息</div>
     <div id="net-info" style="font-size:11px;color:#555;line-height:1.8;">
-      <div><span style="color:#888;" data-i18n="params">参数量</span>: <span id="param-count" style="font-weight:700;color:#0877bd;">—</span></div>
-      <div><span style="color:#888;" data-i18n="seqLen">序列长度</span>: <span id="seq-len-val" style="font-weight:700;">—</span></div>
-      <div><span style="color:#888;" data-i18n="trainSamples">训练样本</span>: <span id="train-samples-val" style="font-weight:700;">—</span></div>
+      <div><span style="color:#595959;" data-i18n="params">参数量</span>: <span id="param-count" style="font-weight:700;color:#0877bd;">—</span></div>
+      <div><span style="color:#595959;" data-i18n="seqLen">序列长度</span>: <span id="seq-len-val" style="font-weight:700;">—</span></div>
+      <div><span style="color:#595959;" data-i18n="trainSamples">训练样本</span>: <span id="train-samples-val" style="font-weight:700;">—</span></div>
     </div>
   </div>
 </div>
@@ -1886,5 +1906,7 @@ function init() {
 
 init();
 </script>
+<footer class="sb-foot"><span>Tianshi Xu</span><a href="index.html">Resources</a><a href="../index.html">Home</a><span>© 2026</span></footer>
+<script src="playgrounds-a11y.js"></script>
 </body>
 </html>

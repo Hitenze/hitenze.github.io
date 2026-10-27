@@ -3,6 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+    /* Theme boot: apply a saved choice before CSS paints (no flash); otherwise CSS follows the system. */
+    (function () {
+      var d = document.documentElement, t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t === 'dark-mode' || t === 'light-mode') { d.classList.add(t); d.setAttribute('data-theme', t === 'dark-mode' ? 'dark' : 'light'); }
+      else { d.setAttribute('data-theme', window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+    })();
+  </script>
+<link rel="stylesheet" href="../assets/css/tokens.css">
+<link rel="stylesheet" href="../assets/css/site-bar.css">
+<script src="../assets/js/site.js" defer></script>
 <title>GCN 游乐场</title>
 <style>
 /* ============ RESET & BASE ============ */
@@ -34,7 +46,7 @@ body {
 #header h1 { font-size: 18px; font-weight: 600; letter-spacing: 1px; }
 #header .subtitle { font-size: 12px; color: #8ab; margin-left: 4px; }
 #header .epoch-label { font-size: 14px; color: #acd; margin-left: auto; }
-#header .epoch-label span.val { color: #e74c3c; font-weight: 700; font-size: 16px; }
+#header .epoch-label span.val { color: #c0392b; font-weight: 700; font-size: 16px; }
 
 /* ============ CONTROL BAR ============ */
 #control-bar {
@@ -104,7 +116,7 @@ body {
   flex-shrink: 0;
 }
 #sidebar h3 {
-  font-size: 11px; color: #888; margin-bottom: 8px;
+  font-size: 11px; color: #595959; margin-bottom: 8px;
   text-transform: uppercase; letter-spacing: 1px;
 }
 .sidebar-section { margin-bottom: 14px; }
@@ -155,7 +167,7 @@ body {
   padding: 5px 12px;
   background: #fff;
   border-bottom: 1px solid #eee;
-  font-size: 11px; color: #888;
+  font-size: 11px; color: #595959;
   display: flex; align-items: center; gap: 8px;
   flex-shrink: 0;
 }
@@ -183,7 +195,7 @@ body {
 }
 #node-info .ni-title { font-weight: 700; color: #333; margin-bottom: 4px; font-size: 12px; }
 #node-info .ni-row { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 2px; }
-#node-info .ni-key { color: #888; }
+#node-info .ni-key { color: #595959; }
 #node-info .ni-val { font-weight: 700; color: #0877bd; }
 .class-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 3px; }
 
@@ -198,7 +210,7 @@ body {
   overflow: hidden;
 }
 .panel-title {
-  font-size: 11px; color: #888; font-weight: 600; margin-bottom: 4px;
+  font-size: 11px; color: #595959; font-weight: 600; margin-bottom: 4px;
   text-transform: uppercase; letter-spacing: 0.5px;
 }
 .right-top {
@@ -274,8 +286,16 @@ body {
   100% { opacity: 1; }
 }
 </style>
+<link rel="stylesheet" href="playgrounds-theme.css">
 </head>
-<body>
+<body class="pg pg-gcn">
+<a class="sb-skip" href="#main">Skip to content</a>
+<div class="sb-bar" role="navigation" aria-label="Site">
+  <a class="sb-brand" href="../index.html">Tianshi Xu</a><span class="sb-sep" aria-hidden="true">/</span><a class="sb-link" href="index.html">Resources</a>
+  <span class="sb-spacer"></span>
+  <button type="button" class="sb-theme js-theme-toggle" aria-label="Dark theme" aria-describedby="theme-state" title="Toggle color theme"><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg></button>
+  <span id="theme-state" class="sb-sr"></span>
+</div>
 <div id="page-content">
 
 <!-- HEADER -->
@@ -344,7 +364,7 @@ body {
 </div>
 
 <!-- MAIN LAYOUT -->
-<div id="main">
+<div id="main" tabindex="-1">
   <!-- LEFT SIDEBAR -->
   <div id="sidebar">
     <h3 data-i18n="graphConfig">图配置</h3>
@@ -398,7 +418,7 @@ body {
   <div id="center-area">
     <div id="graph-title-bar">
       <span class="gtitle" data-i18n="graphVizTitle">力导向图</span>
-      <span id="graph-stats" style="margin-left:auto; color:#999;"></span>
+      <span id="graph-stats" style="margin-left:auto; color:#595959;"></span>
     </div>
     <div id="graph-canvas-wrap">
       <canvas id="graph-canvas"></canvas>
@@ -2035,5 +2055,7 @@ window.addEventListener('load', () => {
   applyPreset('normal');
 });
 </script>
+<footer class="sb-foot"><span>Tianshi Xu</span><a href="index.html">Resources</a><a href="../index.html">Home</a><span>© 2026</span></footer>
+<script src="playgrounds-a11y.js"></script>
 </body>
 </html>

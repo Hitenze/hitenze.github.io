@@ -3,6 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+    /* Theme boot: apply a saved choice before CSS paints (no flash); otherwise CSS follows the system. */
+    (function () {
+      var d = document.documentElement, t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t === 'dark-mode' || t === 'light-mode') { d.classList.add(t); d.setAttribute('data-theme', t === 'dark-mode' ? 'dark' : 'light'); }
+      else { d.setAttribute('data-theme', window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+    })();
+  </script>
+<link rel="stylesheet" href="../assets/css/tokens.css">
+<link rel="stylesheet" href="../assets/css/site-bar.css">
+<script src="../assets/js/site.js" defer></script>
 <title>CNN Playground</title>
 <style>
 /* ============ RESET & BASE ============ */
@@ -30,7 +42,7 @@ body {
 #header h1 { font-size: 18px; font-weight: 600; letter-spacing: 1px; }
 #header .subtitle { font-size: 12px; color: #8ab; margin-left: 4px; }
 #header .epoch-label { font-size: 14px; color: #acd; margin-left: auto; }
-#header .epoch-label span.val { color: #e74c3c; font-weight: 700; font-size: 16px; }
+#header .epoch-label span.val { color: #c0392b; font-weight: 700; font-size: 16px; }
 
 /* ============ CONTROL BAR ============ */
 #control-bar {
@@ -99,7 +111,7 @@ body {
   flex-shrink: 0;
 }
 #sidebar h3 {
-  font-size: 11px; color: #888; margin-bottom: 8px;
+  font-size: 11px; color: #595959; margin-bottom: 8px;
   text-transform: uppercase; letter-spacing: 1px;
 }
 .sidebar-section { margin-bottom: 14px; }
@@ -170,7 +182,7 @@ body {
   max-height: 260px;
 }
 .fwd-title {
-  font-size: 11px; color: #888; font-weight: 600;
+  font-size: 11px; color: #595959; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
 }
 #fwd-scroll {
@@ -193,7 +205,7 @@ body {
 }
 .fwd-maps { display: flex; gap: 3px; flex-wrap: wrap; max-width: 400px; }
 .fwd-arrow {
-  font-size: 14px; color: #bbb; flex-shrink: 0;
+  font-size: 14px; color: #707070; flex-shrink: 0;
   padding-left: 82px; /* align under maps area, offset for label width */
   line-height: 1;
 }
@@ -223,7 +235,7 @@ body {
   width: 16px; text-align: right; flex-shrink: 0;
 }
 #digit-row .digit-group { display: flex; gap: 2px; align-items: center; }
-#digit-row .dg-label { font-size: 10px; color: #888; margin-right: 2px; }
+#digit-row .dg-label { font-size: 10px; color: #595959; margin-right: 2px; }
 
 /* ============ DRAW CANVAS ============ */
 #draw-section {
@@ -255,7 +267,7 @@ body {
   flex-shrink: 0;
 }
 .panel-title {
-  font-size: 11px; color: #888; font-weight: 600; margin-bottom: 2px;
+  font-size: 11px; color: #595959; font-weight: 600; margin-bottom: 2px;
   text-transform: uppercase; letter-spacing: 0.5px;
 }
 .plot-container {
@@ -479,8 +491,16 @@ body { display: flex; flex-direction: column; }
   }
 }
 </style>
+<link rel="stylesheet" href="playgrounds-theme.css">
 </head>
-<body>
+<body class="pg pg-cnn">
+<a class="sb-skip" href="#main">Skip to content</a>
+<div class="sb-bar" role="navigation" aria-label="Site">
+  <a class="sb-brand" href="../index.html">Tianshi Xu</a><span class="sb-sep" aria-hidden="true">/</span><a class="sb-link" href="index.html">Resources</a>
+  <span class="sb-spacer"></span>
+  <button type="button" class="sb-theme js-theme-toggle" aria-label="Dark theme" aria-describedby="theme-state" title="Toggle color theme"><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg></button>
+  <span id="theme-state" class="sb-sr"></span>
+</div>
 <div id="page-content">
 
 <!-- HEADER -->
@@ -542,7 +562,7 @@ body { display: flex; flex-direction: column; }
 </div>
 
 <!-- MAIN LAYOUT -->
-<div id="main">
+<div id="main" tabindex="-1">
   <!-- LEFT SIDEBAR -->
   <div id="sidebar">
     <h3 data-i18n="architecture">Architecture</h3>
@@ -578,7 +598,7 @@ body { display: flex; flex-direction: column; }
         <input type="checkbox" id="chk-residual" style="cursor:pointer;">
         <span data-i18n="residual">Residual</span>
       </label>
-      <div id="residual-note" style="font-size:10px;color:#aaa;margin-top:2px;" data-i18n="residualNote">(needs 2 layers, same channels)</div>
+      <div id="residual-note" style="font-size:10px;color:#666666;margin-top:2px;" data-i18n="residualNote">(needs 2 layers, same channels)</div>
     </div>
   </div>
 
@@ -604,7 +624,7 @@ body { display: flex; flex-direction: column; }
 
         <!-- Draw canvas -->
         <div id="draw-section" style="margin-left:8px;">
-          <span style="font-size:10px;color:#888;display:block;margin-bottom:2px;" data-i18n="drawDigit">Draw</span>
+          <span style="font-size:10px;color:#595959;display:block;margin-bottom:2px;" data-i18n="drawDigit">Draw</span>
           <canvas id="draw-canvas" width="96" height="96" style="width:80px;height:80px;"></canvas>
           <button id="btn-clear" data-i18n="clear">Clear</button>
         </div>
@@ -1532,13 +1552,13 @@ function updateResidualUI() {
   // Gray out note when conditions are met (active) or show it when conditions aren't met
   if (cfg.residual && !active) {
     noteEl.style.display = 'block';
-    noteEl.style.color = '#e74c3c';
+    noteEl.style.color = '#c0392b';
   } else if (!cfg.residual) {
     noteEl.style.display = 'none';
   } else {
     // residual is ON and active — show note dimmed
     noteEl.style.display = 'block';
-    noteEl.style.color = '#aaa';
+    noteEl.style.color = '#666666';
   }
   drawArchDiagram();
 }
@@ -1966,7 +1986,7 @@ function runForwardViz(imgFlat, label) {
   const predRes = document.getElementById('fwd-pred-res');
   if (predRes) {
     predRes.textContent = t('predicted') + ' ' + predIdx;
-    predRes.style.color = predIdx === label ? '#27ae60' : '#e74c3c';
+    predRes.style.color = predIdx === label ? '#1e7a45' : '#c0392b';
   }
 
   // Also update main right-panel prob chart
@@ -2013,7 +2033,7 @@ function updateProbChart(probs, label) {
   const predEl = document.getElementById('pred-result');
   if (label >= 0) {
     predEl.textContent = t('predicted') + ' ' + pred + (pred===label?' ✓':' ✗');
-    predEl.style.color = pred===label ? '#27ae60' : '#e74c3c';
+    predEl.style.color = pred===label ? '#1e7a45' : '#c0392b';
   } else {
     predEl.textContent = t('predicted') + ' ' + pred;
     predEl.style.color = '#0877bd';
@@ -2186,5 +2206,7 @@ window.addEventListener('resize', () => {
 applyI18N();
 // Initialize via reset (builds model, thumbnails, fwd viz, starts training)
 reset(true);
-</script></body>
+</script><footer class="sb-foot"><span>Tianshi Xu</span><a href="index.html">Resources</a><a href="../index.html">Home</a><span>© 2026</span></footer>
+<script src="playgrounds-a11y.js"></script>
+</body>
 </html>

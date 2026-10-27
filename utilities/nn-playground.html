@@ -3,6 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+    /* Theme boot: apply a saved choice before CSS paints (no flash); otherwise CSS follows the system. */
+    (function () {
+      var d = document.documentElement, t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t === 'dark-mode' || t === 'light-mode') { d.classList.add(t); d.setAttribute('data-theme', t === 'dark-mode' ? 'dark' : 'light'); }
+      else { d.setAttribute('data-theme', window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+    })();
+  </script>
+<link rel="stylesheet" href="../assets/css/tokens.css">
+<link rel="stylesheet" href="../assets/css/site-bar.css">
+<script src="../assets/js/site.js" defer></script>
 <title>Neural Network Playground — 1D Regression</title>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
@@ -29,7 +41,7 @@ body {
 }
 #header h1 { font-size: 18px; font-weight: 600; letter-spacing: 1px; }
 #header .epoch-label { font-size: 14px; color: #acd; margin-left: auto; }
-#header .epoch-label span { color: #e74c3c; font-weight: 700; font-size: 16px; }
+#header .epoch-label span { color: #c0392b; font-weight: 700; font-size: 16px; }
 
 /* ============ CONTROL BAR ============ */
 #control-bar {
@@ -95,11 +107,11 @@ body {
   padding: 12px;
   overflow-y: auto;
 }
-#sidebar h3 { font-size: 12px; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+#sidebar h3 { font-size: 12px; color: #595959; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
 .sidebar-section { margin-bottom: 14px; }
 .sidebar-section label { font-size: 11px; color: #555; display: block; margin-bottom: 3px; }
 .sidebar-section select, .sidebar-section input[type="range"] { width: 100%; }
-.sidebar-section .range-val { font-size: 11px; color: #888; float: right; }
+.sidebar-section .range-val { font-size: 11px; color: #595959; float: right; }
 .dataset-btn {
   display: block; width: 100%; padding: 6px 8px; margin-bottom: 4px;
   border: 2px solid #ddd; border-radius: 4px; background: #fafafa;
@@ -116,7 +128,7 @@ body {
   border-right: 1px solid #ddd;
   padding: 12px 8px;
 }
-#features-col h3 { font-size: 12px; color: #888; margin-bottom: 10px; text-align: center; }
+#features-col h3 { font-size: 12px; color: #595959; margin-bottom: 10px; text-align: center; }
 .feature-item {
   display: flex; align-items: center; gap: 4px; margin-bottom: 8px;
   font-size: 12px;
@@ -174,7 +186,7 @@ body {
 }
 .panel-title {
   font-size: 11px;
-  color: #888;
+  color: #595959;
   font-weight: 600;
   margin-bottom: 2px;
   text-transform: uppercase;
@@ -373,8 +385,16 @@ body {
   }
 }
 </style>
+<link rel="stylesheet" href="playgrounds-theme.css">
 </head>
-<body>
+<body class="pg pg-nn">
+<a class="sb-skip" href="#main">Skip to content</a>
+<div class="sb-bar" role="navigation" aria-label="Site">
+  <a class="sb-brand" href="../index.html">Tianshi Xu</a><span class="sb-sep" aria-hidden="true">/</span><a class="sb-link" href="index.html">Resources</a>
+  <span class="sb-spacer"></span>
+  <button type="button" class="sb-theme js-theme-toggle" aria-label="Dark theme" aria-describedby="theme-state" title="Toggle color theme"><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg></button>
+  <span id="theme-state" class="sb-sr"></span>
+</div>
 
 <!-- HEADER -->
 <div id="header">
@@ -459,7 +479,7 @@ body {
 </div>
 
 <!-- MAIN LAYOUT -->
-<div id="main">
+<div id="main" tabindex="-1">
   <!-- LEFT SIDEBAR -->
   <div id="sidebar">
     <h3 data-i18n="dataset">数据集</h3>
@@ -1879,5 +1899,7 @@ syncStateFromUI();
 generateData();
 initNetwork();
 updateAllVisuals();
-</script></body>
+</script><footer class="sb-foot"><span>Tianshi Xu</span><a href="index.html">Resources</a><a href="../index.html">Home</a><span>© 2026</span></footer>
+<script src="playgrounds-a11y.js"></script>
+</body>
 </html>
