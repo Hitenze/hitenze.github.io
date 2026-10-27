@@ -1,0 +1,68 @@
+/* Site integration for the reveal.js deck (generated; loaded after slides.css).
+   Dark theme: the deck palette is remapped to the site's dark tokens (light text >= 4.5:1);
+   section dividers and code blocks were already dark. The corner link returns to the site;
+   it is hidden in print and while the deck is in browser full screen. */
+
+.deck-return {
+  position: fixed; top: 8px; right: 8px; z-index: 40;
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px;
+  border: 1px solid #c9c2b4; border-radius: 3px;
+  background: rgba(255, 253, 248, 0.92); color: #263642;
+  font: 500 14px/1.2 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  text-decoration: none;
+}
+.reveal-viewport { background: var(--paper); }
+/* Contrast: orange slide labels/arrows on paper were 2.7:1 (darker orange in light theme, the
+   original orange on the dark paper); Monokai comments/keywords lightened to >= 4.5:1. */
+.slide-label, .workflow-line b { color: #b9481f; }
+.reveal .hljs-comment, .reveal .hljs-meta, .reveal .hljs-quote { color: #a8a38a; }
+.reveal .hljs-keyword { color: #ff6b9d; }
+.reveal .slide-number a { display: inline-block; min-height: 24px; line-height: 24px; }
+/* Divider/title slides: the kicker label was absolutely positioned inside a relatively positioned
+   wrapper and overlapped the heading; place it in the flow above the heading instead. */
+.section-divider .slide-label { position: static; display: block; margin: 0 0 1.4em; }
+/* Vertical stacks (reveal adds .stack): the wrapper took slide padding and paper background,
+   which showed as a strip beside the nested slides. */
+.reveal .slides > section.stack { padding: 0 !important; background: none !important; }
+.deck-return:hover { text-decoration: underline; }
+.deck-return:focus-visible { outline: 2px solid #e86f3a; outline-offset: 2px; }
+:fullscreen .deck-return { display: none; }
+@media print { .deck-return, .sb-skip { display: none !important; } }
+
+html.dark-mode { --paper: #141b23; --ink: #e9edf2; --muted: #b6c0cc; --rule: #344150; color-scheme: dark; }
+html.dark-mode .reveal .slides > section, html.dark-mode .reveal .slides > section > section {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+html.dark-mode .reveal h1, html.dark-mode .reveal h2, html.dark-mode .reveal h3 { color: #e9edf2; }
+html.dark-mode .reveal .section-divider { background: #0f1f2b !important; }
+html.dark-mode .reveal a { color: #8ec9f0; }
+html.dark-mode .slide-label, html.dark-mode .workflow-line b { color: #e86f3a; }
+html.dark-mode .panel { background: rgba(26, 35, 45, 0.94); box-shadow: 7px 7px 0 rgba(0, 0, 0, 0.35); }
+html.dark-mode .callout { background: #2a2521; }
+html.dark-mode .equation { background: #1a232d; color: #e9edf2; }
+html.dark-mode .workflow-line span { border-color: #6b7a8c; background: #1a232d; color: #e9edf2; }
+html.dark-mode .appendix-badge { border-color: #6b7a8c; color: #e9edf2; }
+html.dark-mode .reveal .slide-number { color: #e9edf2; }
+html.dark-mode .deck-return { background: rgba(20, 27, 35, 0.92); color: #e9edf2; border-color: #344150; }
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light-mode) { --paper: #141b23; --ink: #e9edf2; --muted: #b6c0cc; --rule: #344150; color-scheme: dark; }
+  html:not(.light-mode) .reveal .slides > section, html:not(.light-mode) .reveal .slides > section > section {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  }
+  html:not(.light-mode) .reveal h1, html:not(.light-mode) .reveal h2, html:not(.light-mode) .reveal h3 { color: #e9edf2; }
+  html:not(.light-mode) .reveal .section-divider { background: #0f1f2b !important; }
+  html:not(.light-mode) .reveal a { color: #8ec9f0; }
+  html:not(.light-mode) .slide-label, html:not(.light-mode) .workflow-line b { color: #e86f3a; }
+  html:not(.light-mode) .panel { background: rgba(26, 35, 45, 0.94); box-shadow: 7px 7px 0 rgba(0, 0, 0, 0.35); }
+  html:not(.light-mode) .callout { background: #2a2521; }
+  html:not(.light-mode) .equation { background: #1a232d; color: #e9edf2; }
+  html:not(.light-mode) .workflow-line span { border-color: #6b7a8c; background: #1a232d; color: #e9edf2; }
+  html:not(.light-mode) .appendix-badge { border-color: #6b7a8c; color: #e9edf2; }
+  html:not(.light-mode) .reveal .slide-number { color: #e9edf2; }
+  html:not(.light-mode) .deck-return { background: rgba(20, 27, 35, 0.92); color: #e9edf2; border-color: #344150; }
+}

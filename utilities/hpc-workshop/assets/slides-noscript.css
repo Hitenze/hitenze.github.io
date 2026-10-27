@@ -1,0 +1,31 @@
+/* Document view of the deck when JavaScript is off (loaded inside <noscript>).
+   reveal.js normally positions one slide at a time; here every slide is shown in order as a
+   static page, with fragments visible, and the slim site footer below. */
+
+html, body { height: auto !important; overflow: auto !important; }
+.reveal, .reveal .slides {
+  position: static !important; width: auto !important; height: auto !important;
+  overflow: visible !important; transform: none !important; inset: auto !important;
+  pointer-events: auto !important; perspective: none !important;
+}
+.reveal { font-size: clamp(17px, 2.1vw, 30px); }
+.reveal .slides > section,
+.reveal .slides > section > section {
+  display: block !important; position: relative !important; inset: auto !important;
+  width: auto !important; height: auto !important; max-width: 1600px;
+  margin: 0 auto 1.25rem !important; padding: 3.2em 4vw 2.4em !important;
+  opacity: 1 !important; visibility: visible !important; transform: none !important;
+  border-bottom: 1px solid var(--rule);
+}
+.reveal .slides > section.section-divider { display: flex !important; min-height: 60vh; }
+.reveal .slides > section.title-slide { display: grid !important; }
+.reveal .slides > section > section { margin: 0 !important; }
+.reveal .slides > section:has(> section) { padding: 0 !important; background: none !important; }
+.slide-label { left: 4vw; }
+.reveal .slides .title-slide { grid-template-columns: minmax(0, 1fr) minmax(0, 310px); }
+.reveal .fragment { opacity: 1 !important; visibility: visible !important; transform: none !important; }
+.reveal pre code { max-height: none; }
+.deck-return { position: absolute; }
+@media (max-width: 760px) {
+  .grid-2, .grid-3, .full-bleed-image, .reveal .slides .title-slide { grid-template-columns: 1fr !important; }
+}

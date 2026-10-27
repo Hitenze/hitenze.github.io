@@ -3,14 +3,29 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+    /* Theme boot: apply a saved choice before CSS paints (no flash); otherwise CSS follows the system. */
+    (function () {
+      var d = document.documentElement, t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t === 'dark-mode' || t === 'light-mode') { d.classList.add(t); d.setAttribute('data-theme', t === 'dark-mode' ? 'dark' : 'light'); }
+      else { d.setAttribute('data-theme', window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+    })();
+  </script>
+<link rel="stylesheet" href="../../assets/css/tokens.css">
+<link rel="stylesheet" href="../../assets/css/site-bar.css">
     <title>HPC Workshop - Technical Field Manual Slides</title>
     <meta name="description" content="A 90-minute practical introduction to HPC clusters, Slurm, remote workflows, and a first Python job.">
     <link rel="stylesheet" href="assets/vendor/reveal/reveal.css">
     <link rel="stylesheet" href="assets/vendor/reveal/plugin/highlight/monokai.css">
     <link rel="stylesheet" href="assets/slides.css">
+    <link rel="stylesheet" href="assets/slides-theme.css">
+    <noscript><link rel="stylesheet" href="assets/slides-noscript.css"></noscript>
 </head>
 <body>
-    <div class="reveal">
+    <a class="sb-skip" href="#deck">Skip to slides</a>
+    <a class="deck-return" href="../index.html">Tianshi Xu · Resources</a>
+    <div class="reveal" id="deck" tabindex="-1">
         <div class="slides">
             <!-- 01 -->
             <section class="section-divider title-slide">
@@ -546,6 +561,7 @@ ssh -N -J research-cluster \
             </section>
         </div>
     </div>
+    <noscript><footer class="sb-foot"><span>Tianshi Xu</span><a href="../index.html">Resources</a><a href="../../index.html">Home</a><span>© 2026</span></footer></noscript>
 
     <script src="assets/vendor/reveal/reveal.js"></script>
     <script src="assets/vendor/reveal/plugin/highlight/highlight.js"></script>
