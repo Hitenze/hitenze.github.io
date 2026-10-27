@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="../assets/css/site-bar.css">
 <script src="../assets/js/site.js" defer></script>
+<script src="playgrounds-theme.js"></script>
 <title>GCN 游乐场</title>
 <style>
 /* ============ RESET & BASE ============ */
@@ -22,8 +23,8 @@
 html, body { height: 100%; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
-  background: #f7f7f7;
-  color: #333;
+  background: var(--paper);
+  color: var(--ink);
   font-size: 13px;
   overflow-x: hidden;
   min-height: 100vh;
@@ -34,8 +35,8 @@ body {
 
 /* ============ HEADER ============ */
 #header {
-  background: #1a3a4a;
-  color: #fff;
+  background: var(--panel);
+  color: var(--ink);
   display: flex;
   align-items: center;
   padding: 0 20px;
@@ -44,14 +45,14 @@ body {
   flex-shrink: 0;
 }
 #header h1 { font-size: 18px; font-weight: 600; letter-spacing: 1px; }
-#header .subtitle { font-size: 12px; color: #8ab; margin-left: 4px; }
-#header .epoch-label { font-size: 14px; color: #acd; margin-left: auto; }
-#header .epoch-label span.val { color: #c0392b; font-weight: 700; font-size: 16px; }
+#header .subtitle { font-size: 12px; color: var(--muted); margin-left: 4px; }
+#header .epoch-label { font-size: 14px; color: var(--muted); margin-left: auto; }
+#header .epoch-label span.val { color: var(--data-red); font-weight: 700; font-size: 16px; }
 
 /* ============ CONTROL BAR ============ */
 #control-bar {
-  background: #e8e8e8;
-  border-bottom: 1px solid #ccc;
+  background: var(--panel);
+  border-bottom: 1px solid var(--rule);
   padding: 4px 16px;
   display: flex;
   align-items: center;
@@ -60,28 +61,28 @@ body {
   flex-shrink: 0;
 }
 .ctrl-group { display: flex; align-items: center; gap: 4px; }
-.ctrl-group label { font-size: 11px; color: #666; white-space: nowrap; }
+.ctrl-group label { font-size: 11px; color: var(--muted); white-space: nowrap; }
 .ctrl-group select {
-  font-size: 12px; padding: 3px 6px; border: 1px solid #bbb; border-radius: 3px;
-  background: #fff; cursor: pointer;
+  font-size: 12px; padding: 3px 6px; border: 1px solid var(--muted); border-radius: 3px;
+  background: var(--paper); cursor: pointer;
 }
 .btn-round {
   width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center; font-size: 16px;
   transition: background 0.15s;
 }
-.btn-play { background: #e74c3c; color: #fff; }
-.btn-play:hover { background: #c0392b; }
-.btn-play.playing { background: #0877bd; }
-.btn-step { background: #ddd; color: #333; }
-.btn-step:hover { background: #ccc; }
-.btn-reset { background: #ddd; color: #c33; }
-.btn-reset:hover { background: #ccc; }
+.btn-play { background: var(--data-red); color: var(--on-accent); }
+.btn-play:hover { background: var(--data-red); }
+.btn-play.playing { background: var(--accent); }
+.btn-step { background: var(--panel); color: var(--ink); }
+.btn-step:hover { background: var(--rule); }
+.btn-reset { background: var(--panel); color: var(--data-red); }
+.btn-reset:hover { background: var(--rule); }
 
 /* ============ PRESET BAR ============ */
 #preset-bar {
-  background: #f0f0f0;
-  border-bottom: 1px solid #ddd;
+  background: var(--panel);
+  border-bottom: 1px solid var(--rule);
   padding: 4px 16px;
   display: flex;
   align-items: center;
@@ -89,13 +90,13 @@ body {
   flex-wrap: wrap;
   flex-shrink: 0;
 }
-#preset-bar .preset-label { font-size: 12px; color: #666; font-weight: 600; }
+#preset-bar .preset-label { font-size: 12px; color: var(--muted); font-weight: 600; }
 .btn-preset {
-  font-size: 11px; padding: 4px 10px; border: 1px solid #bbb; border-radius: 14px;
-  background: #fff; cursor: pointer; transition: all 0.15s; color: #444;
+  font-size: 11px; padding: 4px 10px; border: 1px solid var(--muted); border-radius: 14px;
+  background: var(--paper); cursor: pointer; transition: all 0.15s; color: var(--ink);
 }
-.btn-preset:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
-.btn-preset.active { background: #0877bd; color: #fff; border-color: #0877bd; }
+.btn-preset:hover { background: var(--data-red); color: var(--on-accent); border-color: var(--accent); }
+.btn-preset.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 
 /* ============ MAIN LAYOUT ============ */
 #main {
@@ -109,49 +110,49 @@ body {
 #sidebar {
   width: 168px;
   min-width: 168px;
-  background: #fff;
-  border-right: 1px solid #ddd;
+  background: var(--paper);
+  border-right: 1px solid var(--rule);
   padding: 12px;
   overflow-y: auto;
   flex-shrink: 0;
 }
 #sidebar h3 {
-  font-size: 11px; color: #595959; margin-bottom: 8px;
+  font-size: 11px; color: var(--muted); margin-bottom: 8px;
   text-transform: uppercase; letter-spacing: 1px;
 }
 .sidebar-section { margin-bottom: 14px; }
-.sidebar-section label { font-size: 11px; color: #555; display: block; margin-bottom: 3px; }
+.sidebar-section label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 3px; }
 .spin-row { display: flex; align-items: center; gap: 4px; }
 .spin-val {
   width: 32px; text-align: center; font-size: 13px; font-weight: 700;
-  color: #0877bd;
+  color: var(--accent);
 }
 .btn-spin {
-  width: 22px; height: 22px; border-radius: 4px; border: 1px solid #bbb;
-  background: #f5f5f5; cursor: pointer; font-size: 14px; line-height: 1;
+  width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--muted);
+  background: var(--panel); cursor: pointer; font-size: 14px; line-height: 1;
   display: flex; align-items: center; justify-content: center;
   transition: background 0.1s;
 }
-.btn-spin:hover { background: #e0e0e0; }
+.btn-spin:hover { background: var(--rule); }
 .btn-spin:disabled { opacity: 0.35; cursor: default; }
 .radio-group { display: flex; gap: 5px; flex-wrap: wrap; }
 .radio-group label {
   display: flex; align-items: center; gap: 3px; cursor: pointer;
-  padding: 3px 7px; border: 1px solid #bbb; border-radius: 10px;
-  font-size: 11px; transition: all 0.1s; color: #444;
+  padding: 3px 7px; border: 1px solid var(--muted); border-radius: 10px;
+  font-size: 11px; transition: all 0.1s; color: var(--ink);
 }
-.radio-group label.checked { background: #0877bd; color: #fff; border-color: #0877bd; }
+.radio-group label.checked { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 .radio-group input { display: none; }
 .full-select {
   width: 100%; font-size: 12px; padding: 3px 6px;
-  border: 1px solid #bbb; border-radius: 3px; background: #fff;
+  border: 1px solid var(--muted); border-radius: 3px; background: var(--paper);
 }
 .checkbox-row { display: flex; align-items: center; gap: 6px; }
 .checkbox-row input[type=checkbox] { cursor: pointer; }
-.checkbox-row span { font-size: 11px; color: #555; }
+.checkbox-row span, .checkbox-row label { font-size: 11px; color: var(--muted); }
 .slider-row { display: flex; align-items: center; gap: 6px; }
 .slider-row input[type=range] { flex: 1; }
-.slider-val { font-size: 11px; font-weight: 700; color: #0877bd; width: 28px; }
+.slider-val { font-size: 11px; font-weight: 700; color: var(--accent); width: 28px; }
 
 /* ============ CENTER AREA ============ */
 #center-area {
@@ -159,19 +160,19 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #fafafa;
-  border-right: 1px solid #ddd;
+  background: var(--paper);
+  border-right: 1px solid var(--rule);
   min-width: 0;
 }
 #graph-title-bar {
   padding: 5px 12px;
-  background: #fff;
-  border-bottom: 1px solid #eee;
-  font-size: 11px; color: #595959;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  font-size: 11px; color: var(--muted);
   display: flex; align-items: center; gap: 8px;
   flex-shrink: 0;
 }
-#graph-title-bar .gtitle { font-weight: 600; color: #555; }
+#graph-title-bar .gtitle { font-weight: 600; color: var(--muted); }
 #graph-canvas-wrap {
   flex: 1;
   position: relative;
@@ -183,8 +184,8 @@ body {
 #node-info {
   position: absolute;
   bottom: 10px; left: 10px;
-  background: rgba(255,255,255,0.97);
-  border: 1px solid #ddd;
+  background: var(--paper);
+  border: 1px solid var(--rule);
   border-radius: 6px;
   padding: 8px 12px;
   font-size: 11px;
@@ -193,30 +194,30 @@ body {
   min-width: 140px;
   pointer-events: none;
 }
-#node-info .ni-title { font-weight: 700; color: #333; margin-bottom: 4px; font-size: 12px; }
+#node-info .ni-title { font-weight: 700; color: var(--ink); margin-bottom: 4px; font-size: 12px; }
 #node-info .ni-row { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 2px; }
-#node-info .ni-key { color: #595959; }
-#node-info .ni-val { font-weight: 700; color: #0877bd; }
+#node-info .ni-key { color: var(--muted); }
+#node-info .ni-val { font-weight: 700; color: var(--accent); }
 .class-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 3px; }
 
 /* ============ RIGHT PANEL ============ */
 #right-panel {
   width: 290px;
   min-width: 290px;
-  background: #fff;
+  background: var(--paper);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   overflow: hidden;
 }
 .panel-title {
-  font-size: 11px; color: #595959; font-weight: 600; margin-bottom: 4px;
+  font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 4px;
   text-transform: uppercase; letter-spacing: 0.5px;
 }
 .right-top {
   flex: 1;
   padding: 8px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--rule);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -230,15 +231,15 @@ body {
   display: flex; gap: 3px; flex-wrap: wrap; margin-bottom: 6px;
 }
 .layer-tab {
-  font-size: 10px; padding: 2px 7px; border: 1px solid #bbb; border-radius: 10px;
-  background: #f5f5f5; cursor: pointer; color: #555; transition: all 0.1s;
+  font-size: 10px; padding: 2px 7px; border: 1px solid var(--muted); border-radius: 10px;
+  background: var(--panel); cursor: pointer; color: var(--muted); transition: all 0.1s;
 }
-.layer-tab.active { background: #0877bd; color: #fff; border-color: #0877bd; }
+.layer-tab.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 #pca-canvas-wrap { flex: 1; overflow: hidden; min-height: 0; }
 #pca-canvas { display: block; }
 
 .plot-container {
-  background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden;
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden;
 }
 .loss-info {
   display: flex; gap: 10px; font-size: 12px; padding: 4px 0; flex-wrap: wrap;
@@ -250,40 +251,65 @@ body {
   display: flex; gap: 8px; align-items: center; font-size: 11px; margin-top: 4px;
 }
 .acc-bar-wrap {
-  flex: 1; height: 10px; background: #f0f0f0; border-radius: 6px; overflow: hidden;
+  flex: 1; height: 10px; background: var(--panel); border-radius: 6px; overflow: hidden;
 }
 .acc-bar { height: 100%; border-radius: 6px; transition: width 0.3s; }
-.acc-label { font-size: 11px; color: #666; width: 50px; flex-shrink: 0; }
+.acc-label { font-size: 11px; color: var(--muted); width: 50px; flex-shrink: 0; }
 .acc-val { font-weight: 700; font-family: monospace; width: 34px; flex-shrink: 0; }
 
 /* ============ LANG BTN ============ */
 #btn-lang {
-  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
-  color: #fff; border-radius: 4px; padding: 2px 8px; cursor: pointer;
+  background: transparent; border: 1px solid var(--rule);
+  color: var(--ink); border-radius: 4px; padding: 2px 8px; cursor: pointer;
   font-size: 12px; margin-left: 6px;
 }
-#btn-lang:hover { background: rgba(255,255,255,0.25); }
+#btn-lang:hover { background: var(--accent-soft); }
 
 /* ============ LEGEND ============ */
 #legend {
   display: flex; gap: 10px; flex-wrap: wrap;
   padding: 4px 8px;
-  background: #fff; border-top: 1px solid #eee;
+  background: var(--paper); border-top: 1px solid var(--rule);
   flex-shrink: 0;
 }
-.leg-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #555; }
+.leg-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--muted); }
 .leg-circle {
   width: 12px; height: 12px; border-radius: 50%;
-  border: 2px solid #333;
+  border: 2px solid var(--ink);
 }
-.leg-circle.train { border: 2px solid #111; }
-.leg-circle.test { border: 1.5px solid #aaa; }
+.leg-circle.train { border: 2px solid var(--ink); }
+.leg-circle.test { border: 1.5px solid var(--rule); }
 
 /* Pulse animation for misclassified */
 @keyframes pulse {
   0% { opacity: 1; }
   50% { opacity: 0.4; }
   100% { opacity: 1; }
+}
+
+/* ============ NARROW SCREENS (phones, small tablets) ============
+   The fixed side panels are stacked under one another; each visualisation keeps a fixed height,
+   and wide diagrams scroll inside their own box instead of the page. */
+@media (max-width: 900px) {
+  html, body { height: auto; }
+  body { overflow-x: visible; }
+  #header { height: auto; min-height: 48px; padding: 8px 12px; flex-wrap: wrap; row-gap: 6px; }
+  #header h1, #header .subtitle { white-space: normal; }
+  #header .epoch-label { margin-left: 0; }
+  #control-bar, #preset-bar { padding: 8px 12px; }
+  #main { flex: none; flex-direction: column; min-height: 0; overflow: visible; }
+  #sidebar, #center-area, #right-panel {
+    width: 100%; min-width: 0; flex: none; overflow: visible;
+    border-right: none; border-bottom: 1px solid var(--rule);
+  }
+  #page-content { flex: none; }
+  #header { gap: 6px 12px; }
+  #graph-title-bar { flex-wrap: wrap; }
+  #graph-title-bar #graph-stats { margin-left: 0 !important; }
+  #graph-canvas-wrap { flex: none; height: min(92vw, 380px); }
+  #legend { flex-wrap: wrap; }
+  .right-top { flex: none; overflow: visible; }
+  #pca-canvas-wrap { flex: none; height: 260px; }
 }
 </style>
 <link rel="stylesheet" href="playgrounds-theme.css">
@@ -302,18 +328,18 @@ body {
 <div id="header">
   <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-label="GCN Logo">
     <!-- Graph nodes -->
-    <circle cx="8" cy="8" r="4" fill="#0877bd" opacity="0.9"/>
-    <circle cx="22" cy="8" r="4" fill="#e74c3c" opacity="0.9"/>
-    <circle cx="8" cy="22" r="4" fill="#27ae60" opacity="0.9"/>
-    <circle cx="20" cy="21" r="3.5" fill="#0877bd" opacity="0.7"/>
-    <circle cx="14" cy="14" r="3" fill="#fff" opacity="0.9"/>
+    <circle cx="8" cy="8" r="4" opacity="0.9" style="fill:var(--data-blue)"/>
+    <circle cx="22" cy="8" r="4" opacity="0.9" style="fill:var(--data-red)"/>
+    <circle cx="8" cy="22" r="4" opacity="0.9" style="fill:var(--data-green)"/>
+    <circle cx="20" cy="21" r="3.5" opacity="0.7" style="fill:var(--data-blue)"/>
+    <circle cx="14" cy="14" r="3" opacity="0.9" style="fill:var(--muted)"/>
     <!-- Edges -->
-    <line x1="8" y1="8" x2="22" y2="8" stroke="white" stroke-width="1.2" opacity="0.5"/>
-    <line x1="8" y1="8" x2="8" y2="22" stroke="white" stroke-width="1.2" opacity="0.5"/>
-    <line x1="22" y1="8" x2="20" y2="21" stroke="white" stroke-width="1.2" opacity="0.5"/>
-    <line x1="8" y1="22" x2="20" y2="21" stroke="white" stroke-width="1.2" opacity="0.5"/>
-    <line x1="14" y1="14" x2="8" y2="8" stroke="white" stroke-width="1" opacity="0.4"/>
-    <line x1="14" y1="14" x2="22" y2="8" stroke="white" stroke-width="1" opacity="0.4"/>
+    <line x1="8" y1="8" x2="22" y2="8" stroke-width="1.2" opacity="0.5" style="stroke:var(--muted)"/>
+    <line x1="8" y1="8" x2="8" y2="22" stroke-width="1.2" opacity="0.5" style="stroke:var(--muted)"/>
+    <line x1="22" y1="8" x2="20" y2="21" stroke-width="1.2" opacity="0.5" style="stroke:var(--muted)"/>
+    <line x1="8" y1="22" x2="20" y2="21" stroke-width="1.2" opacity="0.5" style="stroke:var(--muted)"/>
+    <line x1="14" y1="14" x2="8" y2="8" stroke-width="1" opacity="0.4" style="stroke:var(--muted)"/>
+    <line x1="14" y1="14" x2="22" y2="8" stroke-width="1" opacity="0.4" style="stroke:var(--muted)"/>
   </svg>
   <h1 data-i18n="title">GCN 游乐场</h1>
   <div class="subtitle" data-i18n="subtitle">图卷积网络节点分类</div>
@@ -323,11 +349,11 @@ body {
 
 <!-- CONTROL BAR -->
 <div id="control-bar">
-  <button class="btn-round btn-play" id="btn-play" title="播放/暂停">▶</button>
-  <button class="btn-round btn-step" id="btn-step" title="单步">⏭</button>
-  <button class="btn-round btn-reset" id="btn-reset" title="重置">↺</button>
+  <button class="btn-round btn-play" id="btn-play" title="播放/暂停" aria-label="播放/暂停">▶</button>
+  <button class="btn-round btn-step" id="btn-step" title="单步" aria-label="单步">⏭</button>
+  <button class="btn-round btn-reset" id="btn-reset" title="重置" aria-label="重置">↺</button>
   <div class="ctrl-group">
-    <label data-i18n="lr">学习率</label>
+    <label for="sel-lr" data-i18n="lr">学习率</label>
     <select id="sel-lr">
       <option value="0.01" selected>0.01</option>
       <option value="0.005">0.005</option>
@@ -335,14 +361,14 @@ body {
     </select>
   </div>
   <div class="ctrl-group">
-    <label data-i18n="optimizer">优化器</label>
+    <label for="sel-optimizer" data-i18n="optimizer">优化器</label>
     <select id="sel-optimizer">
       <option value="sgd">SGD</option>
       <option value="adam" selected>Adam</option>
     </select>
   </div>
   <div class="ctrl-group">
-    <label>Dropout</label>
+    <label for="sel-dropout">Dropout</label>
     <select id="sel-dropout">
       <option value="0" selected>0</option>
       <option value="0.1">0.1</option>
@@ -370,7 +396,7 @@ body {
     <h3 data-i18n="graphConfig">图配置</h3>
 
     <div class="sidebar-section">
-      <label data-i18n="graphLabel">图数据集</label>
+      <label for="sel-graph" data-i18n="graphLabel">图数据集</label>
       <select class="full-select" id="sel-graph">
         <option value="sbm" data-i18n="graphSBM">随机块模型</option>
         <option value="karate" data-i18n="graphKarate">空手道俱乐部</option>
@@ -390,8 +416,8 @@ body {
     </div>
 
     <div class="sidebar-section">
-      <label data-i18n="hiddenDim">隐藏维度</label>
-      <div class="radio-group" id="rg-hidden">
+      <label id="lbl-rg-hidden" data-i18n="hiddenDim">隐藏维度</label>
+      <div class="radio-group" id="rg-hidden" role="radiogroup" aria-labelledby="lbl-rg-hidden">
         <label data-val="8"><input type="radio" name="hidden" value="8"> 8</label>
         <label class="checked" data-val="16"><input type="radio" name="hidden" value="16" checked> 16</label>
         <label data-val="32"><input type="radio" name="hidden" value="32"> 32</label>
@@ -401,12 +427,12 @@ body {
     <div class="sidebar-section">
       <div class="checkbox-row">
         <input type="checkbox" id="cb-residual">
-        <span data-i18n="residual">残差连接</span>
+        <label for="cb-residual" data-i18n="residual">残差连接</label>
       </div>
     </div>
 
     <div class="sidebar-section">
-      <label data-i18n="trainRatio">训练比例</label>
+      <label for="sl-trainratio" data-i18n="trainRatio">训练比例</label>
       <div class="slider-row">
         <input type="range" id="sl-trainratio" min="10" max="70" value="30" step="10">
         <div class="slider-val" id="trainratio-val">30%</div>
@@ -418,7 +444,7 @@ body {
   <div id="center-area">
     <div id="graph-title-bar">
       <span class="gtitle" data-i18n="graphVizTitle">力导向图</span>
-      <span id="graph-stats" style="margin-left:auto; color:#595959;"></span>
+      <span id="graph-stats" style="margin-left:auto; color:var(--muted);"></span>
     </div>
     <div id="graph-canvas-wrap">
       <canvas id="graph-canvas"></canvas>
@@ -433,23 +459,23 @@ body {
     </div>
     <div id="legend">
       <div class="leg-item">
-        <svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="#0877bd"/></svg>
+        <svg width="12" height="12"><circle cx="6" cy="6" r="5" style="fill:var(--data-blue)"/></svg>
         <span data-i18n="class0">类别 0</span>
       </div>
       <div class="leg-item">
-        <svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="#e74c3c"/></svg>
+        <svg width="12" height="12"><circle cx="6" cy="6" r="5" style="fill:var(--data-red)"/></svg>
         <span data-i18n="class1">类别 1</span>
       </div>
       <div class="leg-item">
-        <svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="#27ae60"/></svg>
+        <svg width="12" height="12"><circle cx="6" cy="6" r="5" style="fill:var(--data-green)"/></svg>
         <span data-i18n="class2">类别 2</span>
       </div>
       <div class="leg-item" style="margin-left:8px;">
-        <svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="#aaa" stroke="#111" stroke-width="2"/></svg>
+        <svg width="14" height="14"><circle cx="7" cy="7" r="5" stroke-width="2" style="fill:var(--muted);stroke:var(--ink)"/></svg>
         <span data-i18n="trainNode">训练节点</span>
       </div>
       <div class="leg-item">
-        <svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="#aaa" stroke="#aaa" stroke-width="1.5"/></svg>
+        <svg width="14" height="14"><circle cx="7" cy="7" r="5" stroke-width="1.5" style="fill:var(--muted);stroke:var(--muted)"/></svg>
         <span data-i18n="testNode">测试节点</span>
       </div>
     </div>
@@ -471,24 +497,24 @@ body {
       </div>
       <div class="loss-info">
         <div class="loss-item">
-          <div class="loss-dot" style="background:#0877bd;"></div>
+          <div class="loss-dot" style="background:var(--data-blue);"></div>
           <span data-i18n="trainLoss">训练损失</span>:
           <span class="loss-value" id="disp-train-loss">-.---</span>
         </div>
         <div class="loss-item">
-          <div class="loss-dot" style="background:#e74c3c;"></div>
+          <div class="loss-dot" style="background:var(--data-red);"></div>
           <span data-i18n="testAcc">测试准确率</span>:
           <span class="loss-value" id="disp-test-acc">--%</span>
         </div>
       </div>
       <div class="acc-row">
         <span class="acc-label" data-i18n="trainAccLabel">训练</span>
-        <div class="acc-bar-wrap"><div class="acc-bar" id="bar-train-acc" style="background:#0877bd; width:0%;"></div></div>
+        <div class="acc-bar-wrap"><div class="acc-bar" id="bar-train-acc" style="background:var(--data-blue); width:0%;"></div></div>
         <span class="acc-val" id="disp-train-acc">--%</span>
       </div>
       <div class="acc-row">
         <span class="acc-label" data-i18n="testAccLabel">测试</span>
-        <div class="acc-bar-wrap"><div class="acc-bar" id="bar-test-acc" style="background:#e74c3c; width:0%;"></div></div>
+        <div class="acc-bar-wrap"><div class="acc-bar" id="bar-test-acc" style="background:var(--data-red); width:0%;"></div></div>
         <span class="acc-val" id="disp-test-acc2">--%</span>
       </div>
     </div>
@@ -1287,8 +1313,9 @@ class ForceLayout {
 // ============================================================
 // APP STATE
 // ============================================================
-const CLASS_COLORS = ['#0877bd', '#e74c3c', '#27ae60'];
-const CLASS_COLORS_LIGHT = ['#cde8f8', '#fad4d4', '#c8eedb'];
+// Class colours are site tokens (assets/css/tokens.css), read at draw time so they follow the theme
+const CLASS_TOKENS = ['data-blue', 'data-red', 'data-green'];
+const classColor = c => PG.c(CLASS_TOKENS[c % 3]);
 
 let graphData = null;
 let adjNorm = null;
@@ -1378,7 +1405,7 @@ function renderGraph() {
   ctx.clearRect(0, 0, w, h);
 
   // Background
-  ctx.fillStyle = '#fafafa';
+  ctx.fillStyle = PG.c('paper');
   ctx.fillRect(0, 0, w, h);
 
   const probs = lastProbs;
@@ -1392,7 +1419,7 @@ function renderGraph() {
     ctx.beginPath();
     ctx.moveTo(forceLayout.x[u], forceLayout.y[u]);
     ctx.lineTo(forceLayout.x[v], forceLayout.y[v]);
-    ctx.strokeStyle = isHighlight ? 'rgba(200,140,0,0.7)' : 'rgba(150,150,150,0.35)';
+    ctx.strokeStyle = isHighlight ? PG.a('data-orange', 0.85) : PG.a('muted', 0.35);
     ctx.lineWidth = isHighlight ? 2 : 1;
     ctx.stroke();
   }
@@ -1423,8 +1450,7 @@ function renderGraph() {
     const r = baseR + conf * 3.5;
 
     // Color
-    const color = CLASS_COLORS[predClass % 3];
-    const lightColor = CLASS_COLORS_LIGHT[predClass % 3];
+    const color = classColor(predClass);
 
     ctx.beginPath();
     ctx.arc(x, y, r, 0, 2 * Math.PI);
@@ -1433,14 +1459,14 @@ function renderGraph() {
     ctx.fill();
 
     // Border: thick for train, thin for test
-    ctx.strokeStyle = isSelected ? '#ff0' : (isTrain ? '#111' : '#aaa');
+    ctx.strokeStyle = isSelected ? PG.c('data-orange') : (isTrain ? PG.c('ink') : PG.c('muted'));
     ctx.lineWidth = isSelected ? 3 : (isTrain ? 2.5 : 1.2);
     ctx.stroke();
     ctx.globalAlpha = 1.0;
 
     // Misclassified cross mark
     if (probs && !isCorrect) {
-      ctx.strokeStyle = 'rgba(255,220,0,0.9)';
+      ctx.strokeStyle = PG.c('paper');
       ctx.lineWidth = 1.5;
       const cr = r * 0.45;
       ctx.beginPath();
@@ -1451,7 +1477,7 @@ function renderGraph() {
 
     // Node index label for small graphs
     if (N <= 24) {
-      ctx.fillStyle = '#fff';
+      ctx.fillStyle = PG.c('paper');
       ctx.font = `bold ${Math.floor(r * 0.85)}px sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -1468,7 +1494,7 @@ function renderPCA() {
   const w = pcaCanvas.width, h = pcaCanvas.height;
   const ctx = pcaCtx;
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#fff';
+  ctx.fillStyle = PG.c('paper');
   ctx.fillRect(0, 0, w, h);
 
   const N = graphData.numNodes;
@@ -1513,13 +1539,13 @@ function renderPCA() {
     const x = px(proj[i*2]);
     const y = py(proj[i*2+1]);
     const c = graphData.labels[i];
-    const color = CLASS_COLORS[c % 3];
+    const color = classColor(c);
     ctx.beginPath();
     ctx.arc(x, y, 4.5, 0, 2*Math.PI);
     ctx.fillStyle = color;
     ctx.globalAlpha = graphData.trainMask[i] ? 1.0 : 0.55;
     ctx.fill();
-    ctx.strokeStyle = graphData.trainMask[i] ? '#111' : 'rgba(100,100,100,0.4)';
+    ctx.strokeStyle = graphData.trainMask[i] ? PG.c('ink') : PG.a('muted', 0.5);
     ctx.lineWidth = graphData.trainMask[i] ? 1.5 : 0.8;
     ctx.stroke();
     ctx.globalAlpha = 1.0;
@@ -1527,7 +1553,7 @@ function renderPCA() {
 
   // Label overlay
   ctx.font = '10px sans-serif';
-  ctx.fillStyle = '#888';
+  ctx.fillStyle = PG.c('muted');
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
   ctx.fillText('PC1 →', 4, h - 14);
@@ -1540,7 +1566,7 @@ function renderLossChart() {
   const w = lossCanvas.width, h = lossCanvas.height || 100;
   const ctx = lossCtx;
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#fff';
+  ctx.fillStyle = PG.c('paper');
   ctx.fillRect(0, 0, w, h);
 
   if (lossHistory.length < 2) return;
@@ -1571,7 +1597,7 @@ function renderLossChart() {
   }
 
   // Grid
-  ctx.strokeStyle = '#eee';
+  ctx.strokeStyle = PG.c('rule');
   ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
     const y = pad.t + (i / 4) * ch;
@@ -1579,25 +1605,25 @@ function renderLossChart() {
   }
 
   // Axes
-  ctx.strokeStyle = '#ccc';
+  ctx.strokeStyle = PG.c('muted');
   ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, pad.t + ch); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(pad.l, pad.t + ch); ctx.lineTo(w - pad.r, pad.t + ch); ctx.stroke();
 
   // Loss (blue, left axis, scale 0 to maxLoss)
-  plotLine(lossHistory, '#0877bd', ch / maxLoss, 0);
+  plotLine(lossHistory, PG.c('data-blue'), ch / maxLoss, 0);
 
   // Test acc (red, right axis, scale 0 to 1)
-  plotLine(testAccHistory, '#e74c3c', ch, 0);
+  plotLine(testAccHistory, PG.c('data-red'), ch, 0);
 
   // Axis labels
-  ctx.fillStyle = '#0877bd';
+  ctx.fillStyle = PG.c('data-blue');
   ctx.font = '9px sans-serif';
   ctx.textAlign = 'right';
   ctx.fillText(maxLoss.toFixed(1), pad.l - 2, pad.t + 4);
   ctx.fillText('0', pad.l - 2, pad.t + ch);
 
-  ctx.fillStyle = '#888';
+  ctx.fillStyle = PG.c('muted');
   ctx.textAlign = 'center';
   ctx.fillText(n + ' ep', pad.l + cw/2, h - 2);
 }
@@ -1648,8 +1674,8 @@ function showNodeInfo(nodeIdx) {
   const f0 = graphData.features[nodeIdx*2].toFixed(2);
   const f1 = graphData.features[nodeIdx*2+1].toFixed(2);
   document.getElementById('ni-feat').textContent = `[${f0}, ${f1}]`;
-  document.getElementById('ni-true').innerHTML = `<span class="class-dot" style="background:${CLASS_COLORS[label%3]}"></span>${label}`;
-  document.getElementById('ni-pred').innerHTML = `<span class="class-dot" style="background:${CLASS_COLORS[predClass%3]}"></span>${predClass}`;
+  document.getElementById('ni-true').innerHTML = `<span class="class-dot" style="background:var(--${CLASS_TOKENS[label%3]})"></span>${label}`;
+  document.getElementById('ni-pred').innerHTML = `<span class="class-dot" style="background:var(--${CLASS_TOKENS[predClass%3]})"></span>${predClass}`;
   document.getElementById('ni-conf').textContent = (conf * 100).toFixed(1) + '%';
   document.getElementById('ni-train').textContent = isTrain ? t('yes') : t('no');
   nodeInfoEl.style.display = 'block';
@@ -2042,6 +2068,11 @@ window.addEventListener('resize', () => {
     forceLayout.w = graphCanvas.width;
     forceLayout.h = graphCanvas.height;
   }
+  renderGraph();
+  renderPCA();
+  renderLossChart();
+});
+PG.onTheme(() => {
   renderGraph();
   renderPCA();
   renderLossChart();

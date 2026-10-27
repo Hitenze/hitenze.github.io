@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="../assets/css/site-bar.css">
 <script src="../assets/js/site.js" defer></script>
+<script src="playgrounds-theme.js"></script>
 <title>RNN 游乐场</title>
 <style>
 /* ============ RESET & BASE ============ */
@@ -22,8 +23,8 @@
 html, body { height: 100%; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
-  background: #f7f7f7;
-  color: #333;
+  background: var(--paper);
+  color: var(--ink);
   font-size: 13px;
   overflow-x: hidden;
   min-height: 100vh;
@@ -35,8 +36,8 @@ body {
 
 /* ============ HEADER ============ */
 #header {
-  background: #1a3a4a;
-  color: #fff;
+  background: var(--panel);
+  color: var(--ink);
   display: flex;
   align-items: center;
   padding: 0 20px;
@@ -45,14 +46,14 @@ body {
   flex-shrink: 0;
 }
 #header h1 { font-size: 18px; font-weight: 600; letter-spacing: 1px; }
-#header .subtitle { font-size: 12px; color: #8ab; margin-left: 4px; }
-#header .epoch-label { font-size: 14px; color: #acd; margin-left: auto; }
-#header .epoch-label span.val { color: #c0392b; font-weight: 700; font-size: 16px; }
+#header .subtitle { font-size: 12px; color: var(--muted); margin-left: 4px; }
+#header .epoch-label { font-size: 14px; color: var(--muted); margin-left: auto; }
+#header .epoch-label span.val { color: var(--data-red); font-weight: 700; font-size: 16px; }
 
 /* ============ CONTROL BAR ============ */
 #control-bar {
-  background: #e8e8e8;
-  border-bottom: 1px solid #ccc;
+  background: var(--panel);
+  border-bottom: 1px solid var(--rule);
   padding: 4px 16px;
   display: flex;
   align-items: center;
@@ -61,28 +62,28 @@ body {
   flex-shrink: 0;
 }
 .ctrl-group { display: flex; align-items: center; gap: 4px; }
-.ctrl-group label { font-size: 11px; color: #666; white-space: nowrap; }
+.ctrl-group label { font-size: 11px; color: var(--muted); white-space: nowrap; }
 .ctrl-group select {
-  font-size: 12px; padding: 3px 6px; border: 1px solid #bbb; border-radius: 3px;
-  background: #fff; cursor: pointer;
+  font-size: 12px; padding: 3px 6px; border: 1px solid var(--muted); border-radius: 3px;
+  background: var(--paper); cursor: pointer;
 }
 .btn-round {
   width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center; font-size: 16px;
   transition: background 0.15s;
 }
-.btn-play { background: #e74c3c; color: #fff; }
-.btn-play:hover { background: #c0392b; }
-.btn-play.playing { background: #0877bd; }
-.btn-step { background: #ddd; color: #333; }
-.btn-step:hover { background: #ccc; }
-.btn-reset { background: #ddd; color: #c33; }
-.btn-reset:hover { background: #ccc; }
+.btn-play { background: var(--data-red); color: var(--on-accent); }
+.btn-play:hover { background: var(--data-red); }
+.btn-play.playing { background: var(--accent); }
+.btn-step { background: var(--panel); color: var(--ink); }
+.btn-step:hover { background: var(--rule); }
+.btn-reset { background: var(--panel); color: var(--data-red); }
+.btn-reset:hover { background: var(--rule); }
 
 /* ============ PRESET BAR ============ */
 #preset-bar {
-  background: #f0f0f0;
-  border-bottom: 1px solid #ddd;
+  background: var(--panel);
+  border-bottom: 1px solid var(--rule);
   padding: 4px 16px;
   display: flex;
   align-items: center;
@@ -90,43 +91,43 @@ body {
   flex-wrap: wrap;
   flex-shrink: 0;
 }
-#preset-bar .preset-label { font-size: 12px; color: #666; font-weight: 600; }
+#preset-bar .preset-label { font-size: 12px; color: var(--muted); font-weight: 600; }
 .btn-preset {
-  font-size: 11px; padding: 4px 10px; border: 1px solid #bbb; border-radius: 14px;
-  background: #fff; cursor: pointer; transition: all 0.15s; color: #444;
+  font-size: 11px; padding: 4px 10px; border: 1px solid var(--muted); border-radius: 14px;
+  background: var(--paper); cursor: pointer; transition: all 0.15s; color: var(--ink);
 }
-.btn-preset:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
-.btn-preset.active { background: #0877bd; color: #fff; border-color: #0877bd; }
+.btn-preset:hover { background: var(--data-red); color: var(--on-accent); border-color: var(--accent); }
+.btn-preset.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 
 /* ============ LEFT SIDEBAR ============ */
 #sidebar {
   width: 160px;
   min-width: 160px;
-  background: #fff;
-  border-right: 1px solid #ddd;
+  background: var(--paper);
+  border-right: 1px solid var(--rule);
   padding: 12px;
   overflow-y: auto;
   flex-shrink: 0;
 }
 #sidebar h3 {
-  font-size: 11px; color: #595959; margin-bottom: 8px;
+  font-size: 11px; color: var(--muted); margin-bottom: 8px;
   text-transform: uppercase; letter-spacing: 1px;
 }
 .sidebar-section { margin-bottom: 14px; }
-.sidebar-section label { font-size: 11px; color: #555; display: block; margin-bottom: 3px; }
+.sidebar-section label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 3px; }
 .sidebar-section select {
   width: 100%; font-size: 12px; padding: 4px 6px;
-  border: 1px solid #bbb; border-radius: 3px; background: #fff; cursor: pointer;
+  border: 1px solid var(--muted); border-radius: 3px; background: var(--paper); cursor: pointer;
 }
 .sidebar-section input[type=range] { width: 100%; cursor: pointer; }
-.slider-val { font-size: 12px; font-weight: 700; color: #0877bd; text-align: center; margin-top: 2px; }
+.slider-val { font-size: 12px; font-weight: 700; color: var(--accent); text-align: center; margin-top: 2px; }
 .radio-group { display: flex; gap: 4px; flex-wrap: wrap; }
 .radio-group label {
   display: flex; align-items: center; gap: 3px; cursor: pointer;
-  padding: 3px 6px; border: 1px solid #bbb; border-radius: 10px;
-  font-size: 11px; transition: all 0.1s; color: #444;
+  padding: 3px 6px; border: 1px solid var(--muted); border-radius: 10px;
+  font-size: 11px; transition: all 0.1s; color: var(--ink);
 }
-.radio-group label.checked { background: #0877bd; color: #fff; border-color: #0877bd; }
+.radio-group label.checked { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 .radio-group input { display: none; }
 
 /* ============ CENTER AREA ============ */
@@ -135,8 +136,8 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #fff;
-  border-right: 1px solid #ddd;
+  background: var(--paper);
+  border-right: 1px solid var(--rule);
   min-width: 0;
 }
 
@@ -145,14 +146,14 @@ body {
   flex: 1;
   min-height: 0;
   padding: 8px;
-  background: #fafafa;
-  border-bottom: 1px solid #eee;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 .area-title {
-  font-size: 11px; color: #595959; font-weight: 600;
+  font-size: 11px; color: var(--muted); font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;
   display: flex; align-items: center; gap: 8px;
 }
@@ -170,8 +171,8 @@ body {
   height: 200px;
   flex-shrink: 0;
   padding: 8px;
-  background: #fff;
-  border-top: 2px solid #e0e0e0;
+  background: var(--paper);
+  border-top: 2px solid var(--rule);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -182,8 +183,8 @@ body {
 #gate-canvas { display: block; }
 #gate-tooltip {
   position: absolute;
-  background: rgba(26,58,74,0.92);
-  color: #fff;
+  background: var(--ink);
+  color: var(--on-accent);
   font-size: 11px;
   padding: 5px 9px;
   border-radius: 5px;
@@ -198,7 +199,7 @@ body {
 #right-panel {
   width: 240px;
   min-width: 240px;
-  background: #fff;
+  background: var(--paper);
   padding: 8px;
   overflow-y: auto;
   display: flex;
@@ -207,11 +208,11 @@ body {
   flex-shrink: 0;
 }
 .panel-title {
-  font-size: 11px; color: #595959; font-weight: 600; margin-bottom: 2px;
+  font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 2px;
   text-transform: uppercase; letter-spacing: 0.5px;
 }
 .plot-container {
-  background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden;
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden;
 }
 .plot-container canvas { display: block; width: 100%; }
 .loss-info {
@@ -223,29 +224,54 @@ body {
 
 /* Gate Statistics */
 .gate-stat-row { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
-.gate-stat-label { font-size: 11px; color: #555; width: 54px; flex-shrink: 0; }
-.gate-stat-bar-wrap { flex: 1; height: 12px; background: #f0f0f0; border-radius: 6px; overflow: hidden; }
+.gate-stat-label { font-size: 11px; color: var(--muted); width: 54px; flex-shrink: 0; }
+.gate-stat-bar-wrap { flex: 1; height: 12px; background: var(--panel); border-radius: 6px; overflow: hidden; }
 .gate-stat-bar { height: 100%; border-radius: 6px; transition: width 0.3s; }
-.gate-stat-val { font-size: 11px; font-family: monospace; width: 36px; text-align: right; color: #555; }
+.gate-stat-val { font-size: 11px; font-family: monospace; width: 36px; text-align: right; color: var(--muted); }
 
 /* ============ LANG BTN ============ */
 #btn-lang {
-  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
-  color: #fff; border-radius: 4px; padding: 2px 8px; cursor: pointer;
+  background: transparent; border: 1px solid var(--rule);
+  color: var(--ink); border-radius: 4px; padding: 2px 8px; cursor: pointer;
   font-size: 12px; margin-left: 6px;
 }
-#btn-lang:hover { background: rgba(255,255,255,0.25); }
+#btn-lang:hover { background: var(--accent-soft); }
 
 /* Divider */
-.panel-divider { border: none; border-top: 1px solid #eee; margin: 2px 0; }
+.panel-divider { border: none; border-top: 1px solid var(--rule); margin: 2px 0; }
 
 /* Status indicator */
 #status-badge {
   font-size: 11px; padding: 2px 8px; border-radius: 10px;
-  background: #e8f4e8; color: #2a7a2a; font-weight: 600;
+  background: var(--tint-green); color: var(--ink); font-weight: 600;
 }
-#status-badge.running { background: #e8f0fa; color: #0877bd; }
-#status-badge.idle { background: #f0f0f0; color: #595959; }
+#status-badge.running { background: var(--accent-soft); color: var(--accent); }
+#status-badge.idle { background: var(--panel); color: var(--muted); }
+
+/* ============ NARROW SCREENS (phones, small tablets) ============
+   The fixed side panels are stacked under one another; each visualisation keeps a fixed height,
+   and wide diagrams scroll inside their own box instead of the page. */
+@media (max-width: 900px) {
+  html, body { height: auto; }
+  body { overflow-x: visible; }
+  #header { height: auto; min-height: 48px; padding: 8px 12px; flex-wrap: wrap; row-gap: 6px; }
+  #header h1, #header .subtitle { white-space: normal; }
+  #header .epoch-label { margin-left: 0; }
+  #control-bar, #preset-bar { padding: 8px 12px; }
+  #main { flex: none; flex-direction: column; min-height: 0; overflow: visible; }
+  #sidebar, #center-area, #right-panel {
+    width: 100%; min-width: 0; flex: none; overflow: visible;
+    border-right: none; border-bottom: 1px solid var(--rule);
+  }
+  #page-content { flex: none; }
+  #header { gap: 6px 12px; }
+  #pred-area { flex: none; overflow: visible; }
+  .area-title, .mse-row { flex-wrap: wrap; }
+  #pred-canvas-wrap { flex: none; height: 240px; }
+  #gate-area { height: auto; overflow: visible; }
+  #gate-canvas-wrap { flex: none; height: 200px; overflow-x: auto; }
+  #right-panel { padding: 12px; }
+}
 </style>
 <link rel="stylesheet" href="playgrounds-theme.css">
 </head>
@@ -263,14 +289,14 @@ body {
 <div id="header">
   <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-label="RNN Logo">
     <!-- Loop/cycle arrows representing recurrence -->
-    <circle cx="14" cy="14" r="10" stroke="#0877bd" stroke-width="2" fill="none" opacity="0.6"/>
-    <circle cx="14" cy="8" r="3" fill="#0877bd" opacity="0.9"/>
-    <circle cx="20" cy="18" r="3" fill="#e74c3c" opacity="0.9"/>
-    <circle cx="8" cy="18" r="3" fill="#0877bd" opacity="0.7"/>
+    <circle cx="14" cy="14" r="10" stroke-width="2" fill="none" opacity="0.6" style="stroke:var(--data-blue)"/>
+    <circle cx="14" cy="8" r="3" opacity="0.9" style="fill:var(--data-blue)"/>
+    <circle cx="20" cy="18" r="3" opacity="0.9" style="fill:var(--data-red)"/>
+    <circle cx="8" cy="18" r="3" opacity="0.7" style="fill:var(--data-blue)"/>
     <!-- Arrows indicating flow -->
-    <path d="M16.5 9.5 L18.5 15.5" stroke="white" stroke-width="1.2" marker-end="url(#arr)"/>
-    <path d="M18.5 18 L9.5 18" stroke="white" stroke-width="1.2"/>
-    <path d="M8.5 16.5 L12 9.5" stroke="white" stroke-width="1.2"/>
+    <path d="M16.5 9.5 L18.5 15.5" stroke-width="1.2" marker-end="url(#arr)" style="stroke:var(--muted)"/>
+    <path d="M18.5 18 L9.5 18" stroke-width="1.2" style="stroke:var(--muted)"/>
+    <path d="M8.5 16.5 L12 9.5" stroke-width="1.2" style="stroke:var(--muted)"/>
   </svg>
   <h1 data-i18n="title">RNN 游乐场</h1>
   <div class="subtitle" data-i18n="subtitle">序列预测 · 门控机制</div>
@@ -281,11 +307,11 @@ body {
 
 <!-- CONTROL BAR -->
 <div id="control-bar">
-  <button class="btn-round btn-play" id="btn-play" title="播放/暂停">▶</button>
-  <button class="btn-round btn-step" id="btn-step" title="单步">⏭</button>
-  <button class="btn-round btn-reset" id="btn-reset" title="重置">↺</button>
+  <button class="btn-round btn-play" id="btn-play" title="播放/暂停" aria-label="播放/暂停">▶</button>
+  <button class="btn-round btn-step" id="btn-step" title="单步" aria-label="单步">⏭</button>
+  <button class="btn-round btn-reset" id="btn-reset" title="重置" aria-label="重置">↺</button>
   <div class="ctrl-group">
-    <label data-i18n="lr">学习率</label>
+    <label for="sel-lr" data-i18n="lr">学习率</label>
     <select id="sel-lr">
       <option value="0.01">0.01</option>
       <option value="0.005" selected>0.005</option>
@@ -293,7 +319,7 @@ body {
     </select>
   </div>
   <div class="ctrl-group">
-    <label data-i18n="optimizer">优化器</label>
+    <label for="sel-optimizer" data-i18n="optimizer">优化器</label>
     <select id="sel-optimizer">
       <option value="sgd">SGD</option>
       <option value="adam" selected>Adam</option>
@@ -318,7 +344,7 @@ body {
     <h3 data-i18n="config">配置</h3>
 
     <div class="sidebar-section">
-      <label data-i18n="dataset">数据集</label>
+      <label for="sel-dataset" data-i18n="dataset">数据集</label>
       <select id="sel-dataset">
         <option value="sine" data-i18n="sine">正弦波</option>
         <option value="square" data-i18n="square">方波</option>
@@ -328,16 +354,16 @@ body {
     </div>
 
     <div class="sidebar-section">
-      <label data-i18n="cellType">单元类型</label>
-      <div class="radio-group" id="rg-cell">
+      <label id="lbl-rg-cell" data-i18n="cellType">单元类型</label>
+      <div class="radio-group" id="rg-cell" role="radiogroup" aria-labelledby="lbl-rg-cell">
         <label class="checked" data-val="rnn"><input type="radio" name="cell" value="rnn"> RNN</label>
         <label data-val="lstm"><input type="radio" name="cell" value="lstm"> LSTM</label>
       </div>
     </div>
 
     <div class="sidebar-section">
-      <label data-i18n="hiddenSize">隐藏维度</label>
-      <div class="radio-group" id="rg-hidden">
+      <label id="lbl-rg-hidden" data-i18n="hiddenSize">隐藏维度</label>
+      <div class="radio-group" id="rg-hidden" role="radiogroup" aria-labelledby="lbl-rg-hidden">
         <label data-val="4"><input type="radio" name="hidden" value="4"> 4</label>
         <label class="checked" data-val="8"><input type="radio" name="hidden" value="8"> 8</label>
         <label data-val="16"><input type="radio" name="hidden" value="16"> 16</label>
@@ -346,15 +372,15 @@ body {
     </div>
 
     <div class="sidebar-section">
-      <label data-i18n="layers">层数</label>
-      <div class="radio-group" id="rg-layers">
+      <label id="lbl-rg-layers" data-i18n="layers">层数</label>
+      <div class="radio-group" id="rg-layers" role="radiogroup" aria-labelledby="lbl-rg-layers">
         <label class="checked" data-val="1"><input type="radio" name="layers" value="1"> 1</label>
         <label data-val="2"><input type="radio" name="layers" value="2"> 2</label>
       </div>
     </div>
 
     <div class="sidebar-section">
-      <label data-i18n="windowSize">窗口大小: <span id="win-label">10</span></label>
+      <label for="slider-window" data-i18n="windowSize">窗口大小: <span id="win-label">10</span></label>
       <input type="range" id="slider-window" min="5" max="20" value="10" step="1">
     </div>
   </div>
@@ -366,8 +392,8 @@ body {
       <div class="area-title">
         <span data-i18n="predTitle">序列预测</span>
         <span class="mse-row">
-          <span class="mse-item"><span class="mse-dot" style="background:#0877bd"></span><span data-i18n="trainMSE">训练MSE</span>:&nbsp;<span class="mse-val" id="train-mse-val">—</span></span>
-          <span class="mse-item"><span class="mse-dot" style="background:#e74c3c"></span><span data-i18n="testMSE">测试MSE</span>:&nbsp;<span class="mse-val" id="test-mse-val">—</span></span>
+          <span class="mse-item"><span class="mse-dot" style="background:var(--data-blue)"></span><span data-i18n="trainMSE">训练MSE</span>:&nbsp;<span class="mse-val" id="train-mse-val">—</span></span>
+          <span class="mse-item"><span class="mse-dot" style="background:var(--data-red)"></span><span data-i18n="testMSE">测试MSE</span>:&nbsp;<span class="mse-val" id="test-mse-val">—</span></span>
         </span>
       </div>
       <div id="pred-canvas-wrap">
@@ -393,12 +419,12 @@ body {
     </div>
     <div class="loss-info">
       <div class="loss-item">
-        <div class="loss-dot" style="background:#0877bd"></div>
+        <div class="loss-dot" style="background:var(--data-blue)"></div>
         <span data-i18n="trainLoss">训练损失</span>:
         <span class="loss-value" id="train-loss-val">—</span>
       </div>
       <div class="loss-item">
-        <div class="loss-dot" style="background:#e74c3c"></div>
+        <div class="loss-dot" style="background:var(--data-red)"></div>
         <span data-i18n="testLoss">测试损失</span>:
         <span class="loss-value" id="test-loss-val">—</span>
       </div>
@@ -411,25 +437,25 @@ body {
       <!-- Forget gate -->
       <div class="gate-stat-row" id="stat-forget-row">
         <div class="gate-stat-label" data-i18n="forgetGate">遗忘门</div>
-        <div class="gate-stat-bar-wrap"><div class="gate-stat-bar" id="stat-forget-bar" style="width:50%;background:#9b59b6;"></div></div>
+        <div class="gate-stat-bar-wrap"><div class="gate-stat-bar" id="stat-forget-bar" style="width:50%;background:var(--data-purple);"></div></div>
         <div class="gate-stat-val" id="stat-forget-val">—</div>
       </div>
       <!-- Input gate -->
       <div class="gate-stat-row" id="stat-input-row">
         <div class="gate-stat-label" data-i18n="inputGate">输入门</div>
-        <div class="gate-stat-bar-wrap"><div class="gate-stat-bar" id="stat-input-bar" style="width:50%;background:#27ae60;"></div></div>
+        <div class="gate-stat-bar-wrap"><div class="gate-stat-bar" id="stat-input-bar" style="width:50%;background:var(--data-green);"></div></div>
         <div class="gate-stat-val" id="stat-input-val">—</div>
       </div>
       <!-- Output gate -->
       <div class="gate-stat-row" id="stat-output-row">
         <div class="gate-stat-label" data-i18n="outputGate">输出门</div>
-        <div class="gate-stat-bar-wrap"><div class="gate-stat-bar" id="stat-output-bar" style="width:50%;background:#e67e22;"></div></div>
+        <div class="gate-stat-bar-wrap"><div class="gate-stat-bar" id="stat-output-bar" style="width:50%;background:var(--data-orange);"></div></div>
         <div class="gate-stat-val" id="stat-output-val">—</div>
       </div>
       <!-- RNN-only: hidden magnitude -->
       <div class="gate-stat-row" id="stat-hidden-row" style="display:none;">
         <div class="gate-stat-label" data-i18n="hiddenMag">隐藏幅值</div>
-        <div class="gate-stat-bar-wrap"><div class="gate-stat-bar" id="stat-hidden-bar" style="width:50%;background:#0877bd;"></div></div>
+        <div class="gate-stat-bar-wrap"><div class="gate-stat-bar" id="stat-hidden-bar" style="width:50%;background:var(--data-blue);"></div></div>
         <div class="gate-stat-val" id="stat-hidden-val">—</div>
       </div>
     </div>
@@ -437,10 +463,10 @@ body {
     <hr class="panel-divider">
 
     <div class="panel-title" data-i18n="networkInfo">网络信息</div>
-    <div id="net-info" style="font-size:11px;color:#555;line-height:1.8;">
-      <div><span style="color:#595959;" data-i18n="params">参数量</span>: <span id="param-count" style="font-weight:700;color:#0877bd;">—</span></div>
-      <div><span style="color:#595959;" data-i18n="seqLen">序列长度</span>: <span id="seq-len-val" style="font-weight:700;">—</span></div>
-      <div><span style="color:#595959;" data-i18n="trainSamples">训练样本</span>: <span id="train-samples-val" style="font-weight:700;">—</span></div>
+    <div id="net-info" style="font-size:11px;color:var(--muted);line-height:1.8;">
+      <div><span style="color:var(--muted);" data-i18n="params">参数量</span>: <span id="param-count" style="font-weight:700;color:var(--accent);">—</span></div>
+      <div><span style="color:var(--muted);" data-i18n="seqLen">序列长度</span>: <span id="seq-len-val" style="font-weight:700;">—</span></div>
+      <div><span style="color:var(--muted);" data-i18n="trainSamples">训练样本</span>: <span id="train-samples-val" style="font-weight:700;">—</span></div>
     </div>
   </div>
 </div>
@@ -1320,13 +1346,13 @@ function drawPredictionPlot() {
 
   // Train/test regions
   const splitX = xScale(splitT);
-  ctx.fillStyle = 'rgba(8,119,189,0.04)';
+  ctx.fillStyle = PG.a('data-blue', 0.06);
   ctx.fillRect(pad.l, pad.t, splitX - pad.l, plotH);
-  ctx.fillStyle = 'rgba(231,76,60,0.04)';
+  ctx.fillStyle = PG.a('data-red', 0.06);
   ctx.fillRect(splitX, pad.t, pad.l + plotW - splitX, plotH);
 
   // Grid lines
-  ctx.strokeStyle = '#eee';
+  ctx.strokeStyle = PG.c('rule');
   ctx.lineWidth = 1;
   for (let v = -1; v <= 1; v += 0.5) {
     const y = yScale(v);
@@ -1334,7 +1360,7 @@ function drawPredictionPlot() {
   }
 
   // Y-axis labels
-  ctx.fillStyle = '#aaa';
+  ctx.fillStyle = PG.c('muted');
   ctx.font = '10px monospace';
   ctx.textAlign = 'right';
   for (let v = -1; v <= 1; v += 0.5) {
@@ -1342,7 +1368,7 @@ function drawPredictionPlot() {
   }
 
   // X axis
-  ctx.strokeStyle = '#ccc';
+  ctx.strokeStyle = PG.c('muted');
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(pad.l, yScale(0));
@@ -1350,21 +1376,21 @@ function drawPredictionPlot() {
   ctx.stroke();
 
   // Split line
-  ctx.strokeStyle = '#bbb';
+  ctx.strokeStyle = PG.c('muted');
   ctx.setLineDash([4, 3]);
   ctx.beginPath(); ctx.moveTo(splitX, pad.t); ctx.lineTo(splitX, pad.t + plotH); ctx.stroke();
   ctx.setLineDash([]);
 
   // Labels
-  ctx.fillStyle = 'rgba(8,119,189,0.5)';
+  ctx.fillStyle = PG.c('data-blue');
   ctx.font = '10px sans-serif';
   ctx.textAlign = 'left';
   ctx.fillText(lang === 'zh' ? '训练' : 'Train', pad.l + 4, pad.t + 12);
-  ctx.fillStyle = 'rgba(231,76,60,0.5)';
+  ctx.fillStyle = PG.c('data-red');
   ctx.fillText(lang === 'zh' ? '测试' : 'Test', splitX + 4, pad.t + 12);
 
   // Ground truth line (blue)
-  ctx.strokeStyle = '#0877bd';
+  ctx.strokeStyle = PG.c('data-blue');
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   for (let i = 0; i < N; i++) {
@@ -1376,7 +1402,7 @@ function drawPredictionPlot() {
   // Prediction lines (red), drawn separately for train/test to avoid
   // visually bridging the split with a synthetic straight segment.
   if (LAST_PREDICTIONS && LAST_PREDICTIONS.length > 0) {
-    ctx.strokeStyle = '#e74c3c';
+    ctx.strokeStyle = PG.c('data-red');
     ctx.lineWidth = 1.5;
 
     const trainCount = DATA.X_train.length;
@@ -1417,15 +1443,15 @@ function drawPredictionPlot() {
   }
 
   // Legend
-  ctx.fillStyle = '#0877bd';
+  ctx.fillStyle = PG.c('data-blue');
   ctx.fillRect(pad.l, H - 14, 16, 2);
-  ctx.fillStyle = '#333';
+  ctx.fillStyle = PG.c('ink');
   ctx.font = '10px sans-serif';
   ctx.textAlign = 'left';
   ctx.fillText(lang === 'zh' ? '真实值' : 'Ground Truth', pad.l + 18, H - 11);
-  ctx.fillStyle = '#e74c3c';
+  ctx.fillStyle = PG.c('data-red');
   ctx.fillRect(pad.l + 80, H - 14, 16, 2);
-  ctx.fillStyle = '#333';
+  ctx.fillStyle = PG.c('ink');
   ctx.fillText(lang === 'zh' ? '预测值' : 'Prediction', pad.l + 98, H - 11);
 }
 
@@ -1433,26 +1459,27 @@ function drawPredictionPlot() {
 // GATE HEATMAP
 // ============================================================
 const GATE_COLORS = {
-  f: { pos: '#9b59b6', neg: '#9b59b6' }, // purple for forget
-  i: { pos: '#27ae60', neg: '#27ae60' }, // green for input
-  o: { pos: '#e67e22', neg: '#e67e22' }, // orange for output
-  c: { posHex: '#0877bd', negHex: '#e74c3c' }, // blue/red diverging for cell state
-  h: { posHex: '#0877bd', negHex: '#e74c3c' }, // blue/red for hidden
-  hidden: { posHex: '#0877bd', negHex: '#e74c3c' },
+  // site token names (see gateColor / divergingColor)
+  f: { pos: 'data-purple', neg: 'data-purple' }, // purple for forget
+  i: { pos: 'data-green', neg: 'data-green' }, // green for input
+  o: { pos: 'data-orange', neg: 'data-orange' }, // orange for output
+  c: { posHex: 'data-blue', negHex: 'data-red' }, // blue/red diverging for cell state
+  h: { posHex: 'data-blue', negHex: 'data-red' }, // blue/red for hidden
+  hidden: { posHex: 'data-blue', negHex: 'data-red' },
 };
 
 // Convert value [0,1] to color with alpha
 function gateColor(val, type) {
   val = Math.max(0, Math.min(1, val));
-  if (type === 'f') return `rgba(155,89,182,${0.1 + val * 0.9})`;
-  if (type === 'i') return `rgba(39,174,96,${0.1 + val * 0.9})`;
-  if (type === 'o') return `rgba(230,126,34,${0.1 + val * 0.9})`;
+  if (type === 'f') return PG.a('data-purple', 0.1 + val * 0.9);
+  if (type === 'i') return PG.a('data-green', 0.1 + val * 0.9);
+  if (type === 'o') return PG.a('data-orange', 0.1 + val * 0.9);
   return null;
 }
 function divergingColor(val) {
   // val in [-1,1] → blue (pos) or red (neg)
-  if (val >= 0) return `rgba(8,119,189,${0.05 + Math.min(1, val) * 0.9})`;
-  return `rgba(231,76,60,${0.05 + Math.min(1, -val) * 0.9})`;
+  if (val >= 0) return PG.a('data-blue', 0.05 + Math.min(1, val) * 0.9);
+  return PG.a('data-red', 0.05 + Math.min(1, -val) * 0.9);
 }
 
 let HOVER_COL = -1;
@@ -1468,7 +1495,7 @@ function drawGateHeatmap() {
   ctx.clearRect(0, 0, W, H);
 
   if (!LAST_GATE_HISTORY) {
-    ctx.fillStyle = '#aaa';
+    ctx.fillStyle = PG.c('muted');
     ctx.font = '13px sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(lang === 'zh' ? '训练后显示门状态...' : 'Gate states appear after training...', W / 2, H / 2);
@@ -1510,14 +1537,14 @@ function drawGateHeatmap() {
     const y0 = pad.t + ri * rowH;
 
     // Row label
-    ctx.fillStyle = '#666';
+    ctx.fillStyle = PG.c('muted');
     ctx.font = '10px sans-serif';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
     ctx.fillText(label, labelW - 4, y0 + rowH / 2);
 
     // Row border
-    ctx.strokeStyle = '#eee';
+    ctx.strokeStyle = PG.c('rule');
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(labelW, y0); ctx.lineTo(W - pad.r, y0);
@@ -1550,7 +1577,7 @@ function drawGateHeatmap() {
 
       // Hover highlight
       if (isHovered) {
-        ctx.strokeStyle = 'rgba(26,58,74,0.6)';
+        ctx.strokeStyle = PG.c('ink');
         ctx.lineWidth = 1.5;
         ctx.strokeRect(x0, y0, colW, rowH);
       }
@@ -1558,7 +1585,7 @@ function drawGateHeatmap() {
   }
 
   // Column time labels
-  ctx.fillStyle = '#aaa';
+  ctx.fillStyle = PG.c('muted');
   ctx.font = '9px monospace';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'bottom';
@@ -1635,7 +1662,7 @@ function drawLossCurve() {
   const train = LOSS_HISTORY.train;
   const test = LOSS_HISTORY.test;
   if (train.length < 2) {
-    ctx.fillStyle = '#bbb';
+    ctx.fillStyle = PG.c('muted');
     ctx.font = '11px sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(lang === 'zh' ? '等待训练...' : 'Waiting for training...', W / 2, H_c / 2);
@@ -1652,19 +1679,19 @@ function drawLossCurve() {
   const yScale = v => pad.t + (1 - Math.min(v / maxL, 1)) * plotH;
 
   // Grid
-  ctx.strokeStyle = '#eee';
+  ctx.strokeStyle = PG.c('rule');
   ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
     const y = pad.t + (i / 4) * plotH;
     ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + plotW, y); ctx.stroke();
-    ctx.fillStyle = '#bbb';
+    ctx.fillStyle = PG.c('muted');
     ctx.font = '9px monospace';
     ctx.textAlign = 'right';
     ctx.fillText(((1 - i / 4) * maxL).toFixed(3), pad.l - 3, y + 3);
   }
 
   // Train loss
-  ctx.strokeStyle = '#0877bd';
+  ctx.strokeStyle = PG.c('data-blue');
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   train.forEach((v, i) => {
@@ -1674,7 +1701,7 @@ function drawLossCurve() {
   ctx.stroke();
 
   // Test loss
-  ctx.strokeStyle = '#e74c3c';
+  ctx.strokeStyle = PG.c('data-red');
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   test.forEach((v, i) => {
@@ -1684,7 +1711,7 @@ function drawLossCurve() {
   ctx.stroke();
 
   // X label
-  ctx.fillStyle = '#bbb';
+  ctx.fillStyle = PG.c('muted');
   ctx.font = '9px sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText(lang === 'zh' ? `轮次 (${train.length})` : `Epoch (${train.length})`, pad.l + plotW / 2, H_c - 4);
@@ -1895,6 +1922,7 @@ window.addEventListener('resize', () => {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => render(), 100);
 });
+PG.onTheme(() => render());
 
 // ============================================================
 // INIT

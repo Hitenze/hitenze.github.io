@@ -355,10 +355,10 @@
             <div class="converter-section">
                 <h3>Timestamp → Datetime</h3>
                 <div class="input-group">
-                    <label>Timestamp</label>
+                    <label for="timestampInput">Timestamp</label>
                     <input type="text" id="timestampInput" placeholder="Enter timestamp, e.g., 1609459200">
                 </div>
-                <div class="radio-group">
+                <div class="radio-group" role="radiogroup" aria-label="Timestamp unit">
                     <label class="radio-label">
                         <input type="radio" name="timestampUnit" value="second" checked>
                         Seconds (10 digits)
@@ -380,10 +380,10 @@
             <div class="converter-section">
                 <h3>Datetime → Timestamp</h3>
                 <div class="input-group">
-                    <label>Datetime</label>
+                    <label for="datetimeInput">Datetime</label>
                     <input type="datetime-local" id="datetimeInput">
                 </div>
-                <div class="radio-group">
+                <div class="radio-group" role="radiogroup" aria-label="Output unit">
                     <label class="radio-label">
                         <input type="radio" name="outputUnit" value="second" checked>
                         Seconds (10 digits)

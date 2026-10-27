@@ -1,59 +1,80 @@
 /* Shared layer for the five playgrounds (body.pg), loaded after each app's own <style>.
-   - The site bar and footer follow the shared light/dark theme. The app itself (charts drawn in
-     JavaScript with fixed colours) stays a light "figure" surface in dark mode, framed by the dark
-     page, so its plots and labels keep their contrast.
+   - Theme: every surface, control, label, border and legend in the apps uses the site tokens
+     (assets/css/tokens.css), in both light and dark mode, so the tools match the content pages.
+     The canvases read the same tokens through playgrounds-theme.js and redraw on a theme change.
    - Keyboard access and target sizes: visually hidden but focusable radio inputs with a focus ring
      on their label; primary controls 44px; dense in-panel controls at least 24px.
-   - Layout: the page may scroll, so nothing is clipped below the added site bar. */
+   - Layout: the page may scroll vertically, so nothing is clipped below the added site bar; each
+     page stacks its panels on narrow screens in its own <style>. */
 
-body.pg { color-scheme: light; }
-html.dark-mode body.pg { background: var(--paper) !important; }
-@media (prefers-color-scheme: dark) { html:not(.light-mode) body.pg { background: var(--paper) !important; } }
-html.dark-mode body.pg #main, html.dark-mode body.pg #control-bar {
-  background-color: #f7f7f7;
-}
-@media (prefers-color-scheme: dark) {
-  html:not(.light-mode) body.pg #main, html:not(.light-mode) body.pg #control-bar { background-color: #f7f7f7; }
-}
+body.pg { font-family: var(--sans); }
 
 /* Scrolling instead of clipping */
-body.pg { overflow-y: auto !important; overflow-x: hidden; height: auto !important; min-height: 100vh; }
+body.pg { overflow-y: auto !important; height: auto !important; min-height: 100vh; }
 /* NN sized its app to the viewport minus its own bars; also subtract the 49px site bar. */
 @media (min-width: 1181px) {
   body.pg-nn #main { height: calc(100vh - 48px - 45px - 35px - 49px) !important; }
 }
 
+/* App header and bars: quiet site-style panels instead of the old dark header */
+body.pg #header { border-bottom: 1px solid var(--rule); }
+body.pg #header h1 { font-family: var(--serif); font-weight: 600; letter-spacing: 0; }
+body.pg #btn-lang { color: var(--ink); border-color: var(--muted); }
+body.pg #btn-lang:hover { background: var(--accent-soft); }
+
+/* Form controls follow the theme */
+body.pg select, body.pg input[type="text"], body.pg input[type="number"], body.pg textarea {
+  background: var(--paper); color: var(--ink); border-color: var(--muted);
+}
+body.pg input[type="range"], body.pg input[type="checkbox"], body.pg input[type="radio"] { accent-color: var(--accent); }
+
+/* Buttons: primary actions in the accent colour, secondary ones as outlined panels */
+body.pg .btn-play { background: var(--accent) !important; color: var(--on-accent) !important; }
+body.pg .btn-play:hover { background: color-mix(in srgb, var(--accent) 82%, var(--ink)) !important; }
+body.pg .btn-play.playing { background: var(--ink) !important; color: var(--paper) !important; }
+body.pg .btn-step, body.pg .btn-reset { background: var(--panel); border: 1px solid var(--muted); color: var(--ink); }
+body.pg .btn-reset { color: var(--data-red); }
+body.pg .btn-step:hover, body.pg .btn-reset:hover { background: var(--accent-soft); }
+body.pg .btn-preset:hover, body.pg .btn-example:hover, body.pg .tab-btn:hover, body.pg .layer-tab:hover {
+  background: var(--accent-soft); color: var(--ink); border-color: var(--accent);
+}
+body.pg .btn-preset.active, body.pg .tab-btn.active, body.pg .layer-tab.active {
+  background: var(--accent); color: var(--on-accent); border-color: var(--accent);
+}
+body.pg .btn-gen:disabled { background: var(--rule); color: var(--muted); }
+
 /* Focus */
 body.pg a:focus-visible, body.pg button:focus-visible, body.pg select:focus-visible,
 body.pg input:focus-visible, body.pg canvas:focus-visible, body.pg [tabindex]:focus-visible {
-  outline: 2px solid #1a5d8f !important; outline-offset: 2px !important;
+  outline: 2px solid var(--accent) !important; outline-offset: 2px !important;
 }
 
 /* Radio groups: focusable inputs, visible focus on the label */
-body.pg .radio-group label { position: relative; min-height: 24px; }
+body.pg .radio-group label { position: relative; min-height: 24px; border-color: var(--muted); color: var(--ink); }
 body.pg .radio-group input {
   display: inline-block !important; position: absolute; inset: 0; width: 100%; height: 100%;
   margin: 0; opacity: 0; cursor: pointer;
 }
-body.pg .radio-group label:focus-within { outline: 2px solid #1a5d8f; outline-offset: 2px; }
-body.pg .radio-group label.checked { background: #1a5d8f !important; border-color: #1a5d8f !important; color: #fff !important; }
+body.pg .radio-group label:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+body.pg .radio-group label.checked { background: var(--accent) !important; border-color: var(--accent) !important; color: var(--on-accent) !important; }
 
 /* Target sizes */
 body.pg .btn-round { width: 44px !important; height: 44px !important; }
 body.pg .btn-spin, body.pg .btn-sm { min-width: 24px !important; min-height: 24px !important; width: 26px !important; height: 26px !important; }
+body.pg .btn-spin, body.pg .btn-sm { background: var(--panel); border-color: var(--muted); color: var(--ink); }
 body.pg .spin-row { gap: 6px; }
 body.pg select, body.pg .btn-preset, body.pg .btn-example, body.pg .btn-gen, body.pg #btn-lang,
 body.pg .ctrl-group select, body.pg input[type="checkbox"] { min-height: 24px; }
 body.pg .btn-preset, body.pg .btn-example, body.pg .btn-gen, body.pg #btn-lang { padding-top: 4px !important; padding-bottom: 4px !important; }
 body.pg input[type="checkbox"] { min-width: 24px; }
 body.pg input[type="range"] { min-height: 24px; }
-
-/* Contrast of small grey labels on white / light grey (were #888-#999) */
-body.pg #sidebar h3, body.pg .panel-title, body.pg .ctrl-group label, body.pg .sidebar-section label,
-body.pg .legend, body.pg .hint, body.pg .muted { color: #555 !important; }
-body.pg #header .subtitle, body.pg #header [data-i18n="subtitle"] { color: #c3d6e0 !important; }
-body.pg .btn-reset { color: #a32020 !important; }
-body.pg .epoch-label, body.pg .epoch-label * { color: #ffab9f !important; }
-body.pg .btn-play { background: #b5342a !important; color: #fff !important; }
 body.pg #btn-clear, body.pg .layer-tab { min-height: 24px; }
-body.pg .btn-play.playing { background: #1a5d8f !important; }
+
+/* Small labels use the site's muted text colour (>= 4.5:1 on paper and panel in both themes) */
+body.pg #sidebar h3, body.pg .panel-title, body.pg .ctrl-group label, body.pg .sidebar-section label,
+body.pg .legend, body.pg .hint, body.pg .muted { color: var(--muted); }
+
+/* Scrollbars */
+body.pg ::-webkit-scrollbar-track { background: var(--panel); }
+body.pg ::-webkit-scrollbar-thumb { background: var(--rule); }
+body.pg ::-webkit-scrollbar-thumb:hover { background: var(--muted); }

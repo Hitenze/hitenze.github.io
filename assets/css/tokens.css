@@ -49,6 +49,16 @@
   --accent: #1a5d8f;
   --accent-soft: #e3edf5;
   --on-accent: #ffffff;
+  /* Data colours for charts and visualisations (playgrounds). Six-digit hex so scripts can add alpha.
+     Each reaches >= 4.5:1 on --paper and --panel in its theme, so it also works as text. */
+  --data-blue: #1a5d8f;
+  --data-red: #b5342a;
+  --data-green: #1e7a45;
+  --data-orange: #9a5200;
+  --data-purple: #7a3ea0;
+  --tint-green: color-mix(in srgb, var(--data-green) 14%, var(--paper));
+  --tint-orange: color-mix(in srgb, var(--data-orange) 14%, var(--paper));
+  --tint-red: color-mix(in srgb, var(--data-red) 14%, var(--paper));
   --serif: 'STIX Two Text', Georgia, 'Times New Roman', serif;
   --sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
@@ -64,6 +74,11 @@
     --accent: #8ec9f0;
     --accent-soft: #1d3446;
     --on-accent: #10161d;
+    --data-blue: #8ec9f0;
+    --data-red: #f19a90;
+    --data-green: #7fd19b;
+    --data-orange: #f2b45a;
+    --data-purple: #c9a3e6;
     color-scheme: dark;
   }
 }
@@ -76,5 +91,10 @@ html.dark-mode {
   --accent: #8ec9f0;
   --accent-soft: #1d3446;
   --on-accent: #10161d;
+  --data-blue: #8ec9f0;
+  --data-red: #f19a90;
+  --data-green: #7fd19b;
+  --data-orange: #f2b45a;
+  --data-purple: #c9a3e6;
   color-scheme: dark;
 }

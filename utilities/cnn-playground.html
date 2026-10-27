@@ -15,14 +15,15 @@
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="../assets/css/site-bar.css">
 <script src="../assets/js/site.js" defer></script>
+<script src="playgrounds-theme.js"></script>
 <title>CNN Playground</title>
 <style>
 /* ============ RESET & BASE ============ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
-  background: #f7f7f7;
-  color: #333;
+  background: var(--paper);
+  color: var(--ink);
   font-size: 13px;
   overflow-x: hidden;
   min-height: 100vh;
@@ -30,8 +31,8 @@ body {
 
 /* ============ HEADER ============ */
 #header {
-  background: #1a3a4a;
-  color: #fff;
+  background: var(--panel);
+  color: var(--ink);
   display: flex;
   align-items: center;
   padding: 0 20px;
@@ -40,14 +41,14 @@ body {
   flex-shrink: 0;
 }
 #header h1 { font-size: 18px; font-weight: 600; letter-spacing: 1px; }
-#header .subtitle { font-size: 12px; color: #8ab; margin-left: 4px; }
-#header .epoch-label { font-size: 14px; color: #acd; margin-left: auto; }
-#header .epoch-label span.val { color: #c0392b; font-weight: 700; font-size: 16px; }
+#header .subtitle { font-size: 12px; color: var(--muted); margin-left: 4px; }
+#header .epoch-label { font-size: 14px; color: var(--muted); margin-left: auto; }
+#header .epoch-label span.val { color: var(--data-red); font-weight: 700; font-size: 16px; }
 
 /* ============ CONTROL BAR ============ */
 #control-bar {
-  background: #e8e8e8;
-  border-bottom: 1px solid #ccc;
+  background: var(--panel);
+  border-bottom: 1px solid var(--rule);
   padding: 4px 16px;
   display: flex;
   align-items: center;
@@ -56,28 +57,28 @@ body {
   flex-shrink: 0;
 }
 .ctrl-group { display: flex; align-items: center; gap: 4px; }
-.ctrl-group label { font-size: 11px; color: #666; white-space: nowrap; }
+.ctrl-group label { font-size: 11px; color: var(--muted); white-space: nowrap; }
 .ctrl-group select {
-  font-size: 12px; padding: 3px 6px; border: 1px solid #bbb; border-radius: 3px;
-  background: #fff; cursor: pointer;
+  font-size: 12px; padding: 3px 6px; border: 1px solid var(--muted); border-radius: 3px;
+  background: var(--paper); cursor: pointer;
 }
 .btn-round {
   width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center; font-size: 16px;
   transition: background 0.15s;
 }
-.btn-play { background: #e74c3c; color: #fff; }
-.btn-play:hover { background: #c0392b; }
-.btn-play.playing { background: #0877bd; }
-.btn-step { background: #ddd; color: #333; }
-.btn-step:hover { background: #ccc; }
-.btn-reset { background: #ddd; color: #c33; }
-.btn-reset:hover { background: #ccc; }
+.btn-play { background: var(--data-red); color: var(--on-accent); }
+.btn-play:hover { background: var(--data-red); }
+.btn-play.playing { background: var(--accent); }
+.btn-step { background: var(--panel); color: var(--ink); }
+.btn-step:hover { background: var(--rule); }
+.btn-reset { background: var(--panel); color: var(--data-red); }
+.btn-reset:hover { background: var(--rule); }
 
 /* ============ PRESET BAR ============ */
 #preset-bar {
-  background: #f0f0f0;
-  border-bottom: 1px solid #ddd;
+  background: var(--panel);
+  border-bottom: 1px solid var(--rule);
   padding: 4px 16px;
   display: flex;
   align-items: center;
@@ -85,13 +86,13 @@ body {
   flex-wrap: wrap;
   flex-shrink: 0;
 }
-#preset-bar .preset-label { font-size: 12px; color: #666; font-weight: 600; }
+#preset-bar .preset-label { font-size: 12px; color: var(--muted); font-weight: 600; }
 .btn-preset {
-  font-size: 11px; padding: 4px 10px; border: 1px solid #bbb; border-radius: 14px;
-  background: #fff; cursor: pointer; transition: all 0.15s; color: #444;
+  font-size: 11px; padding: 4px 10px; border: 1px solid var(--muted); border-radius: 14px;
+  background: var(--paper); cursor: pointer; transition: all 0.15s; color: var(--ink);
 }
-.btn-preset:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
-.btn-preset.active { background: #0877bd; color: #fff; border-color: #0877bd; }
+.btn-preset:hover { background: var(--data-red); color: var(--on-accent); border-color: var(--accent); }
+.btn-preset.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 
 /* ============ MAIN LAYOUT ============ */
 #main {
@@ -104,38 +105,38 @@ body {
 #sidebar {
   width: 160px;
   min-width: 160px;
-  background: #fff;
-  border-right: 1px solid #ddd;
+  background: var(--paper);
+  border-right: 1px solid var(--rule);
   padding: 12px;
   overflow-y: auto;
   flex-shrink: 0;
 }
 #sidebar h3 {
-  font-size: 11px; color: #595959; margin-bottom: 8px;
+  font-size: 11px; color: var(--muted); margin-bottom: 8px;
   text-transform: uppercase; letter-spacing: 1px;
 }
 .sidebar-section { margin-bottom: 14px; }
-.sidebar-section label { font-size: 11px; color: #555; display: block; margin-bottom: 3px; }
+.sidebar-section label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 3px; }
 .spin-row { display: flex; align-items: center; gap: 4px; }
 .spin-val {
   width: 32px; text-align: center; font-size: 13px; font-weight: 700;
-  color: #0877bd;
+  color: var(--accent);
 }
 .btn-spin {
-  width: 22px; height: 22px; border-radius: 4px; border: 1px solid #bbb;
-  background: #f5f5f5; cursor: pointer; font-size: 14px; line-height: 1;
+  width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--muted);
+  background: var(--panel); cursor: pointer; font-size: 14px; line-height: 1;
   display: flex; align-items: center; justify-content: center;
   transition: background 0.1s;
 }
-.btn-spin:hover { background: #e0e0e0; }
+.btn-spin:hover { background: var(--rule); }
 .btn-spin:disabled { opacity: 0.35; cursor: default; }
 .radio-group { display: flex; gap: 6px; flex-wrap: wrap; }
 .radio-group label {
   display: flex; align-items: center; gap: 3px; cursor: pointer;
-  padding: 3px 7px; border: 1px solid #bbb; border-radius: 10px;
-  font-size: 11px; transition: all 0.1s; color: #444;
+  padding: 3px 7px; border: 1px solid var(--muted); border-radius: 10px;
+  font-size: 11px; transition: all 0.1s; color: var(--ink);
 }
-.radio-group label.checked { background: #0877bd; color: #fff; border-color: #0877bd; }
+.radio-group label.checked { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 .radio-group input { display: none; }
 
 /* ============ CENTER AREA ============ */
@@ -144,8 +145,8 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #fff;
-  border-right: 1px solid #ddd;
+  background: var(--paper);
+  border-right: 1px solid var(--rule);
   min-width: 0;
 }
 
@@ -155,8 +156,8 @@ body {
   overflow: hidden;
   position: relative;
   padding: 8px;
-  background: #fafafa;
-  border-bottom: 1px solid #eee;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
 }
 #arch-canvas-wrap {
   width: 100%;
@@ -173,8 +174,8 @@ body {
 /* ============ FORWARD PASS AREA ============ */
 #fwd-area {
   padding: 8px 16px;
-  background: #fff;
-  border-top: 2px solid #e0e0e0;
+  background: var(--paper);
+  border-top: 2px solid var(--rule);
   overflow-x: hidden;
   overflow-y: auto;
   min-height: 0;
@@ -182,7 +183,7 @@ body {
   max-height: 260px;
 }
 .fwd-title {
-  font-size: 11px; color: #595959; font-weight: 600;
+  font-size: 11px; color: var(--muted); font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
 }
 #fwd-scroll {
@@ -200,25 +201,25 @@ body {
   padding: 2px 0;
 }
 .fwd-block-title {
-  font-size: 11px; color: #666; text-align: right; font-weight: 500;
+  font-size: 11px; color: var(--muted); text-align: right; font-weight: 500;
   width: 76px; flex-shrink: 0;
 }
 .fwd-maps { display: flex; gap: 3px; flex-wrap: wrap; max-width: 400px; }
 .fwd-arrow {
-  font-size: 14px; color: #707070; flex-shrink: 0;
+  font-size: 14px; color: var(--muted); flex-shrink: 0;
   padding-left: 82px; /* align under maps area, offset for label width */
   line-height: 1;
 }
 .digit-thumb {
-  cursor: pointer; border: 2px solid #ddd; border-radius: 3px;
+  cursor: pointer; border: 2px solid var(--rule); border-radius: 3px;
   transition: border-color 0.15s;
 }
 .digit-thumb.selected,
 .digit-thumb.selected-thumb {
-  border-color: #0877bd;
-  box-shadow: 0 0 0 1px rgba(8, 119, 189, 0.18);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent);
 }
-.digit-thumb:hover { border-color: #0877bd; }
+.digit-thumb:hover { border-color: var(--accent); }
 
 /* ============ DIGIT SAMPLES ROW ============ */
 #digit-row {
@@ -231,11 +232,11 @@ body {
   display: flex; align-items: center; gap: 3px;
 }
 .sample-row-label {
-  font-size: 11px; color: #555; font-weight: 700;
+  font-size: 11px; color: var(--muted); font-weight: 700;
   width: 16px; text-align: right; flex-shrink: 0;
 }
 #digit-row .digit-group { display: flex; gap: 2px; align-items: center; }
-#digit-row .dg-label { font-size: 10px; color: #595959; margin-right: 2px; }
+#digit-row .dg-label { font-size: 10px; color: var(--muted); margin-right: 2px; }
 
 /* ============ DRAW CANVAS ============ */
 #draw-section {
@@ -243,22 +244,22 @@ body {
 }
 #draw-canvas {
   cursor: crosshair;
-  border: 1px solid #999;
+  border: 1px solid var(--muted);
   border-radius: 3px;
   image-rendering: pixelated;
 }
 #btn-clear {
   margin-top: 4px; font-size: 10px; padding: 2px 8px;
-  border: 1px solid #bbb; border-radius: 3px;
-  background: #f5f5f5; cursor: pointer;
+  border: 1px solid var(--muted); border-radius: 3px;
+  background: var(--panel); cursor: pointer;
 }
-#btn-clear:hover { background: #eee; }
+#btn-clear:hover { background: var(--panel); }
 
 /* ============ RIGHT PANEL ============ */
 #right-panel {
   width: 280px;
   min-width: 280px;
-  background: #fff;
+  background: var(--paper);
   padding: 8px;
   overflow-y: auto;
   display: flex;
@@ -267,11 +268,11 @@ body {
   flex-shrink: 0;
 }
 .panel-title {
-  font-size: 11px; color: #595959; font-weight: 600; margin-bottom: 2px;
+  font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 2px;
   text-transform: uppercase; letter-spacing: 0.5px;
 }
 .plot-container {
-  background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden;
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden;
 }
 .plot-container canvas { display: block; width: 100%; }
 .loss-info {
@@ -283,41 +284,41 @@ body {
 .gap-indicator {
   padding: 2px 7px; border-radius: 10px; font-size: 11px; font-weight: 600;
 }
-.gap-green { background: #d4edda; color: #155724; }
-.gap-yellow { background: #fff3cd; color: #856404; }
-.gap-red { background: #f8d7da; color: #721c24; }
+.gap-green { background: var(--tint-green); color: var(--ink); }
+.gap-yellow { background: var(--tint-orange); color: var(--ink); }
+.gap-red { background: var(--tint-red); color: var(--ink); }
 
 .acc-row {
   display: flex; gap: 10px; align-items: center; font-size: 12px;
 }
 .acc-bar-wrap {
-  flex: 1; height: 12px; background: #f0f0f0; border-radius: 6px; overflow: hidden;
+  flex: 1; height: 12px; background: var(--panel); border-radius: 6px; overflow: hidden;
 }
 .acc-bar {
   height: 100%; border-radius: 6px; transition: width 0.3s;
 }
-.acc-label { font-size: 11px; color: #666; width: 60px; }
+.acc-label { font-size: 11px; color: var(--muted); width: 60px; }
 .acc-val { font-weight: 700; font-family: monospace; width: 36px; }
 
 /* ============ LANG BTN ============ */
 #btn-lang {
-  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
-  color: #fff; border-radius: 4px; padding: 2px 8px; cursor: pointer;
+  background: transparent; border: 1px solid var(--rule);
+  color: var(--ink); border-radius: 4px; padding: 2px 8px; cursor: pointer;
   font-size: 12px; margin-left: 6px;
 }
-#btn-lang:hover { background: rgba(255,255,255,0.25); }
+#btn-lang:hover { background: var(--accent-soft); }
 
 /* ============ PROB CHART ============ */
 .prob-row {
   display: flex; align-items: center; gap: 6px; margin-bottom: 3px;
 }
-.prob-label { font-size: 11px; width: 14px; font-weight: 700; color: #555; }
-.prob-bar-wrap { flex:1; height: 14px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
+.prob-label { font-size: 11px; width: 14px; font-weight: 700; color: var(--muted); }
+.prob-bar-wrap { flex:1; height: 14px; background: var(--panel); border-radius: 3px; overflow: hidden; }
 .prob-bar { height: 100%; border-radius: 3px; transition: width 0.15s; }
-.prob-val { font-size: 11px; font-family: monospace; width: 40px; text-align: right; color: #555; }
+.prob-val { font-size: 11px; font-family: monospace; width: 40px; text-align: right; color: var(--muted); }
 
 .pred-result {
-  text-align: center; font-size: 18px; font-weight: 700; color: #0877bd;
+  text-align: center; font-size: 18px; font-weight: 700; color: var(--accent);
   padding: 4px 0;
 }
 
@@ -392,7 +393,7 @@ body { display: flex; flex-direction: column; }
     width: 100%;
     min-width: 0;
     border-right: none;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--rule);
   }
 
   #sidebar {
@@ -506,11 +507,11 @@ body { display: flex; flex-direction: column; }
 <!-- HEADER -->
 <div id="header">
   <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-label="CNN Logo">
-    <rect x="1" y="4" width="8" height="20" rx="2" fill="#0877bd" opacity="0.85"/>
-    <rect x="11" y="7" width="6" height="14" rx="2" fill="#0877bd" opacity="0.6"/>
-    <rect x="19" y="10" width="8" height="8" rx="2" fill="#e74c3c" opacity="0.85"/>
-    <line x1="9" y1="14" x2="11" y2="14" stroke="white" stroke-width="1.5" opacity="0.6"/>
-    <line x1="17" y1="14" x2="19" y2="14" stroke="white" stroke-width="1.5" opacity="0.6"/>
+    <rect x="1" y="4" width="8" height="20" rx="2" opacity="0.85" style="fill:var(--data-blue)"/>
+    <rect x="11" y="7" width="6" height="14" rx="2" opacity="0.6" style="fill:var(--data-blue)"/>
+    <rect x="19" y="10" width="8" height="8" rx="2" opacity="0.85" style="fill:var(--data-red)"/>
+    <line x1="9" y1="14" x2="11" y2="14" stroke-width="1.5" opacity="0.6" style="stroke:var(--muted)"/>
+    <line x1="17" y1="14" x2="19" y2="14" stroke-width="1.5" opacity="0.6" style="stroke:var(--muted)"/>
   </svg>
   <h1 data-i18n="title">CNN Playground</h1>
   <div class="subtitle" data-i18n="subtitle">Digit Classification 0-1-2</div>
@@ -520,11 +521,11 @@ body { display: flex; flex-direction: column; }
 
 <!-- CONTROL BAR -->
 <div id="control-bar">
-  <button class="btn-round btn-play" id="btn-play" title="Play/Pause">▶</button>
-  <button class="btn-round btn-step" id="btn-step" title="Step">⏭</button>
-  <button class="btn-round btn-reset" id="btn-reset" title="Reset">↺</button>
+  <button class="btn-round btn-play" id="btn-play" title="Play/Pause" aria-label="Play/Pause">▶</button>
+  <button class="btn-round btn-step" id="btn-step" title="Step" aria-label="Step">⏭</button>
+  <button class="btn-round btn-reset" id="btn-reset" title="Reset" aria-label="Reset">↺</button>
   <div class="ctrl-group">
-      <label data-i18n="lr">Learning Rate</label>
+      <label for="sel-lr" data-i18n="lr">Learning Rate</label>
     <select id="sel-lr">
       <option value="0.01">0.01</option>
       <option value="0.005" selected>0.005</option>
@@ -533,14 +534,14 @@ body { display: flex; flex-direction: column; }
     </select>
   </div>
   <div class="ctrl-group">
-      <label data-i18n="optimizer">Optimizer</label>
+      <label for="sel-optimizer" data-i18n="optimizer">Optimizer</label>
     <select id="sel-optimizer">
       <option value="sgd">SGD</option>
       <option value="adam" selected>Adam</option>
     </select>
   </div>
   <div class="ctrl-group">
-    <label data-i18n="dropout">Dropout</label>
+    <label for="sel-dropout" data-i18n="dropout">Dropout</label>
     <select id="sel-dropout">
       <option value="0" selected>0</option>
       <option value="0.1">0.1</option>
@@ -568,8 +569,8 @@ body { display: flex; flex-direction: column; }
     <h3 data-i18n="architecture">Architecture</h3>
 
     <div class="sidebar-section">
-      <label data-i18n="convLayers">Conv Layers</label>
-      <div class="radio-group" id="rg-layers">
+      <label id="lbl-rg-layers" data-i18n="convLayers">Conv Layers</label>
+      <div class="radio-group" id="rg-layers" role="radiogroup" aria-labelledby="lbl-rg-layers">
         <label class="checked" data-val="1"><input type="radio" name="layers" value="1"> 1</label>
         <label data-val="2"><input type="radio" name="layers" value="2"> 2</label>
       </div>
@@ -598,7 +599,7 @@ body { display: flex; flex-direction: column; }
         <input type="checkbox" id="chk-residual" style="cursor:pointer;">
         <span data-i18n="residual">Residual</span>
       </label>
-      <div id="residual-note" style="font-size:10px;color:#666666;margin-top:2px;" data-i18n="residualNote">(needs 2 layers, same channels)</div>
+      <div id="residual-note" style="font-size:10px;color:var(--muted);margin-top:2px;" data-i18n="residualNote">(needs 2 layers, same channels)</div>
     </div>
   </div>
 
@@ -618,13 +619,13 @@ body { display: flex; flex-direction: column; }
       <!-- Digit selector row -->
       <div id="digit-row">
         <div>
-          <div style="font-size:11px;color:#666;font-weight:600;margin-bottom:4px;" data-i18n="testSamples">Test Samples:</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;" data-i18n="testSamples">Test Samples:</div>
           <div id="samples-grid"></div>
         </div>
 
         <!-- Draw canvas -->
         <div id="draw-section" style="margin-left:8px;">
-          <span style="font-size:10px;color:#595959;display:block;margin-bottom:2px;" data-i18n="drawDigit">Draw</span>
+          <span style="font-size:10px;color:var(--muted);display:block;margin-bottom:2px;" data-i18n="drawDigit">Draw</span>
           <canvas id="draw-canvas" width="96" height="96" style="width:80px;height:80px;"></canvas>
           <button id="btn-clear" data-i18n="clear">Clear</button>
         </div>
@@ -645,12 +646,12 @@ body { display: flex; flex-direction: column; }
     </div>
     <div class="loss-info">
       <div class="loss-item">
-        <div class="loss-dot" style="background:#0877bd"></div>
+        <div class="loss-dot" style="background:var(--data-blue)"></div>
         <span data-i18n="trainLoss">Train Loss</span>:
         <span class="loss-value" id="train-loss-val">—</span>
       </div>
       <div class="loss-item">
-        <div class="loss-dot" style="background:#e74c3c"></div>
+        <div class="loss-dot" style="background:var(--data-red)"></div>
         <span data-i18n="testLoss">Test Loss</span>:
         <span class="loss-value" id="test-loss-val">—</span>
       </div>
@@ -663,12 +664,12 @@ body { display: flex; flex-direction: column; }
     <div class="panel-title" data-i18n="accuracy">Accuracy</div>
     <div class="acc-row">
       <div class="acc-label" data-i18n="train">Train</div>
-      <div class="acc-bar-wrap"><div class="acc-bar" id="acc-train-bar" style="width:0%;background:#0877bd;"></div></div>
+      <div class="acc-bar-wrap"><div class="acc-bar" id="acc-train-bar" style="width:0%;background:var(--data-blue);"></div></div>
       <div class="acc-val" id="acc-train-val">—</div>
     </div>
     <div class="acc-row" style="margin-top:4px;">
       <div class="acc-label" data-i18n="test">Test</div>
-      <div class="acc-bar-wrap"><div class="acc-bar" id="acc-test-bar" style="width:0%;background:#e74c3c;"></div></div>
+      <div class="acc-bar-wrap"><div class="acc-bar" id="acc-test-bar" style="width:0%;background:var(--data-red);"></div></div>
       <div class="acc-val" id="acc-test-val">—</div>
     </div>
 
@@ -676,17 +677,17 @@ body { display: flex; flex-direction: column; }
     <div id="prob-chart">
       <div class="prob-row">
         <div class="prob-label">0</div>
-        <div class="prob-bar-wrap"><div class="prob-bar" id="pb-0" style="width:33%;background:#0877bd;"></div></div>
+        <div class="prob-bar-wrap"><div class="prob-bar" id="pb-0" style="width:33%;background:var(--data-blue);"></div></div>
         <div class="prob-val" id="pv-0">0.33</div>
       </div>
       <div class="prob-row">
         <div class="prob-label">1</div>
-        <div class="prob-bar-wrap"><div class="prob-bar" id="pb-1" style="width:33%;background:#0877bd;"></div></div>
+        <div class="prob-bar-wrap"><div class="prob-bar" id="pb-1" style="width:33%;background:var(--data-blue);"></div></div>
         <div class="prob-val" id="pv-1">0.33</div>
       </div>
       <div class="prob-row">
         <div class="prob-label">2</div>
-        <div class="prob-bar-wrap"><div class="prob-bar" id="pb-2" style="width:33%;background:#0877bd;"></div></div>
+        <div class="prob-bar-wrap"><div class="prob-bar" id="pb-2" style="width:33%;background:var(--data-blue);"></div></div>
         <div class="prob-val" id="pv-2">0.33</div>
       </div>
       <div class="pred-result" id="pred-result">?</div>
@@ -1552,13 +1553,13 @@ function updateResidualUI() {
   // Gray out note when conditions are met (active) or show it when conditions aren't met
   if (cfg.residual && !active) {
     noteEl.style.display = 'block';
-    noteEl.style.color = '#c0392b';
+    noteEl.style.color = 'var(--data-red)';
   } else if (!cfg.residual) {
     noteEl.style.display = 'none';
   } else {
     // residual is ON and active — show note dimmed
     noteEl.style.display = 'block';
-    noteEl.style.color = '#666666';
+    noteEl.style.color = 'var(--muted)';
   }
   drawArchDiagram();
 }
@@ -1581,7 +1582,7 @@ function drawLossCurve() {
   const pad = { l:36, r:12, t:12, b:28 };
   const iW = W - pad.l - pad.r, iH = H - pad.t - pad.b;
 
-  ctx.fillStyle = '#f9f9f9';
+  ctx.fillStyle = PG.c('paper');
   ctx.fillRect(pad.l, pad.t, iW, iH);
 
   const tr = lossHistory.train, te = lossHistory.test;
@@ -1595,25 +1596,25 @@ function drawLossCurve() {
   function py(v) { return pad.t + iH - ((v - minL) / (maxL - minL)) * iH; }
 
   // grid
-  ctx.strokeStyle = '#e8e8e8'; ctx.lineWidth = 1;
+  ctx.strokeStyle = PG.c('rule'); ctx.lineWidth = 1;
   for (let i=0; i<=4; i++) {
     const y = pad.t + (i/4)*iH;
     ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+iW,y); ctx.stroke();
-    ctx.fillStyle='#aaa'; ctx.font='9px sans-serif'; ctx.textAlign='right';
+    ctx.fillStyle=PG.c('muted'); ctx.font='9px sans-serif'; ctx.textAlign='right';
     ctx.fillText((maxL*(1-i/4)).toFixed(2), pad.l-3, y+3);
   }
   // x axis labels
-  ctx.fillStyle='#aaa'; ctx.font='9px sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle=PG.c('muted'); ctx.font='9px sans-serif'; ctx.textAlign='center';
   ctx.fillText('0', pad.l, pad.t+iH+12);
   ctx.fillText(n+'ep', pad.l+iW, pad.t+iH+12);
 
   // train line
-  ctx.beginPath(); ctx.strokeStyle='#0877bd'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.strokeStyle=PG.c('data-blue'); ctx.lineWidth=2;
   tr.forEach((v,i) => { i===0?ctx.moveTo(px(i),py(v)):ctx.lineTo(px(i),py(v)); });
   ctx.stroke();
 
   // test line
-  ctx.beginPath(); ctx.strokeStyle='#e74c3c'; ctx.lineWidth=2; ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.strokeStyle=PG.c('data-red'); ctx.lineWidth=2; ctx.setLineDash([4,3]);
   te.forEach((v,i) => { i===0?ctx.moveTo(px(i),py(v)):ctx.lineTo(px(i),py(v)); });
   ctx.stroke();
   ctx.setLineDash([]);
@@ -1708,7 +1709,7 @@ function drawArchDiagram() {
   });
 
   // Draw connections
-  ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1.5;
+  ctx.strokeStyle = PG.c('muted'); ctx.lineWidth = 1.5;
   for (let i=0; i<layerDefs.length-1; i++) {
     const x1 = cX[i] + layerDefs[i].w/2 - 2;
     const x2 = cX[i+1] - layerDefs[i+1].w/2 + 2;
@@ -1717,7 +1718,7 @@ function drawArchDiagram() {
     // arrow head
     ctx.beginPath();
     ctx.moveTo(x2,y); ctx.lineTo(x2-7,y-4); ctx.lineTo(x2-7,y+4); ctx.closePath();
-    ctx.fillStyle='#ccc'; ctx.fill();
+    ctx.fillStyle=PG.c('muted'); ctx.fill();
   }
 
   // Residual skip arc removed — controlled via checkbox only
@@ -1729,19 +1730,20 @@ function drawArchDiagram() {
     const w = ld.w, h = ld.h;
 
     // Color based on type
-    let boxColor = '#e8f4fc', borderColor = '#0877bd';
-    if (ld.type === 'pool1' || ld.type === 'pool2') { boxColor='#f0f7f0'; borderColor='#2ecc71'; }
-    if (ld.type === 'out') { boxColor='#fef9e7'; borderColor='#f39c12'; }
-    if (ld.type === 'fc') { boxColor='#fdf2f8'; borderColor='#9b59b6'; }
+    // Color based on type (site tokens, read at draw time so they follow the theme)
+    let typeToken = 'data-blue';
+    if (ld.type === 'pool1' || ld.type === 'pool2') typeToken = 'data-green';
+    if (ld.type === 'out') typeToken = 'data-orange';
+    if (ld.type === 'fc') typeToken = 'data-purple';
 
-    ctx.fillStyle = boxColor;
-    ctx.strokeStyle = borderColor;
+    ctx.fillStyle = PG.mix('paper', typeToken, 0.12);
+    ctx.strokeStyle = PG.c(typeToken);
     ctx.lineWidth = 1.5;
     roundRect(ctx, x, y, w, h, 4);
     ctx.fill(); ctx.stroke();
 
     // Label
-    ctx.fillStyle = '#444'; ctx.font = 'bold 9px sans-serif'; ctx.textAlign='center';
+    ctx.fillStyle = PG.c('ink'); ctx.font = 'bold 9px sans-serif'; ctx.textAlign='center';
     const lines = ld.label.split('\n');
     lines.forEach((line, li) => {
       ctx.fillText(line, cX[i], y + 14 + li*11);
@@ -1795,6 +1797,8 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
+// Kernel weights and feature maps are data images: they keep their grayscale / blue ramps in both
+// themes (like the input digits), framed by the themed panels.
 // Grayscale diverging color for kernels: black(negative) → gray(zero) → white(positive)
 function divergingColor(v) {
   // v in [-1,1]: -1=black, 0=mid-gray, 1=white
@@ -1841,7 +1845,7 @@ function rebuildFwdViz() {
       cv.width = mapW; cv.height = mapH;
       cv.style.width = MAP_SIZE+'px'; cv.style.height = (MAP_SIZE*mapH/mapW)+'px';
       cv.style.imageRendering = 'pixelated';
-      cv.style.border = '1px solid #ddd';
+      cv.style.border = '1px solid var(--rule)';
       cv.style.borderRadius = '2px';
       cv.setAttribute('data-idx', i);
       mapsDiv.appendChild(cv);
@@ -1869,7 +1873,7 @@ function rebuildFwdViz() {
   inputCv.width = IMG_SIZE; inputCv.height = IMG_SIZE;
   inputCv.style.width = '40px'; inputCv.style.height = '40px';
   inputCv.style.imageRendering = 'pixelated';
-  inputCv.style.border = '2px solid #0877bd'; inputCv.style.borderRadius='3px';
+  inputCv.style.border = '2px solid var(--accent)'; inputCv.style.borderRadius='3px';
   inputBlock.appendChild(inputCv);
   scroll.appendChild(inputBlock);
 
@@ -1903,15 +1907,15 @@ function rebuildFwdViz() {
   for (let c=0;c<3;c++) {
     const row = document.createElement('div');
     row.style.cssText='display:flex;align-items:center;gap:3px;margin-bottom:2px;';
-    const lbl=document.createElement('span'); lbl.textContent=c; lbl.style.cssText='font-size:10px;width:10px;font-weight:700;color:#555;';
-    const bwrap=document.createElement('div'); bwrap.style.cssText='width:70px;height:10px;background:#f0f0f0;border-radius:3px;overflow:hidden;';
-    const bar=document.createElement('div'); bar.id=`fwd-pb-${c}`; bar.style.cssText='height:100%;border-radius:3px;background:#0877bd;width:33%;transition:width 0.15s;';
+    const lbl=document.createElement('span'); lbl.textContent=c; lbl.style.cssText='font-size:10px;width:10px;font-weight:700;color:var(--muted);';
+    const bwrap=document.createElement('div'); bwrap.style.cssText='width:70px;height:10px;background:var(--panel);border-radius:3px;overflow:hidden;';
+    const bar=document.createElement('div'); bar.id=`fwd-pb-${c}`; bar.style.cssText='height:100%;border-radius:3px;background:var(--data-blue);width:33%;transition:width 0.15s;';
     bwrap.appendChild(bar);
     const val=document.createElement('span'); val.id=`fwd-pv-${c}`; val.style.cssText='font-size:9px;font-family:monospace;width:34px;text-align:right;';val.textContent='0.33';
     row.appendChild(lbl); row.appendChild(bwrap); row.appendChild(val);
     predBars.appendChild(row);
   }
-  const predRes=document.createElement('div'); predRes.id='fwd-pred-res'; predRes.style.cssText='font-size:14px;font-weight:700;color:#0877bd;padding:2px 0;white-space:nowrap;';
+  const predRes=document.createElement('div'); predRes.id='fwd-pred-res'; predRes.style.cssText='font-size:14px;font-weight:700;color:var(--accent);padding:2px 0;white-space:nowrap;';
   predRes.textContent='?';
   predInner.appendChild(predBars);
   predInner.appendChild(predRes);
@@ -1986,7 +1990,7 @@ function runForwardViz(imgFlat, label) {
   const predRes = document.getElementById('fwd-pred-res');
   if (predRes) {
     predRes.textContent = t('predicted') + ' ' + predIdx;
-    predRes.style.color = predIdx === label ? '#1e7a45' : '#c0392b';
+    predRes.style.color = predIdx === label ? 'var(--data-green)' : 'var(--data-red)';
   }
 
   // Also update main right-panel prob chart
@@ -2033,10 +2037,10 @@ function updateProbChart(probs, label) {
   const predEl = document.getElementById('pred-result');
   if (label >= 0) {
     predEl.textContent = t('predicted') + ' ' + pred + (pred===label?' ✓':' ✗');
-    predEl.style.color = pred===label ? '#1e7a45' : '#c0392b';
+    predEl.style.color = pred===label ? 'var(--data-green)' : 'var(--data-red)';
   } else {
     predEl.textContent = t('predicted') + ' ' + pred;
-    predEl.style.color = '#0877bd';
+    predEl.style.color = 'var(--accent)';
   }
 }
 
@@ -2062,7 +2066,7 @@ function buildThumbs() {
     classTestSamples.forEach((sample) => {
       const cv = document.createElement('canvas');
       cv.width = IMG_SIZE; cv.height = IMG_SIZE;
-      cv.style.cssText = 'width:26px;height:26px;image-rendering:pixelated;cursor:pointer;border:2px solid #ccc;border-radius:2px;';
+      cv.style.cssText = 'width:26px;height:26px;image-rendering:pixelated;cursor:pointer;border:2px solid var(--rule);border-radius:2px;';
       cv.className = 'digit-thumb';
       cv._sampleLabel = cls;
       cv._sampleImg = sample.img;
@@ -2075,12 +2079,12 @@ function buildThumbs() {
       ctx.putImageData(id,0,0);
       if (selectedSample && selectedSample.label === cls && selectedSample.img === sample.img) {
         cv.classList.add('selected-thumb');
-        cv.style.borderColor = '#0877bd';
+        cv.style.borderColor = 'var(--accent)';
       }
       cv.addEventListener('click', () => {
         document.querySelectorAll('.digit-thumb').forEach(c => {
           if (!c.classList.contains('selected-thumb')) {
-            c.style.borderColor = c._borderColor || '#ccc';
+            c.style.borderColor = c._borderColor || 'var(--rule)';
           }
         });
         document.querySelectorAll('.digit-thumb').forEach(c => {
@@ -2088,7 +2092,7 @@ function buildThumbs() {
           c.classList.remove('selected');
         });
         cv.classList.add('selected-thumb');
-        cv.style.borderColor = '#0877bd';
+        cv.style.borderColor = 'var(--accent)';
         selectedSample = { img: sample.img, label: cls };
         runForwardViz(sample.img, cls);
       });
@@ -2110,7 +2114,7 @@ function updateThumbBorders() {
     const probs = result.probs;
     const pred = probs.indexOf(Math.max(...probs));
     const correct = pred === label;
-    cv._borderColor = correct ? '#27ae60' : '#e74c3c';
+    cv._borderColor = correct ? 'var(--data-green)' : 'var(--data-red)';
     if (!cv.classList.contains('selected-thumb')) {
       cv.style.borderColor = cv._borderColor;
     }
@@ -2161,7 +2165,7 @@ document.getElementById('btn-clear').addEventListener('click', () => {
   document.querySelectorAll('.digit-thumb').forEach(c => {
     c.classList.remove('selected-thumb');
     c.classList.remove('selected');
-    c.style.borderColor = c._borderColor || '#ccc';
+    c.style.borderColor = c._borderColor || 'var(--rule)';
   });
   selectedSample = null;
   updateProbChart([0.33,0.33,0.34],-1);
@@ -2183,7 +2187,7 @@ function inferDrawn() {
   document.querySelectorAll('.digit-thumb').forEach(c => {
     c.classList.remove('selected-thumb');
     c.classList.remove('selected');
-    c.style.borderColor = c._borderColor || '#ccc';
+    c.style.borderColor = c._borderColor || 'var(--rule)';
   });
   selectedSample = { img: flat, label: -1 };
   runForwardViz(flat, -1);
@@ -2198,6 +2202,10 @@ window.addEventListener('resize', () => {
   resizeTimer = setTimeout(() => {
     drawArchDiagram();
   }, 100);
+});
+PG.onTheme(() => {
+  drawArchDiagram();
+  drawLossCurve();
 });
 
 // ============================================================

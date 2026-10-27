@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="../assets/css/site-bar.css">
 <script src="../assets/js/site.js" defer></script>
+<script src="playgrounds-theme.js"></script>
 <title>Neural Network Playground — 1D Regression</title>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
@@ -23,16 +24,16 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
-  background: #f7f7f7;
-  color: #333;
+  background: var(--paper);
+  color: var(--ink);
   font-size: 13px;
   overflow: hidden;
   height: 100vh;
 }
 /* ============ HEADER ============ */
 #header {
-  background: #1a3a4a;
-  color: #fff;
+  background: var(--panel);
+  color: var(--ink);
   display: flex;
   align-items: center;
   padding: 0 20px;
@@ -40,13 +41,13 @@ body {
   gap: 16px;
 }
 #header h1 { font-size: 18px; font-weight: 600; letter-spacing: 1px; }
-#header .epoch-label { font-size: 14px; color: #acd; margin-left: auto; }
-#header .epoch-label span { color: #c0392b; font-weight: 700; font-size: 16px; }
+#header .epoch-label { font-size: 14px; color: var(--muted); margin-left: auto; }
+#header .epoch-label span { color: var(--data-red); font-weight: 700; font-size: 16px; }
 
 /* ============ CONTROL BAR ============ */
 #control-bar {
-  background: #e8e8e8;
-  border-bottom: 1px solid #ccc;
+  background: var(--panel);
+  border-bottom: 1px solid var(--rule);
   padding: 4px 16px;
   display: flex;
   align-items: center;
@@ -54,41 +55,41 @@ body {
   flex-wrap: wrap;
 }
 .ctrl-group { display: flex; align-items: center; gap: 4px; }
-.ctrl-group label { font-size: 11px; color: #666; white-space: nowrap; }
+.ctrl-group label { font-size: 11px; color: var(--muted); white-space: nowrap; }
 .ctrl-group select {
-  font-size: 12px; padding: 3px 6px; border: 1px solid #bbb; border-radius: 3px;
-  background: #fff; cursor: pointer;
+  font-size: 12px; padding: 3px 6px; border: 1px solid var(--muted); border-radius: 3px;
+  background: var(--paper); cursor: pointer;
 }
 .btn-round {
   width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center; font-size: 16px;
   transition: background 0.15s;
 }
-.btn-play { background: #e74c3c; color: #fff; }
-.btn-play:hover { background: #c0392b; }
-.btn-play.playing { background: #0877bd; }
-.btn-step { background: #ddd; color: #333; }
-.btn-step:hover { background: #ccc; }
-.btn-reset { background: #ddd; color: #c33; }
-.btn-reset:hover { background: #ccc; }
+.btn-play { background: var(--data-red); color: var(--on-accent); }
+.btn-play:hover { background: var(--data-red); }
+.btn-play.playing { background: var(--accent); }
+.btn-step { background: var(--panel); color: var(--ink); }
+.btn-step:hover { background: var(--rule); }
+.btn-reset { background: var(--panel); color: var(--data-red); }
+.btn-reset:hover { background: var(--rule); }
 
 /* ============ PRESET BAR ============ */
 #preset-bar {
-  background: #f0f0f0;
-  border-bottom: 1px solid #ddd;
+  background: var(--panel);
+  border-bottom: 1px solid var(--rule);
   padding: 4px 16px;
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
 }
-#preset-bar .preset-label { font-size: 12px; color: #666; font-weight: 600; }
+#preset-bar .preset-label { font-size: 12px; color: var(--muted); font-weight: 600; }
 .btn-preset {
-  font-size: 11px; padding: 4px 10px; border: 1px solid #bbb; border-radius: 14px;
-  background: #fff; cursor: pointer; transition: all 0.15s; color: #444;
+  font-size: 11px; padding: 4px 10px; border: 1px solid var(--muted); border-radius: 14px;
+  background: var(--paper); cursor: pointer; transition: all 0.15s; color: var(--ink);
 }
-.btn-preset:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
-.btn-preset.active { background: #0877bd; color: #fff; border-color: #0877bd; }
+.btn-preset:hover { background: var(--data-red); color: var(--on-accent); border-color: var(--accent); }
+.btn-preset.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 
 /* ============ MAIN LAYOUT ============ */
 #main {
@@ -102,33 +103,33 @@ body {
 #sidebar {
   width: 155px;
   min-width: 155px;
-  background: #fff;
-  border-right: 1px solid #ddd;
+  background: var(--paper);
+  border-right: 1px solid var(--rule);
   padding: 12px;
   overflow-y: auto;
 }
-#sidebar h3 { font-size: 12px; color: #595959; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+#sidebar h3 { font-size: 12px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
 .sidebar-section { margin-bottom: 14px; }
-.sidebar-section label { font-size: 11px; color: #555; display: block; margin-bottom: 3px; }
+.sidebar-section label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 3px; }
 .sidebar-section select, .sidebar-section input[type="range"] { width: 100%; }
-.sidebar-section .range-val { font-size: 11px; color: #595959; float: right; }
+.sidebar-section .range-val { font-size: 11px; color: var(--muted); float: right; }
 .dataset-btn {
   display: block; width: 100%; padding: 6px 8px; margin-bottom: 4px;
-  border: 2px solid #ddd; border-radius: 4px; background: #fafafa;
+  border: 2px solid var(--rule); border-radius: 4px; background: var(--paper);
   cursor: pointer; font-size: 12px; text-align: left; transition: all 0.15s;
 }
-.dataset-btn:hover { border-color: #0877bd; }
-.dataset-btn.active { border-color: #0877bd; background: #e8f4fc; font-weight: 600; }
+.dataset-btn:hover { border-color: var(--accent); }
+.dataset-btn.active { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
 
 /* ============ FEATURES COLUMN ============ */
 #features-col {
   width: 85px;
   min-width: 85px;
-  background: #fafafa;
-  border-right: 1px solid #ddd;
+  background: var(--paper);
+  border-right: 1px solid var(--rule);
   padding: 12px 8px;
 }
-#features-col h3 { font-size: 12px; color: #595959; margin-bottom: 10px; text-align: center; }
+#features-col h3 { font-size: 12px; color: var(--muted); margin-bottom: 10px; text-align: center; }
 .feature-item {
   display: flex; align-items: center; gap: 4px; margin-bottom: 8px;
   font-size: 12px;
@@ -142,8 +143,8 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #fff;
-  border-right: 1px solid #ddd;
+  background: var(--paper);
+  border-right: 1px solid var(--rule);
 }
 #network-top {
   display: flex;
@@ -151,16 +152,16 @@ body {
   justify-content: center;
   gap: 12px;
   padding: 8px;
-  background: #fafafa;
-  border-bottom: 1px solid #eee;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
 }
-#network-top label { font-size: 13px; color: #555; font-weight: 600; }
+#network-top label { font-size: 13px; color: var(--muted); font-weight: 600; }
 .btn-sm {
-  width: 24px; height: 24px; border-radius: 4px; border: 1px solid #bbb;
-  background: #fff; cursor: pointer; font-size: 14px; line-height: 1;
+  width: 24px; height: 24px; border-radius: 4px; border: 1px solid var(--muted);
+  background: var(--paper); cursor: pointer; font-size: 14px; line-height: 1;
   display: flex; align-items: center; justify-content: center;
 }
-.btn-sm:hover { background: #eee; }
+.btn-sm:hover { background: var(--panel); }
 #network-svg-container {
   flex: 1;
   overflow: hidden;
@@ -177,7 +178,7 @@ body {
 #right-panel {
   width: 320px;
   min-width: 320px;
-  background: #fff;
+  background: var(--paper);
   padding: 8px;
   overflow-y: auto;
   display: flex;
@@ -186,15 +187,15 @@ body {
 }
 .panel-title {
   font-size: 11px;
-  color: #595959;
+  color: var(--muted);
   font-weight: 600;
   margin-bottom: 2px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 .plot-container {
-  background: #fff;
-  border: 1px solid #e0e0e0;
+  background: var(--paper);
+  border: 1px solid var(--rule);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -215,9 +216,9 @@ body {
 .gap-indicator {
   padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;
 }
-.gap-green { background: #d4edda; color: #155724; }
-.gap-yellow { background: #fff3cd; color: #856404; }
-.gap-red { background: #f8d7da; color: #721c24; }
+.gap-green { background: var(--tint-green); color: var(--ink); }
+.gap-yellow { background: var(--tint-orange); color: var(--ink); }
+.gap-red { background: var(--tint-red); color: var(--ink); }
 
 .checkbox-row { display: flex; gap: 12px; font-size: 11px; align-items: center; padding: 2px 0; }
 .checkbox-row label { cursor: pointer; display: flex; align-items: center; gap: 3px; }
@@ -284,7 +285,7 @@ body {
     width: 100%;
     min-width: 0;
     border-right: none;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--rule);
   }
 
   #sidebar {
@@ -399,18 +400,18 @@ body {
 <!-- HEADER -->
 <div id="header">
   <h1 data-i18n="title">Neural Network Playground</h1>
-  <div style="font-size:12px; color:#8ab; margin-left:8px;" data-i18n="subtitle">1D Regression</div>
-  <button id="btn-lang" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:#fff; border-radius:4px; padding:2px 8px; cursor:pointer; font-size:12px; margin-left:8px;">中</button>
+  <div style="font-size:12px; color:var(--muted); margin-left:8px;" data-i18n="subtitle">1D Regression</div>
+  <button id="btn-lang" style="background:transparent; border:1px solid var(--rule); color:var(--ink); border-radius:4px; padding:2px 8px; cursor:pointer; font-size:12px; margin-left:8px;">中</button>
   <div class="epoch-label"><span data-i18n="epoch">Epoch</span>: <span id="epoch-display">0</span></div>
 </div>
 
 <!-- CONTROL BAR -->
 <div id="control-bar">
-  <button class="btn-round btn-play" id="btn-play" title="播放/暂停">▶</button>
-  <button class="btn-round btn-step" id="btn-step" title="单步">⏭</button>
-  <button class="btn-round btn-reset" id="btn-reset" title="重置">↺</button>
+  <button class="btn-round btn-play" id="btn-play" title="播放/暂停" aria-label="播放/暂停">▶</button>
+  <button class="btn-round btn-step" id="btn-step" title="单步" aria-label="单步">⏭</button>
+  <button class="btn-round btn-reset" id="btn-reset" title="重置" aria-label="重置">↺</button>
   <div class="ctrl-group">
-    <label data-i18n="lr">学习率</label>
+    <label for="sel-lr" data-i18n="lr">学习率</label>
     <select id="sel-lr">
       <option value="0.0005">0.0005</option>
       <option value="0.001">0.001</option>
@@ -421,7 +422,7 @@ body {
     </select>
   </div>
   <div class="ctrl-group">
-    <label data-i18n="activation">激活函数</label>
+    <label for="sel-activation" data-i18n="activation">激活函数</label>
     <select id="sel-activation">
       <option value="relu">ReLU</option>
       <option value="tanh" selected>Tanh</option>
@@ -429,7 +430,7 @@ body {
     </select>
   </div>
   <div class="ctrl-group">
-    <label data-i18n="reg">正则化</label>
+    <label for="sel-reg" data-i18n="reg">正则化</label>
     <select id="sel-reg">
       <option value="none" selected data-i18n="none">无</option>
       <option value="l1">L1</option>
@@ -437,7 +438,7 @@ body {
     </select>
   </div>
   <div class="ctrl-group">
-    <label data-i18n="regRate">正则化率</label>
+    <label for="sel-reg-rate" data-i18n="regRate">正则化率</label>
     <select id="sel-reg-rate">
       <option value="0" selected>0</option>
       <option value="0.0003">0.0003</option>
@@ -449,7 +450,7 @@ body {
     </select>
   </div>
   <div class="ctrl-group">
-    <label data-i18n="optimizer">优化器</label>
+    <label for="sel-optimizer" data-i18n="optimizer">优化器</label>
     <select id="sel-optimizer">
       <option value="sgd">SGD</option>
       <option value="adam" selected>Adam</option>
@@ -457,7 +458,7 @@ body {
     </select>
   </div>
   <div class="ctrl-group">
-    <label data-i18n="dropout">Dropout率</label>
+    <label for="sel-dropout" data-i18n="dropout">Dropout率</label>
     <select id="sel-dropout">
       <option value="0" selected>0</option>
       <option value="0.1">0.1</option>
@@ -490,15 +491,15 @@ body {
       <button class="dataset-btn" data-fn="composite" data-i18n="compositeFn">复合</button>
     </div>
     <div class="sidebar-section">
-      <label><span data-i18n="noise">噪声</span> <span class="range-val" id="noise-val">15</span></label>
+      <label for="slider-noise"><span data-i18n="noise">噪声</span> <span class="range-val" id="noise-val">15</span></label>
       <input type="range" id="slider-noise" min="0" max="50" value="15">
     </div>
     <div class="sidebar-section">
-      <label><span data-i18n="trainRatio">训练比例</span> <span class="range-val" id="ratio-val">60%</span></label>
+      <label for="slider-ratio"><span data-i18n="trainRatio">训练比例</span> <span class="range-val" id="ratio-val">60%</span></label>
       <input type="range" id="slider-ratio" min="20" max="80" value="60">
     </div>
     <div class="sidebar-section">
-      <label><span data-i18n="numPoints">数据点数</span> <span class="range-val" id="npoints-val">40</span></label>
+      <label for="slider-npoints"><span data-i18n="numPoints">数据点数</span> <span class="range-val" id="npoints-val">40</span></label>
       <input type="range" id="slider-npoints" min="20" max="200" value="40" step="5">
     </div>
   </div>
@@ -548,8 +549,8 @@ body {
       <label><input type="checkbox" id="chk-truth" checked> <span data-i18n="showTruth">显示真实函数</span></label>
     </div>
     <div class="loss-info">
-      <div class="loss-item"><div class="loss-dot" style="background:#0877bd"></div><span data-i18n="trainLoss">训练损失</span>: <span class="loss-value" id="train-loss-val">—</span></div>
-      <div class="loss-item"><div class="loss-dot" style="background:#e74c3c"></div><span data-i18n="testLoss">测试损失</span>: <span class="loss-value" id="test-loss-val">—</span></div>
+      <div class="loss-item"><div class="loss-dot" style="background:var(--data-blue)"></div><span data-i18n="trainLoss">训练损失</span>: <span class="loss-value" id="train-loss-val">—</span></div>
+      <div class="loss-item"><div class="loss-dot" style="background:var(--data-red)"></div><span data-i18n="testLoss">测试损失</span>: <span class="loss-value" id="test-loss-val">—</span></div>
       <div class="loss-item"><span data-i18n="genGap">泛化间隙</span>: <span class="gap-indicator gap-green" id="gap-val">—</span></div>
     </div>
 
@@ -1102,7 +1103,7 @@ function drawMainPlot() {
   const yToPixel = y => margin.top + (1 - (y - yMin) / (yMax - yMin)) * ph;
 
   // Grid
-  ctx.strokeStyle = '#eee';
+  ctx.strokeStyle = PG.c('rule');
   ctx.lineWidth = 1;
   // Y grid
   const yStep = niceStep(yMin, yMax, 6);
@@ -1118,7 +1119,7 @@ function drawMainPlot() {
   }
 
   // Axes
-  ctx.strokeStyle = '#999';
+  ctx.strokeStyle = PG.c('muted');
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(margin.left, margin.top);
@@ -1127,7 +1128,7 @@ function drawMainPlot() {
   ctx.stroke();
 
   // Axis labels
-  ctx.fillStyle = '#888';
+  ctx.fillStyle = PG.c('muted');
   ctx.font = '10px sans-serif';
   ctx.textAlign = 'center';
   for (let x = Math.ceil(xRange[0] / xStep) * xStep; x <= xRange[1]; x += xStep) {
@@ -1140,7 +1141,7 @@ function drawMainPlot() {
 
   // True function (gray dashed)
   if (state.showTruth) {
-    ctx.strokeStyle = '#999';
+    ctx.strokeStyle = PG.c('muted');
     ctx.lineWidth = 1.5;
     ctx.setLineDash([5, 4]);
     ctx.beginPath();
@@ -1156,7 +1157,7 @@ function drawMainPlot() {
 
   // Network prediction (black solid)
   if (network) {
-    ctx.strokeStyle = '#222';
+    ctx.strokeStyle = PG.c('ink');
     ctx.lineWidth = 2.5;
     ctx.beginPath();
     for (let i = 0; i <= 200; i++) {
@@ -1170,7 +1171,7 @@ function drawMainPlot() {
 
   // Test data (red)
   if (state.showTest) {
-    ctx.fillStyle = '#e74c3c';
+    ctx.fillStyle = PG.c('data-red');
     for (const dp of testData) {
       const px = xToPixel(dp.x), py = yToPixel(dp.y);
       ctx.beginPath(); ctx.arc(px, py, 3.5, 0, Math.PI * 2); ctx.fill();
@@ -1178,7 +1179,7 @@ function drawMainPlot() {
   }
 
   // Train data (blue)
-  ctx.fillStyle = '#0877bd';
+  ctx.fillStyle = PG.c('data-blue');
   for (const dp of trainData) {
     const px = xToPixel(dp.x), py = yToPixel(dp.y);
     ctx.beginPath(); ctx.arc(px, py, 4.5, 0, Math.PI * 2); ctx.fill();
@@ -1187,16 +1188,16 @@ function drawMainPlot() {
   // Legend
   ctx.font = '11px sans-serif';
   const legendX = margin.left + 8, legendY = margin.top + 10;
-  ctx.fillStyle = '#0877bd';
+  ctx.fillStyle = PG.c('data-blue');
   ctx.beginPath(); ctx.arc(legendX, legendY, 4, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#333';
+  ctx.fillStyle = PG.c('ink');
   ctx.textAlign = 'left';
   ctx.fillText(t('train'), legendX + 8, legendY + 3);
 
   if (state.showTest) {
-    ctx.fillStyle = '#e74c3c';
+    ctx.fillStyle = PG.c('data-red');
     ctx.beginPath(); ctx.arc(legendX + 50, legendY, 3.5, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#333';
+    ctx.fillStyle = PG.c('ink');
     ctx.fillText(t('test'), legendX + 58, legendY + 3);
   }
 }
@@ -1240,7 +1241,7 @@ function drawLossCurve() {
   const yToP = v => margin.top + (1 - Math.min(v, maxLoss) / maxLoss) * ph;
 
   // Gap shading
-  ctx.fillStyle = 'rgba(245,147,34,0.1)';
+  ctx.fillStyle = PG.a('data-orange', 0.12);
   ctx.beginPath();
   for (let i = 0; i < maxEpoch; i++) {
     const tst = testArr[i] || 0;
@@ -1264,7 +1265,7 @@ function drawLossCurve() {
   ctx.fill();
 
   // Axes
-  ctx.strokeStyle = '#ccc';
+  ctx.strokeStyle = PG.c('muted');
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(margin.left, margin.top);
@@ -1273,7 +1274,7 @@ function drawLossCurve() {
   ctx.stroke();
 
   // Tick labels
-  ctx.fillStyle = '#888';
+  ctx.fillStyle = PG.c('muted');
   ctx.font = '9px sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText('0', margin.left, H - margin.bottom + 12);
@@ -1285,7 +1286,7 @@ function drawLossCurve() {
   ctx.fillText(t('epoch'), margin.left + pw / 2, H - margin.bottom + 18);
 
   // Train loss line
-  ctx.strokeStyle = '#0877bd';
+  ctx.strokeStyle = PG.c('data-blue');
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   for (let i = 0; i < maxEpoch; i++) {
@@ -1295,7 +1296,7 @@ function drawLossCurve() {
   ctx.stroke();
 
   // Test loss line
-  ctx.strokeStyle = '#e74c3c';
+  ctx.strokeStyle = PG.c('data-red');
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   for (let i = 0; i < maxEpoch; i++) {
@@ -1307,14 +1308,14 @@ function drawLossCurve() {
   // Legend
   ctx.font = '10px sans-serif';
   const lx = margin.left + 10;
-  ctx.strokeStyle = '#0877bd'; ctx.lineWidth = 2;
+  ctx.strokeStyle = PG.c('data-blue'); ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(lx, margin.top + 6); ctx.lineTo(lx + 15, margin.top + 6); ctx.stroke();
-  ctx.fillStyle = '#333'; ctx.textAlign = 'left';
+  ctx.fillStyle = PG.c('ink'); ctx.textAlign = 'left';
   ctx.fillText(t('train'), lx + 18, margin.top + 10);
 
-  ctx.strokeStyle = '#e74c3c'; ctx.lineWidth = 2;
+  ctx.strokeStyle = PG.c('data-red'); ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(lx + 50, margin.top + 6); ctx.lineTo(lx + 65, margin.top + 6); ctx.stroke();
-  ctx.fillStyle = '#333';
+  ctx.fillStyle = PG.c('ink');
   ctx.fillText(t('test'), lx + 68, margin.top + 10);
 }
 
@@ -1345,12 +1346,12 @@ function drawParamsChart() {
     const barH = (abs / maxAbs) * ph;
     const x = margin.left + i * barW;
     const y = margin.top + ph - barH;
-    ctx.fillStyle = w >= 0 ? '#0877bd' : '#e74c3c';
+    ctx.fillStyle = w >= 0 ? PG.c('data-blue') : PG.c('data-red');
     ctx.fillRect(x, y, Math.max(barW - 0.5, 1), barH);
   }
 
   // Axes
-  ctx.strokeStyle = '#ccc';
+  ctx.strokeStyle = PG.c('muted');
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(margin.left, margin.top);
@@ -1358,7 +1359,7 @@ function drawParamsChart() {
   ctx.lineTo(W - margin.right, H - margin.bottom);
   ctx.stroke();
 
-  ctx.fillStyle = '#888';
+  ctx.fillStyle = PG.c('muted');
   ctx.font = '9px sans-serif';
   ctx.textAlign = 'right';
   ctx.fillText(maxAbs.toFixed(2), margin.left - 4, margin.top + 8);
@@ -1368,13 +1369,13 @@ function drawParamsChart() {
 
   // Legend
   const lx = W - margin.right - 100;
-  ctx.fillStyle = '#0877bd';
+  ctx.fillStyle = PG.c('data-blue');
   ctx.fillRect(lx, margin.top + 2, 10, 8);
-  ctx.fillStyle = '#333'; ctx.textAlign = 'left'; ctx.font = '9px sans-serif';
+  ctx.fillStyle = PG.c('ink'); ctx.textAlign = 'left'; ctx.font = '9px sans-serif';
   ctx.fillText(t('pos'), lx + 13, margin.top + 9);
-  ctx.fillStyle = '#e74c3c';
+  ctx.fillStyle = PG.c('data-red');
   ctx.fillRect(lx + 30, margin.top + 2, 10, 8);
-  ctx.fillStyle = '#333';
+  ctx.fillStyle = PG.c('ink');
   ctx.fillText(t('neg'), lx + 43, margin.top + 9);
 }
 
@@ -1473,16 +1474,16 @@ function drawNetworkSVG() {
         const absW = Math.abs(w);
         const thickness = Math.min(Math.max(absW * 2, 0.5), 5);
         let color;
-        if (absW < 0.05) color = '#ccc';
-        else if (w > 0) color = '#0877bd';
-        else color = '#e74c3c';
+        if (absW < 0.05) color = 'var(--rule)';
+        else if (w > 0) color = 'var(--data-blue)';
+        else color = 'var(--data-red)';
 
         svg.append('line')
           .attr('x1', nodePositions[l - 1][from].x + RECT_SIZE / 2)
           .attr('y1', nodePositions[l - 1][from].y)
           .attr('x2', nodePositions[l][to].x - RECT_SIZE / 2)
           .attr('y2', nodePositions[l][to].y)
-          .attr('stroke', color)
+          .style('stroke', color)
           .attr('stroke-width', thickness)
           .attr('opacity', 0.6);
       }
@@ -1497,14 +1498,15 @@ function drawNetworkSVG() {
         .attr('transform', `translate(${pos.x - RECT_SIZE / 2}, ${pos.y - RECT_SIZE / 2})`);
 
       // Node background
-      let fillColor = '#f0f0f0';
+      // SVG colours are site tokens (CSS custom properties), so they follow the theme without a redraw
+      let fillColor = 'var(--panel)';
       if (l === 0) {
-        fillColor = '#e3f2fd';
+        fillColor = 'var(--accent-soft)';
       } else if (l === numLayers - 1) {
-        fillColor = '#fde8e8';
+        fillColor = 'var(--tint-red)';
       } else {
         // Color based on average activation
-        fillColor = '#f5f5f5';
+        fillColor = 'var(--panel)';
       }
 
       g.append('rect')
@@ -1512,8 +1514,8 @@ function drawNetworkSVG() {
         .attr('height', RECT_SIZE)
         .attr('rx', 4)
         .attr('ry', 4)
-        .attr('fill', fillColor)
-        .attr('stroke', '#aaa')
+        .style('fill', fillColor)
+        .style('stroke', 'var(--muted)')
         .attr('stroke-width', 1);
 
       // Label inside node
@@ -1530,7 +1532,7 @@ function drawNetworkSVG() {
           .attr('y', RECT_SIZE / 2 + 4)
           .attr('text-anchor', 'middle')
           .attr('font-size', '11px')
-          .attr('fill', '#555')
+          .style('fill', 'var(--ink)')
           .text(label);
       }
 
@@ -1564,12 +1566,12 @@ function drawNetworkSVG() {
           g.append('line')
             .attr('x1', pad).attr('x2', pad + pw)
             .attr('y1', zeroY).attr('y2', zeroY)
-            .attr('stroke', '#ccc').attr('stroke-width', 0.5);
+            .style('stroke', 'var(--rule)').attr('stroke-width', 0.5);
         }
         g.append('path')
           .attr('d', pathD)
           .attr('fill', 'none')
-          .attr('stroke', '#0877bd')
+          .style('stroke', 'var(--data-blue)')
           .attr('stroke-width', 1.5)
           .attr('stroke-linecap', 'round');
       }
@@ -1583,7 +1585,7 @@ function drawNetworkSVG() {
     .attr('y', 18)
     .attr('text-anchor', 'middle')
     .attr('font-size', '11px')
-    .attr('fill', '#888')
+    .style('fill', 'var(--muted)')
     .text(t('input'));
 
   // Hidden layers
@@ -1593,7 +1595,7 @@ function drawNetworkSVG() {
       .attr('y', 18)
       .attr('text-anchor', 'middle')
       .attr('font-size', '11px')
-      .attr('fill', '#888')
+      .style('fill', 'var(--muted)')
       .text(t('hiddenN') + l);
 
     // Neuron count label + buttons below the last node
@@ -1607,7 +1609,7 @@ function drawNetworkSVG() {
       .attr('y', lastNodeY + 11)
       .attr('text-anchor', 'middle')
       .attr('font-size', '10px')
-      .attr('fill', '#888')
+      .style('fill', 'var(--muted)')
       .text(t('nNeurons').replace('{n}', state.hiddenLayers[l - 1]));
 
     // Minus button (left side, below the label)
@@ -1617,8 +1619,8 @@ function drawNetworkSVG() {
       .attr('transform', `translate(${layerX[l] - totalCtrlW / 2}, ${btnRowY})`)
       .style('cursor', 'pointer')
       .on('click', () => changeNeurons(l - 1, -1));
-    minusG.append('rect').attr('width', btnW).attr('height', btnH).attr('rx', 3).attr('fill', '#e8e8e8').attr('stroke', '#bbb');
-    minusG.append('text').attr('x', btnW / 2).attr('y', btnH - 3).attr('text-anchor', 'middle').attr('font-size', '13px').attr('fill', '#666').text('−');
+    minusG.append('rect').attr('width', btnW).attr('height', btnH).attr('rx', 3).style('fill', 'var(--panel)').style('stroke', 'var(--muted)');
+    minusG.append('text').attr('x', btnW / 2).attr('y', btnH - 3).attr('text-anchor', 'middle').attr('font-size', '13px').style('fill', 'var(--ink)').text('−');
 
     // Plus button (right side, next to minus)
     const plusG = svg.append('g')
@@ -1626,8 +1628,8 @@ function drawNetworkSVG() {
       .attr('transform', `translate(${layerX[l] - totalCtrlW / 2 + btnW + btnGap}, ${btnRowY})`)
       .style('cursor', 'pointer')
       .on('click', () => changeNeurons(l - 1, 1));
-    plusG.append('rect').attr('width', btnW).attr('height', btnH).attr('rx', 3).attr('fill', '#e8e8e8').attr('stroke', '#bbb');
-    plusG.append('text').attr('x', btnW / 2).attr('y', btnH - 3).attr('text-anchor', 'middle').attr('font-size', '13px').attr('fill', '#666').text('+');
+    plusG.append('rect').attr('width', btnW).attr('height', btnH).attr('rx', 3).style('fill', 'var(--panel)').style('stroke', 'var(--muted)');
+    plusG.append('text').attr('x', btnW / 2).attr('y', btnH - 3).attr('text-anchor', 'middle').attr('font-size', '13px').style('fill', 'var(--ink)').text('+');
   }
 
   // Output
@@ -1636,7 +1638,7 @@ function drawNetworkSVG() {
     .attr('y', 18)
     .attr('text-anchor', 'middle')
     .attr('font-size', '11px')
-    .attr('fill', '#888')
+    .style('fill', 'var(--muted)')
     .text(t('output'));
 }
 
@@ -1891,6 +1893,11 @@ window.addEventListener('resize', () => {
   resizeTimeout = setTimeout(() => {
     drawNetworkSVG();
   }, 200);
+});
+PG.onTheme(() => {
+  drawMainPlot();
+  drawLossCurve();
+  drawParamsChart();
 });
 
 // ---- INIT ----

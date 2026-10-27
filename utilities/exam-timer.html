@@ -494,15 +494,15 @@
                 <h3>Set Time</h3>
                 <div class="time-inputs">
                     <div class="time-input-group">
-                        <label>Hours</label>
+                        <label for="hoursInput">Hours</label>
                         <input type="number" id="hoursInput" min="0" max="23" value="1">
                     </div>
                     <div class="time-input-group">
-                        <label>Minutes</label>
+                        <label for="minutesInput">Minutes</label>
                         <input type="number" id="minutesInput" min="0" max="59" value="30">
                     </div>
                     <div class="time-input-group">
-                        <label>Seconds</label>
+                        <label for="secondsInput">Seconds</label>
                         <input type="number" id="secondsInput" min="0" max="59" value="0">
                     </div>
                 </div>
@@ -519,8 +519,8 @@
             </div>
 
             <div class="control-section">
-                <h3>Notes</h3>
-                <textarea id="customTextInput" placeholder="Enter text to display, e.g., exam instructions, room policy, etc.">Exam Instructions:
+                <h3 id="notesHeading">Notes</h3>
+                <textarea id="customTextInput" aria-labelledby="notesHeading" placeholder="Enter text to display, e.g., exam instructions, room policy, etc.">Exam Instructions:
 • Sit with at least one empty seat between students.
 • Only one person may use the restroom at a time. Leave your phone on the front table when you go.
 • Do not remove or detach any pages from the exam.
@@ -531,17 +531,17 @@
                 <h3>Font Size</h3>
                 <div class="slider-group">
                     <div class="slider-label">
-                        <span>Time font</span>
+                        <span id="timerFontLabel">Time font</span>
                         <span class="slider-value" id="timerFontValue">120px</span>
                     </div>
-                    <input type="range" id="timerFontSlider" min="60" max="200" value="120" oninput="updateTimerFont()">
+                    <input type="range" id="timerFontSlider" aria-labelledby="timerFontLabel" min="60" max="200" value="120" oninput="updateTimerFont()">
                 </div>
                 <div class="slider-group">
                     <div class="slider-label">
-                        <span>Notes font</span>
+                        <span id="textFontLabel">Notes font</span>
                         <span class="slider-value" id="textFontValue">36px</span>
                     </div>
-                    <input type="range" id="textFontSlider" min="24" max="80" value="36" oninput="updateTextFont()">
+                    <input type="range" id="textFontSlider" aria-labelledby="textFontLabel" min="24" max="80" value="36" oninput="updateTextFont()">
                 </div>
             </div>
 
