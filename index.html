@@ -1,213 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Tianshi Xu - Assistant Professor at the University of Kentucky. Research in learning-augmented scientific computing, optimization, and high-performance numerical algorithms.">
-    <meta name="keywords" content="Tianshi Xu, Machine Learning, Data Science, High-Performance Computing, Numerical Linear Algebra, University of Kentucky">
-    <meta name="author" content="Tianshi Xu">
-    <link rel="author" type="text/plain" href="humans.txt">
-    
-    <title>Tianshi Xu - Assistant Professor at the University of Kentucky</title>
-
-    <!-- Theme boot (avoid flash on navigation) -->
-    <script>
-      (function() {
-        try {
-          var theme = localStorage.getItem('theme');
-          if (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            theme = 'dark-mode';
-          }
-          if (theme) document.documentElement.classList.add(theme);
-        } catch (e) {}
-      })();
-    </script>
-    <style>
-      html { background: #f6f7fb; }
-      body { background: #f6f7fb; }
-      html.dark-mode,
-      html.dark-mode body { background: #1a1a1a; }
-    </style>
-    
-    <!-- CSS -->
-    <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/responsive.css">
-    <link rel="stylesheet" href="assets/css/navigation-patch.css">
-    
-    <!-- Additional styles for homepage news -->
-    <style>
-        .news-list-home {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .news-list-home li {
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: flex-start;
-        }
-        
-        .news-date-home {
-            display: inline-block;
-            font-weight: 600;
-            color: var(--accent-color);
-            min-width: 90px;
-            margin-right: 0.5rem;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-        
-        .news-list-home li > span:not(.news-date-home) {
-            flex: 1;
-            display: inline;
-        }
-
-        .research-interest-text {
-            line-height: 1.75;
-            margin-bottom: 1rem;
-        }
-        
-        @media (max-width: 768px) {
-            .news-list-home li {
-                display: block;
-            }
-            
-            .news-date-home {
-                display: block;
-                margin-bottom: 0.25rem;
-            }
-
-            .research-interest-text {
-                margin-bottom: 0.75rem;
-            }
-        }
-    </style>
-    
-    <!-- MathJax -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML" async></script>
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            TeX: { equationNumbers: { autoNumber: "AMS" } }
-        });
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tianshi Xu — Assistant Professor of Mathematics, University of Kentucky</title>
+  <meta name="description" content="Tianshi Xu, Assistant Professor of Mathematics at the University of Kentucky. Research in scientific machine learning, stochastic optimization, and high-performance computing, with numerical linear algebra as the common thread.">
+  <meta name="author" content="Tianshi Xu">
+  <meta name="color-scheme" content="light dark">
+  <link rel="author" type="text/plain" href="humans.txt">
+  <link rel="icon" href="data:,">
+  <script>
+    /* Theme boot: apply a saved choice before CSS paints (no flash); otherwise CSS follows the system. */
+    (function () {
+      var d = document.documentElement, t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t === 'dark-mode' || t === 'light-mode') { d.classList.add(t); d.setAttribute('data-theme', t === 'dark-mode' ? 'dark' : 'light'); }
+      else { d.setAttribute('data-theme', window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+    })();
+  </script>
+  <link rel="preload" href="assets/fonts/stix-two-text/stix-two-text-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/stix-two-text/stix-two-text-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script src="assets/js/site.js" defer></script>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <nav>
-                <a href="index.html" class="logo">Tianshi Xu</a>
-                <div class="nav-groups">
-                    <ul class="nav-links nav-primary nav-home">
-                        <li><a href="index.html">Home</a></li>
-                    </ul>
-                    <div class="nav-group">
-                        <div class="nav-links-label">Research</div>
-                        <ul class="nav-links nav-sub">
-                            <li><a href="research.html">Overview</a></li>
-                            <li><a href="publications.html">Publications</a></li>
-                            <li><a href="software.html">Software</a></li>
-                            <li><a href="presentations.html">Presentations</a></li>
-                        </ul>
-                    </div>
-                    <div class="nav-group">
-                        <div class="nav-links-label">Teaching</div>
-                        <ul class="nav-links nav-sub">
-                            <li><a href="teaching.html">Courses</a></li>
-                            <li><a href="mentoring.html">Mentoring</a></li>
-                        </ul>
-                    </div>
-                    <div class="nav-group">
-                        <div class="nav-links-label">Service</div>
-                        <ul class="nav-links nav-sub">
-                            <li><a href="service.html">Professional Service</a></li>
-                            <li><a href="outreach.html">Outreach</a></li>
-                        </ul>
-                    </div>
-                    <div class="nav-group">
-                        <div class="nav-links-label">Links</div>
-                        <ul class="nav-links nav-secondary">
-                            <li><a href="https://github.com/hitenze" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-                            <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank" rel="noopener noreferrer">Google Scholar</a></li>
-                            <li><a href="https://wliao60.math.gatech.edu/bootcamp2026/" target="_blank" rel="noopener noreferrer">Bootcamp 2026</a></li>
-                            <li><a href="utilities/index.html">Web Tools</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="nav-tools">
-                    <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
-                </div>
-            </nav>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html">Tianshi Xu</a>
+      <button type="button" class="icon-btn theme-toggle js-theme-toggle" aria-label="Dark theme" aria-describedby="theme-state" title="Toggle color theme">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg>
+      </button>
+      <span id="theme-state" class="sr-only"></span>
+      <button type="button" class="icon-btn menu-toggle" aria-expanded="false" aria-controls="site-nav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <span>Menu</span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="Primary">
+        <ul>
+          <li><a href="index.html" aria-current="page">Home</a></li>
+          <li><a href="research.html">Research</a></li>
+          <li><a href="publications.html">Publications</a></li>
+          <li><a href="software.html">Software</a></li>
+          <li><a href="teaching.html">Teaching</a></li>
+          <li class="more">
+            <details>
+              <summary class="more-btn">More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg></summary>
+              <p class="more-heading" id="more-heading">More</p>
+              <ul class="more-panel" aria-labelledby="more-heading">
+                <li><a href="presentations.html">Talks</a></li>
+                <li><a href="service.html">Service &amp; Outreach</a></li>
+                <li><a href="news.html">News</a></li>
+                <li><a href="utilities/index.html">Resources</a></li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="wrap" tabindex="-1">
+    <section class="hero" aria-labelledby="name">
+      <img class="hero-photo" src="assets/images/profile-salt-flats-256.jpg" srcset="assets/images/profile-salt-flats-256.jpg 256w, assets/images/profile-salt-flats.jpg 500w" sizes="(min-width: 64em) 128px, (min-width: 37.5em) 104px, 64px" alt="Tianshi Xu" width="128" height="128" fetchpriority="high" decoding="async">
+      <div class="hero-name">
+        <h1 id="name">Tianshi Xu</h1>
+        <p class="role">Assistant Professor of Mathematics, University of Kentucky</p>
+      </div>
+      <!-- Two groups (emails, profiles) that wrap as units, so a single link is never left on its own line. -->
+      <div class="hero-links">
+        <ul class="link-group" role="list">
+          <li><span class="email"><span class="sr-only">Email: </span><span class="addr">tianshi (dot) xu (at) uky (dot) edu</span></span></li>
+          <li><span class="email"><span class="sr-only">Permanent email: </span><span class="addr">contact (at) tianshixu (dot) com</span></span> <span class="email-note" aria-hidden="true">(permanent)</span></li>
+        </ul>
+        <ul class="link-group is-profiles" role="list">
+          <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ">Google Scholar</a></li>
+          <li><a href="https://github.com/hitenze">GitHub</a></li>
+        </ul>
+      </div>
+      <div class="statement">
+        <p class="lead">I develop mathematical foundations, algorithms, and efficient implementations in scientific machine learning, stochastic optimization, and high-performance computing.</p>
+      </div>
+      <svg class="watermark" viewBox="0 0 192 192" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0 0h4v4h-4zM6 0h4v4h-4zM18 0h4v4h-4zM30 0h4v4h-4zM144 0h4v4h-4zM156 0h4v4h-4zM168 0h4v4h-4zM174 0h4v4h-4zM0 6h4v4h-4zM6 6h4v4h-4zM12 6h4v4h-4zM18 6h4v4h-4zM156 6h4v4h-4zM6 12h4v4h-4zM12 12h4v4h-4zM18 12h4v4h-4zM24 12h4v4h-4zM150 12h4v4h-4zM156 12h4v4h-4zM12 18h4v4h-4zM18 18h4v4h-4zM24 18h4v4h-4zM6 24h4v4h-4zM18 24h4v4h-4zM24 24h4v4h-4zM30 24h4v4h-4zM36 24h4v4h-4zM24 30h4v4h-4zM30 30h4v4h-4zM36 30h4v4h-4zM42 30h4v4h-4zM186 30h4v4h-4zM6 36h4v4h-4zM12 36h4v4h-4zM18 36h4v4h-4zM30 36h4v4h-4zM36 36h4v4h-4zM42 36h4v4h-4zM168 36h4v4h-4zM36 42h4v4h-4zM42 42h4v4h-4zM48 42h4v4h-4zM42 48h4v4h-4zM48 48h4v4h-4zM54 48h4v4h-4zM60 48h4v4h-4zM162 48h4v4h-4zM48 54h4v4h-4zM54 54h4v4h-4zM60 54h4v4h-4zM78 54h4v4h-4zM90 54h4v4h-4zM144 54h4v4h-4zM168 54h4v4h-4zM174 54h4v4h-4zM54 60h4v4h-4zM60 60h4v4h-4zM66 60h4v4h-4zM72 60h4v4h-4zM90 60h4v4h-4zM48 66h4v4h-4zM54 66h4v4h-4zM60 66h4v4h-4zM66 66h4v4h-4zM72 66h4v4h-4zM150 66h4v4h-4zM180 66h4v4h-4zM66 72h4v4h-4zM72 72h4v4h-4zM78 72h4v4h-4zM72 78h4v4h-4zM78 78h4v4h-4zM84 78h4v4h-4zM156 78h4v4h-4zM162 78h4v4h-4zM78 84h4v4h-4zM84 84h4v4h-4zM90 84h4v4h-4zM60 90h4v4h-4zM84 90h4v4h-4zM90 90h4v4h-4zM96 90h4v4h-4zM90 96h4v4h-4zM96 96h4v4h-4zM102 96h4v4h-4zM126 96h4v4h-4zM132 96h4v4h-4zM138 96h4v4h-4zM96 102h4v4h-4zM102 102h4v4h-4zM108 102h4v4h-4zM114 102h4v4h-4zM120 102h4v4h-4zM102 108h4v4h-4zM108 108h4v4h-4zM114 108h4v4h-4zM132 108h4v4h-4zM102 114h4v4h-4zM108 114h4v4h-4zM114 114h4v4h-4zM120 114h4v4h-4zM132 114h4v4h-4zM138 114h4v4h-4zM102 120h4v4h-4zM114 120h4v4h-4zM120 120h4v4h-4zM126 120h4v4h-4zM120 126h4v4h-4zM126 126h4v4h-4zM132 126h4v4h-4zM96 132h4v4h-4zM102 132h4v4h-4zM114 132h4v4h-4zM126 132h4v4h-4zM132 132h4v4h-4zM138 132h4v4h-4zM144 132h4v4h-4zM108 138h4v4h-4zM132 138h4v4h-4zM138 138h4v4h-4zM144 138h4v4h-4zM12 144h4v4h-4zM30 144h4v4h-4zM54 144h4v4h-4zM90 144h4v4h-4zM138 144h4v4h-4zM144 144h4v4h-4zM150 144h4v4h-4zM156 144h4v4h-4zM168 144h4v4h-4zM174 144h4v4h-4zM186 144h4v4h-4zM18 150h4v4h-4zM30 150h4v4h-4zM102 150h4v4h-4zM144 150h4v4h-4zM150 150h4v4h-4zM156 150h4v4h-4zM162 150h4v4h-4zM168 150h4v4h-4zM174 150h4v4h-4zM186 150h4v4h-4zM102 156h4v4h-4zM114 156h4v4h-4zM138 156h4v4h-4zM150 156h4v4h-4zM156 156h4v4h-4zM162 156h4v4h-4zM42 162h4v4h-4zM78 162h4v4h-4zM90 162h4v4h-4zM102 162h4v4h-4zM108 162h4v4h-4zM156 162h4v4h-4zM162 162h4v4h-4zM168 162h4v4h-4zM180 162h4v4h-4zM0 168h4v4h-4zM102 168h4v4h-4zM150 168h4v4h-4zM162 168h4v4h-4zM168 168h4v4h-4zM174 168h4v4h-4zM186 168h4v4h-4zM12 174h4v4h-4zM90 174h4v4h-4zM126 174h4v4h-4zM132 174h4v4h-4zM168 174h4v4h-4zM174 174h4v4h-4zM180 174h4v4h-4zM12 180h4v4h-4zM138 180h4v4h-4zM144 180h4v4h-4zM168 180h4v4h-4zM174 180h4v4h-4zM180 180h4v4h-4zM186 180h4v4h-4zM84 186h4v4h-4zM168 186h4v4h-4zM180 186h4v4h-4zM186 186h4v4h-4z"/></svg>
+    </section>
+
+    <section id="research" class="section is-research" aria-labelledby="research-h">
+      <h2 id="research-h">Research</h2>
+      <div class="body">
+        <ul class="pillars" role="list">
+          <li><h3>Scientific Machine Learning</h3><p>Multiscale neural representations of Green’s functions and learning-augmented preconditioners that encode the structure of the underlying operator.</p></li>
+          <li><h3>Stochastic Optimization</h3><p>Preconditioning for stochastic gradient methods and variance reduction in trace and log-determinant estimators, with applications to Gaussian processes and large language model training.</p></li>
+          <li><h3>High-Performance Computing</h3><p>Scalable algorithms and implementations that account for communication costs, parallelism, GPU execution, and mixed precision.</p></li>
+        </ul>
+        <div class="foundation">
+          <p class="foundation-label">Common foundation</p>
+          <h3>Numerical linear algebra</h3>
+          <p class="foundation-text">Numerical linear algebra is the common thread, connecting my work on learning-augmented PDE solvers, preconditioned methods for large-scale learning, and scalable algorithms for modern computing architectures.</p>
         </div>
-    </header>
+        <p class="more-link"><a href="research.html">Research →</a></p>
+      </div>
+    </section>
 
-    <!-- Main Content -->
-    <main class="page-content">
-        <div class="container">
-            <!-- Biography Section -->
-            <section class="section">
-                <div class="profile-container">
-                    <div class="profile-image">
-                        <img src="assets/images/profile-salt-flats.jpg" alt="Tianshi Xu" width="500" height="500" fetchpriority="high" decoding="async">
-                    </div>
-                    <div class="profile-info">
-                        <h1>Tianshi Xu</h1>
-                        <div class="title">Assistant Professor</div>
-                        <div class="affiliation">University of Kentucky • Department of Mathematics</div>
-                        <div class="contact-info">
-                            Email: tianshi ( d o t ) xu ( a t ) uky ( d o t ) edu<br>
-                            Permanent email: contact ( a t ) tianshixu ( d o t ) com
-                        </div>
-                    </div>
-                </div>
-
-                <h2>Research Interests</h2>
-                <p class="research-interest-text">
-                    My research develops mathematical foundations, algorithms, and efficient implementations in scientific machine learning, stochastic optimization, and high-performance computing. I study learning-augmented solvers for PDEs, preconditioned methods for large-scale learning, and scalable algorithms for modern computing architectures.
-                </p>
-                <p style="text-align: right; margin-top: 1rem;"><a href="research.html" style="font-size: 0.95rem;">Learn More →</a></p>
-
-                <h2>Positions</h2>
-                <ul>
-                    <li><strong>Assistant Professor</strong>, Department of Mathematics, University of Kentucky (Aug 2026-Present)</li>
-                    <li><strong>Postdoctoral Fellow</strong>, Department of Mathematics, Emory University (Aug 2023-Jul 2026, Mentor: Professor <a href="https://www.math.emory.edu/~yxi26/" target="_blank" rel="noopener noreferrer">Yuanzhe Xi</a>)</li>
-                </ul>
-
-                <h2>Education</h2>
-                <ul>
-                    <li><strong>Ph.D.</strong>, University of Minnesota (2023; Advisor: <a href="https://www-users.cse.umn.edu/~saad/" target="_blank" rel="noopener noreferrer">Yousef Saad</a>)</li>
-                    <!--<li><strong>M.S. in Computer Science</strong> (Minor in Biomedical Engineering), University of Minnesota, Twin Cities, U.S. (2019)</li>-->
-                    <!--<li><strong>M.S. in Computational Mathematics</strong>, Beihang University, China (2016, Advisor: Professor Vladimir Shaydurov)</li>-->
-                    <!--<li><strong>B.S. in Computational Mathematics</strong>, Beihang University, China (2013)</li>-->
-                </ul>
-                
-                <h2>Recent News</h2>
-                <ul class="news-list-home">
-                    <li><span class="news-date-home">[Sep-2026]</span> <span>The 2nd Atlanta Mathematics of Data Science Bootcamp was held at Georgia Tech. <a href="https://wliao60.math.gatech.edu/bootcamp2026/" target="_blank" rel="noopener noreferrer">[Website]</a></span></li>
-                    <li><span class="news-date-home">[Aug-2026]</span> <span>Paper accepted by SIAM Journal on Matrix Analysis and Applications: <a href="https://arxiv.org/abs/2510.24587" target="_blank" rel="noopener noreferrer">"Preconditioned Truncated Single-Sample Estimators for Scalable Stochastic Optimization"</a></span></li>
-                    <li><span class="news-date-home">[Jul-2026]</span> <span>Applications are open for the 2nd Atlanta Mathematics of Data Science Bootcamp at Georgia Tech, Sep 19-20, 2026. <a href="https://wliao60.math.gatech.edu/bootcamp2026/" target="_blank" rel="noopener noreferrer">[Website]</a></span></li>
-                    <li><span class="news-date-home">[Jun-2026]</span> <span>New preprint: <a href="https://arxiv.org/abs/2606.27216" target="_blank" rel="noopener noreferrer">"Hierarchical Muon: Tiled Newton-Schulz Updates for Efficient Muon Optimization"</a></span></li>
-                    <li><span class="news-date-home">[Jun-2026]</span> <span>New preprint: <a href="https://arxiv.org/abs/2606.22742" target="_blank" rel="noopener noreferrer">"Factored Sparse Approximate Inverse Preconditioning via Spectral Optimization"</a></span></li>
-                    <li><span class="news-date-home">[May-2026]</span> <span>Paper accepted by Transactions on Machine Learning Research: <a href="https://arxiv.org/abs/2511.19716" target="_blank" rel="noopener noreferrer">"Design Criteria for SGD Preconditioners: Local Conditioning, Noise Floors, and Basin Stability"</a></span></li>
-                    <li><span class="news-date-home">[May-2026]</span> <span>Paper published in Foundations of Data Science: <a href="https://doi.org/10.3934/fods.2026013" target="_blank" rel="noopener noreferrer">"Preconditioned Additive Gaussian Processes with Fourier Acceleration"</a></span></li>
-                    <li><span class="news-date-home">[Apr-2026]</span> <span>Paper published in SIAM Journal on Scientific Computing: <a href="https://doi.org/10.1137/24M1709601" target="_blank" rel="noopener noreferrer">"Multiscale Neural Networks for Approximating Green's Functions"</a></span></li>
-                    <li><span class="news-date-home">[Feb-2026]</span> <span>ACM26 will be hosted at Emory Mathematics. <a href="https://www.math.emory.edu/~yxi26/ACM26/index.html" target="_blank" rel="noopener noreferrer">[Website]</a></span></li>
-                    <li><span class="news-date-home">[Jan-2026]</span> <span>Paper published in SIAM Journal on Scientific Computing: <a href="https://doi.org/10.1137/25M1756922" target="_blank" rel="noopener noreferrer">"Mixed-Precision Orthogonalization-Free Projection Methods for Eigenvalue and Singular Value Problems"</a></span></li>
-                    <li><span class="news-date-home">[Jan-2026]</span> <span>Paper published in Journal of Open Source Software: <a href="https://doi.org/10.21105/joss.08621" target="_blank" rel="noopener noreferrer">"HiGP: A High-Performance Python Package for Gaussian Processes"</a></span></li>
-                </ul>
-                <p style="text-align: right; margin-top: 0.5rem;"><a href="news.html" style="font-size: 0.95rem;">View All News →</a></p>
-            </section>
+    <section id="publications" class="section" aria-labelledby="publications-h">
+      <h2 id="publications-h">Selected publications</h2>
+      <div class="body">
+        <div class="pubs-layout">
+          <div>
+            <ol class="papers" role="list">
+            <li class="paper">
+              <article>
+                <h3>Multiscale Neural Networks for Approximating Green’s Functions</h3>
+                <p class="meta">W. Hao, R. Li, Y. Xi, <strong>T. Xu</strong>, and Y. Yang · <cite>SIAM Journal on Scientific Computing</cite>, 48(2): C240–C270 (2026) <span class="chip is-published">Published</span></p>
+                <p class="summary">Multiscale neural representations of Green’s functions for families of PDEs.</p>
+                <p class="links"><a href="https://doi.org/10.1137/24M1709601" aria-label="DOI for Multiscale Neural Networks for Approximating Green’s Functions">DOI</a> <a href="https://arxiv.org/pdf/2410.18439" aria-label="PDF for Multiscale Neural Networks for Approximating Green’s Functions">PDF</a> <a href="https://github.com/Hitenze/MGLearn" aria-label="Code for Multiscale Neural Networks for Approximating Green’s Functions">Code</a></p>
+              </article>
+            </li>
+            <li class="paper">
+              <article>
+                <h3>Preconditioned Truncated Single-Sample Estimators for Scalable Stochastic Optimization</h3>
+                <p class="meta"><strong>T. Xu</strong>, D. Cai, H. Huang, E. Chow, and Y. Xi · <cite>SIAM Journal on Matrix Analysis and Applications</cite> <span class="chip">Accepted</span></p>
+                <p class="summary">Preconditioning to reduce estimator variance in large-scale stochastic optimization.</p>
+                <p class="links"><a href="https://arxiv.org/abs/2510.24587" aria-label="arXiv page for Preconditioned Truncated Single-Sample Estimators for Scalable Stochastic Optimization">arXiv</a> <a href="https://arxiv.org/pdf/2510.24587" aria-label="PDF for Preconditioned Truncated Single-Sample Estimators for Scalable Stochastic Optimization">PDF</a></p>
+              </article>
+            </li>
+            <li class="paper">
+              <article>
+                <h3>Design Criteria for SGD Preconditioners: Local Conditioning, Noise Floors, and Basin Stability</h3>
+                <p class="meta">M. Scott, <strong>T. Xu</strong>, Z. Tang, A. Pichette-Emmons, Q. Ye, Y. Saad, and Y. Xi · <cite>Transactions on Machine Learning Research</cite> (2026) <span class="chip is-published">Published</span></p>
+                <p class="summary">How a fixed preconditioner shapes the convergence rate, noise floor, and basin stability of SGD.</p>
+                <p class="links"><a href="https://openreview.net/forum?id=vo8FOBt6f6" aria-label="OpenReview page for Design Criteria for SGD Preconditioners: Local Conditioning, Noise Floors, and Basin Stability">OpenReview</a> <a href="https://openreview.net/pdf?id=vo8FOBt6f6" aria-label="PDF for Design Criteria for SGD Preconditioners: Local Conditioning, Noise Floors, and Basin Stability">PDF</a> <a href="https://youtu.be/jaQe_zAi1Gs" aria-label="Video for Design Criteria for SGD Preconditioners: Local Conditioning, Noise Floors, and Basin Stability">Video</a></p>
+              </article>
+            </li>
+            <li class="paper">
+              <article>
+                <h3>Hierarchical Muon: Tiled Newton-Schulz Updates for Efficient Muon Optimization</h3>
+                <p class="meta">Z. Tang, <strong>T. Xu</strong>, Y. Saad, and Y. Xi · <cite>arXiv:2606.27216</cite> (2026) <span class="chip is-preprint">Preprint</span></p>
+                <p class="summary">Tiled Newton-Schulz updates that reduce the optimizer-step cost of Muon in transformer training.</p>
+                <p class="links"><a href="https://arxiv.org/abs/2606.27216" aria-label="arXiv page for Hierarchical Muon: Tiled Newton-Schulz Updates for Efficient Muon Optimization">arXiv</a> <a href="https://arxiv.org/pdf/2606.27216" aria-label="PDF for Hierarchical Muon: Tiled Newton-Schulz Updates for Efficient Muon Optimization">PDF</a> <a href="https://github.com/tang0389/himuon" aria-label="Code for Hierarchical Muon: Tiled Newton-Schulz Updates for Efficient Muon Optimization">Code</a></p>
+              </article>
+            </li>
+            <li class="paper">
+              <article>
+                <h3>Neural Approximate Inverse Preconditioners</h3>
+                <p class="meta"><strong>T. Xu</strong>, R. Li, and Y. Xi · <cite>arXiv:2510.13034</cite> (2025) <span class="chip is-preprint">Preprint</span></p>
+                <p class="summary">Learned approximate inverse preconditioners for sparse linear systems.</p>
+                <p class="links"><a href="https://arxiv.org/abs/2510.13034" aria-label="arXiv page for Neural Approximate Inverse Preconditioners">arXiv</a> <a href="https://arxiv.org/pdf/2510.13034v3" aria-label="PDF for Neural Approximate Inverse Preconditioners">PDF</a></p>
+              </article>
+            </li>
+            </ol>
+            <p class="more-link"><a href="publications.html">All publications →</a></p>
+          </div>
+          <aside id="software" class="software" aria-labelledby="software-h">
+            <h3 id="software-h">Software</h3>
+            <ul role="list">
+              <li><p class="name"><a href="https://github.com/hitenze/pargemslr">ParGeMSLR</a> — Main developer</p><p class="what">An MPI/C++ implementation of a parallel multilevel Schur-complement low-rank preconditioner for large sparse linear systems.</p></li>
+              <li><p class="name"><a href="https://github.com/hitenze/Schurcheb">SchurCheb</a> — Main developer</p><p class="what">A distributed Chebyshev eigensolver for partial spectral factorizations of matrix pencils.</p></li>
+              <li><p class="name"><a href="https://github.com/hitenze/SchurILU">SchurILU</a> — Main developer</p><p class="what">NumPy/SciPy ILU baselines with Schur-complement support, available on <a href="https://pypi.org/project/schurilu/">PyPI</a>.</p></li>
+              <li><p class="name"><a href="https://github.com/huanghua1994/HiGP">HiGP</a> — Co-developer</p><p class="what">A high-performance Python package for large-scale Gaussian processes.</p></li>
+              <li><p class="name"><a href="https://github.com/hypre-space/hypre">hypre</a> — Contributor</p><p class="what">GPU-accelerated incomplete LU preconditioners.</p></li>
+            </ul>
+            <p class="more-link"><a href="software.html">All software →</a></p>
+          </aside>
         </div>
-    </main>
+      </div>
+    </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p style="font-size: 0.85rem; color: #999;">© 2026 Tianshi Xu</p>
-        </div>
-    </footer>
+    <section id="news" class="section is-short" aria-labelledby="news-h">
+      <h2 id="news-h">News</h2>
+      <div class="body">
+        <dl class="dated">
+          <div><dt>September 2026</dt><dd>Co-organized the 2nd Atlanta Mathematics of Data Science Bootcamp at Georgia Tech, Sep 19-20, 2026. <a href="https://wliao60.math.gatech.edu/bootcamp2026/">[Website]</a></dd></div>
+          <div><dt>August 2026</dt><dd>Paper accepted by SIAM Journal on Matrix Analysis and Applications: <a href="https://arxiv.org/abs/2510.24587">"Preconditioned Truncated Single-Sample Estimators for Scalable Stochastic Optimization"</a></dd></div>
+          <div><dt>July 2026</dt><dd>Applications are open for the 2nd Atlanta Mathematics of Data Science Bootcamp at Georgia Tech, Sep 19-20, 2026. <a href="https://wliao60.math.gatech.edu/bootcamp2026/">[Website]</a></dd></div>
+          <div><dt>June 2026</dt><dd>New preprint: <a href="https://arxiv.org/abs/2606.27216">"Hierarchical Muon: Tiled Newton-Schulz Updates for Efficient Muon Optimization"</a></dd></div>
+          <div><dt>June 2026</dt><dd>New preprint: <a href="https://arxiv.org/abs/2606.22742">"Factored Sparse Approximate Inverse Preconditioning via Spectral Optimization"</a></dd></div>
+        </dl>
+        <p class="more-link"><a href="news.html">All news →</a></p>
+      </div>
+    </section>
 
-    <!-- JavaScript -->
-    <script src="assets/js/main.js"></script>
+    <section id="teaching" class="section is-short" aria-labelledby="teaching-h">
+      <h2 id="teaching-h">Teaching</h2>
+      <div class="body">
+        <ul class="courses" role="list">
+          <li><p class="course-line"><span class="course-code">MA 321</span> Introduction to Numerical Methods <span class="status">Current</span></p><p class="course-meta">Fall 2026 • University of Kentucky</p></li>
+          <li><p class="course-line"><span class="course-code">MA 420G</span> Introduction to Stochastic Processes <span class="status">Upcoming</span></p><p class="course-meta">Spring 2027 • University of Kentucky · <a href="files/flyer_27_s_420g.pdf">Flyer</a></p></li>
+        </ul>
+        <p class="more-link"><a href="teaching.html">Teaching &amp; mentoring →</a></p>
+      </div>
+    </section>
+
+    <section id="bio" class="section" aria-labelledby="bio-h">
+      <h2 id="bio-h">Bio</h2>
+      <div class="body">
+        <p class="prose">I was previously a postdoctoral fellow at Emory University (2023–2026), where I worked with Yuanzhe Xi. I received my Ph.D. from the University of Minnesota in 2023, advised by Yousef Saad.</p>
+        <h3 class="subhead">Positions</h3>
+        <ul class="plain">
+          <li><strong>Assistant Professor</strong>, Department of Mathematics, University of Kentucky (Aug 2026-Present)</li>
+          <li><strong>Postdoctoral Fellow</strong>, Department of Mathematics, Emory University (Aug 2023-Jul 2026, Mentor: Professor <a href="https://www.math.emory.edu/~yxi26/">Yuanzhe Xi</a>)</li>
+        </ul>
+        <h3 class="subhead">Education</h3>
+        <ul class="plain">
+          <li><strong>Ph.D.</strong>, University of Minnesota (2023; Advisor: <a href="https://www-users.cse.umn.edu/~saad/">Yousef Saad</a>)</li>
+          <!--<li><strong>M.S. in Computer Science</strong> (Minor in Biomedical Engineering), University of Minnesota, Twin Cities, U.S. (2019)</li>-->
+          <!--<li><strong>M.S. in Computational Mathematics</strong>, Beihang University, China (2016, Advisor: Professor Vladimir Shaydurov)</li>-->
+          <!--<li><strong>B.S. in Computational Mathematics</strong>, Beihang University, China (2013)</li>-->
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="inner">
+        <p class="footer-name">Tianshi Xu <span>· Assistant Professor of Mathematics, University of Kentucky</span></p>
+        <ul class="footer-contact" role="list">
+          <li><span class="email"><span class="sr-only">Email: </span><span class="addr">tianshi (dot) xu (at) uky (dot) edu</span></span></li>
+          <li><span class="email"><span class="sr-only">Permanent email: </span><span class="addr">contact (at) tianshixu (dot) com</span></span> <span class="email-note" aria-hidden="true">(permanent)</span></li>
+        </ul>
+        <nav aria-label="All pages">
+          <ul>
+            <li><a href="research.html">Research</a></li>
+            <li><a href="publications.html">Publications</a></li>
+            <li><a href="software.html">Software</a></li>
+            <li><a href="teaching.html">Teaching</a></li>
+            <li><a href="teaching.html#mentoring">Mentoring</a></li>
+            <li><a href="presentations.html">Talks</a></li>
+            <li><a href="service.html">Service &amp; Outreach</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="utilities/index.html">Resources</a></li>
+            <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ">Google Scholar</a></li>
+            <li><a href="https://github.com/hitenze">GitHub</a></li>
+          </ul>
+        </nav>
+        <p class="copyright">© 2026 Tianshi Xu</p>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

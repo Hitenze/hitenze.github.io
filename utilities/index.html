@@ -1,390 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Toolbox</title>
-    <style>
-        @font-face {
-            font-family: 'STIX Two Text';
-            font-style: normal;
-            font-weight: 400 700;
-            font-display: swap;
-            src: url('../assets/fonts/stix-two-text/stix-two-text-normal-latin-ext.woff2') format('woff2');
-            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-        }
-        @font-face {
-            font-family: 'STIX Two Text';
-            font-style: normal;
-            font-weight: 400 700;
-            font-display: swap;
-            src: url('../assets/fonts/stix-two-text/stix-two-text-normal-latin.woff2') format('woff2');
-            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-        }
-        @font-face {
-            font-family: 'STIX Two Text';
-            font-style: italic;
-            font-weight: 400 700;
-            font-display: swap;
-            src: url('../assets/fonts/stix-two-text/stix-two-text-italic-latin-ext.woff2') format('woff2');
-            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-        }
-        @font-face {
-            font-family: 'STIX Two Text';
-            font-style: italic;
-            font-weight: 400 700;
-            font-display: swap;
-            src: url('../assets/fonts/stix-two-text/stix-two-text-italic-latin.woff2') format('woff2');
-            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-        }
-        @font-face {
-            font-family: 'IBM Plex Mono';
-            font-style: normal;
-            font-weight: 400;
-            font-display: swap;
-            src: url('../assets/fonts/ibm-plex-mono/ibm-plex-mono-400-latin-ext.woff2') format('woff2');
-            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-        }
-        @font-face {
-            font-family: 'IBM Plex Mono';
-            font-style: normal;
-            font-weight: 400;
-            font-display: swap;
-            src: url('../assets/fonts/ibm-plex-mono/ibm-plex-mono-400-latin.woff2') format('woff2');
-            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-        }
-        @font-face {
-            font-family: 'IBM Plex Mono';
-            font-style: normal;
-            font-weight: 500;
-            font-display: swap;
-            src: url('../assets/fonts/ibm-plex-mono/ibm-plex-mono-500-latin-ext.woff2') format('woff2');
-            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-        }
-        @font-face {
-            font-family: 'IBM Plex Mono';
-            font-style: normal;
-            font-weight: 500;
-            font-display: swap;
-            src: url('../assets/fonts/ibm-plex-mono/ibm-plex-mono-500-latin.woff2') format('woff2');
-            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-        }
-
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #3498db;
-            --text-primary: #2b2f33;
-            --text-secondary: #59636e;
-            --text-light: #8a949e;
-            --bg-primary: #f6f7fb;
-            --bg-white: #fff;
-            --bg-light: #f1f4f8;
-            --border-color: #d9e1ea;
-            --shadow-sm: 0 6px 16px rgba(14, 33, 53, 0.08);
-            --shadow-md: 0 12px 28px rgba(14, 33, 53, 0.12);
-            --radius-md: 12px;
-            --radius-lg: 18px;
-            --font-display: 'STIX Two Text', 'Times New Roman', serif;
-            --font-primary: 'STIX Two Text', 'Georgia', serif;
-            --font-ui: 'IBM Plex Mono', 'SFMono-Regular', 'Consolas', 'Monaco', monospace;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: var(--font-primary);
-            background: var(--bg-primary);
-            background-image:
-                radial-gradient(circle at 15% 10%, rgba(52, 152, 219, 0.12), transparent 35%),
-                radial-gradient(circle at 85% 0%, rgba(44, 62, 80, 0.12), transparent 40%),
-                linear-gradient(180deg, #ffffff 0%, var(--bg-primary) 100%);
-            min-height: 100vh;
-            padding: 28px;
-            color: var(--text-primary);
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        header {
-            background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            padding: 40px;
-            margin-bottom: 36px;
-            border: 1px solid var(--border-color);
-        }
-
-        header h1 {
-            font-family: var(--font-display);
-            font-size: clamp(2.2rem, 3.2vw, 2.9rem);
-            margin-bottom: 10px;
-            color: var(--primary-color);
-            font-weight: 700;
-        }
-
-        header h1::after {
-            content: '';
-            display: block;
-            width: 72px;
-            height: 3px;
-            background: var(--accent-color);
-            margin-top: 0.6rem;
-            border-radius: 999px;
-        }
-
-        header p {
-            font-size: 1.05rem;
-            color: var(--text-secondary);
-        }
-
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            color: var(--secondary-color);
-            text-decoration: none;
-            margin-bottom: 20px;
-            padding: 10px 18px;
-            background: var(--bg-white);
-            border-radius: 999px;
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-color);
-            font-weight: 600;
-            font-family: var(--font-ui);
-            letter-spacing: 0.02em;
-        }
-
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 22px;
-            padding: 10px 0 30px;
-        }
-
-        .tool-card {
-            background: var(--bg-white);
-            border-radius: var(--radius-md);
-            padding: 28px;
-            text-decoration: none;
-            color: var(--text-primary);
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
-            border-left: 4px solid var(--accent-color);
-        }
-
-        .tool-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .tool-card h2 {
-            font-family: var(--font-display);
-            font-size: 1.35rem;
-            margin-bottom: 12px;
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .tool-card p {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-
-        .tool-card.disabled {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        .tutorial-section {
-            margin-top: 18px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .tutorial-section h2 {
-            font-family: var(--font-ui);
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .tutorial-section > p {
-            color: var(--text-light);
-            margin-bottom: 18px;
-            line-height: 1.6;
-        }
-
-        .tutorial-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 22px;
-        }
-
-        .tutorial-card {
-            border-left-color: var(--secondary-color);
-        }
-
-        footer {
-            text-align: center;
-            color: var(--text-light);
-            margin-top: 40px;
-            padding: 12px;
-            font-size: 0.9rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            body {
-                padding: 20px;
-            }
-
-            header {
-                padding: 30px;
-            }
-
-            header h1 {
-                font-size: 2rem;
-            }
-
-            .tools-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-
-            .tool-card {
-                padding: 24px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 12px;
-            }
-
-            header {
-                margin-bottom: 30px;
-                padding: 25px 20px;
-            }
-
-            header h1 {
-                font-size: 1.8rem;
-            }
-        }
-    </style>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resources — Tianshi Xu</title>
+  <meta name="description" content="Resources from Tianshi Xu: HPC workshop materials, interactive machine-learning playgrounds, and web utilities.">
+  <meta name="author" content="Tianshi Xu">
+  <meta name="color-scheme" content="light dark">
+  <link rel="author" type="text/plain" href="../humans.txt">
+  <link rel="icon" href="data:,">
+  <script>
+    /* Theme boot: apply a saved choice before CSS paints (no flash); otherwise CSS follows the system. */
+    (function () {
+      var d = document.documentElement, t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t === 'dark-mode' || t === 'light-mode') { d.classList.add(t); d.setAttribute('data-theme', t === 'dark-mode' ? 'dark' : 'light'); }
+      else { d.setAttribute('data-theme', window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+    })();
+  </script>
+  <link rel="preload" href="../assets/fonts/stix-two-text/stix-two-text-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/stix-two-text/stix-two-text-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/site.css">
+  <script src="../assets/js/site.js" defer></script>
 </head>
 <body>
-    <div class="container">
-        <a href="../index.html" class="back-btn">← Back to Home</a>
-        <header>
-            <h1>Online Toolbox</h1>
-            <p>A collection of practical web utilities for everyday tasks.</p>
-        </header>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-        <div class="tools-grid">
-
-            <a href="photo-mosaic.html" class="tool-card">
-                <h2>Photo Mosaic</h2>
-                <p>Blur selected areas of an image to protect privacy</p>
-            </a>
-
-            <a href="text-format.html" class="tool-card">
-                <h2>Text Formatter</h2>
-                <p>Clean whitespace, line breaks, and adjust casing</p>
-            </a>
-            
-            <a href="url-to-qr.html" class="tool-card">
-                <h2>URL to QR</h2>
-                <p>Convert URLs to scannable QR codes</p>
-            </a>
-
-            <a href="exam-timer.html" class="tool-card">
-                <h2>Exam Timer</h2>
-                <p>Large-screen timer for exams or talks</p>
-            </a>
-
-            <a href="json-format.html" class="tool-card">
-                <h2>JSON Formatter</h2>
-                <p>Validate, pretty-print, and minify JSON</p>
-            </a>
-
-            <a href="base64.html" class="tool-card">
-                <h2>Base64 Encoder/Decoder</h2>
-                <p>Convert text and files to/from Base64</p>
-            </a>
-
-            <a href="timestamp.html" class="tool-card">
-                <h2>Timestamp Converter</h2>
-                <p>Convert between Unix timestamp and datetime</p>
-            </a>
-
-            <a href="url-encode.html" class="tool-card">
-                <h2>URL Encode/Decode</h2>
-                <p>Encode/decode full URLs or URL components</p>
-            </a>
-
-            <a href="password-generator.html" class="tool-card">
-                <h2>Password Generator</h2>
-                <p>Create secure, random passwords</p>
-            </a>
-
-            <a href="GP%20Explorer/index.html" class="tool-card">
-                <h2>GP Explorer</h2>
-                <p>Visualize GP priors, posteriors, and hyperparameter sampling with MCMC and HMC.</p>
-            </a>
-
-            <a href="nn-playground.html" class="tool-card">
-                <h2>NN Playground</h2>
-                <p>Experiment with network width, regularization, dropout, and optimizers in a simple regression demo.</p>
-            </a>
-
-            <a href="cnn-playground.html" class="tool-card">
-                <h2>CNN Playground</h2>
-                <p>Inspect feature maps, compare small CNN variants, and test digit predictions with sample or hand-drawn inputs.</p>
-            </a>
-
-            <a href="rnn-playground.html" class="tool-card">
-                <h2>RNN Playground</h2>
-                <p>Compare RNN and LSTM sequence models, inspect hidden dynamics, and watch forecasting behavior across datasets.</p>
-            </a>
-
-            <a href="gcn-playground.html" class="tool-card">
-                <h2>GCN Playground</h2>
-                <p>Explore node classification, oversmoothing, residual connections, and label scarcity on small graph datasets.</p>
-            </a>
-
-            <a href="transformer-playground.html" class="tool-card">
-                <h2>Transformer Playground</h2>
-                <p>Inspect causal self-attention, compare head and depth settings, and interact with a tiny language model.</p>
-            </a>
-        </div>
-
-        <section class="tutorial-section">
-            <h2>Might Be Useful Tutorials</h2>
-            <p>Small workshop notes and tutorial materials that are not part of the main toolbox.</p>
-            <div class="tutorial-grid">
-                <a href="hpc-workshop/index.html" class="tool-card tutorial-card">
-                    <h2>HPC Workshop</h2>
-                    <p>Introductory Slurm and high-performance computing workshop materials.</p>
-                </a>
-            </div>
-        </section>
-
-        <footer>
-            <p>&copy; 2025 Online Toolbox</p>
-        </footer>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../index.html">Tianshi Xu</a>
+      <button type="button" class="icon-btn theme-toggle js-theme-toggle" aria-label="Dark theme" aria-describedby="theme-state" title="Toggle color theme">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg>
+      </button>
+      <span id="theme-state" class="sr-only"></span>
+      <button type="button" class="icon-btn menu-toggle" aria-expanded="false" aria-controls="site-nav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <span>Menu</span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="Primary">
+        <ul>
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="../research.html">Research</a></li>
+          <li><a href="../publications.html">Publications</a></li>
+          <li><a href="../software.html">Software</a></li>
+          <li><a href="../teaching.html">Teaching</a></li>
+          <li class="more">
+            <details>
+              <summary class="more-btn is-current">More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg></summary>
+              <p class="more-heading" id="more-heading">More</p>
+              <ul class="more-panel" aria-labelledby="more-heading">
+                <li><a href="../presentations.html">Talks</a></li>
+                <li><a href="../service.html">Service &amp; Outreach</a></li>
+                <li><a href="../news.html">News</a></li>
+                <li><a href="../utilities/index.html" aria-current="page">Resources</a></li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </nav>
     </div>
+  </header>
+
+  <main id="main" class="wrap" tabindex="-1">
+    <header class="page-head">
+      <h1>Resources</h1>
+      <p class="intro">Workshop materials, interactive playgrounds, and practical web utilities.</p>
+      <nav class="page-toc" aria-label="On this page"><ul><li><a href="#workshops">Workshops &amp; events</a></li><li><a href="#playgrounds">Interactive playgrounds</a></li><li><a href="#tools">Online Toolbox</a></li></ul></nav>
+    </header>
+
+    <section id="workshops" class="section" aria-labelledby="workshops-h">
+      <h2 id="workshops-h">Workshops &amp; events</h2>
+      <div class="body">
+        <p class="prose">Might Be Useful Tutorials: small workshop notes and tutorial materials that are not part of the main toolbox.</p>
+        <ul class="cards" role="list">
+          <li><a class="card" href="hpc-workshop/index.html"><span class="card-title">HPC Workshop</span><span class="card-text">Introductory Slurm and high-performance computing workshop materials.</span></a></li>
+          <li><a class="card" href="https://wliao60.math.gatech.edu/bootcamp2026/"><span class="card-title">2nd Atlanta Mathematics of Data Science Bootcamp</span><span class="card-text">Co-organized at Georgia Tech, Sep 19-20, 2026.</span><span class="card-meta">External event website</span></a></li>
+          <li><a class="card" href="../service.html#outreach"><span class="card-title">Outreach</span><span class="card-text">Past bootcamps, workshops, and outreach events.</span></a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="playgrounds" class="section" aria-labelledby="playgrounds-h">
+      <h2 id="playgrounds-h">Interactive playgrounds</h2>
+      <div class="body">
+        <ul class="cards" role="list">
+          <li><a class="card" href="GP%20Explorer/index.html"><span class="card-title">GP Explorer</span><span class="card-text">Visualize GP priors, posteriors, and hyperparameter sampling with MCMC and HMC.</span></a></li>
+          <li><a class="card" href="nn-playground.html"><span class="card-title">NN Playground</span><span class="card-text">Experiment with network width, regularization, dropout, and optimizers in a simple regression demo.</span></a></li>
+          <li><a class="card" href="cnn-playground.html"><span class="card-title">CNN Playground</span><span class="card-text">Inspect feature maps, compare small CNN variants, and test digit predictions with sample or hand-drawn inputs.</span></a></li>
+          <li><a class="card" href="rnn-playground.html"><span class="card-title">RNN Playground</span><span class="card-text">Compare RNN and LSTM sequence models, inspect hidden dynamics, and watch forecasting behavior across datasets.</span></a></li>
+          <li><a class="card" href="gcn-playground.html"><span class="card-title">GCN Playground</span><span class="card-text">Explore node classification, oversmoothing, residual connections, and label scarcity on small graph datasets.</span></a></li>
+          <li><a class="card" href="transformer-playground.html"><span class="card-title">Transformer Playground</span><span class="card-text">Inspect causal self-attention, compare head and depth settings, and interact with a tiny language model.</span></a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="tools" class="section" aria-labelledby="tools-h">
+      <h2 id="tools-h">Online Toolbox</h2>
+      <div class="body">
+        <p class="prose">A collection of practical web utilities for everyday tasks.</p>
+        <ul class="cards" role="list">
+          <li><a class="card" href="photo-mosaic.html"><span class="card-title">Photo Mosaic</span><span class="card-text">Blur selected areas of an image to protect privacy</span></a></li>
+          <li><a class="card" href="text-format.html"><span class="card-title">Text Formatter</span><span class="card-text">Clean whitespace, line breaks, and adjust casing</span></a></li>
+          <li><a class="card" href="url-to-qr.html"><span class="card-title">URL to QR</span><span class="card-text">Convert URLs to scannable QR codes</span></a></li>
+          <li><a class="card" href="exam-timer.html"><span class="card-title">Exam Timer</span><span class="card-text">Large-screen timer for exams or talks</span></a></li>
+          <li><a class="card" href="json-format.html"><span class="card-title">JSON Formatter</span><span class="card-text">Validate, pretty-print, and minify JSON</span></a></li>
+          <li><a class="card" href="base64.html"><span class="card-title">Base64 Encoder/Decoder</span><span class="card-text">Convert text and files to/from Base64</span></a></li>
+          <li><a class="card" href="timestamp.html"><span class="card-title">Timestamp Converter</span><span class="card-text">Convert between Unix timestamp and datetime</span></a></li>
+          <li><a class="card" href="url-encode.html"><span class="card-title">URL Encode/Decode</span><span class="card-text">Encode/decode full URLs or URL components</span></a></li>
+          <li><a class="card" href="password-generator.html"><span class="card-title">Password Generator</span><span class="card-text">Create secure, random passwords</span></a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="inner">
+        <p class="footer-name">Tianshi Xu <span>· Assistant Professor of Mathematics, University of Kentucky</span></p>
+        <ul class="footer-contact" role="list">
+          <li><span class="email"><span class="sr-only">Email: </span><span class="addr">tianshi (dot) xu (at) uky (dot) edu</span></span></li>
+          <li><span class="email"><span class="sr-only">Permanent email: </span><span class="addr">contact (at) tianshixu (dot) com</span></span> <span class="email-note" aria-hidden="true">(permanent)</span></li>
+        </ul>
+        <nav aria-label="All pages">
+          <ul>
+            <li><a href="../research.html">Research</a></li>
+            <li><a href="../publications.html">Publications</a></li>
+            <li><a href="../software.html">Software</a></li>
+            <li><a href="../teaching.html">Teaching</a></li>
+            <li><a href="../teaching.html#mentoring">Mentoring</a></li>
+            <li><a href="../presentations.html">Talks</a></li>
+            <li><a href="../service.html">Service &amp; Outreach</a></li>
+            <li><a href="../news.html">News</a></li>
+            <li><a href="../utilities/index.html">Resources</a></li>
+            <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ">Google Scholar</a></li>
+            <li><a href="https://github.com/hitenze">GitHub</a></li>
+          </ul>
+        </nav>
+        <p class="copyright">© 2026 Tianshi Xu</p>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

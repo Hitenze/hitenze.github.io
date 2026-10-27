@@ -1,173 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Professional Service - Tianshi Xu. Peer review, conference organization, and professional academic service.">
-    <title>Professional Service - Tianshi Xu</title>
-
-    <!-- Theme boot (avoid flash on navigation) -->
-    <script>
-      (function() {
-        try {
-          var theme = localStorage.getItem('theme');
-          if (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            theme = 'dark-mode';
-          }
-          if (theme) document.documentElement.classList.add(theme);
-        } catch (e) {}
-      })();
-    </script>
-    <style>
-      html { background: #f6f7fb; }
-      body { background: #f6f7fb; }
-      html.dark-mode,
-      html.dark-mode body { background: #1a1a1a; }
-    </style>
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/responsive.css">
-    <link rel="stylesheet" href="assets/css/navigation-patch.css">
-
-    <style>
-        .service-block {
-            background: var(--bg-light);
-            border: 1px solid var(--border-color);
-            border-left: 4px solid var(--accent-color);
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .service-block h2 {
-            margin-top: 0;
-            margin-bottom: 1rem;
-        }
-
-        .reviewer-list {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .reviewer-list li {
-            padding: 0.45rem 0;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        .reviewer-list li:last-child {
-            border-bottom: none;
-        }
-
-        .service-list {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .service-list li {
-            padding: 0.45rem 0;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        .service-list li:last-child {
-            border-bottom: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Service &amp; Outreach — Tianshi Xu</title>
+  <meta name="description" content="Professional service and outreach by Tianshi Xu: peer review, conference and minisymposium organization, and outreach activities.">
+  <meta name="author" content="Tianshi Xu">
+  <meta name="color-scheme" content="light dark">
+  <link rel="author" type="text/plain" href="humans.txt">
+  <link rel="icon" href="data:,">
+  <script>
+    /* Theme boot: apply a saved choice before CSS paints (no flash); otherwise CSS follows the system. */
+    (function () {
+      var d = document.documentElement, t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t === 'dark-mode' || t === 'light-mode') { d.classList.add(t); d.setAttribute('data-theme', t === 'dark-mode' ? 'dark' : 'light'); }
+      else { d.setAttribute('data-theme', window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+    })();
+  </script>
+  <link rel="preload" href="assets/fonts/stix-two-text/stix-two-text-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/stix-two-text/stix-two-text-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script src="assets/js/site.js" defer></script>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <nav>
-                <a href="index.html" class="logo">Tianshi Xu</a>
-                <div class="nav-groups">
-                    <ul class="nav-links nav-primary nav-home">
-                        <li><a href="index.html">Home</a></li>
-                    </ul>
-                    <div class="nav-group">
-                        <div class="nav-links-label">Research</div>
-                        <ul class="nav-links nav-sub">
-                            <li><a href="research.html">Overview</a></li>
-                            <li><a href="publications.html">Publications</a></li>
-                            <li><a href="software.html">Software</a></li>
-                            <li><a href="presentations.html">Presentations</a></li>
-                        </ul>
-                    </div>
-                    <div class="nav-group">
-                        <div class="nav-links-label">Teaching</div>
-                        <ul class="nav-links nav-sub">
-                            <li><a href="teaching.html">Courses</a></li>
-                            <li><a href="mentoring.html">Mentoring</a></li>
-                        </ul>
-                    </div>
-                    <div class="nav-group">
-                        <div class="nav-links-label">Service</div>
-                        <ul class="nav-links nav-sub">
-                            <li><a href="service.html">Professional Service</a></li>
-                            <li><a href="outreach.html">Outreach</a></li>
-                        </ul>
-                    </div>
-                    <div class="nav-group">
-                        <div class="nav-links-label">Links</div>
-                        <ul class="nav-links nav-secondary">
-                            <li><a href="https://github.com/hitenze" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-                            <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank" rel="noopener noreferrer">Google Scholar</a></li>
-                            <li><a href="https://wliao60.math.gatech.edu/bootcamp2026/" target="_blank" rel="noopener noreferrer">Bootcamp 2026</a></li>
-                            <li><a href="utilities/index.html">Web Tools</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="nav-tools">
-                    <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
-                </div>
-            </nav>
-        </div>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html">Tianshi Xu</a>
+      <button type="button" class="icon-btn theme-toggle js-theme-toggle" aria-label="Dark theme" aria-describedby="theme-state" title="Toggle color theme">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg>
+      </button>
+      <span id="theme-state" class="sr-only"></span>
+      <button type="button" class="icon-btn menu-toggle" aria-expanded="false" aria-controls="site-nav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <span>Menu</span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="Primary">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="research.html">Research</a></li>
+          <li><a href="publications.html">Publications</a></li>
+          <li><a href="software.html">Software</a></li>
+          <li><a href="teaching.html">Teaching</a></li>
+          <li class="more">
+            <details>
+              <summary class="more-btn is-current">More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg></summary>
+              <p class="more-heading" id="more-heading">More</p>
+              <ul class="more-panel" aria-labelledby="more-heading">
+                <li><a href="presentations.html">Talks</a></li>
+                <li><a href="service.html" aria-current="page">Service &amp; Outreach</a></li>
+                <li><a href="news.html">News</a></li>
+                <li><a href="utilities/index.html">Resources</a></li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="wrap" tabindex="-1">
+    <header class="page-head">
+      <h1>Service &amp; Outreach</h1>
+      <nav class="page-toc" aria-label="On this page"><ul><li><a href="#service">Professional service</a></li><li><a href="#outreach">Outreach</a></li></ul></nav>
     </header>
 
-    <!-- Main Content -->
-    <main class="page-content">
-        <div class="container">
-            <section class="section">
-                <h1>Professional Service</h1>
+    <section id="service" class="section" aria-labelledby="service-h">
+      <h2 id="service-h">Professional Service</h2>
+      <div class="body">
+        <h3 class="subhead">Reviewer</h3>
+        <ul class="plain">
+          <li>ACM Transactions on Architecture and Code Optimization</li>
+          <li>Cluster Computing</li>
+          <li>IEEE Transactions on Cloud Computing</li>
+          <li>IEEE Transactions on Parallel and Distributed Systems</li>
+          <li>Numerical Linear Algebra with Applications</li>
+          <li>SIAM Journal on Scientific Computing</li>
+          <li>The Journal of Supercomputing</li>
+        </ul>
+        <h3 class="subhead">Conference and Minisymposium Organization</h3>
+        <ul class="plain">
+          <li>Proposed minisymposium "AI-Accelerated Numerical Solvers" for the SIAM Conference on Computational Science and Engineering (CSE27), Feb 22-26, 2027.</li>
+          <li>"Uncertainty Quantification for Machine Learning" at the SIAM Southeastern Atlantic Section Conference, Mar 21-23, 2025.</li>
+          <li>"Preconditioning for Kernel Matrices" at the SIAM Conference on Mathematics of Data Science, Oct 21-25, 2024.</li>
+          <li>"Preconditioning Method for Gaussian Process" at the International Conference on Preconditioning Techniques for Scientific and Industrial Applications, Jun 10-12, 2024.</li>
+        </ul>
+      </div>
+    </section>
 
-                <div class="service-block">
-                    <h2>Reviewer</h2>
-                    <ul class="reviewer-list">
-                        <li>ACM Transactions on Architecture and Code Optimization</li>
-                        <li>Cluster Computing</li>
-                        <li>IEEE Transactions on Cloud Computing</li>
-                        <li>IEEE Transactions on Parallel and Distributed Systems</li>
-                        <li>Numerical Linear Algebra with Applications</li>
-                        <li>SIAM Journal on Scientific Computing</li>
-                        <li>The Journal of Supercomputing</li>
-                    </ul>
-                </div>
-
-                <div class="service-block">
-                    <h2>Conference and Minisymposium Organization</h2>
-                    <ul class="service-list">
-                        <li>Proposed minisymposium "AI-Accelerated Numerical Solvers" for the SIAM Conference on Computational Science and Engineering (CSE27), Feb 22-26, 2027.</li>
-                        <li>"Uncertainty Quantification for Machine Learning" at the SIAM Southeastern Atlantic Section Conference, Mar 21-23, 2025.</li>
-                        <li>"Preconditioning for Kernel Matrices" at the SIAM Conference on Mathematics of Data Science, Oct 21-25, 2024.</li>
-                        <li>"Preconditioning Method for Gaussian Process" at the International Conference on Preconditioning Techniques for Scientific and Industrial Applications, Jun 10-12, 2024.</li>
-                    </ul>
-                </div>
-            </section>
+    <section id="outreach" class="section" aria-labelledby="outreach-h">
+      <h2 id="outreach-h">Outreach Activities</h2>
+      <div class="body">
+        <div class="outreach">
+        <article class="oitem">
+          <p class="kicker">Co-Organizer · 2026</p>
+          <h3>2nd Atlanta Mathematics of Data Science Bootcamp</h3>
+          <p>Co-organizer of the 2nd Atlanta Mathematics of Data Science Bootcamp, a free two-day program for undergraduate and high school students at Georgia Tech (2026).</p>
+          <figure>
+            <img src="assets/images/bootcamp_2026.jpg" alt="Group photo from the 2nd Atlanta Mathematics of Data Science Bootcamp" width="1280" height="722" loading="lazy" decoding="async">
+            <figcaption>2nd Atlanta Mathematics of Data Science Bootcamp (2026)</figcaption>
+          </figure>
+          <p class="links"><a href="https://wliao60.math.gatech.edu/bootcamp2026/">Visit Event Website</a></p>
+        </article>
+        <article class="oitem">
+          <p class="kicker">Instructor · 2025</p>
+          <h3>Emory Laney Graduate School Skills Training on HPC</h3>
+          <p>Instructor for the Emory LGS Skills Training on HPC (2025).</p>
+          <figure>
+            <img src="assets/images/hpc_2025.png" alt="Emory LGS Skills Training on HPC" width="1080" height="1080" loading="lazy" decoding="async">
+            <figcaption>Emory LGS Skills Training on HPC (2025)</figcaption>
+          </figure>
+        </article>
+        <article class="oitem">
+          <p class="kicker">Co-Organizer · 2025</p>
+          <h3>Atlanta Mathematics of Data Science Bootcamp</h3>
+          <p>Co-organizer of the Atlanta Mathematics of Data Science Bootcamp (2025).</p>
+          <figure>
+            <img src="assets/images/bootcamp.jpg" alt="Atlanta Mathematics of Data Science Bootcamp" width="1702" height="1276" loading="lazy" decoding="async">
+            <figcaption>Atlanta Mathematics of Data Science Bootcamp (2025)</figcaption>
+          </figure>
+          <p class="links"><a href="https://yuanzhe-xi.github.io/bootcamp.html">Visit Event Website</a> <a href="assets/images/bootcamp_2025.png">View Event Flyer</a></p>
+        </article>
+        <article class="oitem">
+          <p class="kicker">Exhibitor · 2025</p>
+          <h3>Atlanta Science Festival</h3>
+          <p>Exhibitor at the Atlanta Science Festival (2025). We set up a booth to show the importance of math in science and engineering.</p>
+          <figure>
+            <img src="assets/images/ASF25.jpg" alt="Atlanta Science Festival 2025" width="3024" height="4032" loading="lazy" decoding="async">
+            <figcaption>Atlanta Science Festival (2025)</figcaption>
+          </figure>
+        </article>
+        <article class="oitem">
+          <p class="kicker">Exhibitor · 2023 · 2024</p>
+          <h3>Mary Lin Elementary School STEAM Day</h3>
+          <p>Exhibitor at the Mary Lin Elementary School's STEAM Day (2023, 2024). We set up booths to show the importance of math in science and engineering.</p>
+          <figure>
+            <img src="assets/images/MLSN.jpg" alt="Mary Lin Elementary School STEAM Day" width="1280" height="1707" loading="lazy" decoding="async">
+            <figcaption>Mary Lin Elementary School STEAM Day (2024, kids identifying details blurred for privacy)</figcaption>
+          </figure>
+        </article>
         </div>
-    </main>
+      </div>
+    </section>
+  </main>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p style="font-size: 0.85rem; color: #999;">© 2026 Tianshi Xu</p>
-        </div>
-    </footer>
-
-    <!-- JavaScript -->
-    <script src="assets/js/main.js"></script>
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="inner">
+        <p class="footer-name">Tianshi Xu <span>· Assistant Professor of Mathematics, University of Kentucky</span></p>
+        <ul class="footer-contact" role="list">
+          <li><span class="email"><span class="sr-only">Email: </span><span class="addr">tianshi (dot) xu (at) uky (dot) edu</span></span></li>
+          <li><span class="email"><span class="sr-only">Permanent email: </span><span class="addr">contact (at) tianshixu (dot) com</span></span> <span class="email-note" aria-hidden="true">(permanent)</span></li>
+        </ul>
+        <nav aria-label="All pages">
+          <ul>
+            <li><a href="research.html">Research</a></li>
+            <li><a href="publications.html">Publications</a></li>
+            <li><a href="software.html">Software</a></li>
+            <li><a href="teaching.html">Teaching</a></li>
+            <li><a href="teaching.html#mentoring">Mentoring</a></li>
+            <li><a href="presentations.html">Talks</a></li>
+            <li><a href="service.html">Service &amp; Outreach</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="utilities/index.html">Resources</a></li>
+            <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ">Google Scholar</a></li>
+            <li><a href="https://github.com/hitenze">GitHub</a></li>
+          </ul>
+        </nav>
+        <p class="copyright">© 2026 Tianshi Xu</p>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

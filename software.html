@@ -1,403 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Software - Tianshi Xu. Open-source software packages for numerical linear algebra and high-performance computing.">
-    <title>Software - Tianshi Xu</title>
-
-    <!-- Theme boot (avoid flash on navigation) -->
-    <script>
-      (function() {
-        try {
-          var theme = localStorage.getItem('theme');
-          if (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            theme = 'dark-mode';
-          }
-          if (theme) document.documentElement.classList.add(theme);
-        } catch (e) {}
-      })();
-    </script>
-    <style>
-      html { background: #f6f7fb; }
-      body { background: #f6f7fb; }
-      html.dark-mode,
-      html.dark-mode body { background: #1a1a1a; }
-    </style>
-    
-    <!-- CSS -->
-    <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/responsive.css">
-    <link rel="stylesheet" href="assets/css/navigation-patch.css">
-    
-    <!-- Additional styles for software page -->
-    <style>
-        .software-card {
-            background: var(--bg-light);
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-md);
-            transition: var(--transition);
-            border-left: 4px solid var(--success-color);
-        }
-        
-        .software-card-collaborator {
-            border-left-color: var(--info-color);
-        }
-        
-        .software-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .software-header {
-            display: grid;
-            grid-template-columns: 1fr 250px;
-            gap: 2rem;
-            padding: 2rem;
-            align-items: center;
-        }
-        
-        .software-visual {
-            width: 100%;
-            height: 180px;
-            display: grid;
-            place-items: center;
-        }
-
-        .software-image {
-            grid-area: 1 / 1;
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 8px;
-        }
-
-        .software-image-dark {
-            display: none;
-        }
-
-        html.dark-mode .software-image-light {
-            display: none;
-        }
-
-        html.dark-mode .software-image-dark {
-            display: block;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            html:not(.light-mode):not(.dark-mode) .software-image-light {
-                display: none;
-            }
-
-            html:not(.light-mode):not(.dark-mode) .software-image-dark {
-                display: block;
-            }
-        }
-        
-        .software-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-        
-        .software-description {
-            color: var(--text-secondary);
-            line-height: 1.7;
-            margin: 1rem 0;
-        }
-        
-        .software-links {
-            margin-top: 1rem;
-        }
-        
-        .software-tag {
-            display: inline-block;
-            background: rgba(52, 152, 219, 0.15);
-            color: var(--accent-color);
-            padding: 0.25rem 0.6rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            margin-right: 0.4rem;
-            margin-bottom: 0.4rem;
-        }
-        
-        .contributor-badge {
-            display: inline-block;
-            background: var(--success-color);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 5px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-bottom: 1rem;
-        }
-        
-        .collaborator-badge {
-            background: var(--info-color);
-        }
-        
-        @media (max-width: 768px) {
-            .software-header {
-                grid-template-columns: 1fr;
-            }
-            
-            .software-visual {
-                max-width: 300px;
-                margin: 0 auto;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Software — Tianshi Xu</title>
+  <meta name="description" content="Research software by Tianshi Xu: ParGeMSLR, SchurCheb, SchurILU, HiGP, and contributions to hypre.">
+  <meta name="author" content="Tianshi Xu">
+  <meta name="color-scheme" content="light dark">
+  <link rel="author" type="text/plain" href="humans.txt">
+  <link rel="icon" href="data:,">
+  <script>
+    /* Theme boot: apply a saved choice before CSS paints (no flash); otherwise CSS follows the system. */
+    (function () {
+      var d = document.documentElement, t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t === 'dark-mode' || t === 'light-mode') { d.classList.add(t); d.setAttribute('data-theme', t === 'dark-mode' ? 'dark' : 'light'); }
+      else { d.setAttribute('data-theme', window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+    })();
+  </script>
+  <link rel="preload" href="assets/fonts/stix-two-text/stix-two-text-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/stix-two-text/stix-two-text-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script src="assets/js/site.js" defer></script>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <nav>
-                <a href="index.html" class="logo">Tianshi Xu</a>
-                <div class="nav-groups">
-                    <ul class="nav-links nav-primary nav-home">
-                        <li><a href="index.html">Home</a></li>
-                    </ul>
-                    <div class="nav-group">
-                        <div class="nav-links-label">Research</div>
-                        <ul class="nav-links nav-sub">
-                            <li><a href="research.html">Overview</a></li>
-                            <li><a href="publications.html">Publications</a></li>
-                            <li><a href="software.html">Software</a></li>
-                            <li><a href="presentations.html">Presentations</a></li>
-                        </ul>
-                    </div>
-                    <div class="nav-group">
-                        <div class="nav-links-label">Teaching</div>
-                        <ul class="nav-links nav-sub">
-                            <li><a href="teaching.html">Courses</a></li>
-                            <li><a href="mentoring.html">Mentoring</a></li>
-                        </ul>
-                    </div>
-                    <div class="nav-group">
-                        <div class="nav-links-label">Service</div>
-                        <ul class="nav-links nav-sub">
-                            <li><a href="service.html">Professional Service</a></li>
-                            <li><a href="outreach.html">Outreach</a></li>
-                        </ul>
-                    </div>
-                    <div class="nav-group">
-                        <div class="nav-links-label">Links</div>
-                        <ul class="nav-links nav-secondary">
-                            <li><a href="https://github.com/hitenze" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-                            <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ&hl=en&oi=ao" target="_blank" rel="noopener noreferrer">Google Scholar</a></li>
-                            <li><a href="https://wliao60.math.gatech.edu/bootcamp2026/" target="_blank" rel="noopener noreferrer">Bootcamp 2026</a></li>
-                            <li><a href="utilities/index.html">Web Tools</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="nav-tools">
-                    <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
-                </div>
-            </nav>
-        </div>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html">Tianshi Xu</a>
+      <button type="button" class="icon-btn theme-toggle js-theme-toggle" aria-label="Dark theme" aria-describedby="theme-state" title="Toggle color theme">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg>
+      </button>
+      <span id="theme-state" class="sr-only"></span>
+      <button type="button" class="icon-btn menu-toggle" aria-expanded="false" aria-controls="site-nav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <span>Menu</span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="Primary">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="research.html">Research</a></li>
+          <li><a href="publications.html">Publications</a></li>
+          <li><a href="software.html" aria-current="page">Software</a></li>
+          <li><a href="teaching.html">Teaching</a></li>
+          <li class="more">
+            <details>
+              <summary class="more-btn">More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg></summary>
+              <p class="more-heading" id="more-heading">More</p>
+              <ul class="more-panel" aria-labelledby="more-heading">
+                <li><a href="presentations.html">Talks</a></li>
+                <li><a href="service.html">Service &amp; Outreach</a></li>
+                <li><a href="news.html">News</a></li>
+                <li><a href="utilities/index.html">Resources</a></li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="wrap" tabindex="-1">
+    <header class="page-head">
+      <h1>Software</h1>
     </header>
 
-    <!-- Main Content -->
-    <main class="page-content">
-        <div class="container">
-            <section class="section">
-                <h1>Software</h1>
-                
-                <!-- Main Contributor Section -->
-                <h2>Select Packages</h2>
-                
-                <div class="software-card">
-                    <div class="software-header">
-                        <div>
-                            <span class="contributor-badge">Main Developer</span>
-                            <h3 class="software-title">
-                                ParGeMSLR: Parallel Generalized Multilevel Low-Rank Preconditioner
-                            </h3>
-                            <p class="software-description">
-                                ParGeMSLR (Parallel Generalized Multilevel Schur Low-Rank) is an MPI-based C++ library
-                                for solving large, sparse symmetric and nonsymmetric linear systems. Its purely algebraic
-                                preconditioner combines a multilevel Schur-complement hierarchy with low-rank corrections.
-                            </p>
-                            <div>
-                                <span class="software-tag">C++</span>
-                                <span class="software-tag">MPI</span>
-                                <span class="software-tag">CUDA</span>
-                            </div>
-                            <div class="software-links">
-                                <a href="https://github.com/hitenze/pargemslr" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-                                    View on GitHub
-                                </a>
-                                <a href="https://doi.org/10.1016/j.parco.2022.102956" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-                                    Related Paper
-                                </a>
-                            </div>
-                        </div>
-                        <div class="software-visual" role="img" aria-label="ParGeMSLR multilevel low-rank preconditioner structure">
-                            <img src="assets/images/pargemslr-light.png" alt="" width="668" height="410" loading="lazy" decoding="async" class="software-image software-image-light">
-                            <img src="assets/images/pargemslr-dark.png" alt="" width="668" height="410" loading="lazy" decoding="async" class="software-image software-image-dark">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="software-card">
-                    <div class="software-header">
-                        <div>
-                            <span class="contributor-badge">Main Developer</span>
-                            <h3 class="software-title">
-                                SchurCheb: Schur Complement Chebyshev Eigenvalue Solver
-                            </h3>
-                            <p class="software-description">
-                                SchurCheb is an MPI-based C++ research code for computing partial spectral factorizations
-                                of matrix pencils via Chebyshev approximation. The distributed-memory implementation
-                                computes the eigenvalues and corresponding eigenvectors of a large, sparse, real symmetric
-                                positive-definite matrix pencil that lie within a target interval.
-                            </p>
-                            <div>
-                                <span class="software-tag">C++</span>
-                                <span class="software-tag">MPI</span>
-                                <span class="software-tag">CUDA</span>
-                            </div>
-                            <div class="software-links">
-                                <a href="https://github.com/hitenze/Schurcheb" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-                                    View on GitHub
-                                </a>
-                                <a href="https://doi.org/10.1137/22M1501155" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-                                    Related Paper
-                                </a>
-                            </div>
-                        </div>
-                        <div class="software-visual" role="img" aria-label="SchurCheb Chebyshev filtered spectral decomposition">
-                            <img src="assets/images/schurcheb-light.png" alt="" width="359" height="262" loading="lazy" decoding="async" class="software-image software-image-light">
-                            <img src="assets/images/schurcheb-dark.png" alt="" width="359" height="262" loading="lazy" decoding="async" class="software-image software-image-dark">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="software-card">
-                    <div class="software-header">
-                        <div>
-                            <span class="contributor-badge">Main Developer</span>
-                            <h3 class="software-title">
-                                SchurILU: NumPy/SciPy ILU Baselines
-                            </h3>
-                            <p class="software-description">
-                                SchurILU is a NumPy/SciPy library for incomplete LU preconditioners with explicit
-                                Schur-complement support. It provides reproducible ILU baselines for research in
-                                iterative solvers and learning-based preconditioning.
-                            </p>
-                            <div>
-                                <span class="software-tag">Python</span>
-                                <span class="software-tag">NumPy</span>
-                                <span class="software-tag">SciPy</span>
-                            </div>
-                            <div class="software-links">
-                                <a href="https://github.com/hitenze/SchurILU" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-                                    View on GitHub
-                                </a>
-                                <a href="https://pypi.org/project/schurilu/" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-                                    View on PyPI
-                                </a>
-                                <a href="https://doi.org/10.1016/j.parco.2022.102956" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-                                    Related Paper
-                                </a>
-                            </div>
-                        </div>
-                        <div class="software-visual" role="img" aria-label="SchurILU block Schur complement sparsity structure">
-                            <img src="assets/images/schurilu-light.png" alt="" width="1200" height="1200" loading="lazy" decoding="async" class="software-image software-image-light">
-                            <img src="assets/images/schurilu-dark.png" alt="" width="1200" height="1200" loading="lazy" decoding="async" class="software-image software-image-dark">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="software-card software-card-collaborator">
-                    <div class="software-header">
-                        <div>
-                            <span class="contributor-badge collaborator-badge">Contributor</span>
-                            <h3 class="software-title">
-                                HYPRE: High Performance Preconditioners
-                            </h3>
-                            <p class="software-description">
-                                HYPRE is a library of high-performance preconditioners and solvers featuring
-                                multigrid methods for the solution of large, sparse linear systems of equations 
-                                on massively parallel computers. I contribute to the development of GPU-accelerated 
-                                incomplete LU preconditioners.
-                            </p>
-                            <div>
-                                <span class="software-tag">C</span>
-                                <span class="software-tag">MPI</span>
-                                <span class="software-tag">CUDA</span>
-                            </div>
-                            <div class="software-links">
-                                <a href="https://github.com/hypre-space/hypre" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-                                    View on GitHub
-                                </a>
-                                <a href="https://computing.llnl.gov/projects/hypre-scalable-linear-solvers-multigrid-methods" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-                                    Project Page
-                                </a>
-                                <a href="https://doi.org/10.1177/10943420251319334" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-                                    Related Paper
-                                </a>
-                            </div>
-                        </div>
-                        <div class="software-visual" role="img" aria-label="HYPRE high-performance preconditioners logo">
-                            <img src="assets/images/hypre-light.png" alt="" width="512" height="180" loading="lazy" decoding="async" class="software-image software-image-light">
-                            <img src="assets/images/hypre-dark.png" alt="" width="512" height="180" loading="lazy" decoding="async" class="software-image software-image-dark">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="software-card software-card-collaborator">
-                    <div class="software-header">
-                        <div>
-                            <span class="contributor-badge collaborator-badge">Co-developer</span>
-                            <h3 class="software-title">
-                                HiGP: High-Performance Package for Large-Scale Gaussian Processes
-                            </h3>
-                            <p class="software-description">
-                                HiGP is a high-performance Python package for large-scale Gaussian process regression
-                                and classification. It provides C++ and Python interfaces for efficient training and
-                                prediction on large datasets.
-                            </p>
-                            <div>
-                                <span class="software-tag">C++</span>
-                                <span class="software-tag">Python</span>
-                            </div>
-                            <div class="software-links">
-                                <a href="https://github.com/huanghua1994/HiGP" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-                                    View on GitHub
-                                </a>
-                                <a href="https://doi.org/10.21105/joss.08621" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-                                    Related Paper
-                                </a>
-                            </div>
-                        </div>
-                        <div class="software-visual" role="img" aria-label="HiGP hierarchical matrix structure">
-                            <img src="assets/images/higp-light.png" alt="" width="201" height="202" loading="lazy" decoding="async" class="software-image software-image-light">
-                            <img src="assets/images/higp-dark.png" alt="" width="201" height="202" loading="lazy" decoding="async" class="software-image software-image-dark">
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Additional Software -->
-                <h2>Other Contributions</h2>
-                <p>View more of my software projects and contributions on my <a href="https://github.com/hitenze" target="_blank" rel="noopener noreferrer">GitHub profile</a>.</p>
-            </section>
+    <section id="packages" class="section" aria-labelledby="packages-h">
+      <h2 id="packages-h">Select Packages</h2>
+      <div class="body">
+        <div class="sw-list">
+        <article class="sw">
+          <div>
+            <p class="sw-role">Main Developer</p>
+            <h3>ParGeMSLR: Parallel Generalized Multilevel Low-Rank Preconditioner</h3>
+            <p class="desc">ParGeMSLR (Parallel Generalized Multilevel Schur Low-Rank) is an MPI-based C++ library for solving large, sparse symmetric and nonsymmetric linear systems. Its purely algebraic preconditioner combines a multilevel Schur-complement hierarchy with low-rank corrections.</p>
+            <div class="tags"><span class="tag">C++</span><span class="tag">MPI</span><span class="tag">CUDA</span></div>
+            <p class="links"><a href="https://github.com/hitenze/pargemslr">View on GitHub</a> <a href="https://doi.org/10.1016/j.parco.2022.102956">Related Paper</a></p>
+          </div>
+          <div class="visual" role="img" aria-label="ParGeMSLR multilevel low-rank preconditioner structure">
+            <img class="img-light" src="assets/images/pargemslr-light.png" alt="" width="668" height="410" loading="lazy" decoding="async">
+            <img class="img-dark" src="assets/images/pargemslr-dark.png" alt="" width="668" height="410" loading="lazy" decoding="async">
+          </div>
+        </article>
+        <article class="sw">
+          <div>
+            <p class="sw-role">Main Developer</p>
+            <h3>SchurCheb: Schur Complement Chebyshev Eigenvalue Solver</h3>
+            <p class="desc">SchurCheb is an MPI-based C++ research code for computing partial spectral factorizations of matrix pencils via Chebyshev approximation. The distributed-memory implementation computes the eigenvalues and corresponding eigenvectors of a large, sparse, real symmetric positive-definite matrix pencil that lie within a target interval.</p>
+            <div class="tags"><span class="tag">C++</span><span class="tag">MPI</span><span class="tag">CUDA</span></div>
+            <p class="links"><a href="https://github.com/hitenze/Schurcheb">View on GitHub</a> <a href="https://doi.org/10.1137/22M1501155">Related Paper</a></p>
+          </div>
+          <div class="visual" role="img" aria-label="SchurCheb Chebyshev filtered spectral decomposition">
+            <img class="img-light" src="assets/images/schurcheb-light.png" alt="" width="359" height="262" loading="lazy" decoding="async">
+            <img class="img-dark" src="assets/images/schurcheb-dark.png" alt="" width="359" height="262" loading="lazy" decoding="async">
+          </div>
+        </article>
+        <article class="sw">
+          <div>
+            <p class="sw-role">Main Developer</p>
+            <h3>SchurILU: NumPy/SciPy ILU Baselines</h3>
+            <p class="desc">SchurILU is a NumPy/SciPy library for incomplete LU preconditioners with explicit Schur-complement support. It provides reproducible ILU baselines for research in iterative solvers and learning-based preconditioning.</p>
+            <div class="tags"><span class="tag">Python</span><span class="tag">NumPy</span><span class="tag">SciPy</span></div>
+            <p class="links"><a href="https://github.com/hitenze/SchurILU">View on GitHub</a> <a href="https://pypi.org/project/schurilu/">View on PyPI</a> <a href="https://doi.org/10.1016/j.parco.2022.102956">Related Paper</a></p>
+          </div>
+          <div class="visual" role="img" aria-label="SchurILU block Schur complement sparsity structure">
+            <img class="img-light" src="assets/images/schurilu-light.png" alt="" width="1200" height="1200" loading="lazy" decoding="async">
+            <img class="img-dark" src="assets/images/schurilu-dark.png" alt="" width="1200" height="1200" loading="lazy" decoding="async">
+          </div>
+        </article>
+        <article class="sw">
+          <div>
+            <p class="sw-role">Co-developer</p>
+            <h3>HiGP: High-Performance Package for Large-Scale Gaussian Processes</h3>
+            <p class="desc">HiGP is a high-performance Python package for large-scale Gaussian process regression and classification. It provides C++ and Python interfaces for efficient training and prediction on large datasets.</p>
+            <div class="tags"><span class="tag">C++</span><span class="tag">Python</span></div>
+            <p class="links"><a href="https://github.com/huanghua1994/HiGP">View on GitHub</a> <a href="https://doi.org/10.21105/joss.08621">Related Paper</a></p>
+          </div>
+          <div class="visual" role="img" aria-label="HiGP hierarchical matrix structure">
+            <img class="img-light" src="assets/images/higp-light.png" alt="" width="201" height="202" loading="lazy" decoding="async">
+            <img class="img-dark" src="assets/images/higp-dark.png" alt="" width="201" height="202" loading="lazy" decoding="async">
+          </div>
+        </article>
+        <article class="sw is-minor">
+          <div>
+            <p class="sw-role">Contributor</p>
+            <h3>HYPRE: High Performance Preconditioners</h3>
+            <p class="desc">HYPRE is a library of high-performance preconditioners and solvers featuring multigrid methods for the solution of large, sparse linear systems of equations on massively parallel computers. I contribute to the development of GPU-accelerated incomplete LU preconditioners.</p>
+            <div class="tags"><span class="tag">C</span><span class="tag">MPI</span><span class="tag">CUDA</span></div>
+            <p class="links"><a href="https://github.com/hypre-space/hypre">View on GitHub</a> <a href="https://computing.llnl.gov/projects/hypre-scalable-linear-solvers-multigrid-methods">Project Page</a> <a href="https://doi.org/10.1177/10943420251319334">Related Paper</a></p>
+          </div>
+          <div class="visual" role="img" aria-label="HYPRE high-performance preconditioners logo">
+            <img class="img-light" src="assets/images/hypre-light.png" alt="" width="512" height="180" loading="lazy" decoding="async">
+            <img class="img-dark" src="assets/images/hypre-dark.png" alt="" width="512" height="180" loading="lazy" decoding="async">
+          </div>
+        </article>
         </div>
-    </main>
+      </div>
+    </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p style="font-size: 0.85rem; color: #999;">© 2026 Tianshi Xu</p>
-        </div>
-    </footer>
+    <section id="other" class="section is-short" aria-labelledby="other-h">
+      <h2 id="other-h">Other Contributions</h2>
+      <div class="body">
+        <p class="prose">View more of my software projects and contributions on my <a href="https://github.com/hitenze">GitHub profile</a>.</p>
+      </div>
+    </section>
+  </main>
 
-    <!-- JavaScript -->
-    <script src="assets/js/main.js"></script>
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="inner">
+        <p class="footer-name">Tianshi Xu <span>· Assistant Professor of Mathematics, University of Kentucky</span></p>
+        <ul class="footer-contact" role="list">
+          <li><span class="email"><span class="sr-only">Email: </span><span class="addr">tianshi (dot) xu (at) uky (dot) edu</span></span></li>
+          <li><span class="email"><span class="sr-only">Permanent email: </span><span class="addr">contact (at) tianshixu (dot) com</span></span> <span class="email-note" aria-hidden="true">(permanent)</span></li>
+        </ul>
+        <nav aria-label="All pages">
+          <ul>
+            <li><a href="research.html">Research</a></li>
+            <li><a href="publications.html">Publications</a></li>
+            <li><a href="software.html">Software</a></li>
+            <li><a href="teaching.html">Teaching</a></li>
+            <li><a href="teaching.html#mentoring">Mentoring</a></li>
+            <li><a href="presentations.html">Talks</a></li>
+            <li><a href="service.html">Service &amp; Outreach</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="utilities/index.html">Resources</a></li>
+            <li><a href="https://scholar.google.com/citations?user=2xUwyhYAAAAJ">Google Scholar</a></li>
+            <li><a href="https://github.com/hitenze">GitHub</a></li>
+          </ul>
+        </nav>
+        <p class="copyright">© 2026 Tianshi Xu</p>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
