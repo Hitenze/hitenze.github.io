@@ -796,6 +796,12 @@ function updateLanguageButton() {
   document.getElementById('btn-lang').textContent = lang === 'en' ? '中' : 'EN';
 }
 function applyI18N() {
+  // The playback buttons show only symbols, so their names follow the language too
+  const pbNames = lang === 'zh' ? ['播放/暂停', '单步', '重置'] : ['Play/Pause', 'Step', 'Reset'];
+  ['btn-play', 'btn-step', 'btn-reset'].forEach((id, i) => {
+    const b = document.getElementById(id);
+    if (b) { b.title = pbNames[i]; b.setAttribute('aria-label', pbNames[i]); }
+  });
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
   document.title = t('title');
   updateLanguageButton();
@@ -1797,23 +1803,17 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
-// Kernel weights and feature maps are data images: they keep their grayscale / blue ramps in both
-// themes (like the input digits), framed by the themed panels.
-// Grayscale diverging color for kernels: black(negative) → gray(zero) → white(positive)
+// Kernel weights and feature maps are derived visualisations, coloured with the site tokens so they
+// follow the theme (redrawn on site-themechange). Only the input digits and the drawing pad stay
+// black/white: those pixels are what the model reads.
+// Diverging color for kernels: data-red (negative) → paper (zero) → data-blue (positive)
 function divergingColor(v) {
-  // v in [-1,1]: -1=black, 0=mid-gray, 1=white
   v = Math.max(-1, Math.min(1, v));
-  const g = Math.round(128 + 127 * v);
-  return `rgb(${g},${g},${g})`;
+  return v < 0 ? PG.mix('paper', 'data-red', -v) : PG.mix('paper', 'data-blue', v);
 }
-// Blue intensity (for activations ≥0)
+// Activation ramp (for activations ≥0): paper (zero) → data-blue (max)
 function blueIntensity(v) {
-  // v in [0,1]
-  const t = Math.max(0,Math.min(1,v));
-  const r = Math.round(255*(1-t*0.9));
-  const g = Math.round(255*(1-t*0.7));
-  const b = 255;
-  return `rgb(${r},${g},${b})`;
+  return PG.mix('paper', 'data-blue', Math.max(0, Math.min(1, v)));
 }
 
 // ============================================================
@@ -2011,14 +2011,15 @@ function drawGrayscaleMap(canvas, data, H, W, useBlue) {
   const max = Math.max(...data, 0.001);
   const min = Math.min(...data);
   const range = max - min || 1;
+  const lo = PG.rgb('paper'), hi = PG.rgb('data-blue');
   for (let i=0; i<H*W; i++) {
     const v = (data[i] - min) / range; // 0..1
     let r,g,b;
     if (useBlue) {
-      // blue intensity
-      r = Math.round(255*(1-v*0.9));
-      g = Math.round(255*(1-v*0.7));
-      b = 255;
+      // activation ramp: paper (zero) → data-blue (max), display only
+      r = Math.round(lo[0] + (hi[0] - lo[0]) * v);
+      g = Math.round(lo[1] + (hi[1] - lo[1]) * v);
+      b = Math.round(lo[2] + (hi[2] - lo[2]) * v);
     } else {
       const gv = Math.round(v*255);
       r=gv; g=gv; b=gv;
@@ -2206,6 +2207,8 @@ window.addEventListener('resize', () => {
 PG.onTheme(() => {
   drawArchDiagram();
   drawLossCurve();
+  // feature maps; runForwardViz only reads the sample, so the model input is unchanged
+  if (selectedSample) runForwardViz(selectedSample.img, selectedSample.label);
 });
 
 // ============================================================

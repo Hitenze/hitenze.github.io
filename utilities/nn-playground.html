@@ -682,6 +682,12 @@ function updateLanguageButton() {
 }
 
 function applyI18N(redraw = true) {
+  // The playback buttons show only symbols, so their names follow the language too
+  const pbNames = lang === 'zh' ? ['播放/暂停', '单步', '重置'] : ['Play/Pause', 'Step', 'Reset'];
+  ['btn-play', 'btn-step', 'btn-reset'].forEach((id, i) => {
+    const b = document.getElementById(id);
+    if (b) { b.title = pbNames[i]; b.setAttribute('aria-label', pbNames[i]); }
+  });
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
   updateLanguageButton();
   // Update document title

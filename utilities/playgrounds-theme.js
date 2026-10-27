@@ -4,7 +4,7 @@
    (assets/js/site.js) dispatches 'site-themechange'; the cache is cleared and every redraw function
    registered with PG.onTheme() runs again, so the charts follow the theme.
    Exception: the CNN's drawing pad and digit images stay black/white, because those pixels are the
-   model's input data, not decoration. */
+   model's input data, not decoration (its feature maps and kernels do use the tokens). */
 (function () {
   'use strict';
   var cache = {};
@@ -29,6 +29,8 @@
   window.PG = {
     /* Token value, e.g. PG.c('ink'), PG.c('data-blue'). */
     c: token,
+    /* Token as an [r, g, b] array, for ImageData ramps. */
+    rgb: function (name) { return rgb(token(name)); },
     /* Token with alpha, e.g. PG.a('data-blue', 0.5). */
     a: function (name, alpha) {
       var c = rgb(token(name));
@@ -39,14 +41,17 @@
       var x = rgb(token(a)), y = rgb(token(b));
       return 'rgb(' + x.map(function (v, i) { return Math.round(v + (y[i] - v) * t); }).join(',') + ')';
     },
-    /* 'ink' or 'paper', whichever reads better on a blend of tokens a and b at t. */
+    /* Text colour for a blend of tokens a and b at t: 'ink' or 'paper', whichever reads better, as
+       long as it reaches 4.6:1 (a small margin over 4.5:1 for rounding). In the middle of a ramp
+       neither token may get there; then black or white is used, one of which always gives at least
+       4.58:1. */
     textOn: function (a, b, t) {
       var x = rgb(token(a)), y = rgb(token(b));
       var bg = lum(x.map(function (v, i) { return Math.round(v + (y[i] - v) * t); }));
-      var ink = lum(rgb(token('ink'))), paper = lum(rgb(token('paper')));
-      var cInk = (Math.max(bg, ink) + 0.05) / (Math.min(bg, ink) + 0.05);
-      var cPaper = (Math.max(bg, paper) + 0.05) / (Math.min(bg, paper) + 0.05);
-      return token(cInk >= cPaper ? 'ink' : 'paper');
+      function cr(l) { return (Math.max(bg, l) + 0.05) / (Math.min(bg, l) + 0.05); }
+      var cInk = cr(lum(rgb(token('ink')))), cPaper = cr(lum(rgb(token('paper'))));
+      if (Math.max(cInk, cPaper) >= 4.6) return token(cInk >= cPaper ? 'ink' : 'paper');
+      return cr(0) >= cr(1) ? '#000' : '#fff';
     },
     onTheme: function (fn) { redraws.push(fn); }
   };

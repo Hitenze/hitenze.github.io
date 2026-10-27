@@ -190,7 +190,7 @@ body {
   margin-bottom: 4px;
 }
 .tok-prompt { color: var(--accent); font-weight: 600; padding: 1px 4px; border-radius: 3px; background: var(--accent-soft); }
-.tok-generated { color: var(--data-green); font-weight: 600; padding: 1px 4px; border-radius: 3px; background: var(--tint-green); animation: fadeIn 0.3s; }
+.tok-generated { color: color-mix(in srgb, var(--data-green) 70%, var(--ink)); font-weight: 600; padding: 1px 4px; border-radius: 3px; background: var(--tint-green); animation: fadeIn 0.3s; }
 .tok-new { animation: popIn 0.4s; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes popIn { 0% { transform: scale(0.6); opacity: 0; } 70% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
@@ -637,6 +637,12 @@ const I18N = {
 };
 let lang = 'en';
 function applyI18n() {
+  // The playback buttons show only symbols, so their names follow the language too
+  const pbNames = lang === 'zh' ? ['播放/暂停', '单步', '重置'] : ['Play/Pause', 'Step one epoch', 'Reset'];
+  ['btn-play', 'btn-step', 'btn-reset'].forEach((id, i) => {
+    const b = document.getElementById(id);
+    if (b) { b.title = pbNames[i]; b.setAttribute('aria-label', pbNames[i]); }
+  });
   document.getElementById('btn-lang').textContent = lang === 'zh' ? 'EN' : '中';
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
   document.querySelectorAll('[data-i18n]').forEach(el => {
