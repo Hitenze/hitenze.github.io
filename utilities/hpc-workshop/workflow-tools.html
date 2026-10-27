@@ -235,7 +235,7 @@
                                     <div class="step-indicator w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3 mt-0.5">1</div>
                                     <div class="text-sm">
                                         <p class="font-semibold">Verify SSH in a terminal</p>
-                                        <p class="text-gray-600"><code>ssh user@cluster.example.edu</code> must work before debugging VS Code.</p>
+                                        <p class="text-gray-600"><!--email_off--><code>ssh user@cluster.example.edu</code><!--/email_off--> must work before debugging VS Code.</p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
@@ -264,7 +264,7 @@
 
                         <div>
                             <h4 class="font-semibold text-gray-800 mb-2">Minimal <code>~/.ssh/config</code></h4>
-                            <div class="code-block p-3 text-xs overflow-x-auto">
+                            <!--email_off--><div class="code-block p-3 text-xs overflow-x-auto">
                                 <pre class="text-white"><code>Host my-cluster
     HostName cluster.example.edu
     User your_username
@@ -273,7 +273,7 @@
 
 <span class="comment"># If your institution requires a jump host:</span>
 <span class="comment"># ProxyJump your_username@login.example.edu</span></code></pre>
-                            </div>
+                            </div><!--/email_off-->
                         </div>
 
                         <div class="bg-green-50 p-4 rounded border border-green-200">

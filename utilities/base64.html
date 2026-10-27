@@ -215,7 +215,6 @@
 
         .file-input-wrapper {
             position: relative;
-            overflow: hidden;
             display: inline-block;
         }
 
@@ -275,6 +274,12 @@
             color: #0c5460;
             border: 1px solid #bee5eb;
             display: block;
+        }
+
+        /* Always in the accessibility tree; visually hidden */
+        .status-live {
+            position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+            overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
         }
 
         footer {
@@ -391,15 +396,16 @@
 
                 <div class="button-row">
                     <div class="file-input-wrapper">
-                        <button class="btn btn-secondary">Encode File</button>
-                        <input type="file" id="fileInput" aria-label="Encode file" onchange="encodeFile(event)">
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">Encode File</button>
+                        <input type="file" id="fileInput" tabindex="-1" aria-hidden="true" onchange="encodeFile(event)">
                     </div>
                     <button class="btn btn-secondary" onclick="downloadAsFile()">Download Decoded File</button>
                     <button class="btn btn-success" onclick="copyBase64()">Copy Base64</button>
                     <button class="btn btn-success" onclick="copyText()">Copy Text</button>
                 </div>
 
-                <div class="message" id="message"></div>
+                <div class="message" id="message" aria-hidden="true"></div>
+                <div class="status-live" id="status" role="status" aria-live="polite" aria-atomic="true"></div>
             </div>
 
             <div class="preview" id="preview">
@@ -436,13 +442,34 @@
         base64Input.addEventListener('input', updateBase64Count);
 
         // Show message
+        const status = document.getElementById('status');
+        let hideTimer, statusTimer;
         function showMessage(msg, type = 'info') {
-            message.textContent = msg;
             message.className = `message ${type}`;
+            message.textContent = msg;
 
-            setTimeout(() => {
+            // Screen readers: the status region is always exposed; clear, then set, so repeats are announced too
+            clearTimeout(statusTimer);
+            status.textContent = '';
+            statusTimer = setTimeout(() => { status.textContent = msg; }, 50);
+
+            clearTimeout(hideTimer);
+            hideTimer = setTimeout(() => {
                 message.className = 'message';
             }, 3000);
+        }
+
+        // URL-safe Base64 (and missing padding) → standard Base64
+        function toStandardBase64(b64) {
+            b64 = b64.replace(/-/g, '+').replace(/_/g, '/');
+            while (b64.length % 4) {
+                b64 += '=';
+            }
+            return b64;
+        }
+
+        function toUrlSafeBase64(b64) {
+            return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
         }
 
         // Encode text → Base64
@@ -457,7 +484,7 @@
                 let encoded = btoa(unescape(encodeURIComponent(text)));
 
                 if (urlSafe.checked) {
-                    encoded = encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+                    encoded = toUrlSafeBase64(encoded);
                 }
 
                 base64Input.value = encoded;
@@ -503,7 +530,10 @@
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                const base64 = e.target.result.split(',')[1];
+                let base64 = e.target.result.split(',')[1];
+                if (urlSafe.checked) {
+                    base64 = toUrlSafeBase64(base64);
+                }
                 base64Input.value = base64;
                 updateBase64Count();
                 showMessage(`File "${file.name}" encoded`, 'success');
@@ -513,10 +543,12 @@
                 showMessage('Failed to read file', 'error');
             };
             reader.readAsDataURL(file);
+            event.target.value = '';
         }
 
         // Detect image data and preview it
         function checkForImage(base64) {
+            base64 = toStandardBase64(base64);
             const imageFormats = [
                 { prefix: '/9j/', mime: 'jpeg' },
                 { prefix: 'iVBORw0KGgo', mime: 'png' },
@@ -536,10 +568,16 @@
 
         // Download decoded file
         function downloadAsFile() {
-            const base64 = base64Input.value.trim();
+            let base64 = base64Input.value.trim();
             if (!base64) {
                 showMessage('Please enter Base64', 'error');
                 return;
+            }
+
+            // Handle URL-safe Base64 and missing padding, as in decodeText()
+            base64 = base64.replace(/-/g, '+').replace(/_/g, '/');
+            while (base64.length % 4) {
+                base64 += '=';
             }
 
             try {
