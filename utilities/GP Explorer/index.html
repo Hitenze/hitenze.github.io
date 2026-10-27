@@ -155,8 +155,15 @@
                 <button class="btn-sample btn-secondary" id="btn-gp-toggle" data-i18n="btn-show-posterior">显示后验</button>
                 <button class="btn-sample btn-danger" id="btn-gp-clear" data-i18n="btn-clear-obs">清除观测点</button>
               </div>
+              <div class="viz-controls gp-add-obs" role="group" aria-labelledby="gp-add-obs-label">
+                <span id="gp-add-obs-label" data-i18n="ctrl-add-obs">输入观测点</span>
+                <label>x <input type="number" id="obs-x" min="-4" max="4" step="0.1" value="0"></label>
+                <label>y <input type="number" id="obs-y" min="-3" max="3" step="0.1" value="0"></label>
+                <button type="button" class="btn-sample btn-secondary" id="btn-gp-add" data-i18n="btn-add-obs">添加观测点</button>
+                <span id="obs-status" class="obs-status" role="status"></span>
+              </div>
               <canvas id="gp-canvas" width="600" height="400"></canvas>
-              <p class="viz-caption" data-i18n="gp-viz-caption">点击画布添加观测点，切换「显示后验」查看 GP 如何更新预测</p>
+              <p class="viz-caption" data-i18n="gp-viz-caption">点击画布或输入坐标添加观测点，切换「显示后验」查看 GP 如何更新预测</p>
             </div>
           </div>
         </div>

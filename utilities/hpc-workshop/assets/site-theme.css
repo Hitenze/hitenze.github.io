@@ -25,6 +25,14 @@ main a.font-mono { display: inline-block; min-height: 24px; line-height: 24px; }
 main [class*="grid"] > *, main .flex > *, .manual-layout > * { min-width: 0; }
 main pre, main .code-block, main .terminal-window { max-width: 100%; overflow-x: auto; }
 main :not(pre) > code { overflow-wrap: anywhere; }
+/* Mobile workshop menu: the link list sat on a white inner box while the links are near-white
+   (about 1:1); give the inner box the navy of the bar. Until workshop.js has wired the toggle
+   (or without JavaScript) the list is shown open and the toggle is hidden. */
+#mobile-menu > div { background: var(--navy) !important; border-color: rgba(255, 255, 255, 0.14) !important; }
+#mobile-menu a[aria-current="page"] { color: #fff !important; text-decoration: underline; text-decoration-color: var(--orange); text-underline-offset: 0.3em; }
+html:not(.ws-menu-ready) #mobile-menu { display: block !important; }
+html:not(.ws-menu-ready) #mobile-menu-button { display: none !important; }
+@media (min-width: 1024px) { html:not(.ws-menu-ready) #mobile-menu { display: none !important; } }
 /* Workshop footer link lists: at least 24px targets */
 footer:not(.sb-foot) li a { display: inline-block; min-height: 24px; line-height: 24px; }
 

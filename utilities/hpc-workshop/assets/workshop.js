@@ -11,6 +11,8 @@
   }
 
   if (button && menu) {
+    // The menu is shown open until this runs (see site-theme.css), so it works without JavaScript.
+    document.documentElement.classList.add("ws-menu-ready");
     button.addEventListener("click", function () {
       setMenu(button.getAttribute("aria-expanded") !== "true");
     });

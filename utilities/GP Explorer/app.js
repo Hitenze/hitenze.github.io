@@ -30,7 +30,10 @@ const i18n = {
     'btn-show-posterior': '显示后验',
     'btn-show-prior': '显示先验',
     'btn-clear-obs': '清除观测点',
-    'gp-viz-caption': '点击画布添加观测点，切换「显示后验」查看 GP 如何更新预测',
+    'ctrl-add-obs': '输入观测点',
+    'btn-add-obs': '添加观测点',
+    'obs-count': '观测点数：',
+    'gp-viz-caption': '点击画布或输入坐标添加观测点，切换「显示后验」查看 GP 如何更新预测',
     'mcmc-title': 'MCMC：从后验分布中采样',
     'mcmc-intro': '当 GP 的超参数后验无法解析求解时，我们先做正参数变换，令 \\(z=(\\log \\ell, \\log \\sigma_f)\\)，再在 \\(z\\)-空间上使用 MCMC 采样；这等价于在原始正参数上使用对数正态先验。',
     'mcmc-mh-title': 'Metropolis-Hastings 算法',
@@ -145,7 +148,10 @@ const i18n = {
     'btn-show-posterior': 'Show Posterior',
     'btn-show-prior': 'Show Prior',
     'btn-clear-obs': 'Clear Points',
-    'gp-viz-caption': 'Click the canvas to add observations, toggle "Show Posterior" to see GP updates',
+    'ctrl-add-obs': 'Enter a point',
+    'btn-add-obs': 'Add observation',
+    'obs-count': 'Observations: ',
+    'gp-viz-caption': 'Click the canvas (or enter coordinates) to add observations, toggle "Show Posterior" to see GP updates',
     'mcmc-title': 'MCMC: Sampling from the Posterior',
     'mcmc-intro': 'When the GP hyperparameter posterior cannot be solved analytically, we first transform the positive parameters via \\(z=(\\log \\ell, \\log \\sigma_f)\\), then run MCMC in \\(z\\)-space. This is equivalent to using log-normal priors on the original positive hyperparameters.',
     'mcmc-mh-title': 'Metropolis-Hastings Algorithm',
@@ -611,7 +617,7 @@ gpCanvas.addEventListener('click', (e) => {
   const rect = gpCanvas.getBoundingClientRect(), cx = e.clientX - rect.left, cy = e.clientY - rect.top;
   const pad = { l: 45, r: 15, t: 20, b: 35 }, plotW = rect.width - pad.l - pad.r, plotH = rect.height - pad.t - pad.b;
   const x = -4 + (cx - pad.l) / plotW * 8, y = 3 - (cy - pad.t) / plotH * 6;
-  if (x >= -4 && x <= 4 && y >= -3 && y <= 3) { gpObservations.push([x, y]); invalidateSamplingResults(); }
+  if (x >= -4 && x <= 4 && y >= -3 && y <= 3) { gpObservations.push([x, y]); invalidateSamplingResults(); announceObservations(); }
 });
 document.getElementById('kernel-select').addEventListener('change', (e) => {
   currentKernel = e.target.value;
@@ -633,7 +639,20 @@ document.getElementById('btn-gp-toggle').addEventListener('click', () => {
   document.getElementById('btn-gp-toggle').textContent = gpShowPosterior ? i18n.t('btn-show-prior') : i18n.t('btn-show-posterior');
   drawGP();
 });
-document.getElementById('btn-gp-clear').addEventListener('click', () => { gpObservations = []; invalidateSamplingResults(); });
+document.getElementById('btn-gp-clear').addEventListener('click', () => { gpObservations = []; invalidateSamplingResults(); announceObservations(); });
+// Keyboard alternative to clicking the canvases: add an observation from typed coordinates
+// (shared by the GP, MCMC and HMC views, like canvas clicks).
+function announceObservations() {
+  const s = document.getElementById('obs-status');
+  if (s) s.textContent = i18n.t('obs-count') + gpObservations.length;
+}
+document.getElementById('btn-gp-add').addEventListener('click', () => {
+  const x = parseFloat(document.getElementById('obs-x').value), y = parseFloat(document.getElementById('obs-y').value);
+  if (!isFinite(x) || !isFinite(y)) return;
+  gpObservations.push([Math.max(-4, Math.min(4, x)), Math.max(-3, Math.min(3, y))]);
+  invalidateSamplingResults();
+  announceObservations();
+});
 document.querySelectorAll('.kernel-card').forEach(card => {
   card.addEventListener('click', () => {
     currentKernel = card.dataset.kernel;
@@ -657,6 +676,7 @@ document.querySelectorAll('.kernel-card').forEach(card => {
     if (x >= -4 && x <= 4 && y >= -3 && y <= 3) {
       gpObservations.push([x, y]);
       invalidateSamplingResults();
+      announceObservations();
     }
   });
 });
