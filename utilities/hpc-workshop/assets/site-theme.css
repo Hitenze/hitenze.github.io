@@ -1,0 +1,109 @@
+/* Dark theme for the HPC workshop pages (generated; loaded after workshop.css).
+   The workshop's own palette variables are remapped to the site's dark tokens; navigation, hero,
+   footer and code blocks are already dark and are left unchanged. Tinted light panels become a
+   warm dark panel with light text (contrast >= 4.5:1). */
+
+/* The workshop styles every <footer> as its navy footer; keep the site's slim footer on the page
+   background in both themes. */
+footer.sb-foot { border-top: 1px solid var(--rule); background: var(--paper) !important; }
+footer.sb-foot span { color: var(--muted) !important; }
+footer.sb-foot a { color: var(--orange-dark) !important; }
+/* Contrast fixes that apply in both themes:
+   - terminal snippets (dark .bg-gray-900 boxes): the workshop's "tinted text -> ink" rule also
+     turned their green command text dark; restore light text on the dark box;
+   - white digits on the orange step markers were 3.1:1; use navy digits (as on the hero buttons);
+   - light-grey arrows/labels (text-gray-400) on the paper background. */
+main .bg-gray-900, main .bg-gray-900 * { color: #e9edf2 !important; }
+main .bg-gray-900 [class*="text-green-"], main .bg-gray-900[class*="text-green-"] { color: #8fd8a8 !important; }
+main .bg-gray-900 .text-gray-500, main .bg-gray-900 .text-gray-400 { color: #a3adb9 !important; }
+.step-indicator, .step-number { color: #152a3a !important; }
+main [class*="bg-"].text-white { background-color: var(--navy) !important; }
+main .text-gray-400 { color: var(--muted) !important; }
+main a.font-mono { display: inline-block; min-height: 24px; line-height: 24px; }
+/* Narrow screens: grid/flex children may shrink so long code scrolls inside its block instead of
+   widening the page. */
+main [class*="grid"] > *, main .flex > *, .manual-layout > * { min-width: 0; }
+main pre, main .code-block, main .terminal-window { max-width: 100%; overflow-x: auto; }
+main :not(pre) > code { overflow-wrap: anywhere; }
+/* Workshop footer link lists: at least 24px targets */
+footer:not(.sb-foot) li a { display: inline-block; min-height: 24px; line-height: 24px; }
+
+html.dark-mode {
+  --paper: #141b23; --paper-deep: #212c38;
+  --ink: #e9edf2; --muted: #b6c0cc; --rule: #344150;
+  --orange-dark: #f2a27c; --shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+html.dark-mode body {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+html.dark-mode h1, html.dark-mode h2, html.dark-mode h3, html.dark-mode h4, html.dark-mode h5, html.dark-mode h6,
+html.dark-mode main h2, html.dark-mode main h3, html.dark-mode main h4, html.dark-mode .manual-toc h2 { color: var(--ink) !important; }
+html.dark-mode .manual-glyph { color: var(--ink); background: #1a232d; }
+html.dark-mode .bg-white:not(a), html.dark-mode .bg-gray-50, html.dark-mode .bg-slate-50 { background-color: #1a232d !important; }
+html.dark-mode .bg-gray-100, html.dark-mode .bg-gray-200, html.dark-mode .bg-slate-100,
+html.dark-mode .hover\:bg-gray-100:hover, html.dark-mode .hover\:bg-gray-50:hover { background-color: var(--paper-deep) !important; }
+html.dark-mode main .text-gray-900, html.dark-mode main .text-gray-800, html.dark-mode main .text-slate-900, html.dark-mode main .text-slate-800,
+html.dark-mode .bg-white .text-gray-900, html.dark-mode body.text-gray-900 { color: var(--ink) !important; }
+html.dark-mode main .text-gray-700, html.dark-mode main .text-gray-600, html.dark-mode main .text-slate-700, html.dark-mode main .text-slate-600 { color: var(--muted) !important; }
+html.dark-mode main .text-gray-400 { color: #9aa5b3 !important; }
+html.dark-mode .border-gray-100, html.dark-mode .border-gray-200, html.dark-mode .border-gray-300, html.dark-mode .border-slate-200 { border-color: var(--rule) !important; }
+html.dark-mode main [class*="bg-blue-"]:not(a):not(button), html.dark-mode main [class*="bg-green-"]:not(a):not(button),
+html.dark-mode main [class*="bg-red-"]:not(a):not(button), html.dark-mode main [class*="bg-yellow-"]:not(a):not(button),
+html.dark-mode main [class*="bg-purple-"]:not(a):not(button), html.dark-mode main [class*="bg-indigo-"]:not(a):not(button),
+html.dark-mode main [class*="bg-cyan-"]:not(a):not(button), html.dark-mode main [class*="bg-emerald-"]:not(a):not(button),
+html.dark-mode main [class*="bg-orange-"]:not(a):not(button),
+html.dark-mode main [class*="from-"], html.dark-mode main [class*="to-"],
+html.dark-mode .field-note, html.dark-mode .workshop-info .bg-blue-50 { background-color: #2a2521 !important; background-image: none !important; }
+html.dark-mode main [class*="text-orange-"], html.dark-mode main [class*="text-slate-"] { color: var(--ink) !important; }
+html.dark-mode .workshop-info { background: rgba(26, 35, 45, 0.9) !important; }
+html.dark-mode .workshop-card, html.dark-mode .section-card, html.dark-mode .architecture-card, html.dark-mode .scheduler-card,
+html.dark-mode .workflow-card, html.dark-mode .tutorial-card {
+  background: rgba(26, 35, 45, 0.94) !important; box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.35) !important;
+}
+html.dark-mode .manual-panel, html.dark-mode .optional-reference { background: rgba(26, 35, 45, 0.94); }
+html.dark-mode .core-badge { background: #3a261c; }
+html.dark-mode .optional-badge { background: var(--paper-deep); color: var(--muted); }
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light-mode) {
+    --paper: #141b23; --paper-deep: #212c38;
+    --ink: #e9edf2; --muted: #b6c0cc; --rule: #344150;
+    --orange-dark: #f2a27c; --shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
+  }
+  html:not(.light-mode) body {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  }
+  html:not(.light-mode) h1, html:not(.light-mode) h2, html:not(.light-mode) h3, html:not(.light-mode) h4, html:not(.light-mode) h5, html:not(.light-mode) h6,
+  html:not(.light-mode) main h2, html:not(.light-mode) main h3, html:not(.light-mode) main h4, html:not(.light-mode) .manual-toc h2 { color: var(--ink) !important; }
+  html:not(.light-mode) .manual-glyph { color: var(--ink); background: #1a232d; }
+  html:not(.light-mode) .bg-white:not(a), html:not(.light-mode) .bg-gray-50, html:not(.light-mode) .bg-slate-50 { background-color: #1a232d !important; }
+  html:not(.light-mode) .bg-gray-100, html:not(.light-mode) .bg-gray-200, html:not(.light-mode) .bg-slate-100,
+  html:not(.light-mode) .hover\:bg-gray-100:hover, html:not(.light-mode) .hover\:bg-gray-50:hover { background-color: var(--paper-deep) !important; }
+  html:not(.light-mode) main .text-gray-900, html:not(.light-mode) main .text-gray-800, html:not(.light-mode) main .text-slate-900, html:not(.light-mode) main .text-slate-800,
+  html:not(.light-mode) .bg-white .text-gray-900, html:not(.light-mode) body.text-gray-900 { color: var(--ink) !important; }
+  html:not(.light-mode) main .text-gray-700, html:not(.light-mode) main .text-gray-600, html:not(.light-mode) main .text-slate-700, html:not(.light-mode) main .text-slate-600 { color: var(--muted) !important; }
+  html:not(.light-mode) main .text-gray-400 { color: #9aa5b3 !important; }
+  html:not(.light-mode) .border-gray-100, html:not(.light-mode) .border-gray-200, html:not(.light-mode) .border-gray-300, html:not(.light-mode) .border-slate-200 { border-color: var(--rule) !important; }
+  html:not(.light-mode) main [class*="bg-blue-"]:not(a):not(button), html:not(.light-mode) main [class*="bg-green-"]:not(a):not(button),
+  html:not(.light-mode) main [class*="bg-red-"]:not(a):not(button), html:not(.light-mode) main [class*="bg-yellow-"]:not(a):not(button),
+  html:not(.light-mode) main [class*="bg-purple-"]:not(a):not(button), html:not(.light-mode) main [class*="bg-indigo-"]:not(a):not(button),
+  html:not(.light-mode) main [class*="bg-cyan-"]:not(a):not(button), html:not(.light-mode) main [class*="bg-emerald-"]:not(a):not(button),
+  html:not(.light-mode) main [class*="bg-orange-"]:not(a):not(button),
+  html:not(.light-mode) main [class*="from-"], html:not(.light-mode) main [class*="to-"],
+  html:not(.light-mode) .field-note, html:not(.light-mode) .workshop-info .bg-blue-50 { background-color: #2a2521 !important; background-image: none !important; }
+  html:not(.light-mode) main [class*="text-orange-"], html:not(.light-mode) main [class*="text-slate-"] { color: var(--ink) !important; }
+  html:not(.light-mode) .workshop-info { background: rgba(26, 35, 45, 0.9) !important; }
+  html:not(.light-mode) .workshop-card, html:not(.light-mode) .section-card, html:not(.light-mode) .architecture-card, html:not(.light-mode) .scheduler-card,
+  html:not(.light-mode) .workflow-card, html:not(.light-mode) .tutorial-card {
+    background: rgba(26, 35, 45, 0.94) !important; box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.35) !important;
+  }
+  html:not(.light-mode) .manual-panel, html:not(.light-mode) .optional-reference { background: rgba(26, 35, 45, 0.94); }
+  html:not(.light-mode) .core-badge { background: #3a261c; }
+  html:not(.light-mode) .optional-badge { background: var(--paper-deep); color: var(--muted); }
+}
