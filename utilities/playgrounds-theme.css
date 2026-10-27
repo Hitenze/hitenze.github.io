@@ -86,7 +86,10 @@ body.pg .legend, body.pg .hint, body.pg .muted { color: var(--muted); }
   body.pg #preset-bar .preset-label, body.pg .checkbox-row label, body.pg .checkbox-row span,
   body.pg .layer-head-selector label, body.pg .range-val, body.pg .slider-val,
   body.pg .btn-preset, body.pg .btn-example, body.pg .btn-gen, body.pg .tab-btn, body.pg .layer-tab,
-  body.pg #btn-lang {
+  body.pg #btn-lang,
+  body.pg .area-title, body.pg .gen-title, body.pg .heatmap-title, body.pg .example-btns > span,
+  body.pg .dataset-btn, body.pg #features-col h3, body.pg .feature-item label,
+  body.pg .fwd-title, body.pg #draw-section > span, body.pg #btn-clear, body.pg #graph-title-bar .gtitle {
     font-size: 0.8125rem !important;
   }
 }
