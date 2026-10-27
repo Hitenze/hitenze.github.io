@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="../assets/css/site-bar.css">
 <script src="../assets/js/site.js" defer></script>
-    <title>Exam Timer - Online Toolbox</title>
+    <title>Exam Timer — Tianshi Xu</title>
     <style>
         * {
             margin: 0;
@@ -102,6 +102,7 @@
             box-shadow: 0 4px 16px rgba(0,0,0,0.15);
             position: relative;
             overflow: hidden;
+            container-type: inline-size;
         }
 
         body.fullscreen-mode .display-area {
@@ -129,8 +130,10 @@
             50% { opacity: 0.8; }
         }
 
+        /* The slider sets the largest size; "00:00:00" (about 4.9em in a monospace font) is capped
+           to the width of the display box (19cqi), so it is never clipped on narrow screens. */
         .timer-display {
-            font-size: 120px;
+            font-size: min(120px, 19cqi);
             font-weight: 700;
             color: white;
             font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
@@ -424,10 +427,6 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .timer-display {
-                font-size: 80px;
-            }
-
             .custom-text {
                 font-size: 32px;
             }
@@ -446,10 +445,6 @@
         }
 
         @media (max-width: 480px) {
-            .timer-display {
-                font-size: 60px;
-            }
-
             .custom-text {
                 font-size: 24px;
             }
@@ -716,7 +711,7 @@
         function updateTimerFont() {
             const size = document.getElementById('timerFontSlider').value;
             document.getElementById('timerFontValue').textContent = size + 'px';
-            timerDisplay.style.fontSize = size + 'px';
+            timerDisplay.style.fontSize = 'min(' + size + 'px, 19cqi)';
         }
 
         function updateTextFont() {

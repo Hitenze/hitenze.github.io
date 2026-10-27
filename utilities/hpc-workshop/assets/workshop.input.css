@@ -14,7 +14,7 @@
   font-family: "STIX Two Text";
   font-style: normal;
   font-weight: 400 700;
-  font-display: swap;
+  font-display: optional;
   src: url("../../../assets/fonts/stix-two-text/stix-two-text-normal-latin.woff2") format("woff2");
 }
 
@@ -22,7 +22,7 @@
   font-family: "STIX Two Text";
   font-style: italic;
   font-weight: 400 700;
-  font-display: swap;
+  font-display: optional;
   src: url("../../../assets/fonts/stix-two-text/stix-two-text-italic-latin.woff2") format("woff2");
 }
 
@@ -30,7 +30,7 @@
   font-family: "IBM Plex Mono";
   font-style: normal;
   font-weight: 400;
-  font-display: swap;
+  font-display: optional;
   src: url("../../../assets/fonts/ibm-plex-mono/ibm-plex-mono-400-latin.woff2") format("woff2");
 }
 
@@ -38,7 +38,7 @@
   font-family: "IBM Plex Mono";
   font-style: normal;
   font-weight: 500;
-  font-display: swap;
+  font-display: optional;
   src: url("../../../assets/fonts/ibm-plex-mono/ibm-plex-mono-500-latin.woff2") format("woff2");
 }
 
@@ -73,7 +73,7 @@ body {
     linear-gradient(90deg, rgba(21, 42, 58, 0.035) 1px, transparent 1px);
   background-size: 28px 28px;
   font-family: "STIX Two Text", Georgia, serif;
-  font-size: 17px;
+  font-size: 1.0625rem;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
 }
@@ -570,7 +570,7 @@ footer h3 {
 
 @media (max-width: 767px) {
   body {
-    font-size: 16px;
+    font-size: 1rem;
   }
 
   .optional-reference::before {

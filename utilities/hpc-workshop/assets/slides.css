@@ -2,7 +2,7 @@
   font-family: "STIX Two Text";
   font-style: normal;
   font-weight: 400 700;
-  font-display: swap;
+  font-display: optional;
   src: url("../../../assets/fonts/stix-two-text/stix-two-text-normal-latin.woff2") format("woff2");
 }
 
@@ -10,7 +10,7 @@
   font-family: "IBM Plex Mono";
   font-style: normal;
   font-weight: 400;
-  font-display: swap;
+  font-display: optional;
   src: url("../../../assets/fonts/ibm-plex-mono/ibm-plex-mono-400-latin.woff2") format("woff2");
 }
 
@@ -18,7 +18,7 @@
   font-family: "IBM Plex Mono";
   font-style: normal;
   font-weight: 500;
-  font-display: swap;
+  font-display: optional;
   src: url("../../../assets/fonts/ibm-plex-mono/ibm-plex-mono-500-latin.woff2") format("woff2");
 }
 

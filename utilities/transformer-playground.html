@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="../assets/css/site-bar.css">
 <script src="../assets/js/site.js" defer></script>
 <script src="playgrounds-theme.js"></script>
-<title>Transformer Playground</title>
+<title>Transformer Playground — Tianshi Xu</title>
 <style>
 /* ============ RESET & BASE ============ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -197,13 +197,13 @@ body {
 
 /* Top-5 predictions bar */
 #top5-area {
-  display: flex; gap: 6px; align-items: flex-end; height: 42px;
+  display: flex; gap: 6px; align-items: flex-end; height: 66px;
 }
-.top5-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 28px; }
+.top5-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 40px; }
 .top5-bar { width: 22px; background: var(--accent); border-radius: 2px 2px 0 0; transition: height 0.3s; min-height: 2px; }
 .top5-bar.top { background: var(--data-red); }
-.top5-label { font-size: 9px; color: var(--muted); text-align: center; max-width: 30px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.top5-prob { font-size: 8px; color: var(--muted); font-family: monospace; }
+.top5-label { font-size: 11px; color: var(--muted); text-align: center; max-width: 44px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.top5-prob { font-size: 10px; color: var(--muted); font-family: monospace; }
 
 /* ============ ATTENTION HEATMAP AREA ============ */
 #heatmap-area {
@@ -372,12 +372,12 @@ body {
       <line x1="4.5" y1="7" x2="4.5" y2="11" stroke-width="0.8" opacity="0.4" style="stroke:var(--muted)"/>
       <line x1="13.5" y1="7" x2="13.5" y2="11" stroke-width="0.8" opacity="0.7" style="stroke:var(--muted)"/>
     </svg>
-    <h1 data-i18n="title">Transformer 游乐场</h1>
+    <h1 data-i18n="title">Transformer Playground</h1>
     <span class="subtitle" data-i18n="subtitle">注意力机制 · 语言建模</span>
   </div>
   <button id="btn-lang" onclick="toggleLang()">中</button>
   <div class="epoch-label">
-    <span data-i18n="epoch">轮次</span>: <span id="epoch-val" class="val">0</span>
+    <span><span data-i18n="epoch">Epoch</span>:</span><span id="epoch-val" class="val">0</span>
   </div>
 </div>
 
@@ -514,7 +514,7 @@ body {
       <div class="loss-info">
         <div class="loss-item">
           <div class="loss-dot" style="background:var(--data-red);"></div>
-          <span data-i18n="loss_label">损失</span>: <span class="loss-value" id="loss-display">—</span>
+          <span><span data-i18n="loss_label">Loss</span>:</span><span class="loss-value" id="loss-display">—</span>
         </div>
       </div>
       <div class="acc-row">
@@ -645,6 +645,7 @@ function applyI18n() {
   });
   document.getElementById('btn-lang').textContent = lang === 'zh' ? 'EN' : '中';
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  document.title = t('title') + ' — Tianshi Xu';
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.getAttribute('data-i18n');
     if (I18N[lang][k]) el.textContent = I18N[lang][k];
@@ -1843,8 +1844,8 @@ function renderHeatmaps() {
     grid.appendChild(panel);
   }
 
-  const CELL = Math.min(32, Math.floor((document.getElementById('heatmap-scroll').clientWidth / cols - 60) / Math.max(T, 2)));
-  const PAD_LEFT = 36, PAD_TOP = 36;
+  const CELL = Math.min(32, Math.floor((document.getElementById('heatmap-scroll').clientWidth / cols - 68) / Math.max(T, 2)));
+  const PAD_LEFT = 44, PAD_TOP = 36;
   const W = PAD_LEFT + T * CELL;
   const H = PAD_TOP + T * CELL;
 
@@ -1888,7 +1889,7 @@ function renderHeatmaps() {
           // Value text
           if (CELL >= 20) {
             ctx.fillStyle = PG.textOn('paper', 'data-blue', w);
-            ctx.font = `${Math.min(9, CELL * 0.28)}px monospace`;
+            ctx.font = `${Math.min(11, CELL * 0.34)}px monospace`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(w.toFixed(2), x + CELL / 2, y + CELL / 2);
@@ -1899,7 +1900,7 @@ function renderHeatmaps() {
 
     // Column labels (top)
     ctx.fillStyle = PG.c('muted');
-    ctx.font = `bold ${Math.min(10, CELL * 0.35)}px sans-serif`;
+    ctx.font = `bold ${Math.min(11, CELL * 0.4)}px sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     for (let col = 0; col < T; col++) {

@@ -14,17 +14,29 @@
   </script>
 <link rel="stylesheet" href="../../assets/css/tokens.css">
 <link rel="stylesheet" href="../../assets/css/site-bar.css">
-    <title>HPC Workshop - Technical Field Manual Slides</title>
+    <title>Technical Field Manual Slides · HPC Workshop — Tianshi Xu</title>
     <meta name="description" content="A 90-minute practical introduction to HPC clusters, Slurm, remote workflows, and a first Python job.">
     <link rel="stylesheet" href="assets/vendor/reveal/reveal.css">
     <link rel="stylesheet" href="assets/vendor/reveal/plugin/highlight/monokai.css">
     <link rel="stylesheet" href="assets/slides.css">
     <link rel="stylesheet" href="assets/slides-theme.css">
     <noscript><link rel="stylesheet" href="assets/slides-noscript.css"></noscript>
+    <script>
+        /* Reading view (?view=read): every slide in order as one scrolling page, the same document
+           view as without JavaScript. Readable on phones, where a 1600x900 slide is scaled down. */
+        if (/[?&]view=read(&|$)/.test(location.search)) {
+            document.documentElement.classList.add('deck-read');
+            document.write('<link rel="stylesheet" href="assets/slides-noscript.css">');
+        }
+    </script>
 </head>
 <body>
     <a class="sb-skip" href="#deck">Skip to slides</a>
-    <a class="deck-return" href="../index.html">Tianshi Xu · Resources</a>
+    <nav class="deck-nav" aria-label="Deck">
+        <a class="deck-return" href="../index.html">Tianshi Xu · Resources</a>
+        <a class="deck-return deck-to-read" href="slides.html?view=read">Reading view</a>
+        <a class="deck-return deck-to-slides" href="slides.html">Slide view</a>
+    </nav>
     <div class="reveal" id="deck" tabindex="-1">
         <div class="slides">
             <!-- 01 -->
@@ -561,12 +573,12 @@ ssh -N -J research-cluster \
             </section>
         </div>
     </div>
-    <noscript><footer class="sb-foot"><span>Tianshi Xu</span><a href="../index.html">Resources</a><a href="../../index.html">Home</a><span>© 2026</span></footer></noscript>
+    <footer class="sb-foot deck-foot"><span>Tianshi Xu</span><a href="../index.html">Resources</a><a href="../../index.html">Home</a><span>© 2026</span></footer>
 
     <script src="assets/vendor/reveal/reveal.js"></script>
     <script src="assets/vendor/reveal/plugin/highlight/highlight.js"></script>
     <script>
-        Reveal.initialize({
+        if (!document.documentElement.classList.contains('deck-read')) Reveal.initialize({
             hash: true,
             controls: true,
             controlsTutorial: false,

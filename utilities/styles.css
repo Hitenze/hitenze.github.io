@@ -1,17 +1,18 @@
 /* Shared theme layer for the web tools (loaded after each tool's own <style>).
    1. Maps the tools' surfaces and text to the site tokens (tokens.css), so the shared light/dark
-      theme applies; in light mode the surfaces keep their original look.
+      theme applies and the tools sit on the same paper as the site bar and footer: page = paper,
+      cards = panel, inner areas = paper.
    2. Raises low-contrast colours (white text on light blue/green/orange/red, light-grey text) to
       at least 4.5:1 in both themes.
    !important is needed because the tools' inline styles use the same selectors. */
 
 :root {
-  --t-bg: #f5f7fa;
-  --t-surface: #ffffff;
-  --t-surface-2: #f8f9fa;
-  --t-border: #e0e0e0;
-  --t-text: #2c3e50;
-  --t-text-2: #4f5f6e;
+  --t-bg: var(--paper);
+  --t-surface: var(--panel);
+  --t-surface-2: var(--paper);
+  --t-border: var(--rule);
+  --t-text: var(--ink);
+  --t-text-2: var(--muted);
   /* Accessible action colours: white text >= 4.5:1 on each */
   --t-blue: #1a5d8f;
   --t-blue-hover: #154b74;
@@ -72,11 +73,11 @@ header, .tool-card, .control-panel, .main-content, .param-item, .quick-btn {
   background: var(--t-surface) !important; border-color: var(--t-border) !important; color: var(--t-text-2) !important;
 }
 .preview, .button-group, .url-params, .result, .qr-result, .url-display, .password-display,
-.checkbox-label, .preset-btn, .upload-area, .btn-secondary {
+.checkbox-label, .preset-btn, .upload-area, .btn-secondary, .password-item {
   background: var(--t-surface-2) !important; border-color: var(--t-border) !important;
 }
 header h1, h2, h3, h4, label, .pane label, .preview h4, .url-params h4, .text-area-wrapper label,
-.converter-section h3, .control-section h3, .options-section h3, .password-text, .quick-btn .value,
+.converter-section h3, .control-section h3, .options-section h3, .password-text, .password-item-text, .quick-btn .value,
 .result, .input-group label, .upload-text, .control-group label { color: var(--t-text) !important; }
 header p, footer, .char-count, .button-group h3, .radio-label, .slider-label, .strength-label,
 .checkbox-label, .quick-btn .label, .time-input-group label, .placeholder, .upload-hint, .upload-icon,

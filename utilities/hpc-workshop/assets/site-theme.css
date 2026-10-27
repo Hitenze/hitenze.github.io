@@ -3,8 +3,19 @@
    footer and code blocks are already dark and are left unchanged. Tinted light panels become a
    warm dark panel with light text (contrast >= 4.5:1). */
 
-/* The workshop styles every <footer> as its navy footer; keep the site's slim footer on the page
-   background in both themes. */
+/* workshop.css redefines --paper, --ink, --muted and --rule on :root for its own warmer palette.
+   Give the shared site bar and slim footer the site's light values back so they look the same as on
+   every other page (the dark values below already match the site's). */
+html:not(.dark-mode) .sb-bar, html:not(.dark-mode) .sb-foot, html:not(.dark-mode) .sb-skip {
+  --paper: #f8f6f0; --ink: #1b222b; --muted: #4a5361; --rule: #d6d0c2;
+}
+@media (prefers-color-scheme: dark) {
+  html:not(.light-mode) .sb-bar, html:not(.light-mode) .sb-foot, html:not(.light-mode) .sb-skip {
+    --paper: #141b23; --ink: #e9edf2; --muted: #b6c0cc; --rule: #344150;
+  }
+}
+/* The workshop styles every <footer> as its navy footer; keep the site's slim footer on the site's
+   paper in both themes. */
 footer.sb-foot { border-top: 1px solid var(--rule); background: var(--paper) !important; }
 footer.sb-foot span { color: var(--muted) !important; }
 footer.sb-foot a { color: var(--orange-dark) !important; }
@@ -35,6 +46,10 @@ html:not(.ws-menu-ready) #mobile-menu-button { display: none !important; }
 @media (min-width: 1024px) { html:not(.ws-menu-ready) #mobile-menu { display: none !important; } }
 /* Workshop footer link lists: at least 24px targets */
 footer:not(.sb-foot) li a { display: inline-block; min-height: 24px; line-height: 24px; }
+/* Landing-page hero buttons: equal widths, all three on one row when they fit, otherwise stacked,
+   so no button is left alone on a second row. */
+.hero-actions { display: flex !important; flex-wrap: wrap; justify-content: center; gap: 1rem; }
+.hero-actions > * { margin: 0 !important; flex: 1 1 15em; max-width: 20em; text-align: center; }
 /* Page titles: balanced line breaks on narrow screens (ignored where unsupported) */
 h1 { text-wrap: balance; }
 

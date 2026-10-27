@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="../assets/css/site-bar.css">
 <script src="../assets/js/site.js" defer></script>
 <script src="playgrounds-theme.js"></script>
-<title>CNN Playground</title>
+<title>CNN Playground — Tianshi Xu</title>
 <style>
 /* ============ RESET & BASE ============ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -647,16 +647,16 @@ body { display: flex; flex-direction: column; }
     <div class="loss-info">
       <div class="loss-item">
         <div class="loss-dot" style="background:var(--data-blue)"></div>
-        <span data-i18n="trainLoss">Train Loss</span>:
+        <span><span data-i18n="trainLoss">Train Loss</span>:</span>
         <span class="loss-value" id="train-loss-val">—</span>
       </div>
       <div class="loss-item">
         <div class="loss-dot" style="background:var(--data-red)"></div>
-        <span data-i18n="testLoss">Test Loss</span>:
+        <span><span data-i18n="testLoss">Test Loss</span>:</span>
         <span class="loss-value" id="test-loss-val">—</span>
       </div>
       <div class="loss-item">
-        <span data-i18n="genGap">Gen. Gap</span>:
+        <span><span data-i18n="genGap">Gen. Gap</span>:</span>
         <span class="gap-indicator gap-green" id="gap-val">—</span>
       </div>
     </div>
@@ -803,7 +803,7 @@ function applyI18N() {
     if (b) { b.title = pbNames[i]; b.setAttribute('aria-label', pbNames[i]); }
   });
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
-  document.title = t('title');
+  document.title = t('title') + ' — Tianshi Xu';
   updateLanguageButton();
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');

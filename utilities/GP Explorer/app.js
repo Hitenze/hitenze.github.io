@@ -127,10 +127,10 @@ const i18n = {
     'skip-link': 'Skip to content',
     'hero-eyebrow': 'Interactive Learning',
     'hero-title': 'Understanding Gaussian Processes<br>From Prior to Posterior',
-    'hero-sub': 'Build intuition for Gaussian Processes from the ground up. Understand how MCMC samples from posterior distributions, and how HMC uses physics to explore faster. Every step has an interactive visualization.',
+    'hero-sub': 'Build intuition for Gaussian processes from the ground up. Understand how MCMC samples from posterior distributions, and how HMC uses physics to explore faster. Every step has an interactive visualization.',
     'tab-gp': 'Gaussian Process (GP)',
-    'gp-title': 'What is a Gaussian Process?',
-    'gp-intro': 'A Gaussian Process is a probability distribution over functions. For any finite set of input points \\(x_1, \\ldots, x_n\\), the corresponding function values \\(f(x_1), \\ldots, f(x_n)\\) follow a multivariate normal distribution:',
+    'gp-title': 'What Is a Gaussian Process?',
+    'gp-intro': 'A Gaussian process is a probability distribution over functions. For any finite set of input points \\(x_1, \\ldots, x_n\\), the corresponding function values \\(f(x_1), \\ldots, f(x_n)\\) follow a multivariate normal distribution:',
     'gp-kernel-explain': 'where \\(m(\\mathbf{x})\\) is the mean function, and \\(k(\\mathbf{x}, \\mathbf{x}\')\\) is the kernel (covariance function). The kernel encodes our prior beliefs about function smoothness, periodicity, and other properties.',
     'gp-kernel-family': 'Kernel Family',
     'kernel-rbf-desc': 'Infinitely differentiable, produces extremely smooth function samples',
@@ -149,7 +149,7 @@ const i18n = {
     'btn-show-prior': 'Show Prior',
     'btn-clear-obs': 'Clear Points',
     'ctrl-add-obs': 'Enter a point',
-    'btn-add-obs': 'Add observation',
+    'btn-add-obs': 'Add Observation',
     'obs-count': 'Observations: ',
     'gp-viz-caption': 'Click the canvas (or enter coordinates) to add observations, toggle "Show Posterior" to see GP updates',
     'mcmc-title': 'MCMC: Sampling from the Posterior',
@@ -252,7 +252,7 @@ const i18n = {
   setLang(lang) {
     this._lang = lang;
     document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
-    document.title = lang === 'zh' ? 'GP · MCMC · HMC 交互式探索' : 'GP · MCMC · HMC Interactive Explorer';
+    document.title = (lang === 'zh' ? 'GP · MCMC · HMC 交互式探索' : 'GP · MCMC · HMC Interactive Explorer') + ' — Tianshi Xu';
     this.applyAll();
   },
   applyAll() {
@@ -534,7 +534,7 @@ function drawGP() {
   for (let x = -4; x <= 4; x++) { ctx.beginPath(); ctx.moveTo(toX(x), pad.t); ctx.lineTo(toX(x), pad.t + plotH); ctx.stroke(); }
   for (let y = -3; y <= 3; y++) { ctx.beginPath(); ctx.moveTo(pad.l, toY(y)); ctx.lineTo(pad.l + plotW, toY(y)); ctx.stroke(); }
   ctx.strokeStyle = faint; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(pad.l, toY(0)); ctx.lineTo(pad.l + plotW, toY(0)); ctx.stroke();
-  ctx.fillStyle = textColor; ctx.font = '11px JetBrains Mono, monospace'; ctx.textAlign = 'center';
+  ctx.fillStyle = textColor; ctx.font = '11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace'; ctx.textAlign = 'center';
   for (let x = -4; x <= 4; x += 2) ctx.fillText(x, toX(x), pad.t + plotH + 16);
   ctx.textAlign = 'right'; for (let y = -3; y <= 3; y++) ctx.fillText(y, pad.l - 8, toY(y) + 4);
 
@@ -594,7 +594,7 @@ function drawGP() {
     ctx.stroke();
     // Obs
     gpObservations.forEach(([ox, oy]) => { ctx.beginPath(); ctx.arc(toX(ox), toY(oy), 6, 0, Math.PI * 2); ctx.fillStyle = accent; ctx.fill(); ctx.strokeStyle = bg; ctx.lineWidth = 2; ctx.stroke(); });
-    ctx.fillStyle = textColor; ctx.font = '11px Satoshi, sans-serif'; ctx.textAlign = 'left';
+    ctx.fillStyle = textColor; ctx.font = '11px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'; ctx.textAlign = 'left';
     ctx.fillText(obsX.length > 0 ? i18n.t('canvas-gp-posterior-obs') : i18n.t('canvas-gp-posterior-no-obs'), pad.l + 10, pad.t + 16);
   } else {
     // Prior
@@ -606,7 +606,7 @@ function drawGP() {
       ctx.stroke(); ctx.globalAlpha = 1;
     }
     gpObservations.forEach(([ox, oy]) => { ctx.beginPath(); ctx.arc(toX(ox), toY(oy), 5, 0, Math.PI * 2); ctx.fillStyle = faint; ctx.fill(); });
-    ctx.fillStyle = textColor; ctx.font = '11px Satoshi, sans-serif'; ctx.textAlign = 'left';
+    ctx.fillStyle = textColor; ctx.font = '11px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'; ctx.textAlign = 'left';
     ctx.fillText(i18n.t('canvas-gp-prior'), pad.l + 10, pad.t + 16);
   }
 }
@@ -768,7 +768,7 @@ function drawHyperCanvas(canvasId, primarySamples, secondarySamples) {
 
   // Legend
   if (secondarySamples && secondarySamples.length > 0) {
-    ctx.font = '11px Satoshi, sans-serif'; ctx.textAlign = 'left';
+    ctx.font = '11px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'; ctx.textAlign = 'left';
     ctx.fillStyle = accent; ctx.fillRect(pad.l + 10, pad.t + 8, 12, 3);
     ctx.fillStyle = textColor; ctx.fillText('HMC', pad.l + 28, pad.t + 14);
     ctx.fillStyle = errorColor; ctx.fillRect(pad.l + 70, pad.t + 8, 12, 3);
@@ -776,7 +776,7 @@ function drawHyperCanvas(canvasId, primarySamples, secondarySamples) {
   }
 
   if (currentKernel === 'periodic') {
-    ctx.font = '10px JetBrains Mono, monospace';
+    ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
     ctx.textAlign = 'right';
     ctx.fillStyle = textColor;
     const fixedLabel = i18n._lang === 'zh' ? `固定 p=${period.toFixed(2)}` : `fixed p=${period.toFixed(2)}`;
@@ -784,7 +784,7 @@ function drawHyperCanvas(canvasId, primarySamples, secondarySamples) {
   }
 
   // Axes
-  ctx.fillStyle = textColor; ctx.font = '11px JetBrains Mono, monospace'; ctx.textAlign = 'center';
+  ctx.fillStyle = textColor; ctx.font = '11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace'; ctx.textAlign = 'center';
   ctx.fillText('ℓ', pad.l + plotW / 2, pad.t + plotH + 25);
   for (let v = 0.5; v <= 5; v += 0.5) { if (v % 1 === 0) ctx.fillText(v.toFixed(0), toX(v), pad.t + plotH + 14); }
   ctx.save(); ctx.translate(14, pad.t + plotH / 2); ctx.rotate(-Math.PI / 2);
@@ -831,13 +831,13 @@ function drawLiveGP(canvasId, params, compareParams) {
 
   // Hint text
   if (obsX.length === 0) {
-    ctx.fillStyle = textColor; ctx.font = '13px Satoshi, sans-serif'; ctx.textAlign = 'center';
+    ctx.fillStyle = textColor; ctx.font = '13px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'; ctx.textAlign = 'center';
     ctx.fillText(i18n.t('gp-live-click-hint'), W / 2, H / 2);
   } else if (obsX.length < 2) {
-    ctx.fillStyle = textColor; ctx.font = '12px Satoshi, sans-serif'; ctx.textAlign = 'center';
+    ctx.fillStyle = textColor; ctx.font = '12px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'; ctx.textAlign = 'center';
     ctx.fillText(i18n.t('gp-live-click-more'), W / 2, H - pad.b - 5);
   } else if (!params) {
-    ctx.fillStyle = textColor; ctx.font = '12px Satoshi, sans-serif'; ctx.textAlign = 'center';
+    ctx.fillStyle = textColor; ctx.font = '12px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'; ctx.textAlign = 'center';
     ctx.fillText(i18n.t('gp-live-ready'), W / 2, H - pad.b - 5);
   }
 
@@ -893,7 +893,7 @@ function drawLiveGP(canvasId, params, compareParams) {
   gpObservations.forEach(([ox, oy]) => { ctx.beginPath(); ctx.arc(toX(ox), toY(oy), 4, 0, Math.PI * 2); ctx.fillStyle = accent; ctx.fill(); ctx.strokeStyle = bg; ctx.lineWidth = 1.5; ctx.stroke(); });
 
   // Label
-  ctx.fillStyle = textColor; ctx.font = '10px JetBrains Mono, monospace'; ctx.textAlign = 'left';
+  ctx.fillStyle = textColor; ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace'; ctx.textAlign = 'left';
   if (compareParams) {
     ctx.fillStyle = accent;
     ctx.fillText(`HMC: ${formatHyperParamText(l, sf)}`, pad.l + 6, pad.t + 12);
@@ -906,7 +906,7 @@ function drawLiveGP(canvasId, params, compareParams) {
   // Legend when comparing
   if (compareParams) {
     const lx = W - pad.r - 100;
-    ctx.font = '11px Satoshi, sans-serif'; ctx.textAlign = 'left';
+    ctx.font = '11px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'; ctx.textAlign = 'left';
     ctx.fillStyle = accent; ctx.fillRect(lx, pad.t + 6, 12, 3);
     ctx.fillStyle = textColor; ctx.fillText('HMC', lx + 16, pad.t + 12);
     ctx.fillStyle = errorColor; ctx.fillRect(lx + 52, pad.t + 6, 12, 3);

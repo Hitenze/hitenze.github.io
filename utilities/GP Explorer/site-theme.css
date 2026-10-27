@@ -3,13 +3,18 @@
      html[data-theme] before paint; without JS the prefers-color-scheme rules in style.css apply.
      The app's own toggle is hidden; the site bar's toggle drives it (app.js listens and redraws).
    - Palette surfaces/text/accent mapped to the site tokens; muted text raised to >= 4.5:1.
-   - Fonts: the site's system sans and mono stacks (no third-party font requests).
+   - Fonts: the site's serif for headings, system sans for text and controls, mono for code
+     (no third-party font requests).
    - Without JavaScript all three explanations (GP, MCMC, HMC) are shown in order; tabs and the
      single-panel view are applied only after app.js has started (html.gp-ready). */
 
 :root {
-  --font-display: var(--mono);
+  --font-display: var(--sans);
   --font-body: var(--sans);
+}
+/* Headings and the logo use the site's serif, as on every other page; controls stay sans. */
+.logo-text, .hero h1, .panel-text h2, .panel-text h3, .kernel-card h4, .summary-inner h2 {
+  font-family: var(--serif);
 }
 :root, [data-theme="light"] {
   --color-bg: #f8f6f0;
