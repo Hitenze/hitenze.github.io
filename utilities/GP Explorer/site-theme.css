@@ -1,0 +1,76 @@
+/* Site integration for GP Explorer (loaded after base.css and style.css).
+   - Theme authority is the site's shared 'theme' choice: the inline boot script sets
+     html[data-theme] before paint; without JS the prefers-color-scheme rules in style.css apply.
+     The app's own toggle is hidden; the site bar's toggle drives it (app.js listens and redraws).
+   - Palette surfaces/text/accent mapped to the site tokens; muted text raised to >= 4.5:1.
+   - Fonts: the site's system sans and mono stacks (no third-party font requests).
+   - Without JavaScript all three explanations (GP, MCMC, HMC) are shown in order; tabs and the
+     single-panel view are applied only after app.js has started (html.gp-ready). */
+
+:root {
+  --font-display: var(--mono);
+  --font-body: var(--sans);
+}
+:root, [data-theme="light"] {
+  --color-bg: #f8f6f0;
+  --color-surface: #ffffff;
+  --color-text: #1b222b;
+  --color-text-muted: #4a5361;
+  --color-text-faint: #5f6675;
+  --color-accent: #1a5d8f;
+  --color-accent-hover: #154b74;
+  --color-accent-light: #e3edf5;
+}
+html[data-theme="dark"] {
+  --color-bg: #141b23;
+  --color-surface: #1a232d;
+  --color-surface-2: #212c38;
+  --color-surface-offset: #27323f;
+  --color-divider: #344150;
+  --color-border: #3f4d5e;
+  --color-text: #e9edf2;
+  --color-text-muted: #b6c0cc;
+  --color-text-faint: #9aa5b3;
+  --color-accent: #8ec9f0;
+  --color-accent-hover: #b5dcf6;
+  --color-accent-light: #1d3446;
+  --color-accent-subtle: #1a2d3c;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-bg: #141b23;
+    --color-surface: #1a232d;
+    --color-surface-2: #212c38;
+    --color-surface-offset: #27323f;
+    --color-divider: #344150;
+    --color-border: #3f4d5e;
+    --color-text: #e9edf2;
+    --color-text-muted: #b6c0cc;
+    --color-text-faint: #9aa5b3;
+    --color-accent: #8ec9f0;
+    --color-accent-hover: #b5dcf6;
+    --color-accent-light: #1d3446;
+    --color-accent-subtle: #1a2d3c;
+  }
+}
+
+/* Text on the accent fill: white on the light accent, dark ink on the pale dark-theme accent */
+html[data-theme="dark"] .btn-sample:not(.btn-secondary):not(.btn-danger), html[data-theme="dark"] .step-num { color: #10161d; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .btn-sample:not(.btn-secondary):not(.btn-danger), :root:not([data-theme]) .step-num { color: #10161d; }
+}
+
+/* The site bar carries the theme toggle */
+[data-theme-toggle] { display: none !important; }
+
+/* Without JavaScript: every explanation visible, no tab bar */
+html:not(.gp-ready) .tab-panel { display: block !important; }
+html:not(.gp-ready) .tab-panel + .tab-panel { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--color-divider); }
+html:not(.gp-ready) .tab-nav { display: none !important; }
+.gp-nojs { margin: 0 0 12px; padding: 10px 14px; border: 1px dashed var(--color-border); border-radius: 6px; color: var(--color-text-muted); font: 400 14px/1.5 var(--sans); }
+
+/* Target sizes and focus for the app's own controls */
+.lang-toggle, .tab-btn, .btn-sample { min-height: 44px; }
+.lang-toggle { min-width: 44px; }
+input[type="range"] { min-height: 24px; }
+a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }

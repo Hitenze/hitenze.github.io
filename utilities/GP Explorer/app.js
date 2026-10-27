@@ -270,20 +270,16 @@ const i18n = {
   }
 };
 
-// ── Theme Toggle ──
+// ── Theme ──
+// The site's shared theme choice is the authority: the inline boot script in <head> sets
+// html[data-theme] before paint, and the site bar's toggle (assets/js/site.js) changes it and
+// dispatches 'site-themechange'. Canvases are redrawn with the new palette.
 (function(){
-  const t = document.querySelector('[data-theme-toggle]');
   const r = document.documentElement;
-  let d = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
-  r.setAttribute('data-theme', d);
-  function updateIcon() {
-    if (!t) return;
-    t.innerHTML = d === 'dark'
-      ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
-      : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  if (!r.getAttribute('data-theme')) {
+    r.setAttribute('data-theme', matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
   }
-  updateIcon();
-  if (t) t.addEventListener('click', () => { d = d === 'dark' ? 'light' : 'dark'; r.setAttribute('data-theme', d); updateIcon(); redrawAllCanvases(); });
+  document.addEventListener('site-themechange', () => { redrawAllCanvases(); });
 })();
 
 // ── Language Toggle ──
@@ -306,6 +302,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // ── Tab Navigation ──
 const tabBtns = document.querySelectorAll('.tab-btn');
 const tabPanels = document.querySelectorAll('.tab-panel');
+// Without JavaScript all panels are shown (site-theme.css); with it, one panel at a time.
+tabPanels.forEach(p => { p.hidden = !p.classList.contains('active'); });
+document.documentElement.classList.add('gp-ready');
 tabBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     tabBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
