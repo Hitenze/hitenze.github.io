@@ -35,6 +35,8 @@ html:not(.ws-menu-ready) #mobile-menu-button { display: none !important; }
 @media (min-width: 1024px) { html:not(.ws-menu-ready) #mobile-menu { display: none !important; } }
 /* Workshop footer link lists: at least 24px targets */
 footer:not(.sb-foot) li a { display: inline-block; min-height: 24px; line-height: 24px; }
+/* Page titles: balanced line breaks on narrow screens (ignored where unsupported) */
+h1 { text-wrap: balance; }
 
 html.dark-mode {
   --paper: #141b23; --paper-deep: #212c38;

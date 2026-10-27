@@ -27,12 +27,14 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background: #f5f7fa;
             min-height: 100vh;
-            padding: 20px;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            /* Page gutter lives here, not on body, so the site bar and footer are full width */
+            box-sizing: content-box;
+            padding: 20px 20px 0;
         }
 
         .back-btn {
@@ -306,8 +308,8 @@
         }
 
         @media (max-width: 480px) {
-            body {
-                padding: 10px;
+            .container {
+                padding: 10px 10px 0;
             }
 
             header {

@@ -711,7 +711,9 @@ canvas {
   .panel-viz { position: static; }
   .metric-row { grid-template-columns: 1fr; }
   .flow-diagram { flex-direction: column; }
-  .flow-arrow { transform: rotate(90deg); }
+  /* Stacked: the caption stays horizontal; only the glyph turns to point down */
+  .flow-arrow { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); white-space: normal; text-align: center; max-width: 100%; }
+  .flow-glyph { display: inline-block; line-height: 1; transform: rotate(90deg); }
   .kernel-cards { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {

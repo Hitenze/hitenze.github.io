@@ -74,6 +74,23 @@ body.pg #btn-clear, body.pg .layer-tab { min-height: 24px; }
 body.pg #sidebar h3, body.pg .panel-title, body.pg .ctrl-group label, body.pg .sidebar-section label,
 body.pg .legend, body.pg .hint, body.pg .muted { color: var(--muted); }
 
+/* Phone and narrow-tablet text scale (panels are stacked below 900px). Only HTML labels and
+   controls grow; canvas and SVG drawing text is untouched, and wider screens keep each app's
+   dense sizes. Form controls at 16px so iOS does not zoom on focus. !important because several
+   page rules use ID selectors or inline styles. */
+@media (max-width: 56.25em) {
+  body.pg select, body.pg input[type="text"], body.pg input[type="number"], body.pg textarea {
+    font-size: 1rem !important;
+  }
+  body.pg .ctrl-group label, body.pg .sidebar-section label, body.pg #sidebar h3, body.pg .panel-title,
+  body.pg #preset-bar .preset-label, body.pg .checkbox-row label, body.pg .checkbox-row span,
+  body.pg .layer-head-selector label, body.pg .range-val, body.pg .slider-val,
+  body.pg .btn-preset, body.pg .btn-example, body.pg .btn-gen, body.pg .tab-btn, body.pg .layer-tab,
+  body.pg #btn-lang {
+    font-size: 0.8125rem !important;
+  }
+}
+
 /* Scrollbars */
 body.pg ::-webkit-scrollbar-track { background: var(--panel); }
 body.pg ::-webkit-scrollbar-thumb { background: var(--rule); }
