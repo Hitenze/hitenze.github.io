@@ -1,116 +1,148 @@
+/* Shared theme layer for the web tools (loaded after each tool's own <style>).
+   1. Maps the tools' surfaces and text to the site tokens (tokens.css), so the shared light/dark
+      theme applies; in light mode the surfaces keep their original look.
+   2. Raises low-contrast colours (white text on light blue/green/orange/red, light-grey text) to
+      at least 4.5:1 in both themes.
+   !important is needed because the tools' inline styles use the same selectors. */
+
 :root {
-  --myblue: #66c4ff;
-  --myblue-hover: #41b6ff;
-  --myred: #ef4d3b;
-  --myred-hover: #d43f31;
-  --myyellow: #f4cd71;
-  --myyellow-hover: #e0b953;
-  --mypurple: #af58ba;
-  --mygreen: #9ae085;
-  --mygreen-hover: #78ce59;
-  --mygray: #dcdcdc;
+  --t-bg: #f5f7fa;
+  --t-surface: #ffffff;
+  --t-surface-2: #f8f9fa;
+  --t-border: #e0e0e0;
+  --t-text: #2c3e50;
+  --t-text-2: #4f5f6e;
+  /* Accessible action colours: white text >= 4.5:1 on each */
+  --t-blue: #1a5d8f;
+  --t-blue-hover: #154b74;
+  --t-green: #1e7a45;
+  --t-green-hover: #17633a;
+  --t-orange: #9a5200;
+  --t-orange-hover: #7f4400;
+  --t-red: #b5342a;
+  --t-red-hover: #962a22;
+  --t-grey: #5f6b6d;
+  --t-on: #ffffff;
+}
+html.dark-mode {
+  --t-bg: var(--paper);
+  --t-surface: var(--panel);
+  --t-surface-2: #212c38;
+  --t-border: var(--rule);
+  --t-text: var(--ink);
+  --t-text-2: var(--muted);
+  --t-blue: #8ec9f0;
+  --t-blue-hover: #b5dcf6;
+  --t-green: #7fd19b;
+  --t-green-hover: #a5e0b9;
+  --t-orange: #f2b45a;
+  --t-orange-hover: #f6c983;
+  --t-red: #f19a90;
+  --t-red-hover: #f5b8b1;
+  --t-grey: #b6c0cc;
+  --t-on: #10161d;
+}
+@media (prefers-color-scheme: dark) {
+  html:not(.light-mode) {
+    --t-bg: var(--paper);
+    --t-surface: var(--panel);
+    --t-surface-2: #212c38;
+    --t-border: var(--rule);
+    --t-text: var(--ink);
+    --t-text-2: var(--muted);
+    --t-blue: #8ec9f0;
+    --t-blue-hover: #b5dcf6;
+    --t-green: #7fd19b;
+    --t-green-hover: #a5e0b9;
+    --t-orange: #f2b45a;
+    --t-orange-hover: #f6c983;
+    --t-red: #f19a90;
+    --t-red-hover: #f5b8b1;
+    --t-grey: #b6c0cc;
+    --t-on: #10161d;
+  }
 }
 
-/* Buttons */
-.btn-primary {
-  background: var(--myblue) !important;
-  border-color: var(--myblue) !important;
-  color: #fff !important;
+/* ---- Surfaces and text ---- */
+body { background: var(--t-bg) !important; color: var(--t-text) !important; }
+header, .tool-card, .control-panel, .main-content, .param-item, .quick-btn {
+  background: var(--t-surface) !important; border-color: var(--t-border) !important;
 }
-.btn-primary:hover {
-  background: var(--myblue-hover) !important;
+.btn:not([class*="btn-"]), .indent-btn:not(.active) {
+  background: var(--t-surface) !important; border-color: var(--t-border) !important; color: var(--t-text-2) !important;
 }
+.preview, .button-group, .url-params, .result, .qr-result, .url-display, .password-display,
+.checkbox-label, .preset-btn, .upload-area, .btn-secondary {
+  background: var(--t-surface-2) !important; border-color: var(--t-border) !important;
+}
+header h1, h2, h3, h4, label, .pane label, .preview h4, .url-params h4, .text-area-wrapper label,
+.converter-section h3, .control-section h3, .options-section h3, .password-text, .quick-btn .value,
+.result, .input-group label, .upload-text, .control-group label { color: var(--t-text) !important; }
+header p, footer, .char-count, .button-group h3, .radio-label, .slider-label, .strength-label,
+.checkbox-label, .quick-btn .label, .time-input-group label, .placeholder, .upload-hint, .upload-icon,
+.url-display, .mode-btn, .preset-btn, .btn-secondary, .input-group label { color: var(--t-text-2) !important; }
+textarea, input[type="text"], input[type="number"], input[type="date"], input[type="datetime-local"],
+input[type="time"], input[type="url"], select, .url-input, .protocol-select, #jsonInput, #textInput {
+  background: var(--t-surface) !important; color: var(--t-text) !important; border-color: var(--t-border) !important;
+}
+::placeholder { color: var(--t-text-2) !important; opacity: 1; }
+.mode-btn { background: var(--t-surface) !important; border-color: var(--t-border) !important; }
+input[type="range"], .slider, .strength-bar { background: var(--t-border) !important; }
+.control-section, .converter-section h3 { border-color: var(--t-border) !important; }
+#canvas { border-color: var(--t-border) !important; }
 
-.btn-success {
-  background: var(--mygreen) !important;
-  border-color: var(--mygreen) !important;
-  color: #000 !important;
-}
-.btn-success:hover {
-  background: var(--mygreen-hover) !important;
-}
+/* Inline-styled text in the tools (style="color: #2c3e50 / #5a6c7d") follows the theme */
+.tool-card ul, .tool-card ul strong { color: var(--t-text-2) !important; }
+.radio-group > span { color: var(--t-text) !important; }
+/* Timestamp: the live clock box keeps its dark panel; its heading stays light */
+.current-time h3 { color: #e5e7eb !important; }
 
-.btn-pause { /* used by exam timer */
-  background: var(--myyellow) !important;
-  border-color: var(--myyellow) !important;
-  color: #000 !important;
+/* ---- Actions ---- */
+.btn-primary, .copy-btn, .mini-copy-btn, .btn-fullscreen, .mode-btn.active, .indent-btn.active {
+  background: var(--t-blue) !important; border-color: var(--t-blue) !important; color: var(--t-on) !important;
 }
-.btn-pause:hover { background: var(--myyellow-hover) !important; }
+.btn-primary:hover, .copy-btn:hover, .mini-copy-btn:hover, .btn-fullscreen:hover, .btn:hover:not(.btn-secondary):not(.btn-success):not(.btn-reset):not(.btn-start):not(.btn-pause) {
+  background: var(--t-blue-hover) !important; border-color: var(--t-blue-hover) !important; color: var(--t-on) !important;
+}
+.preset-btn:hover { background: var(--t-blue) !important; border-color: var(--t-blue) !important; color: var(--t-on) !important; }
+.btn-success, .btn-start { background: var(--t-green) !important; border-color: var(--t-green) !important; color: var(--t-on) !important; }
+.btn-success:hover, .btn-start:hover { background: var(--t-green-hover) !important; }
+.btn-pause { background: var(--t-orange) !important; border-color: var(--t-orange) !important; color: var(--t-on) !important; }
+.btn-pause:hover { background: var(--t-orange-hover) !important; }
+.btn-reset { background: var(--t-red) !important; border-color: var(--t-red) !important; color: var(--t-on) !important; }
+.btn-reset:hover { background: var(--t-red-hover) !important; }
+.btn-secondary:hover { background: var(--t-border) !important; color: var(--t-text) !important; }
+.slider-value, .back-link { color: var(--t-blue) !important; }
+.param-key { color: var(--t-red) !important; }
+.param-value { color: var(--t-green) !important; }
+.mode-btn:hover:not(.active) { border-color: var(--t-blue) !important; color: var(--t-blue) !important; }
+.quick-btn:hover, .upload-area:hover, .upload-area.dragover { border-color: var(--t-blue) !important; }
 
-.btn-reset { /* destructive action */
-  background: var(--myred) !important;
-  border-color: var(--myred) !important;
-  color: #fff !important;
+/* Focus: visible ring on every control */
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--t-blue) !important; outline-offset: 2px !important;
 }
-.btn-reset:hover { background: var(--myred-hover) !important; }
+input:focus, textarea:focus, select:focus { border-color: var(--t-blue) !important; }
 
-/* Exam timer specific buttons */
-.btn-start {
-  background: var(--mygreen) !important;
-  border-color: var(--mygreen) !important;
-  color: #000 !important;
-}
-.btn-start:hover { background: var(--mygreen-hover) !important; }
-
-.btn-fullscreen {
-  background: var(--myblue) !important;
-  border-color: var(--myblue) !important;
-  color: #fff !important;
-}
-.btn-fullscreen:hover { background: var(--myblue-hover) !important; }
-
-.btn-secondary {
-  background: #fff !important;
-  color: #333 !important;
-  border: 1px solid var(--mygray) !important;
-}
-.btn-secondary:hover {
-  background: var(--mygray) !important;
-}
-
-/* Links, cards */
-.tool-card:hover { border-color: var(--myblue) !important; }
-.back-btn:hover { border-color: var(--myblue) !important; color: var(--myblue) !important; }
-
-/* Inputs */
-input:focus, textarea:focus, select:focus {
-  border-color: var(--myblue) !important;
-}
+/* Range sliders: 24px tall target, the visible 6px track drawn in the content box */
+input[type="range"] { box-sizing: content-box !important; height: 6px !important; padding: 9px 0 !important; background-clip: content-box !important; }
+input[type="file"] { min-height: 24px; }
+label.checkbox-label { min-height: 24px; }
 
 /* Range slider thumbs */
-input[type="range"]::-webkit-slider-thumb {
-  background: var(--myblue) !important;
-}
-input[type="range"]::-moz-range-thumb {
-  background: var(--myblue) !important;
-}
+input[type="range"]::-webkit-slider-thumb { background: var(--t-blue) !important; }
+input[type="range"]::-moz-range-thumb { background: var(--t-blue) !important; }
 
-/* Upload areas */
-.upload-area:hover,
-.upload-area.dragover {
-  border-color: var(--myblue) !important;
-}
+/* Password strength colours (bar fill, not text) */
+.strength-weak { background: #e74c3c !important; }
+.strength-fair { background: #f39c12 !important; }
+.strength-good { background: #3498db !important; }
+.strength-strong { background: #27ae60 !important; }
 
-/* Exam timer state backgrounds */
-.display-area.warning { background: var(--myyellow) !important; }
-.display-area.warning .timer-display,
-.display-area.warning .custom-text { color: var(--myblue) !important; text-shadow: none !important; }
-.display-area.danger { background: var(--myred) !important; }
-.display-area.danger .timer-display,
-.display-area.danger .custom-text { color: var(--mygray) !important; text-shadow: none !important; }
-
-/* Password strength colors */
-.strength-weak { background: var(--myred) !important; }
-.strength-fair { background: var(--myyellow) !important; }
-.strength-good { background: var(--myblue) !important; }
-.strength-strong { background: var(--mygreen) !important; }
-
-/* Password generator buttons */
-.copy-btn { background: var(--myblue) !important; }
-.copy-btn:hover { background: var(--myblue-hover) !important; }
-.mini-copy-btn { background: var(--myblue) !important; }
-.mini-copy-btn:hover { background: var(--myblue-hover) !important; }
-
-/* Exam timer text colors and alignment (avoid pure black/white) */
-.display-area .timer-display { color: var(--myblue) !important; }
-.display-area .custom-text { color: var(--mygray) !important; text-align: left !important; }
+/* Exam timer: the display area keeps its own dark stage in both themes */
+.display-area .timer-display, .display-area .custom-text { color: #ffffff !important; text-shadow: none !important; }
+.display-area.warning { background: #92400e !important; }
+.display-area.danger { background: #7f1d1d !important; }
+.display-area .custom-text { text-align: left !important; }
+body.fullscreen-mode { background: #1a1a1a !important; }
+body.fullscreen-mode .sb-bar, body.fullscreen-mode .sb-foot { display: none !important; }
