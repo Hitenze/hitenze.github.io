@@ -380,9 +380,9 @@ button.email:hover .addr { text-decoration-thickness: 2px; }
 .pillars li:first-child { border-top: 0; padding-top: 0; }
 .pillars h3 { font: 700 1.1875rem/1.3 var(--serif); }
 .pillars p { margin-top: 6px; max-width: 60ch; font-size: 1.0625rem; line-height: 1.6; }
-.foundation { margin-top: 4px; border-top: 2px solid var(--ink); padding-top: 16px; }
+.foundation { margin-top: 4px; border-top: 2px solid var(--ink); padding-top: 16px; overflow-wrap: break-word; }
 .foundation-label { font: 500 0.875rem/1.5 var(--sans); color: var(--muted); }
-.foundation h3 { margin-top: 2px; font: 600 1.375rem/1.25 var(--serif); }
+.foundation h3 { margin-top: 2px; font: 600 1.375rem/1.25 var(--serif); text-wrap: balance; }
 .foundation-text { margin-top: 6px; max-width: 66ch; font-size: 1.0625rem; line-height: 1.6; }
 @media (min-width: 47.5em) {
   .pillars { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto auto; }
@@ -396,6 +396,17 @@ button.email:hover .addr { text-decoration-thickness: 2px; }
   .pillars p { margin-top: 8px; font-size: 1rem; }
   .foundation { margin-top: 0; padding-top: 20px; }
   .foundation h3 { font-size: 1.5rem; }
+  /* The foundation spans the full rule on the same three tracks as the pillars: heading under the
+     first column, text across the other two. Only when the column is wide enough (in em, so enlarged
+     text falls back to the stacked layout above). */
+  .is-research > .body { container: research / inline-size; }
+  @container research (width >= 42em) {
+    .foundation { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: baseline; }
+    .foundation-label { grid-column: 1 / -1; }
+    .foundation h3 { grid-column: 1; padding-right: 24px; }
+    /* 25px = the pillars' 24px column padding + 1px column rule, so the text starts with column two */
+    .foundation-text { grid-column: 2 / -1; margin-top: 0; padding-left: 25px; max-width: none; }
+  }
 }
 @media (min-width: 64em) { .section.is-research { padding: 72px 0; } .pillars p { font-size: 1.0625rem; } }
 
