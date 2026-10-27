@@ -1,14 +1,14 @@
 /* TEAM */
     Author: Tianshi Xu
-    Contact: tianshi ( d o t ) xu ( a t ) emory ( d o t ) edu
-    Location: Atlanta, Georgia, USA
+    Contact: tianshi ( d o t ) xu ( a t ) uky ( d o t ) edu
+    Location: Lexington, Kentucky, USA
 
 /* SITE */
     Language: English
     Standards: HTML5, CSS3
-    Components: MathJax
+    Components: KaTeX (GP Explorer)
     Tools: Claude Code (AI-assisted development)
-    
+
 /* SPECIAL THANKS */
     Claude Code by Anthropic for development assistance
     GitHub Pages for hosting
