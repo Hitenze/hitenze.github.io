@@ -537,6 +537,15 @@ html.dark-mode .img-dark { display: block; }
 .footer-name span { font: 400 0.9375rem var(--sans); color: var(--muted); }
 .footer-contact { margin-top: 6px; display: flex; flex-wrap: wrap; column-gap: 20px; font: 400 0.9375rem var(--sans); }
 .footer-contact li { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
+/* Jump target of the hero "Contact" link: clear the sticky header. */
+#contact { scroll-margin-top: 80px; }
+.footer-notice {
+  max-width: 68ch; margin: 6px 0 12px;
+  font: 400 0.8125rem/1.55 var(--sans); color: var(--muted);
+}
+.footer-notice strong { font-weight: 600; color: var(--ink); }
+.footer-notice a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+.footer-notice a:hover { color: var(--accent); }
 .site-footer nav { margin-top: 0; }
 .site-footer nav ul {
   display: grid; grid-template-columns: repeat(2, max-content);
