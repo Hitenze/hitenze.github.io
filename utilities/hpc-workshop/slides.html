@@ -56,7 +56,7 @@
             <!-- 02 -->
             <section>
                 <p class="slide-label">Field map / Core route</p>
-                <h2>Five modules, one working job</h2>
+                <h2>Five Modules, One Working Job</h2>
                 <div class="grid-3 compact">
                     <div class="panel"><h3>01 / Why</h3><p>Parallel work, limits, and Amdahl's Law.</p></div>
                     <div class="panel"><h3>02 / Where</h3><p>Login, compute, storage, and network.</p></div>
@@ -81,7 +81,7 @@
                     <p class="slide-label">01.1 / Parallel work</p>
                     <div class="full-bleed-image">
                         <div>
-                            <h2>Expose independent work</h2>
+                            <h2>Expose Independent Work</h2>
                             <p>Parallel hardware helps only when the algorithm provides work that can proceed concurrently.</p>
                             <p class="callout">More resources do not repair serial dependencies, load imbalance, or excessive communication.</p>
                         </div>
@@ -92,7 +92,7 @@
                 <!-- 05 -->
                 <section>
                     <p class="slide-label">01.2 / Execution models</p>
-                    <h2>Serial and parallel are algorithm choices</h2>
+                    <h2>Serial and Parallel Are Algorithm Choices</h2>
                     <div class="grid-2">
                         <div class="panel">
                             <h3>Serial</h3>
@@ -116,7 +116,7 @@
                 <!-- 06 -->
                 <section>
                     <p class="slide-label">01.3 / Amdahl's Law</p>
-                    <h2>The serial fraction sets the ceiling</h2>
+                    <h2>The Serial Fraction Sets the Ceiling</h2>
                     <div class="equation">S(N) = 1 / ((1 - f) + f / N)</div>
                     <div class="grid-2 compact">
                         <div class="panel">
@@ -134,7 +134,7 @@
                 <!-- 07 -->
                 <section>
                     <p class="slide-label">01.4 / Scientific workloads</p>
-                    <h2>HPC is an end-to-end system</h2>
+                    <h2>HPC Is an End-to-End System</h2>
                     <div class="grid-3 compact">
                         <div class="panel"><h3>Simulation</h3><p>PDEs, particles, climate, fluids, and materials.</p></div>
                         <div class="panel"><h3>Data</h3><p>Genomics, imaging, inverse problems, and ensembles.</p></div>
@@ -155,7 +155,7 @@
                 <!-- 09 -->
                 <section>
                     <p class="slide-label">02.1 / System map</p>
-                    <h2>A cluster has distinct operational zones</h2>
+                    <h2>A Cluster Has Distinct Operational Zones</h2>
                     <div class="workflow-line">
                         <span>Laptop</span><b>→</b><span>Login node</span><b>→</b><span>Scheduler</span><b>→</b><span>Compute node(s)</span>
                     </div>
@@ -169,7 +169,7 @@
                 <!-- 10 -->
                 <section>
                     <p class="slide-label">02.2 / Login boundary</p>
-                    <h2>The login node is a control plane</h2>
+                    <h2>The Login Node Is a Control Plane</h2>
                     <div class="grid-2">
                         <div class="panel">
                             <h3>Appropriate</h3>
@@ -180,7 +180,7 @@
                             </ul>
                         </div>
                         <div class="panel">
-                            <h3>Move to an allocation</h3>
+                            <h3>Move to an Allocation</h3>
                             <ul>
                                 <li>Training and simulation</li>
                                 <li>Large builds or test suites</li>
@@ -194,7 +194,7 @@
                 <!-- 11 -->
                 <section>
                     <p class="slide-label">02.3 / Node anatomy</p>
-                    <h2>Resource topology matters</h2>
+                    <h2>Resource Topology Matters</h2>
                     <div class="grid-3 compact">
                         <div class="panel"><h3>CPU</h3><p>Sockets, cores, hardware threads, caches, and NUMA domains.</p></div>
                         <div class="panel"><h3>Memory</h3><p>Capacity and bandwidth are node-local constraints.</p></div>
@@ -206,10 +206,10 @@
                 <!-- 12 -->
                 <section>
                     <p class="slide-label">02.4 / Data path</p>
-                    <h2>Storage and networks are part of performance</h2>
+                    <h2>Storage and Networks Are Part of Performance</h2>
                     <div class="grid-2 compact">
                         <div class="panel">
-                            <h3>Storage policy</h3>
+                            <h3>Storage Policy</h3>
                             <div class="metric-row"><strong>HOME</strong><span>Code and small persistent files</span></div>
                             <div class="metric-row"><strong>PROJECT</strong><span>Shared durable research data</span></div>
                             <div class="metric-row"><strong>SCRATCH</strong><span>Fast temporary working data; purge policies apply</span></div>
@@ -236,7 +236,7 @@
                     <p class="slide-label">03.1 / Scheduler role</p>
                     <div class="full-bleed-image">
                         <div>
-                            <h2>The scheduler matches requests to resources</h2>
+                            <h2>The Scheduler Matches Requests to Resources</h2>
                             <p>Jobs wait until compatible CPU, GPU, memory, time, and policy constraints are available.</p>
                             <p class="callout">A pending job is not necessarily broken. Inspect its reason before changing the request.</p>
                         </div>
@@ -247,21 +247,21 @@
                 <!-- 15 -->
                 <section>
                     <p class="slide-label">03.2 / Resource language</p>
-                    <h2>Request what the program can use</h2>
+                    <h2>Request What the Program Can Use</h2>
                     <div class="grid-3 compact">
                         <div class="panel"><h3>Tasks</h3><p><code>--ntasks</code> usually maps to processes or ranks.</p></div>
-                        <div class="panel"><h3>CPU slots</h3><p><code>--cpus-per-task</code> reserves schedulable CPU units for each task.</p></div>
+                        <div class="panel"><h3>CPU Slots</h3><p><code>--cpus-per-task</code> reserves schedulable CPU units for each task.</p></div>
                         <div class="panel"><h3>Memory</h3><p><code>--mem</code> is per node, not a job-wide total.</p></div>
                         <div class="panel"><h3>GPU</h3><p><code>--gres=gpu:1</code> is the generic baseline used here.</p></div>
                         <div class="panel"><h3>Time</h3><p><code>--time</code> is a hard wall-clock limit.</p></div>
-                        <div class="panel"><h3>Site policy</h3><p>Account and partition remain cluster-specific.</p></div>
+                        <div class="panel"><h3>Site Policy</h3><p>Account and partition remain cluster-specific.</p></div>
                     </div>
                 </section>
 
                 <!-- 16 -->
                 <section>
                     <p class="slide-label">03.3 / Common layouts</p>
-                    <h2>Slots describe capacity, not utilization</h2>
+                    <h2>Slots Describe Capacity, Not Utilization</h2>
                     <div class="equation">requested CPU slots = nodes × tasks per node × CPUs per task</div>
                     <div class="grid-3 compact">
                         <div class="panel"><h3>MPI</h3><p>Many tasks, usually one or a few CPU slots each.</p></div>
@@ -274,7 +274,7 @@
                 <!-- 17 -->
                 <section>
                     <p class="slide-label">03.4 / Batch script anatomy</p>
-                    <h2>A conservative baseline</h2>
+                    <h2>A Conservative Baseline</h2>
                     <pre><code class="language-bash">#!/bin/bash
 #SBATCH --job-name=hello_hpc
 #SBATCH --output=hello_hpc_%j.out
@@ -296,7 +296,7 @@ python3 -u hello_hpc.py</code></pre>
                 <!-- 18 -->
                 <section>
                     <p class="slide-label">03.5 / Essential commands</p>
-                    <h2>Inspect before guessing</h2>
+                    <h2>Inspect Before Guessing</h2>
                     <div class="grid-3 compact">
                         <div class="panel"><h3><code>sbatch</code></h3><p>Submit a batch script.</p></div>
                         <div class="panel"><h3><code>squeue</code></h3><p>Inspect queued and running jobs.</p></div>
@@ -310,7 +310,7 @@ python3 -u hello_hpc.py</code></pre>
                 <!-- 19 -->
                 <section>
                     <p class="slide-label">03.6 / Failure evidence</p>
-                    <h2>Diagnose from records, not anecdotes</h2>
+                    <h2>Diagnose from Records, Not Anecdotes</h2>
                     <pre><code class="language-bash">sacct -j 12345 --format=JobID,State,Elapsed,MaxRSS,ExitCode
 scontrol show job 12345
 tail -n 80 hello_hpc_12345.out
@@ -334,7 +334,7 @@ tail -n 80 hello_hpc_12345.err</code></pre>
                 <!-- 21 -->
                 <section>
                     <p class="slide-label">04.1 / Python 3.12 + uv</p>
-                    <h2>Lock the project, not the login node</h2>
+                    <h2>Lock the Project, Not the Login Node</h2>
                     <pre><code class="language-bash">module spider python
 module load python/&lt;site-version&gt;
 
@@ -352,7 +352,7 @@ echo ".venv/" &gt;&gt; .gitignore</code></pre>
                 <!-- 22 -->
                 <section>
                     <p class="slide-label">04.2 / Remote-SSH</p>
-                    <h2>Connect in a terminal first</h2>
+                    <h2>Connect in a Terminal First</h2>
                     <div class="grid-2">
                         <div>
                             <pre><code class="language-bash">Host research-cluster
@@ -363,7 +363,7 @@ echo ".venv/" &gt;&gt; .gitignore</code></pre>
   # ProxyJump gateway.example.edu</code></pre>
                         </div>
                         <div class="panel compact">
-                            <h3>Safe path</h3>
+                            <h3>Safe Path</h3>
                             <ol>
                                 <li>Verify <code>ssh research-cluster</code>.</li>
                                 <li>Complete MFA.</li>
@@ -378,13 +378,13 @@ echo ".venv/" &gt;&gt; .gitignore</code></pre>
                 <!-- 23 -->
                 <section>
                     <p class="slide-label">04.3 / Safe agentic workflow</p>
-                    <h2>Automation stops before submission</h2>
+                    <h2>Automation Stops Before Submission</h2>
                     <div class="workflow-line">
                         <span>Plan</span><b>→</b><span>Validate</span><b>→</b><span>Smoke-test</span><b>→</b><span>Submit</span><b>→</b><span>Inspect</span>
                     </div>
                     <div class="grid-2 compact">
                         <div class="panel">
-                            <h3>Agent may</h3>
+                            <h3>Agent May</h3>
                             <ul>
                                 <li>Draft and explain scripts</li>
                                 <li>Run static checks</li>
@@ -392,7 +392,7 @@ echo ".venv/" &gt;&gt; .gitignore</code></pre>
                             </ul>
                         </div>
                         <div class="panel">
-                            <h3>Requires approval</h3>
+                            <h3>Requires Approval</h3>
                             <ul>
                                 <li><code>sbatch</code> or <code>scancel</code></li>
                                 <li>Account and partition choices</li>
@@ -415,7 +415,7 @@ echo ".venv/" &gt;&gt; .gitignore</code></pre>
                 <!-- 25 -->
                 <section>
                     <p class="slide-label">05.1 / Program</p>
-                    <h2>Dependency-free Python smoke test</h2>
+                    <h2>Dependency-Free Python Smoke Test</h2>
                     <pre><code class="language-python"># Abridged: use the full reviewed file in the field exercise
 import os
 import platform
@@ -439,7 +439,7 @@ print(f"Deterministic checksum ({work_items:,} items): {checksum}")</code></pre>
                 <!-- 26 -->
                 <section>
                     <p class="slide-label">05.2 / Allocation</p>
-                    <h2>Keep the first request small</h2>
+                    <h2>Keep the First Request Small</h2>
                     <pre><code class="language-bash">#!/bin/bash
 #SBATCH --job-name=hello_hpc
 #SBATCH --output=hello_hpc_%j.out
@@ -461,7 +461,7 @@ python3 -u hello_hpc.py</code></pre>
                 <!-- 27 -->
                 <section>
                     <p class="slide-label">05.3 / Validation sequence</p>
-                    <h2>Cheap checks first</h2>
+                    <h2>Cheap Checks First</h2>
                     <div class="workflow-line">
                         <span>bash -n</span><b>→</b><span>sbatch --test-only</span><b>→</b><span>small sbatch</span><b>→</b><span>sacct + logs</span>
                     </div>
@@ -477,7 +477,7 @@ cat hello_hpc_12345.err</code></pre>
                 <!-- 28 -->
                 <section>
                     <p class="slide-label">Core route / Complete</p>
-                    <h2>A successful first job proves the path</h2>
+                    <h2>A Successful First Job Proves the Path</h2>
                     <div class="grid-3 compact">
                         <div class="panel"><h3>Placement</h3><p>The program ran on a compute node.</p></div>
                         <div class="panel"><h3>Allocation</h3><p>Slurm metadata matches the request.</p></div>
@@ -498,7 +498,7 @@ cat hello_hpc_12345.err</code></pre>
 
                 <section>
                     <span class="appendix-badge">Appendix A / NumPy threads</span>
-                    <h2>Match BLAS threads to CPU slots</h2>
+                    <h2>Match BLAS Threads to CPU Slots</h2>
                     <pre><code class="language-bash">#SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 
@@ -512,7 +512,7 @@ uv run --frozen python -u numpy_threads.py</code></pre>
 
                 <section>
                     <span class="appendix-badge">Appendix B / Git</span>
-                    <h2>Capture code and environment, not generated data</h2>
+                    <h2>Capture Code and Environment, Not Generated Data</h2>
                     <pre><code class="language-text">project/
 ├── pyproject.toml
 ├── uv.lock
@@ -538,7 +538,7 @@ uv run --frozen python -u numpy_threads.py</code></pre>
 
                 <section>
                     <span class="appendix-badge">Appendix D / Containers</span>
-                    <h2>Use the runtime supported by the site</h2>
+                    <h2>Use the Runtime Supported by the Site</h2>
                     <pre><code class="language-bash">apptainer pull python_3.12.sif docker://python:3.12-slim
 apptainer exec python_3.12.sif python --version
 sbatch --job-name=analysis \
@@ -550,7 +550,7 @@ sbatch --job-name=analysis \
 
                 <section>
                     <span class="appendix-badge">Appendix E / Jupyter</span>
-                    <h2>Run the kernel in an allocation</h2>
+                    <h2>Run the Kernel in an Allocation</h2>
                     <pre><code class="language-bash"># On the allocated compute node
 jupyter lab --no-browser --ip=127.0.0.1 --port=8888
 
@@ -562,7 +562,7 @@ ssh -N -J research-cluster \
 
                 <section>
                     <span class="appendix-badge">Appendix F / Remote-SSH troubleshooting</span>
-                    <h2>Start below the IDE</h2>
+                    <h2>Start Below the IDE</h2>
                     <ol class="compact">
                         <li>Run <code>ssh -vv research-cluster</code> in a terminal.</li>
                         <li>Confirm host, username, key, MFA, and <code>ProxyJump</code>.</li>

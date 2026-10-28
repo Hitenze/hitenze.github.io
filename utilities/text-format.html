@@ -86,9 +86,13 @@
 
         .main-content {
             display: grid;
-            grid-template-columns: 1fr 320px;
+            grid-template-columns: minmax(0, 1fr) 20em;
             gap: 25px;
             margin-bottom: 20px;
+        }
+
+        .main-content > * {
+            min-width: 0;
         }
 
         .text-area-wrapper {
@@ -101,6 +105,8 @@
             color: #2c3e50;
             margin-bottom: 10px;
             display: flex;
+            flex-wrap: wrap;
+            gap: 4px 12px;
             justify-content: space-between;
             align-items: center;
         }
@@ -183,6 +189,7 @@
 
         .action-buttons {
             display: flex;
+            flex-wrap: wrap;
             gap: 10px;
         }
 
@@ -217,9 +224,11 @@
         }
 
         /* Responsive */
-        @media (max-width: 1024px) {
+        /* Breakpoints are in em so an enlarged default text size
+           switches to the narrower layouts at the same text-per-line. */
+        @media (max-width: 64em) {
             .main-content {
-                grid-template-columns: 1fr 280px;
+                grid-template-columns: minmax(0, 1fr) 17.5em;
                 gap: 20px;
             }
 
@@ -228,15 +237,19 @@
             }
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 48em) {
             .main-content {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
             }
 
             .button-panel {
                 display: grid;
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(auto-fit, minmax(min(100%, 14em), 1fr));
                 gap: 12px;
+            }
+
+            .action-buttons {
+                grid-column: 1 / -1;
             }
 
             #textInput {
@@ -252,7 +265,7 @@
             }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 30em) {
             .container {
                 padding: 10px 10px 0;
             }

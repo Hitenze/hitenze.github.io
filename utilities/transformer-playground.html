@@ -237,10 +237,12 @@ body {
 }
 .head-panel {
   background: var(--paper); border: 1px solid var(--rule); border-radius: 4px;
-  padding: 6px;
+  padding: 6px; min-width: 0;
 }
 .head-title { font-size: 10px; color: var(--muted); font-weight: 600; margin-bottom: 4px; text-align: center; }
-.heatmap-canvas-wrap { display: flex; justify-content: center; }
+/* Centred when it fits; scrolls from the left edge when a long sequence is wider than the panel. */
+.heatmap-canvas-wrap { overflow-x: auto; }
+.heatmap-canvas-wrap canvas { display: block; margin: 0 auto; }
 
 /* ============ RIGHT PANEL ============ */
 #right-panel {
@@ -377,7 +379,7 @@ body {
   </div>
   <button id="btn-lang" onclick="toggleLang()">中</button>
   <div class="epoch-label">
-    <span><span data-i18n="epoch">Epoch</span>:</span><span id="epoch-val" class="val">0</span>
+    <span><span data-i18n="epoch">Epoch</span>:</span> <span id="epoch-val" class="val">0</span>
   </div>
 </div>
 
@@ -514,7 +516,7 @@ body {
       <div class="loss-info">
         <div class="loss-item">
           <div class="loss-dot" style="background:var(--data-red);"></div>
-          <span><span data-i18n="loss_label">Loss</span>:</span><span class="loss-value" id="loss-display">—</span>
+          <span><span data-i18n="loss_label">Loss</span>:</span> <span class="loss-value" id="loss-display">—</span>
         </div>
       </div>
       <div class="acc-row">
@@ -1831,9 +1833,24 @@ function renderHeatmaps() {
   const grid = document.getElementById('heads-grid');
   const n = cfg.n_heads;
 
-  // Layout: 1-2 heads: 1 col, 3-4 heads: 2 cols
-  const cols = n <= 2 ? n : 2;
-  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  // Label metrics: row labels sit left at full size; column labels turn
+  // diagonal when they no longer fit their cell.
+  const LABEL_FONT = 'bold 11px sans-serif';
+  const mctx = document.createElement('canvas').getContext('2d');
+  mctx.font = LABEL_FONT;
+  const labelW = Math.ceil(Math.max(...tokenLabels.map(s => mctx.measureText(s).width)));
+  const PAD_LEFT = labelW + 8;
+  const MIN_CELL = 28; // smallest cell that still holds a readable "0.00"
+  const ANGLE = Math.PI / 4;
+  const labelRun = Math.ceil(labelW * Math.cos(ANGLE)); // horizontal reach of a diagonal label
+
+  // Layout: 1-2 heads side by side, 3-4 heads in 2 cols; drop to one column
+  // when side-by-side heads would squeeze cells below MIN_CELL.
+  const avail = document.getElementById('heatmap-scroll').clientWidth;
+  const fitCell = c => Math.floor((avail / c - 24 - PAD_LEFT - labelRun) / Math.max(T, 2));
+  let cols = n <= 2 ? n : 2;
+  if (cols > 1 && fitCell(cols) < MIN_CELL) cols = 1;
+  grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
 
   // Clear and rebuild
   while (grid.children.length > n) grid.removeChild(grid.lastChild);
@@ -1844,9 +1861,12 @@ function renderHeatmaps() {
     grid.appendChild(panel);
   }
 
-  const CELL = Math.min(32, Math.floor((document.getElementById('heatmap-scroll').clientWidth / cols - 68) / Math.max(T, 2)));
-  const PAD_LEFT = 44, PAD_TOP = 36;
-  const W = PAD_LEFT + T * CELL;
+  // Cells never shrink below MIN_CELL; a wider map scrolls inside its panel.
+  const CELL = Math.max(MIN_CELL, Math.min(32, fitCell(cols)));
+  const rotate = labelW + 4 > CELL;
+  const PAD_TOP = rotate ? Math.ceil(labelW * Math.sin(ANGLE)) + 14 : 24;
+  const PAD_RIGHT = rotate ? Math.max(0, labelRun - CELL / 2 + 4) : 0; // room for the last diagonal label
+  const W = PAD_LEFT + T * CELL + PAD_RIGHT;
   const H = PAD_TOP + T * CELL;
 
   for (let h = 0; h < n; h++) {
@@ -1887,25 +1907,32 @@ function renderHeatmaps() {
           ctx.lineWidth = 0.5;
           ctx.strokeRect(x, y, CELL, CELL);
           // Value text
-          if (CELL >= 20) {
-            ctx.fillStyle = PG.textOn('paper', 'data-blue', w);
-            ctx.font = `${Math.min(11, CELL * 0.34)}px monospace`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(w.toFixed(2), x + CELL / 2, y + CELL / 2);
-          }
+          ctx.fillStyle = PG.textOn('paper', 'data-blue', w);
+          ctx.font = `${Math.min(11, CELL * 0.36)}px monospace`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(w.toFixed(2), x + CELL / 2, y + CELL / 2);
         }
       }
     }
 
     // Column labels (top)
     ctx.fillStyle = PG.c('muted');
-    ctx.font = `bold ${Math.min(11, CELL * 0.4)}px sans-serif`;
-    ctx.textAlign = 'center';
+    ctx.font = LABEL_FONT;
     ctx.textBaseline = 'middle';
     for (let col = 0; col < T; col++) {
       const x = PAD_LEFT + col * CELL + CELL / 2;
-      ctx.fillText(tokenLabels[col], x, PAD_TOP / 2);
+      if (rotate) {
+        ctx.save();
+        ctx.translate(x, PAD_TOP - 6);
+        ctx.rotate(-ANGLE);
+        ctx.textAlign = 'left';
+        ctx.fillText(tokenLabels[col], 0, 0);
+        ctx.restore();
+      } else {
+        ctx.textAlign = 'center';
+        ctx.fillText(tokenLabels[col], x, PAD_TOP / 2);
+      }
     }
 
     // Row labels (left)
