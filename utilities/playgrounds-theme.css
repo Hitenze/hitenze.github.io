@@ -98,3 +98,11 @@ body.pg .legend, body.pg .hint, body.pg .muted { color: var(--muted); }
 body.pg ::-webkit-scrollbar-track { background: var(--panel); }
 body.pg ::-webkit-scrollbar-thumb { background: var(--rule); }
 body.pg ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* Keep language switching anchored beside the theme control, independent of title length. */
+body.pg .sb-bar #btn-lang {
+  flex: 0 0 44px; width: 44px; height: 44px; margin: 0;
+  background: transparent; border: 1px solid var(--rule); border-radius: 4px;
+  color: var(--ink); cursor: pointer; font-size: 12px;
+  display: inline-flex; align-items: center; justify-content: center;
+}

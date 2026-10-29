@@ -50,7 +50,7 @@ const i18n = {
     'mcmc-curse-li3': '自相关性高，有效样本量（ESS）低',
     'mcmc-diag-title': '收敛诊断',
     'mcmc-metric-rhat': '多链收敛指标',
-    'mcmc-metric-ess-val': '&gt; 100/链',
+    'mcmc-metric-ess-val': '> 100/链',
     'mcmc-metric-ess': '有效样本量',
     'mcmc-metric-accept-label': '接受率',
     'mcmc-metric-accept': 'MH 最优接受率',
@@ -168,7 +168,7 @@ const i18n = {
     'mcmc-curse-li3': 'High autocorrelation, low effective sample size (ESS)',
     'mcmc-diag-title': 'Convergence Diagnostics',
     'mcmc-metric-rhat': 'Multi-chain convergence',
-    'mcmc-metric-ess-val': '&gt; 100/chain',
+    'mcmc-metric-ess-val': '> 100/chain',
     'mcmc-metric-ess': 'Effective sample size',
     'mcmc-metric-accept-label': 'Accept Rate',
     'mcmc-metric-accept': 'Optimal MH rate',
@@ -271,6 +271,8 @@ const i18n = {
     const toggleBtn = document.getElementById('btn-gp-toggle');
     if (toggleBtn) toggleBtn.textContent = gpShowPosterior ? this.t('btn-show-prior') : this.t('btn-show-posterior');
     updatePeriodControl();
+    announceObservations();
+    updateSamplerStatus();
     updateSamplerNotes();
     redrawAllCanvases();
   }
@@ -478,6 +480,7 @@ const defaultObservations = [
 function ensureObservations() {
   if (gpObservations.length < 2) {
     gpObservations = defaultObservations.map(o => [...o]);
+    announceObservations();
     drawGP();
   }
 }
@@ -917,6 +920,25 @@ function drawLiveGP(canvasId, params, compareParams) {
 // ========================================
 // MCMC on GP hyperparameters
 // ========================================
+// Keep computed numbers separate from translated labels so changing language
+// never reruns a sampler or resets its progress/results.
+const samplerStats = { mcmc: null, hmc: null };
+function updateSamplerStatus() {
+  for (const panel of ['mcmc', 'hmc']) {
+    const el = document.getElementById(`${panel}-stats`);
+    const stats = samplerStats[panel];
+    if (!el) continue;
+    if (!stats) { el.textContent = ''; continue; }
+    const acceptKey = panel === 'hmc' ? 'stats-hmc-accept' : 'stats-accept-rate';
+    el.innerHTML = `${i18n.t('stats-step')}: <span class="stat-val">${stats.step}/${stats.total}</span> | ${i18n.t(acceptKey)}: <span class="stat-val">${stats.rate}%</span>`;
+  }
+  const caption = document.querySelector('[data-i18n="hmc-viz-caption"]');
+  if (caption) {
+    const key = samplerStats.hmc && !hmcComparisonActive ? 'hmc-viz-caption-solo' : 'hmc-viz-caption';
+    caption.textContent = i18n.t(key);
+  }
+}
+
 let mcmcSamples = [];
 let mcmcCurrentParams = null;
 let mcmcAnimId = null;
@@ -956,8 +978,8 @@ function runMCMCOnGP() {
     mcmcCurrentParams = mcmcSamples[mcmcSamples.length - 1];
     drawHyperCanvas('mcmc-canvas', mcmcSamples, []);
     drawLiveGP('mcmc-gp-canvas', mcmcCurrentParams);
-    document.getElementById('mcmc-stats').innerHTML =
-      `${i18n.t('stats-step')}: <span class="stat-val">${mcmcSamples.length}/${totalSteps}</span> | ${i18n.t('stats-accept-rate')}: <span class="stat-val">${(accepted / totalSteps * 100).toFixed(1)}%</span>`;
+    samplerStats.mcmc = { step: mcmcSamples.length, total: totalSteps, rate: (accepted / totalSteps * 100).toFixed(1) };
+    updateSamplerStatus();
     if (step < totalSteps) mcmcAnimId = requestAnimationFrame(animate);
     else mcmcAnimId = null;
   }
@@ -997,10 +1019,9 @@ function invalidateSamplingResults() {
   hmcCurrentParams = null;
   hmcCompareCurrentParams = null;
   hmcComparisonActive = false;
-  const mcmcStats = document.getElementById('mcmc-stats');
-  const hmcStats = document.getElementById('hmc-stats');
-  if (mcmcStats) mcmcStats.innerHTML = '';
-  if (hmcStats) hmcStats.innerHTML = '';
+  samplerStats.mcmc = null;
+  samplerStats.hmc = null;
+  updateSamplerStatus();
   updateNoDataWarning('mcmc');
   updateNoDataWarning('hmc');
   redrawAllCanvases();
@@ -1010,12 +1031,6 @@ function runHMCOnGP(withComparison) {
   if (hmcAnimId) { cancelAnimationFrame(hmcAnimId); hmcAnimId = null; }
   ensureObservations();
   updateNoDataWarning('hmc');
-  // Update caption dynamically
-  const captionEl = document.querySelector('[data-i18n="hmc-viz-caption"]');
-  if (captionEl) {
-    const key = withComparison ? 'hmc-viz-caption' : 'hmc-viz-caption-solo';
-    captionEl.textContent = i18n.t(key);
-  }
   const obsX = gpObservations.map(o => o[0]), obsY = gpObservations.map(o => o[1]);
 
   const eps = parseFloat(document.getElementById('hmc-eps').value);
@@ -1081,8 +1096,8 @@ function runHMCOnGP(withComparison) {
     }
     drawHyperCanvas('hmc-canvas', hmcSamples, withComparison ? hmcCompareSamples : []);
     drawLiveGP('hmc-gp-canvas', hmcCurrentParams, withComparison ? hmcCompareCurrentParams : null);
-    document.getElementById('hmc-stats').innerHTML =
-      `${i18n.t('stats-step')}: <span class="stat-val">${hmcSamples.length}/${nSamples}</span> | ${i18n.t('stats-hmc-accept')}: <span class="stat-val">${(hmcAccepted / nSamples * 100).toFixed(1)}%</span>`;
+    samplerStats.hmc = { step: hmcSamples.length, total: nSamples, rate: (hmcAccepted / nSamples * 100).toFixed(1) };
+    updateSamplerStatus();
     if (step < nSamples) hmcAnimId = requestAnimationFrame(animate);
     else hmcAnimId = null;
   }

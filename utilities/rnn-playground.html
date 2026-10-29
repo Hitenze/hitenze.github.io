@@ -224,7 +224,8 @@ body {
 
 /* Gate Statistics */
 .gate-stat-row { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
-.gate-stat-label { font-size: 11px; color: var(--muted); width: 54px; flex-shrink: 0; }
+.gate-stat-label { font-size: 11px; color: var(--muted); width: 76px; flex-shrink: 0; white-space: nowrap; }
+#stat-hidden-row .gate-stat-label { width: 100px; }
 .gate-stat-bar-wrap { flex: 1; height: 12px; background: var(--panel); border-radius: 6px; overflow: hidden; }
 .gate-stat-bar { height: 100%; border-radius: 6px; transition: width 0.3s; }
 .gate-stat-val { font-size: 11px; font-family: monospace; width: 36px; text-align: right; color: var(--muted); }
@@ -280,6 +281,7 @@ body {
 <div class="sb-bar" role="navigation" aria-label="Site">
   <a class="sb-brand" href="../index.html">Tianshi Xu</a><span class="sb-sep" aria-hidden="true">/</span><a class="sb-link" href="index.html">Resources</a>
   <span class="sb-spacer"></span>
+  <button type="button" id="btn-lang" aria-label="Switch language">中</button>
   <button type="button" class="sb-theme js-theme-toggle" aria-label="Dark theme" aria-describedby="theme-state" title="Toggle color theme"><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg></button>
   <span id="theme-state" class="sb-sr"></span>
 </div>
@@ -300,7 +302,6 @@ body {
   </svg>
   <h1 data-i18n="title">RNN Playground</h1>
   <div class="subtitle" data-i18n="subtitle">序列预测 · 门控机制</div>
-  <button id="btn-lang">中</button>
   <span id="status-badge" class="idle" data-i18n="ready">就绪</span>
   <div class="epoch-label"><span data-i18n="epoch">Epoch</span>: <span class="val" id="epoch-display">0</span></div>
 </div>

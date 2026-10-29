@@ -157,7 +157,7 @@ body {
 }
 
 .title-slide .subtitle {
-  max-width: 18ch;
+  max-width: 42ch;
   color: rgba(255, 253, 248, 0.78);
   font-size: 0.8em;
 }
@@ -247,12 +247,12 @@ body {
   border-radius: 2px;
   background: var(--code);
   box-shadow: none;
-  font-size: 0.48em;
+  font-size: 0.68em;
   line-height: 1.36;
 }
 
 .reveal pre code {
-  max-height: 510px;
+  max-height: none;
   padding: 20px 24px;
   font-family: "IBM Plex Mono", Menlo, monospace;
 }

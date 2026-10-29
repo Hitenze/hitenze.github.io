@@ -20,13 +20,14 @@
     <link rel="stylesheet" href="assets/vendor/reveal/plugin/highlight/monokai.css">
     <link rel="stylesheet" href="assets/slides.css">
     <link rel="stylesheet" href="assets/slides-theme.css">
+    <link id="reading-styles" rel="stylesheet" href="assets/slides-noscript.css" media="not all">
     <noscript><link rel="stylesheet" href="assets/slides-noscript.css"></noscript>
     <script>
         /* Reading view (?view=read): every slide in order as one scrolling page, the same document
            view as without JavaScript. Readable on phones, where a 1600x900 slide is scaled down. */
-        if (/[?&]view=read(&|$)/.test(location.search)) {
+        if (/[?&]view=read(&|$)/.test(location.search) || window.matchMedia("(max-width: 760px)").matches) {
             document.documentElement.classList.add('deck-read');
-            document.write('<link rel="stylesheet" href="assets/slides-noscript.css">');
+            document.getElementById("reading-styles").media = "all";
         }
     </script>
 </head>
@@ -580,6 +581,9 @@ ssh -N -J research-cluster \
     <script>
         if (!document.documentElement.classList.contains('deck-read')) Reveal.initialize({
             hash: true,
+            // The responsive document view above handles phones; do not let Reveal
+            // reparent these custom full-height sections into its scroll wrappers.
+            scrollActivationWidth: null,
             controls: true,
             controlsTutorial: false,
             progress: true,
@@ -591,6 +595,24 @@ ssh -N -J research-cluster \
             transition: "none",
             backgroundTransition: "none",
             plugins: [RevealHighlight]
+        }).then(function () {
+            // A live desktop resize must not leave a tiny or blank slide deck.
+            // Switch to the document view without reloading or losing the current slide.
+            var narrowScreen = window.matchMedia("(max-width: 760px)");
+            function readOnNarrowScreen() {
+                if (!narrowScreen.matches || document.documentElement.classList.contains('deck-read')) return;
+                var currentSlide = document.querySelector('.slides section.present:not(.stack)') || Reveal.getCurrentSlide();
+                Reveal.destroy();
+                document.documentElement.classList.add('deck-read');
+                document.getElementById('reading-styles').media = 'all';
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () {
+                        if (currentSlide) currentSlide.scrollIntoView({block: 'start', behavior: 'instant'});
+                    });
+                });
+            }
+            narrowScreen.addEventListener('change', readOnNarrowScreen);
+            readOnNarrowScreen();
         });
     </script>
 </body>

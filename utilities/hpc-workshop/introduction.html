@@ -423,7 +423,7 @@
         <section id="programming-paradigms" class="mb-16">
             <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Parallel Programming Paradigms</h2>
 
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid gap-8 programming-models">
                 <!-- Shared Memory / OpenMP -->
                 <div class="section-card bg-white rounded-xl shadow-lg p-6 border-t-4 border-green-500">
                     <div class="text-center mb-6">
@@ -451,14 +451,10 @@
                             </ul>
                         </div>
 
-                        <div class="bg-gray-100 p-3 rounded">
-                            <code class="text-xs text-gray-800">
-                                #pragma omp parallel for<br>
-                                for (int i = 0; i &lt; n; i++) {<br>
-                                &nbsp;&nbsp;result[i] = compute(data[i]);<br>
-                                }
-                            </code>
-                        </div>
+                        <pre class="model-code"><code>#pragma omp parallel for
+for (int i = 0; i &lt; n; i++) {
+  result[i] = compute(data[i]);
+}</code></pre>
                     </div>
                 </div>
 
@@ -489,14 +485,10 @@
                             </ul>
                         </div>
 
-                        <div class="bg-gray-100 p-3 rounded">
-                            <code class="text-xs text-gray-800">
-                                MPI_Send(data, count, MPI_INT,<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dest, tag, MPI_COMM_WORLD);<br>
-                                MPI_Recv(buffer, count, MPI_INT,<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source, tag, MPI_COMM_WORLD, &amp;status);
-                            </code>
-                        </div>
+                        <pre class="model-code"><code>MPI_Send(data, count, MPI_INT,
+         dest, tag, MPI_COMM_WORLD);
+MPI_Recv(buffer, count, MPI_INT,
+         source, tag, MPI_COMM_WORLD, &amp;status);</code></pre>
                     </div>
                 </div>
 
@@ -527,15 +519,11 @@
                             </ul>
                         </div>
 
-                        <div class="bg-gray-100 p-3 rounded">
-                            <code class="text-xs text-gray-800">
-                                __global__ void kernel(float *data) {<br>
-                                &nbsp;&nbsp;int idx = blockIdx.x * blockDim.x<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ threadIdx.x;<br>
-                                &nbsp;&nbsp;data[idx] = process(data[idx]);<br>
-                                }
-                            </code>
-                        </div>
+                        <pre class="model-code"><code>__global__ void kernel(float *data) {
+  int idx = blockIdx.x * blockDim.x
+            + threadIdx.x;
+  data[idx] = process(data[idx]);
+}</code></pre>
                     </div>
                 </div>
             </div>

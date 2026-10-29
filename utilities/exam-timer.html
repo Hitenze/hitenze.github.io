@@ -154,6 +154,11 @@
             text-align: left;
         }
 
+        /* Each bullet owns its hanging indent; normal notes and blank lines remain intact. */
+        .note-line { white-space: pre-wrap; min-height: 1em; }
+        .note-bullet { position: relative; padding-left: 0.7em; }
+        .note-bullet::before { content: "•"; position: absolute; left: 0; }
+
         .control-panel {
             background: white;
             border-radius: 8px;
@@ -480,14 +485,14 @@
 • Stop writing immediately when time is called.</div>
         </div>
 
-        <button class="exit-fullscreen" onclick="exitFullscreen()">Exit Fullscreen (ESC)</button>
+        <button class="exit-fullscreen" onclick="exitFullscreen()">Exit fullscreen (ESC)</button>
 
         <div class="control-panel">
             <div class="control-section">
                 <h3>Mode</h3>
                 <div class="mode-switch">
-                    <button class="mode-btn" id="countupBtn" onclick="setMode('countup')">Count Up</button>
-                    <button class="mode-btn active" id="countdownBtn" onclick="setMode('countdown')">Count Down</button>
+                    <button class="mode-btn" id="countupBtn" onclick="setMode('countup')">Count up</button>
+                    <button class="mode-btn active" id="countdownBtn" onclick="setMode('countdown')">Count down</button>
                 </div>
             </div>
 
@@ -702,9 +707,21 @@
             oscillator.stop(audioContext.currentTime + 1);
         }
 
+        // Render as text, never HTML, with a hanging indent for bullet-prefixed lines.
+        function renderNotes(text) {
+            customTextDisplay.replaceChildren();
+            for (const line of text.split(/\r?\n/)) {
+                const row = document.createElement('div');
+                const bullet = line.match(/^\s*•\s*(.*)$/);
+                row.className = bullet ? 'note-line note-bullet' : 'note-line';
+                row.textContent = bullet ? bullet[1] : (line || '\u00a0');
+                customTextDisplay.appendChild(row);
+            }
+        }
+
         // Update notes text
         customTextInput.addEventListener('input', function() {
-            customTextDisplay.textContent = this.value || defaultNotes;
+            renderNotes(this.value || defaultNotes);
         });
 
         // Update font sizes
@@ -765,7 +782,7 @@
 
         // Initialize default notes
         customTextInput.value = defaultNotes;
-        customTextDisplay.textContent = defaultNotes;
+        renderNotes(defaultNotes);
         // Init
         resetTimer();
     </script>

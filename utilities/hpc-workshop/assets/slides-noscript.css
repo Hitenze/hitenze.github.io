@@ -38,9 +38,15 @@ html, body { height: auto !important; overflow: auto !important; }
 .reveal pre, .workflow-line span { font-size: max(0.875rem, 0.58em); }
 .slide-label, .qr-panel code, .title-slide .meta, .appendix-badge { font-size: max(0.8125rem, 0.42em); }
 .qr-panel code { display: inline-block; line-height: 1.5; overflow-wrap: anywhere; }
-.deck-nav { position: absolute; }
+.deck-nav { position: relative; top: auto; right: auto; margin: 8px; }
 .deck-nav .deck-to-read { display: none; }
 .deck-foot { display: flex; }
 @media (max-width: 760px) {
   .grid-2, .grid-3, .full-bleed-image, .reveal .slides .title-slide { grid-template-columns: 1fr !important; }
+}
+
+/* Narrow screens use the document layout by default, so do not offer a switch
+   back to the same layout. Keep the Resources return link. */
+@media (max-width: 760px) {
+  html.deck-read .deck-to-slides { display: none; }
 }

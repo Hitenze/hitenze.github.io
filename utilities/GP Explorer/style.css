@@ -240,6 +240,7 @@
   border-bottom: 2px solid var(--color-divider);
   margin-bottom: var(--space-8);
   overflow-x: auto;
+  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
 }
 .tab-btn {
@@ -252,7 +253,7 @@
   font-weight: 500;
   color: var(--color-text-muted);
   border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
+  margin-bottom: 0;
   white-space: nowrap;
   transition: color var(--transition-interactive), border-color var(--transition-interactive);
 }
@@ -325,7 +326,7 @@
 /* Kernel cards */
 .kernel-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: 1fr; /* Equations need the full text-column width. */
   gap: var(--space-3);
   margin: var(--space-4) 0;
 }
@@ -625,7 +626,10 @@ canvas {
   color: var(--color-text-muted);
 }
 .viz-stats {
-  display: flex;
+  min-height: 1.6em;
+  line-height: 1.6;
+  display: block;
+  text-align: center;
   gap: var(--space-4);
   justify-content: center;
   margin-top: var(--space-3);
@@ -720,3 +724,15 @@ canvas {
   .tab-btn { padding: var(--space-2) var(--space-3); font-size: var(--text-xs); }
   .hero h1 { font-size: var(--text-xl); }
 }
+
+/* Stable controls: hidden periodic parameters retain a slot; actions never reflow
+   when the prior/posterior label changes. Status text has a row from first paint. */
+#period-control[hidden] { display: none !important; }
+.gp-period-slot { flex: 0 0 14rem; min-height: 24px; }
+.gp-actions {
+  flex: 0 0 100%; display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(9.5rem, 100%), 1fr));
+  gap: var(--space-3);
+}
+.gp-actions .btn-sample { width: 100%; min-width: 0; }
+.gp-add-obs .obs-status { flex: 0 0 100%; min-height: 1.6em; line-height: 1.6; }

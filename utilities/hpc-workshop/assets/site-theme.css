@@ -132,3 +132,17 @@ html.dark-mode .optional-badge { background: var(--paper-deep); color: var(--mut
   html:not(.light-mode) .core-badge { background: #3a261c; }
   html:not(.light-mode) .optional-badge { background: var(--paper-deep); color: var(--muted); }
 }
+
+/* Code examples need their own line-preserving block, not inline code wrapping
+   in three narrow columns beside the table of contents. */
+#programming-paradigms .programming-models { grid-template-columns: minmax(0, 1fr); }
+#programming-paradigms .model-code {
+  margin: 1rem 0 0; padding: 1rem; background: var(--paper-deep);
+  font-size: 0.875rem; line-height: 1.6; white-space: pre; overflow-x: auto;
+}
+#programming-paradigms .model-code code { white-space: pre; overflow-wrap: normal; }
+@media (min-width: 768px) {
+  #programming-paradigms .section-card {
+    display: grid; grid-template-columns: minmax(9rem, 0.65fr) minmax(0, 2fr); gap: 1.5rem;
+  }
+}

@@ -147,13 +147,17 @@
                   <input type="range" id="lengthscale" min="0.1" max="3" step="0.1" value="1">
                   <span id="ls-val">1.0</span>
                 </label>
+                <div class="gp-period-slot">
                 <label id="period-control" hidden><span data-i18n="ctrl-period">周期</span> p:
                   <input type="range" id="period" min="0.5" max="4" step="0.1" value="2">
                   <span id="period-val">2.0</span>
                 </label>
+                </div>
+                <div class="gp-actions">
                 <button class="btn-sample" id="btn-gp-sample" data-i18n="btn-resample">重新采样</button>
                 <button class="btn-sample btn-secondary" id="btn-gp-toggle" data-i18n="btn-show-posterior">显示后验</button>
                 <button class="btn-sample btn-danger" id="btn-gp-clear" data-i18n="btn-clear-obs">清除观测点</button>
+                </div>
               </div>
               <div class="viz-controls gp-add-obs" role="group" aria-labelledby="gp-add-obs-label">
                 <span id="gp-add-obs-label" data-i18n="ctrl-add-obs">输入观测点</span>
